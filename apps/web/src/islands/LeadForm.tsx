@@ -35,7 +35,7 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
 
   if (status === "ok") {
     return (
-      <div className="bg-verde-100 text-verde-900 rounded-xl p-6 text-center">
+      <div className="bg-surface-2 text-ink rounded-xl p-6 text-center">
         <p className="text-h4 font-bold">¡Gracias por tu interés!</p>
         <p className="mt-1">Muy pronto un asesor se pondrá en contacto contigo.</p>
       </div>
@@ -148,7 +148,7 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
                 {...field.props}
                 type="checkbox"
                 checked={field.input === true}
-                className="accent-verde-700 mt-1"
+                className="accent-ink mt-1"
               />
               <span>
                 Acepto la política de tratamiento de datos personales de Constructora Las Galias

@@ -48,9 +48,7 @@ export default function MortgageCalculator({
             <label className="text-body-sm text-ink font-medium" htmlFor="calc-price">
               Valor del inmueble
             </label>
-            <span className="text-body-sm text-verde-700 font-semibold">
-              {formatMoney(price, "COP")}
-            </span>
+            <span className="text-body-sm text-ink font-semibold">{formatMoney(price, "COP")}</span>
           </div>
           <input
             id="calc-price"
@@ -60,7 +58,7 @@ export default function MortgageCalculator({
             step={1_000_000}
             value={price}
             onChange={(e) => setPrice(Number(e.target.value))}
-            className="accent-verde-700 mt-2 w-full"
+            className="accent-ink mt-2 w-full"
           />
         </div>
 
@@ -69,7 +67,7 @@ export default function MortgageCalculator({
             <label className="text-body-sm text-ink font-medium" htmlFor="calc-down-payment">
               Cuota inicial
             </label>
-            <span className="text-body-sm text-verde-700 font-semibold">{downPaymentPct}%</span>
+            <span className="text-body-sm text-ink font-semibold">{downPaymentPct}%</span>
           </div>
           <input
             id="calc-down-payment"
@@ -79,7 +77,7 @@ export default function MortgageCalculator({
             step={5}
             value={downPaymentPct}
             onChange={(e) => setDownPaymentPct(Number(e.target.value))}
-            className="accent-verde-700 mt-2 w-full"
+            className="accent-ink mt-2 w-full"
           />
         </div>
 
@@ -88,7 +86,7 @@ export default function MortgageCalculator({
             <label className="text-body-sm text-ink font-medium" htmlFor="calc-term">
               Plazo
             </label>
-            <span className="text-body-sm text-verde-700 font-semibold">{termYears} años</span>
+            <span className="text-body-sm text-ink font-semibold">{termYears} años</span>
           </div>
           <input
             id="calc-term"
@@ -98,17 +96,15 @@ export default function MortgageCalculator({
             step={1}
             value={termYears}
             onChange={(e) => setTermYears(Number(e.target.value))}
-            className="accent-verde-700 mt-2 w-full"
+            className="accent-ink mt-2 w-full"
           />
         </div>
       </div>
 
-      <div className="bg-verde-100 mt-6 rounded-lg p-4 text-center">
-        <p className="text-caption text-verde-900/70 uppercase">Cuota mensual estimada</p>
-        <p className="text-h3 text-verde-900 font-extrabold">
-          {formatMoney(monthlyPayment, "COP")}
-        </p>
-        <p className="text-caption text-verde-900/70 mt-1">
+      <div className="bg-surface-2 mt-6 rounded-lg p-4 text-center">
+        <p className="text-caption text-ink/70 uppercase">Cuota mensual estimada</p>
+        <p className="text-h3 text-ink font-extrabold">{formatMoney(monthlyPayment, "COP")}</p>
+        <p className="text-caption text-ink/70 mt-1">
           Financiando {formatMoney(financedAmount, "COP")}
         </p>
       </div>

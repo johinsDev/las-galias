@@ -81,15 +81,65 @@ export default $config({
         PROJECT_DATA_PROVIDER: "manual",
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
         SHARP_CONCURRENCY: "1",
+        // Sits behind CloudFront → trust X-Forwarded-* (see config/server.ts).
+        IS_PROXIED: "true",
       },
       loadBalancer: {
         rules: [{ listen: "80/http", forward: "1337/http" }],
+        // Strapi "/" redirects (not 200), so point the ELB health check at the
+        // dedicated /_health endpoint (returns 204) and tolerate slow responses
+        // during heavy ops (data transfer, image processing) with a generous
+        // unhealthy threshold — otherwise ECS keeps killing the single task.
+        health: {
+          "1337/http": {
+            path: "/_health",
+            successCodes: "200-299",
+            interval: "30 seconds",
+            timeout: "10 seconds",
+            healthyThreshold: 2,
+            unhealthyThreshold: 5,
+          },
+        },
       },
       scaling: { min: 1, max: 1 },
     });
 
+    // CloudFront in front of the (HTTP) load balancer to give the CMS HTTPS
+    // with no custom domain — uses the default *.cloudfront.net certificate.
+    // Viewer→CloudFront is HTTPS; CloudFront→ALB stays HTTP inside AWS.
+    // Caching is disabled (it's an API/admin) and all viewer data is forwarded.
+    const cdn = new aws.cloudfront.Distribution("CmsCdn", {
+      enabled: true,
+      waitForDeployment: false,
+      origins: [
+        {
+          originId: "cms-alb",
+          domainName: cms.nodes.loadBalancer.dnsName,
+          customOriginConfig: {
+            httpPort: 80,
+            httpsPort: 443,
+            originProtocolPolicy: "http-only",
+            originSslProtocols: ["TLSv1.2"],
+          },
+        },
+      ],
+      defaultCacheBehavior: {
+        targetOriginId: "cms-alb",
+        viewerProtocolPolicy: "redirect-to-https",
+        allowedMethods: ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"],
+        cachedMethods: ["GET", "HEAD"],
+        compress: true,
+        // Managed policies: CachingDisabled + AllViewer (forward everything).
+        cachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+        originRequestPolicyId: "216adef6-5c7f-47e4-b989-5492eafa07d3",
+      },
+      restrictions: { geoRestriction: { restrictionType: "none" } },
+      viewerCertificate: { cloudfrontDefaultCertificate: true },
+    });
+
     return {
       cmsUrl: cms.url,
+      cmsHttpsUrl: $interpolate`https://${cdn.domainName}`,
       uploadsBucket: uploads.name,
     };
   },

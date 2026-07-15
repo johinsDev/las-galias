@@ -9,6 +9,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Server =>
     keys: env.array("APP_KEYS")!,
   },
   url: env("PUBLIC_URL", ""),
+  // Behind CloudFront/ALB: trust X-Forwarded-* so Strapi resolves the HTTPS
+  // public host correctly instead of the internal HTTP one.
+  proxy: env.bool("IS_PROXIED", false),
   cron: {
     enabled: env.bool("CRON_ENABLED", true),
     tasks: cronTasks,

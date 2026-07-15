@@ -7,19 +7,43 @@ import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
+  compact?: boolean;
 }
 
-const { project } = Astro.props;
+const { project, compact = false } = Astro.props;
 const hero = project.heroDesktop ?? project.heroMobile;
 const isExpectation = project.stage === "expectation";
+
+const statusLabels: Record<string, string> = {
+  launch: "Lanzamiento",
+  presale: "Preventa",
+  construction: "En construcción",
+  "immediate-delivery": "Entrega inmediata",
+};
+const statusLabel = isExpectation
+  ? "Muy pronto"
+  : (project.constructionStatus && statusLabels[project.constructionStatus]) || null;
+
+// Derive area + bedroom range from the unit types for the spec chips.
+const units = project.unitTypes ?? [];
+const areas = units.map((u) => u.areaM2).filter((n): n is number => typeof n === "number");
+const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
+function range(nums: number[], unit: string): string | null {
+  if (nums.length === 0) return null;
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+  return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
+}
+const areaChip = range(areas, "m²");
+const bedChip = range(beds, "hab");
 ---
 
 <article
-  class="shadow-card group hover:shadow-card-lg overflow-hidden rounded-xl bg-white transition-shadow"
+  class="group border-line hover:shadow-card-lg flex flex-col overflow-hidden rounded-2xl border bg-white shadow-xs transition-shadow duration-300"
   data-city={project.city?.slug}
   data-reveal
 >
-  <a href={`/proyectos/${project.slug}`} class="block">
+  <a href={`/proyectos/${project.slug}`} class="flex flex-1 flex-col">
     <div class="bg-surface relative aspect-[4/3] overflow-hidden">
       {
         hero?.url && (
@@ -28,26 +52,54 @@ const isExpectation = project.stage === "expectation";
             alt={hero.alternativeText ?? project.name}
             width={640}
             height={480}
-            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         )
       }
       {
-        isExpectation && (
-          <span class="bg-arena text-ink text-caption absolute top-3 left-3 rounded-full px-3 py-1 font-semibold uppercase">
-            Muy pronto
+        statusLabel && (
+          <span class="text-caption text-ink absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 font-semibold shadow-xs backdrop-blur">
+            {statusLabel}
           </span>
         )
       }
     </div>
-    <div class="p-5">
-      <p class="text-caption text-ink-muted uppercase">{project.city?.name}</p>
-      <h3 class="text-h4 text-ink mt-1 font-bold">{project.name}</h3>
+
+    <div class="flex flex-1 flex-col p-5">
+      <p class="text-caption text-ink-muted">
+        {project.city?.name}{project.city?.department ? ` · ${project.city.department}` : ""}
+      </p>
+      <h3 class="text-h4 text-ink mt-1 font-semibold">{project.name}</h3>
+
       {
-        !isExpectation && project.priceFromCOP && (
-          <p class="text-body text-verde-700 mt-2 font-semibold">
+        !isExpectation && project.priceFromCOP ? (
+          <p class="text-ink mt-3 text-lg font-bold">
             <Price copValue={project.priceFromCOP} prefix="Desde" />
           </p>
+        ) : (
+          <p class="text-body-sm text-ink-muted mt-3">Precios de lanzamiento muy pronto</p>
+        )
+      }
+
+      {
+        (areaChip || bedChip) && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {areaChip && <span class="chip">{areaChip}</span>}
+            {bedChip && <span class="chip">{bedChip}</span>}
+          </div>
+        )
+      }
+
+      {
+        !compact && (
+          <div class="border-line mt-5 flex items-center justify-between border-t pt-4">
+            <span class="text-caption text-ink-muted">
+              {isExpectation ? "En expectativa" : "Disponible"}
+            </span>
+            <span class="bg-primary text-primary-foreground group-hover:bg-primary-bright inline-flex h-9 items-center rounded-lg px-4 text-sm font-semibold transition-colors">
+              Ver proyecto
+            </span>
+          </div>
         )
       }
     </div>

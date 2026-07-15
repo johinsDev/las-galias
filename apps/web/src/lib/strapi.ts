@@ -45,6 +45,7 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[city]": "true",
   "populate[heroDesktop]": "true",
   "populate[heroMobile]": "true",
+  "populate[unitTypes]": "true",
 };
 
 export async function getProjects(): Promise<Project[]> {

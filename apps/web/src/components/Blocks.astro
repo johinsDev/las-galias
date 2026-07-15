@@ -65,7 +65,7 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
       ) : node.kind === "h3" ? (
         <h3 class="text-h3 text-ink mt-6 font-bold">{node.text}</h3>
       ) : node.kind === "quote" ? (
-        <blockquote class="border-verde-500 text-body-lg text-ink-muted border-l-4 pl-4 italic">
+        <blockquote class="border-ink text-body-lg text-ink-muted border-l-4 pl-4 italic">
           {node.text}
         </blockquote>
       ) : node.kind === "ol" ? (

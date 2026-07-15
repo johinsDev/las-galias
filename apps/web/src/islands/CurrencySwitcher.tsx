@@ -39,7 +39,7 @@ export default function CurrencySwitcher({ copPerUsd, copPerEur }: CurrencySwitc
           onClick={() => switchTo(c)}
           aria-pressed={currency === c}
           className={`text-caption rounded-full px-3 py-1 font-semibold transition-colors ${
-            currency === c ? "bg-verde-700 text-white" : "text-ink-muted hover:text-ink"
+            currency === c ? "bg-ink text-white" : "text-ink-muted hover:text-ink"
           }`}
         >
           {c}

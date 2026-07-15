@@ -3,72 +3,313 @@ import { Image } from "astro:assets";
 
 import ProjectCard from "@/components/ProjectCard.astro";
 import Base from "@/layouts/Base.astro";
-import { getHomeBanners, getProjects, mediaUrl } from "@/lib/strapi";
+import { getHomeBanners, getPosts, getProjects, mediaUrl } from "@/lib/strapi";
 
-const [banners, projects] = await Promise.all([getHomeBanners(), getProjects()]);
+const [banners, projects, posts] = await Promise.all([getHomeBanners(), getProjects(), getPosts()]);
 const featured = projects.slice(0, 6);
 const banner = banners[0];
+const heroImage = banner?.desktopImage?.url ?? featured[0]?.heroDesktop?.url;
+
+const cities = [
+  ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
+];
+
+const steps = [
+  {
+    n: 1,
+    title: "Explora y elige tu proyecto",
+    text: "Filtra por ciudad, precio y tipología. Encuentra el que se ajusta a tu familia.",
+  },
+  {
+    n: 2,
+    title: "Simula tu crédito y subsidio",
+    text: "Calcula tu cuota inicial y mensual con nuestras herramientas en línea.",
+  },
+  {
+    n: 3,
+    title: "Agenda tu cita y sepárala",
+    text: "Un asesor te acompaña en la firma y en todo el proceso de compra.",
+  },
+];
+
+const stats = [
+  { value: "+30 mil", label: "viviendas entregadas" },
+  { value: "#1", label: "en ventas VIS" },
+  { value: "+30", label: "proyectos activos" },
+];
+
+const blogPosts = posts.slice(0, 3);
 ---
 
 <Base title="Las Galias — Constructora de proyectos de vivienda en Colombia">
-  <section class="bg-hero">
-    {
-      banner ? (
-        <a href={banner.link ?? "/proyectos"} class="block">
-          <picture>
-            <source media="(min-width: 768px)" srcset={mediaUrl(banner.desktopImage?.url)} />
+  <!-- Hero -->
+  <section class="border-line border-b">
+    <div class="container pt-16 pb-10 text-center md:pt-24">
+      <p class="eyebrow" data-reveal>Vivienda nueva · Colombia</p>
+      <h1 class="text-hero text-ink mx-auto mt-4 max-w-4xl font-extrabold" data-reveal>
+        Encuentra el hogar donde empieza tu próxima historia
+      </h1>
+      <p class="text-body-lg text-ink-muted mx-auto mt-5 max-w-2xl" data-reveal>
+        Proyectos de vivienda nueva en las principales ciudades del país, con el respaldo de más de
+        30 mil familias que ya viven en Las Galias.
+      </p>
+      <form
+        action="/proyectos"
+        method="get"
+        class="border-line-strong mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl border bg-white p-2 shadow-xs"
+        data-reveal
+      >
+        <input
+          type="text"
+          name="q"
+          placeholder="Encuentra tu vivienda en… (ciudad)"
+          class="text-body placeholder:text-ink-faint h-11 w-full min-w-0 rounded-xl bg-transparent px-3 outline-none"
+        />
+        <button
+          type="submit"
+          class="bg-primary text-primary-foreground hover:bg-primary-bright inline-flex h-11 shrink-0 items-center rounded-xl px-5 text-sm font-semibold transition-colors"
+        >
+          Buscar
+        </button>
+      </form>
+    </div>
+    <div class="container pb-14" data-reveal>
+      <div class="bg-surface aspect-[16/7] w-full overflow-hidden rounded-3xl">
+        {
+          heroImage && (
             <Image
-              src={mediaUrl(banner.mobileImage?.url ?? banner.desktopImage?.url)}
-              alt={banner.title ?? "Las Galias"}
+              src={mediaUrl(heroImage)}
+              alt={banner?.title ?? "Proyecto destacado Las Galias"}
               width={1600}
-              height={900}
+              height={700}
               loading="eager"
-              class="max-h-[70vh] w-full object-cover"
+              class="h-full w-full object-cover"
             />
-          </picture>
-        </a>
-      ) : (
-        <div class="container py-24 text-center md:py-36">
-          <p class="text-label text-verde-700 font-semibold uppercase" data-reveal>
-            Constructora Las Galias
-          </p>
-          <h1 class="text-hero text-ink mx-auto mt-4 max-w-3xl font-extrabold" data-reveal>
-            Construimos los lugares donde vive <span class="text-gradient-brand">Colombia</span>
-          </h1>
-          <p class="text-body-lg text-ink-muted mx-auto mt-6 max-w-xl" data-reveal>
-            Proyectos de vivienda pensados para tu familia, con la calidad y el respaldo de siempre.
-          </p>
-          <div class="mt-8" data-reveal>
-            <a
-              href="/proyectos"
-              class="bg-primary text-primary-foreground shadow-cta hover:bg-primary-bright inline-flex h-12 items-center rounded-lg px-6 font-semibold transition-colors"
-            >
-              Conoce nuestros proyectos
-            </a>
-          </div>
-        </div>
-      )
-    }
+          )
+        }
+      </div>
+    </div>
   </section>
 
+  <!-- Proyectos -->
   {
     featured.length > 0 && (
       <section class="container py-16 md:py-24">
-        <div class="flex items-end justify-between" data-reveal>
-          <div>
-            <p class="text-label text-verde-700 font-semibold uppercase">Proyectos</p>
-            <h2 class="text-h2 text-ink mt-1 font-bold">Encuentra tu nuevo hogar</h2>
-          </div>
-          <a href="/proyectos" class="text-body-sm text-verde-700 font-semibold hover:underline">
-            Ver todos →
-          </a>
+        <div class="text-center" data-reveal>
+          <p class="eyebrow">Proyectos</p>
+          <h2 class="text-h2 text-ink mt-2 font-bold">Conoce nuestros proyectos</h2>
         </div>
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+        {cities.length > 1 && (
+          <div class="mt-8 flex flex-wrap justify-center gap-2" id="city-filter" data-reveal>
+            <button
+              type="button"
+              data-filter=""
+              class="bg-primary text-primary-foreground text-body-sm rounded-full px-4 py-2 font-medium"
+            >
+              Todos
+            </button>
+            {cities.map((city) => (
+              <button
+                type="button"
+                data-filter={city.slug}
+                class="border-line-strong text-ink-muted hover:text-ink text-body-sm rounded-full border px-4 py-2 font-medium transition-colors"
+              >
+                {city.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="projects-grid">
           {featured.map((project) => (
             <ProjectCard project={project} />
+          ))}
+        </div>
+
+        <div class="mt-10 text-center" data-reveal>
+          <a
+            href="/proyectos"
+            class="border-line-strong text-ink hover:bg-surface inline-flex h-11 items-center rounded-xl border px-6 text-sm font-semibold transition-colors"
+          >
+            Ver todos los proyectos
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Paso a paso -->
+  <section class="bg-surface border-line border-y">
+    <div class="container py-16 md:py-24">
+      <div class="text-center" data-reveal>
+        <p class="eyebrow">Paso a paso</p>
+        <h2 class="text-h2 text-ink mt-2 font-bold">Comprar es muy fácil</h2>
+      </div>
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          steps.map((step) => (
+            <div class="border-line rounded-2xl border bg-white p-6 shadow-xs" data-reveal>
+              <span class="border-line text-ink-muted flex size-9 items-center justify-center rounded-full border text-sm font-semibold">
+                {step.n}
+              </span>
+              <div class="bg-surface mt-5 aspect-[4/3] w-full rounded-xl" />
+              <h3 class="text-h4 text-ink mt-5 font-semibold">{step.title}</h3>
+              <p class="text-body-sm text-ink-muted mt-2">{step.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Herramientas -->
+  <section class="container py-16 md:py-24">
+    <div class="text-center" data-reveal>
+      <p class="eyebrow">Herramientas</p>
+      <h2 class="text-h2 text-ink mt-2 font-bold">Planea tu compra</h2>
+    </div>
+    <div class="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+      <a
+        href="/proyectos"
+        class="group border-line hover:border-line-strong hover:shadow-card flex items-center gap-4 rounded-2xl border bg-white p-6 transition-all"
+        data-reveal
+      >
+        <span
+          class="bg-surface flex size-11 shrink-0 items-center justify-center rounded-xl text-lg"
+          >📊</span
+        >
+        <div>
+          <p class="text-ink font-semibold">Simula tu crédito</p>
+          <p class="text-body-sm text-ink-muted mt-0.5">Cuota inicial, mensual y plazo</p>
+        </div>
+        <span class="text-ink-muted group-hover:text-ink ml-auto transition-colors">→</span>
+      </a>
+      <a
+        href="/contacto"
+        class="group border-line hover:border-line-strong hover:shadow-card flex items-center gap-4 rounded-2xl border bg-white p-6 transition-all"
+        data-reveal
+      >
+        <span
+          class="bg-surface flex size-11 shrink-0 items-center justify-center rounded-xl text-lg"
+          >🏡</span
+        >
+        <div>
+          <p class="text-ink font-semibold">Ver subsidios</p>
+          <p class="text-body-sm text-ink-muted mt-0.5">Mi Casa Ya y cajas de compensación</p>
+        </div>
+        <span class="text-ink-muted group-hover:text-ink ml-auto transition-colors">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Banda de stats -->
+  <section class="bg-ink-900 text-white">
+    <div class="container grid gap-8 py-14 text-center sm:grid-cols-3">
+      {
+        stats.map((stat) => (
+          <div data-reveal>
+            <p
+              class="text-hero font-extrabold tracking-tight"
+              style="font-size:clamp(2.25rem,4vw,3.25rem)"
+            >
+              {stat.value}
+            </p>
+            <p class="text-body-sm mt-1 text-white/55">{stat.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Blog -->
+  {
+    blogPosts.length > 0 && (
+      <section class="container py-16 md:py-24">
+        <div
+          class="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left"
+          data-reveal
+        >
+          <div>
+            <p class="eyebrow">Blog</p>
+            <h2 class="text-h2 text-ink mt-2 font-bold">Aprende sobre vivienda</h2>
+          </div>
+          <a href="/blog" class="text-body-sm text-ink font-semibold hover:underline">
+            Ver todo el blog →
+          </a>
+        </div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post) => (
+            <article
+              class="group border-line hover:shadow-card overflow-hidden rounded-2xl border bg-white shadow-xs transition-shadow"
+              data-reveal
+            >
+              <a href={`/blog/${post.slug}`} class="block">
+                <div class="bg-surface aspect-[16/10] overflow-hidden">
+                  {post.cover?.url && (
+                    <Image
+                      src={mediaUrl(post.cover.url)}
+                      alt={post.cover.alternativeText ?? post.title}
+                      width={640}
+                      height={400}
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  )}
+                </div>
+                <div class="p-5">
+                  <h3 class="text-h4 text-ink font-semibold">{post.title}</h3>
+                  {post.excerpt && (
+                    <p class="text-body-sm text-ink-muted mt-2 line-clamp-2">{post.excerpt}</p>
+                  )}
+                </div>
+              </a>
+            </article>
           ))}
         </div>
       </section>
     )
   }
+
+  <!-- Final CTA -->
+  <section class="bg-surface border-line border-t">
+    <div class="container py-20 text-center" data-reveal>
+      <h2 class="text-h1 text-ink mx-auto max-w-2xl font-extrabold">
+        Da el primer paso hacia tu nuevo hogar
+      </h2>
+      <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-xl">
+        Agenda una cita con nuestros asesores y encuentra el proyecto perfecto para ti.
+      </p>
+      <a
+        href="/contacto"
+        class="bg-primary text-primary-foreground shadow-cta hover:bg-primary-bright mt-8 inline-flex h-12 items-center rounded-xl px-7 font-semibold transition-colors"
+      >
+        Agenda tu cita
+      </a>
+    </div>
+  </section>
+
+  <script>
+    function initCityFilter() {
+      const container = document.getElementById("city-filter");
+      if (!container) return;
+      container.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+        if (!button) return;
+        const filter = button.dataset.filter ?? "";
+        container.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
+          const active = b === button;
+          b.classList.toggle("bg-primary", active);
+          b.classList.toggle("text-primary-foreground", active);
+          b.classList.toggle("border", !active);
+          b.classList.toggle("border-line-strong", !active);
+          b.classList.toggle("text-ink-muted", !active);
+        });
+        document.querySelectorAll<HTMLElement>("#projects-grid [data-city]").forEach((card) => {
+          card.style.display = !filter || card.dataset.city === filter ? "" : "none";
+        });
+      });
+    }
+    initCityFilter();
+    document.addEventListener("astro:page-load", initCityFilter);
+  </script>
 </Base>
