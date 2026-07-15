@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Field, Form, useForm } from "@formisch/react";
+import { Field, Form, setInput, useForm } from "@formisch/react";
 
 import { LeadSchema } from "@lasgalias/schemas";
 import { Button } from "@lasgalias/ui/components/button";
@@ -12,6 +12,14 @@ interface LeadFormProps {
 }
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+
+/** Groups a Colombian mobile number as "300 123 4567" while typing. */
+function formatCoPhone(value: string): string {
+  const d = value.replace(/\D/g, "").slice(0, 10);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`;
+  return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
+}
 
 /**
  * Lead form (expectation-stage PDPs and contact page). Submissions are stored
@@ -106,9 +114,13 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
               {...field.props}
               id="lead-phone"
               type="tel"
+              inputMode="numeric"
               value={field.input ?? ""}
               autoComplete="tel"
-              placeholder="3001234567"
+              placeholder="300 123 4567"
+              onChange={(e) =>
+                setInput(form, { path: ["phone"], input: formatCoPhone(e.currentTarget.value) })
+              }
             />
             {field.errors && (
               <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
