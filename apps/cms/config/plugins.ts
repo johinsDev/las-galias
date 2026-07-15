@@ -70,6 +70,11 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
                   region: env("AWS_REGION", "us-east-1"),
                   params: {
                     Bucket: uploadsBucket,
+                    // SST buckets have ACLs disabled (Bucket owner enforced) and are
+                    // public via bucket policy. The provider only skips its default
+                    // "public-read" ACL when the ACL key is present — a null value
+                    // keeps the key but sends no ACL header.
+                    ACL: null,
                   },
                 },
               },
