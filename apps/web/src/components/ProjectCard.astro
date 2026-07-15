@@ -44,7 +44,10 @@ const bedChip = range(beds, "hab");
   data-reveal
 >
   <a href={`/proyectos/${project.slug}`} class="flex flex-1 flex-col">
-    <div class="bg-surface relative aspect-[4/3] overflow-hidden">
+    <div
+      class="bg-surface relative aspect-[4/3] overflow-hidden"
+      transition:name={`project-hero-${project.slug}`}
+    >
       {
         hero?.url && (
           <Image

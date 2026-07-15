@@ -104,7 +104,10 @@ const showCalculator = !isExpectation && project.priceFromCOP && calculator?.ann
     hero?.url && (
       <section class="container py-6">
         <div class="grid gap-3 md:grid-cols-[1.7fr_1fr]">
-          <div class="bg-surface aspect-[16/11] overflow-hidden rounded-2xl">
+          <div
+            class="bg-surface aspect-[16/11] overflow-hidden rounded-2xl"
+            transition:name={`project-hero-${project.slug}`}
+          >
             <picture>
               {project.heroDesktop?.url && (
                 <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
