@@ -1,7 +1,7 @@
 /**
- * Normaliza los distintos formatos con los que el document service recibe
- * relaciones en `data` (documentId suelto, array, { connect: [...] },
- * { set: [...] }) a una lista plana de documentIds.
+ * Normalizes the different shapes the document service accepts for relations
+ * in `data` (a bare documentId, an array, { connect: [...] }, { set: [...] })
+ * into a flat list of documentIds.
  */
 export function extractRelationIds(value: unknown): string[] {
   if (value == null) return [];

@@ -8,7 +8,7 @@ export interface ProjectDataEnv {
   SINCO_API_KEY?: string;
 }
 
-/** Factory del strategy pattern: la implementación se elige por env, no por código. */
+/** Strategy-pattern factory: the implementation is chosen via env, not code. */
 export function createProjectDataProvider(env: ProjectDataEnv): ProjectDataProvider {
   switch (env.PROJECT_DATA_PROVIDER) {
     case "sinco":
@@ -20,15 +20,15 @@ export function createProjectDataProvider(env: ProjectDataEnv): ProjectDataProvi
     case undefined:
       return new ManualProvider();
     default:
-      throw new Error(`PROJECT_DATA_PROVIDER desconocido: "${env.PROJECT_DATA_PROVIDER}"`);
+      throw new Error(`Unknown PROJECT_DATA_PROVIDER: "${env.PROJECT_DATA_PROVIDER}"`);
   }
 }
 
 export { ManualProvider } from "./manual";
 export { NotImplementedError, SincoProvider, type SincoConfig } from "./sinco";
 export type {
-  EstadoObra,
+  ConstructionStatus,
   ExternalProjectData,
-  ExternalTipologia,
+  ExternalUnitType,
   ProjectDataProvider,
 } from "./types";

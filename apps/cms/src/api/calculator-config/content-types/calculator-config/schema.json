@@ -1,0 +1,27 @@
+{
+  "kind": "singleType",
+  "collectionName": "calculator_config",
+  "info": {
+    "singularName": "calculator-config",
+    "pluralName": "calculator-configs",
+    "displayName": "Calculator config",
+    "description": "Mortgage calculator parameters. Admins only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "annualInterestRate": {
+      "type": "decimal",
+      "required": true
+    },
+    "maxTermYears": {
+      "type": "integer",
+      "default": 20
+    },
+    "maxFinancingPercent": {
+      "type": "decimal",
+      "default": 70
+    }
+  }
+}

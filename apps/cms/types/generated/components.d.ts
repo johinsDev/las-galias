@@ -1,29 +1,29 @@
 import type { Schema, Struct } from "@strapi/strapi";
 
-export interface ProyectoTipologia extends Struct.ComponentSchema {
-  collectionName: "components_proyecto_tipologias";
+export interface ProjectUnitType extends Struct.ComponentSchema {
+  collectionName: "components_project_unit_types";
   info: {
-    description: "Tipolog\u00EDa de vivienda dentro de un proyecto";
-    displayName: "Tipolog\u00EDa";
+    description: "Housing unit type within a project";
+    displayName: "Unit type";
   };
   attributes: {
     areaM2: Schema.Attribute.Decimal;
-    banos: Schema.Attribute.Integer;
-    habitaciones: Schema.Attribute.Integer;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    plano: Schema.Attribute.Media<"images" | "files">;
-    precioCOP: Schema.Attribute.BigInteger;
+    bathrooms: Schema.Attribute.Integer;
+    bedrooms: Schema.Attribute.Integer;
+    floorPlan: Schema.Attribute.Media<"images" | "files">;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priceCOP: Schema.Attribute.BigInteger;
   };
 }
 
 export interface SharedGeo extends Struct.ComponentSchema {
   collectionName: "components_shared_geos";
   info: {
-    description: "Coordenadas y direcci\u00F3n";
-    displayName: "Ubicaci\u00F3n";
+    description: "Coordinates and address";
+    displayName: "Location";
   };
   attributes: {
-    direccion: Schema.Attribute.String;
+    address: Schema.Attribute.String;
     lat: Schema.Attribute.Float;
     lng: Schema.Attribute.Float;
   };
@@ -32,7 +32,7 @@ export interface SharedGeo extends Struct.ComponentSchema {
 export interface SharedSeo extends Struct.ComponentSchema {
   collectionName: "components_shared_seos";
   info: {
-    description: "Metadatos para buscadores y redes";
+    description: "Search engine and social metadata";
     displayName: "SEO";
   };
   attributes: {
@@ -45,7 +45,7 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module "@strapi/strapi" {
   export namespace Public {
     export interface ComponentSchemas {
-      "proyecto.tipologia": ProyectoTipologia;
+      "project.unit-type": ProjectUnitType;
       "shared.geo": SharedGeo;
       "shared.seo": SharedSeo;
     }

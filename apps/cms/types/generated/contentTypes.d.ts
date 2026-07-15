@@ -395,71 +395,13 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiBannerHomeBannerHome extends Struct.CollectionTypeSchema {
-  collectionName: "banners_home";
+export interface ApiAmenityAmenity extends Struct.CollectionTypeSchema {
+  collectionName: "amenities";
   info: {
-    description: "Banners del home con imagen para desktop y mobile";
-    displayName: "Banner del home";
-    pluralName: "banners-home";
-    singularName: "banner-home";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    activo: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    enlace: Schema.Attribute.String;
-    imagenDesktop: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
-    imagenMobile: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::banner-home.banner-home"> &
-      Schema.Attribute.Private;
-    orden: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    publishedAt: Schema.Attribute.DateTime;
-    titulo: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiCiudadCiudad extends Struct.CollectionTypeSchema {
-  collectionName: "ciudades";
-  info: {
-    description: "Ciudades donde Las Galias tiene proyectos";
-    displayName: "Ciudad";
-    pluralName: "ciudades";
-    singularName: "ciudad";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    departamento: Schema.Attribute.String;
-    imagen: Schema.Attribute.Media<"images">;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::ciudad.ciudad"> &
-      Schema.Attribute.Private;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    proyectos: Schema.Attribute.Relation<"oneToMany", "api::proyecto.proyecto">;
-    publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<"nombre"> & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiConfiguracionCalculadoraConfiguracionCalculadora
-  extends Struct.SingleTypeSchema {
-  collectionName: "configuracion_calculadora";
-  info: {
-    description: "Par\u00E1metros de la calculadora de cr\u00E9dito. Solo administradores";
-    displayName: "Configuraci\u00F3n de calculadora";
-    pluralName: "configuraciones-calculadora";
-    singularName: "configuracion-calculadora";
+    description: "Common areas reusable across projects (pool, gym, etc.)";
+    displayName: "Amenity";
+    pluralName: "amenities";
+    singularName: "amenity";
   };
   options: {
     draftAndPublish: false;
@@ -467,45 +409,129 @@ export interface ApiConfiguracionCalculadoraConfiguracionCalculadora
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    icon: Schema.Attribute.Media<"images">;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::configuracion-calculadora.configuracion-calculadora"
-    > &
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::amenity.amenity"> &
       Schema.Attribute.Private;
-    plazoMaxAnios: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
-    porcentajeFinanciacionMax: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<70>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    projects: Schema.Attribute.Relation<"manyToMany", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
-    tasaInteresEA: Schema.Attribute.Decimal & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
 }
 
-export interface ApiEntradaEntrada extends Struct.CollectionTypeSchema {
-  collectionName: "entradas";
+export interface ApiCalculatorConfigCalculatorConfig extends Struct.SingleTypeSchema {
+  collectionName: "calculator_config";
   info: {
-    description: "Entradas del blog";
-    displayName: "Entrada";
-    pluralName: "entradas";
-    singularName: "entrada";
+    description: "Mortgage calculator parameters. Admins only";
+    displayName: "Calculator config";
+    pluralName: "calculator-configs";
+    singularName: "calculator-config";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    annualInterestRate: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::calculator-config.calculator-config"
+    > &
+      Schema.Attribute.Private;
+    maxFinancingPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<70>;
+    maxTermYears: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCityCity extends Struct.CollectionTypeSchema {
+  collectionName: "cities";
+  info: {
+    description: "Cities where Las Galias builds projects";
+    displayName: "City";
+    pluralName: "cities";
+    singularName: "city";
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    contenido: Schema.Attribute.Blocks;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    extracto: Schema.Attribute.Text;
+    department: Schema.Attribute.String;
+    image: Schema.Attribute.Media<"images">;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::entrada.entrada"> &
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::city.city"> &
       Schema.Attribute.Private;
-    portada: Schema.Attribute.Media<"images">;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    projects: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
-    seo: Schema.Attribute.Component<"shared.seo", false>;
-    slug: Schema.Attribute.UID<"titulo"> & Schema.Attribute.Required;
-    titulo: Schema.Attribute.String & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiExchangeRateExchangeRate extends Struct.SingleTypeSchema {
+  collectionName: "exchange_rates";
+  info: {
+    description: "COP\u2192USD/EUR rates populated by the daily cron (TRM + ECB). Admins only";
+    displayName: "Exchange rate";
+    pluralName: "exchange-rates";
+    singularName: "exchange-rate";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    copPerEur: Schema.Attribute.Decimal;
+    copPerUsd: Schema.Attribute.Decimal;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    eurSource: Schema.Attribute.String;
+    fetchedAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::exchange-rate.exchange-rate"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    usdSource: Schema.Attribute.String;
+    validFrom: Schema.Attribute.DateTime;
+  };
+}
+
+export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
+  collectionName: "home_banners";
+  info: {
+    description: "Home banners with dedicated desktop and mobile images";
+    displayName: "Home banner";
+    pluralName: "home-banners";
+    singularName: "home-banner";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    desktopImage: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
+    link: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::home-banner.home-banner"> &
+      Schema.Attribute.Private;
+    mobileImage: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -514,7 +540,7 @@ export interface ApiEntradaEntrada extends Struct.CollectionTypeSchema {
 export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   collectionName: "leads";
   info: {
-    description: "Formularios guardados desde las PDP (especialmente proyectos en expectativa) para hacer push despu\u00E9s";
+    description: "Form submissions saved from PDPs (especially expectation-stage projects) for a later push";
     displayName: "Lead";
     pluralName: "leads";
     singularName: "lead";
@@ -523,108 +549,173 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    aceptaTratamientoDatos: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    acceptsDataPolicy: Schema.Attribute.Boolean & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::lead.lead"> &
       Schema.Attribute.Private;
-    mensaje: Schema.Attribute.Text;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    origen: Schema.Attribute.String;
-    proyecto: Schema.Attribute.Relation<"manyToOne", "api::proyecto.proyecto">;
+    message: Schema.Attribute.Text;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    phone: Schema.Attribute.String & Schema.Attribute.Required;
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
-    telefono: Schema.Attribute.String & Schema.Attribute.Required;
+    source: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
 }
 
-export interface ApiMacroproyectoMacroproyecto extends Struct.CollectionTypeSchema {
-  collectionName: "macroproyectos";
+export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema {
+  collectionName: "macroprojects";
   info: {
-    description: "Macroproyectos que agrupan proyectos y zonas de inter\u00E9s de una misma ubicaci\u00F3n";
-    displayName: "Macroproyecto";
-    pluralName: "macroproyectos";
-    singularName: "macroproyecto";
+    description: "Master developments that group projects and points of interest of a single location";
+    displayName: "Macroproject";
+    pluralName: "macroprojects";
+    singularName: "macroproject";
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    ciudad: Schema.Attribute.Relation<"manyToOne", "api::ciudad.ciudad">;
+    city: Schema.Attribute.Relation<"manyToOne", "api::city.city">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    descripcion: Schema.Attribute.Blocks;
-    galeria: Schema.Attribute.Media<"images", true>;
+    description: Schema.Attribute.Blocks;
+    gallery: Schema.Attribute.Media<"images", true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::macroproyecto.macroproyecto"> &
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::macroproject.macroproject"> &
       Schema.Attribute.Private;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
+    location: Schema.Attribute.Component<"shared.geo", false>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    pointsOfInterest: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::point-of-interest.point-of-interest"
+    >;
     publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<"nombre"> & Schema.Attribute.Required;
-    ubicacion: Schema.Attribute.Component<"shared.geo", false>;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    zonasDeInteres: Schema.Attribute.Relation<"oneToMany", "api::zona-de-interes.zona-de-interes">;
   };
 }
 
-export interface ApiProyectoProyecto extends Struct.CollectionTypeSchema {
-  collectionName: "proyectos";
+export interface ApiPointOfInterestPointOfInterest extends Struct.CollectionTypeSchema {
+  collectionName: "points_of_interest";
   info: {
-    description: "Proyectos inmobiliarios. etapa=expectativa permite publicar con menos campos; etapa=venta exige la ficha completa";
-    displayName: "Proyecto";
-    pluralName: "proyectos";
-    singularName: "proyecto";
+    description: "Nearby points of interest; ALWAYS tied to a macroproject so locations never mix";
+    displayName: "Point of interest";
+    pluralName: "points-of-interest";
+    singularName: "point-of-interest";
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    ciudad: Schema.Attribute.Relation<"manyToOne", "api::ciudad.ciudad"> &
+    category: Schema.Attribute.Enumeration<
+      ["commerce", "health", "education", "transport", "recreation"]
+    > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    datosDesdeSinco: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    descripcion: Schema.Attribute.Blocks;
-    estadoObra: Schema.Attribute.Enumeration<
-      ["lanzamiento", "preventa", "construccion", "entrega-inmediata"]
+    distanceText: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::point-of-interest.point-of-interest"
+    > &
+      Schema.Attribute.Private;
+    macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject"> &
+      Schema.Attribute.Required;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPostPost extends Struct.CollectionTypeSchema {
+  collectionName: "posts";
+  info: {
+    description: "Blog posts";
+    displayName: "Post";
+    pluralName: "posts";
+    singularName: "post";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Schema.Attribute.Blocks;
+    cover: Schema.Attribute.Media<"images">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    excerpt: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::post.post"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProjectProject extends Struct.CollectionTypeSchema {
+  collectionName: "projects";
+  info: {
+    description: "Real-estate projects. stage=expectation publishes with fewer required fields; stage=sale requires the full listing";
+    displayName: "Project";
+    pluralName: "projects";
+    singularName: "project";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    amenities: Schema.Attribute.Relation<"manyToMany", "api::amenity.amenity">;
+    city: Schema.Attribute.Relation<"manyToOne", "api::city.city"> & Schema.Attribute.Required;
+    constructionStatus: Schema.Attribute.Enumeration<
+      ["launch", "presale", "construction", "immediate-delivery"]
     >;
-    etapa: Schema.Attribute.Enumeration<["expectativa", "venta"]> &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<"expectativa">;
-    galeria: Schema.Attribute.Media<"images", true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    gallery: Schema.Attribute.Media<"images", true>;
     heroDesktop: Schema.Attribute.Media<"images">;
     heroMobile: Schema.Attribute.Media<"images">;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::proyecto.proyecto"> &
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::project.project"> &
       Schema.Attribute.Private;
-    macroproyecto: Schema.Attribute.Relation<"manyToOne", "api::macroproyecto.macroproyecto">;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    precioDesdeCOP: Schema.Attribute.BigInteger;
+    location: Schema.Attribute.Component<"shared.geo", false>;
+    macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject">;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    priceFromCOP: Schema.Attribute.BigInteger;
     publishedAt: Schema.Attribute.DateTime;
-    recomendados: Schema.Attribute.Relation<"oneToMany", "api::proyecto.proyecto">;
+    recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     sincoId: Schema.Attribute.String;
-    slug: Schema.Attribute.UID<"nombre"> & Schema.Attribute.Required;
-    tipologias: Schema.Attribute.Component<"proyecto.tipologia", true>;
-    ubicacion: Schema.Attribute.Component<"shared.geo", false>;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    stage: Schema.Attribute.Enumeration<["expectation", "sale"]> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"expectation">;
+    syncFromSinco: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    unitTypes: Schema.Attribute.Component<"project.unit-type", true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     video: Schema.Attribute.String;
-    zonasComunes: Schema.Attribute.Relation<"manyToMany", "api::zona-comun.zona-comun">;
   };
 }
 
-export interface ApiRedireccionRedireccion extends Struct.CollectionTypeSchema {
-  collectionName: "redirecciones";
+export interface ApiRedirectRedirect extends Struct.CollectionTypeSchema {
+  collectionName: "redirects";
   info: {
-    description: "Redirecciones del sitio. Solo administradores. origen=auto-unpublish las crea el sistema al despublicar un proyecto";
-    displayName: "Redirecci\u00F3n";
-    pluralName: "redirecciones";
-    singularName: "redireccion";
+    description: "Site redirects. Admins only. source=auto-unpublish entries are created by the system when a project is unpublished";
+    displayName: "Redirect";
+    pluralName: "redirects";
+    singularName: "redirect";
   };
   options: {
     draftAndPublish: false;
@@ -632,103 +723,16 @@ export interface ApiRedireccionRedireccion extends Struct.CollectionTypeSchema {
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     from: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
-    habilitada: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::redireccion.redireccion"> &
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::redirect.redirect"> &
       Schema.Attribute.Private;
-    origen: Schema.Attribute.Enumeration<["manual", "auto-unpublish"]> &
+    permanent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.Enumeration<["manual", "auto-unpublish"]> &
       Schema.Attribute.DefaultTo<"manual">;
-    permanente: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    publishedAt: Schema.Attribute.DateTime;
     to: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTasaDeCambioTasaDeCambio extends Struct.SingleTypeSchema {
-  collectionName: "tasas_de_cambio";
-  info: {
-    description: "Tasas COP\u2192USD/EUR pobladas por el cron diario (TRM + ECB). Solo administradores";
-    displayName: "Tasa de cambio";
-    pluralName: "tasas-de-cambio";
-    singularName: "tasa-de-cambio";
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    actualizadoEn: Schema.Attribute.DateTime;
-    copPorEur: Schema.Attribute.Decimal;
-    copPorUsd: Schema.Attribute.Decimal;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    fuenteEur: Schema.Attribute.String;
-    fuenteUsd: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::tasa-de-cambio.tasa-de-cambio"> &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    vigenciaDesde: Schema.Attribute.DateTime;
-  };
-}
-
-export interface ApiZonaComunZonaComun extends Struct.CollectionTypeSchema {
-  collectionName: "zonas_comunes";
-  info: {
-    description: "Amenidades reutilizables entre proyectos (piscina, gimnasio, etc.)";
-    displayName: "Zona com\u00FAn";
-    pluralName: "zonas-comunes";
-    singularName: "zona-comun";
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    descripcion: Schema.Attribute.Text;
-    icono: Schema.Attribute.Media<"images">;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::zona-comun.zona-comun"> &
-      Schema.Attribute.Private;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    proyectos: Schema.Attribute.Relation<"manyToMany", "api::proyecto.proyecto">;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiZonaDeInteresZonaDeInteres extends Struct.CollectionTypeSchema {
-  collectionName: "zonas_de_interes";
-  info: {
-    description: "Puntos de inter\u00E9s cercanos; SIEMPRE asociados a un macroproyecto para no mezclar ubicaciones";
-    displayName: "Zona de inter\u00E9s";
-    pluralName: "zonas-de-interes";
-    singularName: "zona-de-interes";
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    distanciaTexto: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::zona-de-interes.zona-de-interes"> &
-      Schema.Attribute.Private;
-    macroproyecto: Schema.Attribute.Relation<"manyToOne", "api::macroproyecto.macroproyecto"> &
-      Schema.Attribute.Required;
-    nombre: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    tipo: Schema.Attribute.Enumeration<
-      ["comercio", "salud", "educacion", "transporte", "recreacion"]
-    > &
-      Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1163,17 +1167,17 @@ declare module "@strapi/strapi" {
       "admin::transfer-token": AdminTransferToken;
       "admin::transfer-token-permission": AdminTransferTokenPermission;
       "admin::user": AdminUser;
-      "api::banner-home.banner-home": ApiBannerHomeBannerHome;
-      "api::ciudad.ciudad": ApiCiudadCiudad;
-      "api::configuracion-calculadora.configuracion-calculadora": ApiConfiguracionCalculadoraConfiguracionCalculadora;
-      "api::entrada.entrada": ApiEntradaEntrada;
+      "api::amenity.amenity": ApiAmenityAmenity;
+      "api::calculator-config.calculator-config": ApiCalculatorConfigCalculatorConfig;
+      "api::city.city": ApiCityCity;
+      "api::exchange-rate.exchange-rate": ApiExchangeRateExchangeRate;
+      "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::lead.lead": ApiLeadLead;
-      "api::macroproyecto.macroproyecto": ApiMacroproyectoMacroproyecto;
-      "api::proyecto.proyecto": ApiProyectoProyecto;
-      "api::redireccion.redireccion": ApiRedireccionRedireccion;
-      "api::tasa-de-cambio.tasa-de-cambio": ApiTasaDeCambioTasaDeCambio;
-      "api::zona-comun.zona-comun": ApiZonaComunZonaComun;
-      "api::zona-de-interes.zona-de-interes": ApiZonaDeInteresZonaDeInteres;
+      "api::macroproject.macroproject": ApiMacroprojectMacroproject;
+      "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
+      "api::post.post": ApiPostPost;
+      "api::project.project": ApiProjectProject;
+      "api::redirect.redirect": ApiRedirectRedirect;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;
       "plugin::i18n.locale": PluginI18NLocale;

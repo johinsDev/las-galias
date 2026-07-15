@@ -1,9 +1,9 @@
 import { animate, inView } from "motion";
 
 /**
- * Scroll reveals con motion (API vanilla, ~5kb): cualquier elemento con
- * [data-reveal] aparece con fade + rise al entrar al viewport.
- * Idempotente: se re-ejecuta en cada astro:page-load (View Transitions).
+ * Scroll reveals with motion (vanilla API, ~5kb): any element with
+ * [data-reveal] fades and rises into view when it enters the viewport.
+ * Idempotent: re-runs on every astro:page-load (View Transitions).
  */
 export function initReveals(): void {
   document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-reveal-bound])").forEach((el) => {

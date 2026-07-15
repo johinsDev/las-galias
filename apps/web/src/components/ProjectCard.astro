@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import type { Project } from "@lasgalias/schemas";
+
+import Price from "@/components/Price.astro";
+import { mediaUrl } from "@/lib/strapi";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const hero = project.heroDesktop ?? project.heroMobile;
+const isExpectation = project.stage === "expectation";
+---
+
+<article
+  class="shadow-card group hover:shadow-card-lg overflow-hidden rounded-xl bg-white transition-shadow"
+  data-city={project.city?.slug}
+  data-reveal
+>
+  <a href={`/proyectos/${project.slug}`} class="block">
+    <div class="bg-surface relative aspect-[4/3] overflow-hidden">
+      {
+        hero?.url && (
+          <Image
+            src={mediaUrl(hero.url)}
+            alt={hero.alternativeText ?? project.name}
+            width={640}
+            height={480}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )
+      }
+      {
+        isExpectation && (
+          <span class="bg-arena text-ink text-caption absolute top-3 left-3 rounded-full px-3 py-1 font-semibold uppercase">
+            Muy pronto
+          </span>
+        )
+      }
+    </div>
+    <div class="p-5">
+      <p class="text-caption text-ink-muted uppercase">{project.city?.name}</p>
+      <h3 class="text-h4 text-ink mt-1 font-bold">{project.name}</h3>
+      {
+        !isExpectation && project.priceFromCOP && (
+          <p class="text-body text-verde-700 mt-2 font-semibold">
+            <Price copValue={project.priceFromCOP} prefix="Desde" />
+          </p>
+        )
+      }
+    </div>
+  </a>
+</article>

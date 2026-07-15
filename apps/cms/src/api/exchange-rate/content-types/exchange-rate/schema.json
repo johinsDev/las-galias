@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "exchange_rates",
+  "info": {
+    "singularName": "exchange-rate",
+    "pluralName": "exchange-rates",
+    "displayName": "Exchange rate",
+    "description": "COP→USD/EUR rates populated by the daily cron (TRM + ECB). Admins only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "copPerUsd": {
+      "type": "decimal"
+    },
+    "copPerEur": {
+      "type": "decimal"
+    },
+    "usdSource": {
+      "type": "string"
+    },
+    "eurSource": {
+      "type": "string"
+    },
+    "validFrom": {
+      "type": "datetime"
+    },
+    "fetchedAt": {
+      "type": "datetime"
+    }
+  }
+}

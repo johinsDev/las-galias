@@ -2,7 +2,7 @@
   "collectionName": "components_shared_seos",
   "info": {
     "displayName": "SEO",
-    "description": "Metadatos para buscadores y redes"
+    "description": "Search engine and social metadata"
   },
   "attributes": {
     "metaTitle": {

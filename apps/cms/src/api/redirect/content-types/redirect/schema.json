@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "redirects",
+  "info": {
+    "singularName": "redirect",
+    "pluralName": "redirects",
+    "displayName": "Redirect",
+    "description": "Site redirects. Admins only. source=auto-unpublish entries are created by the system when a project is unpublished"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "from": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "to": {
+      "type": "string",
+      "required": true
+    },
+    "permanent": {
+      "type": "boolean",
+      "default": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "source": {
+      "type": "enumeration",
+      "enum": ["manual", "auto-unpublish"],
+      "default": "manual"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_project_unit_types",
+  "info": {
+    "displayName": "Unit type",
+    "description": "Housing unit type within a project"
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "areaM2": {
+      "type": "decimal"
+    },
+    "bedrooms": {
+      "type": "integer"
+    },
+    "bathrooms": {
+      "type": "integer"
+    },
+    "priceCOP": {
+      "type": "biginteger"
+    },
+    "floorPlan": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images", "files"]
+    }
+  }
+}

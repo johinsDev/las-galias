@@ -3,9 +3,9 @@ import { TrmColombiaProvider } from "./trm-colombia";
 import type { QuoteCurrency, RateProvider, RateQuote } from "./types";
 
 /**
- * Implementación por defecto del RateProvider:
- * - USD: TRM oficial (datos.gov.co).
- * - EUR: cross-rate — COP/EUR = TRM(COP/USD) × (USD por 1 EUR, del ECB).
+ * Default RateProvider implementation:
+ * - USD: official TRM (datos.gov.co).
+ * - EUR: cross-rate — COP/EUR = TRM(COP/USD) × (USD per 1 EUR, from the ECB).
  */
 export class CompositeRateProvider implements RateProvider {
   readonly name = "trm+ecb";

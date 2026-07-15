@@ -1,8 +1,8 @@
 {
   "collectionName": "components_shared_geos",
   "info": {
-    "displayName": "Ubicación",
-    "description": "Coordenadas y dirección"
+    "displayName": "Location",
+    "description": "Coordinates and address"
   },
   "attributes": {
     "lat": {
@@ -11,7 +11,7 @@
     "lng": {
       "type": "float"
     },
-    "direccion": {
+    "address": {
       "type": "string"
     }
   }

@@ -15,6 +15,7 @@ const deniedExecutableTypes = [
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => {
   const uploadsBucket = env("UPLOADS_BUCKET", "");
+  const smtpHost = env("SMTP_HOST", "");
 
   return {
     "users-permissions": {
@@ -25,12 +26,33 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         },
       },
     },
+    email: {
+      config: {
+        provider: "nodemailer",
+        providerOptions: smtpHost
+          ? {
+              host: smtpHost,
+              port: env.int("SMTP_PORT", 587),
+              auth: {
+                user: env("SMTP_USERNAME", ""),
+                pass: env("SMTP_PASSWORD", ""),
+              },
+            }
+          : // No SMTP configured (local dev): emails are rendered as JSON in the
+            // logs instead of being sent.
+            { jsonTransport: true },
+        settings: {
+          defaultFrom: env("EMAIL_FROM", "no-reply@lasgalias.com"),
+          defaultReplyTo: env("EMAIL_REPLY_TO", "no-reply@lasgalias.com"),
+        },
+      },
+    },
     upload: {
       config: {
-        // Límite máximo de peso para todos los campos de imagen/media (requisito).
+        // Max upload size for every image/media field (requirement).
         sizeLimit: env.int("UPLOAD_MAX_BYTES", 2 * 1024 * 1024),
-        // Solo thumbnail para el admin: el resize/format final lo hace la CDN de
-        // imágenes de Vercel, no sharp en Fargate (ahorra CPU y S3).
+        // Only a thumbnail for the admin: final resize/format is done by the
+        // Vercel image CDN, not sharp on Fargate (saves CPU and S3).
         breakpoints: {
           thumbnail: 245,
         },
@@ -38,8 +60,8 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
           allowedTypes: allowedMediaTypes,
           deniedTypes: deniedExecutableTypes,
         },
-        // Con UPLOADS_BUCKET definido (AWS vía SST) sube a S3; sin él (dev local)
-        // usa el provider de disco por defecto.
+        // With UPLOADS_BUCKET set (AWS via SST) uploads go to S3; without it
+        // (local dev) the default disk provider is used.
         ...(uploadsBucket
           ? {
               provider: "aws-s3",

@@ -3,17 +3,17 @@ export type QuoteCurrency = "USD" | "EUR";
 export interface RateQuote {
   base: "COP";
   quote: QuoteCurrency;
-  /** COP por 1 unidad de la divisa quote */
+  /** COP per 1 unit of the quote currency */
   rate: number;
   source: string;
-  /** ISO date de vigencia de la tasa */
+  /** ISO date the rate is valid from */
   asOf: string;
 }
 
 /**
- * Contrato agnóstico de tasas de cambio. La implementación por defecto compone
- * la TRM oficial (USD) con el cross-rate del ECB (EUR), pero se puede cambiar
- * por una API comercial sin tocar a los consumidores.
+ * Source-agnostic exchange-rate contract. The default implementation composes
+ * the official TRM (USD) with the ECB cross-rate (EUR), but it can be swapped
+ * for a commercial API without touching consumers.
  */
 export interface RateProvider {
   readonly name: string;

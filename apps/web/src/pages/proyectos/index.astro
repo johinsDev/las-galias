@@ -1,11 +1,11 @@
 ---
-import ProyectoCard from "@/components/ProyectoCard.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
 import Base from "@/layouts/Base.astro";
-import { getProyectos } from "@/lib/strapi";
+import { getProjects } from "@/lib/strapi";
 
-const proyectos = await getProyectos();
-const ciudades = [
-  ...new Map(proyectos.filter((p) => p.ciudad).map((p) => [p.ciudad.slug, p.ciudad])).values(),
+const projects = await getProjects();
+const cities = [
+  ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
 ];
 ---
 
@@ -15,22 +15,22 @@ const ciudades = [
     <h1 class="text-h1 text-ink mt-1 font-bold">Nuestros proyectos</h1>
 
     {
-      ciudades.length > 1 && (
-        <div class="mt-6 flex flex-wrap gap-2" id="filtro-ciudades">
+      cities.length > 1 && (
+        <div class="mt-6 flex flex-wrap gap-2" id="city-filter">
           <button
             type="button"
-            data-filtro=""
+            data-filter=""
             class="bg-verde-700 text-caption rounded-full px-4 py-1.5 font-semibold text-white"
           >
             Todas
           </button>
-          {ciudades.map((ciudad) => (
+          {cities.map((city) => (
             <button
               type="button"
-              data-filtro={ciudad.slug}
+              data-filter={city.slug}
               class="bg-surface text-ink-muted text-caption hover:text-ink rounded-full px-4 py-1.5 font-semibold"
             >
-              {ciudad.nombre}
+              {city.name}
             </button>
           ))}
         </div>
@@ -38,10 +38,10 @@ const ciudades = [
     }
 
     {
-      proyectos.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="grid-proyectos">
-          {proyectos.map((proyecto) => (
-            <ProyectoCard proyecto={proyecto} />
+      projects.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="projects-grid">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
           ))}
         </div>
       ) : (
@@ -53,27 +53,27 @@ const ciudades = [
   </section>
 
   <script>
-    // Filtro por ciudad, puro DOM (cero framework): oculta cards por data-ciudad.
-    function initFiltro() {
-      const contenedor = document.getElementById("filtro-ciudades");
-      if (!contenedor) return;
-      contenedor.addEventListener("click", (event) => {
-        const boton = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filtro]");
-        if (!boton) return;
-        const filtro = boton.dataset.filtro ?? "";
-        contenedor.querySelectorAll<HTMLButtonElement>("[data-filtro]").forEach((b) => {
-          const activo = b === boton;
-          b.classList.toggle("bg-verde-700", activo);
-          b.classList.toggle("text-white", activo);
-          b.classList.toggle("bg-surface", !activo);
-          b.classList.toggle("text-ink-muted", !activo);
+    // City filter, plain DOM (zero framework): hides cards by data-city.
+    function initCityFilter() {
+      const container = document.getElementById("city-filter");
+      if (!container) return;
+      container.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+        if (!button) return;
+        const filter = button.dataset.filter ?? "";
+        container.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
+          const active = b === button;
+          b.classList.toggle("bg-verde-700", active);
+          b.classList.toggle("text-white", active);
+          b.classList.toggle("bg-surface", !active);
+          b.classList.toggle("text-ink-muted", !active);
         });
-        document.querySelectorAll<HTMLElement>("#grid-proyectos [data-ciudad]").forEach((card) => {
-          card.style.display = !filtro || card.dataset.ciudad === filtro ? "" : "none";
+        document.querySelectorAll<HTMLElement>("#projects-grid [data-city]").forEach((card) => {
+          card.style.display = !filter || card.dataset.city === filter ? "" : "none";
         });
       });
     }
-    initFiltro();
-    document.addEventListener("astro:page-load", initFiltro);
+    initCityFilter();
+    document.addEventListener("astro:page-load", initCityFilter);
   </script>
 </Base>

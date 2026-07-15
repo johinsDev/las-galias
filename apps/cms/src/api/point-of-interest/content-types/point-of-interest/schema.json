@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "points_of_interest",
+  "info": {
+    "singularName": "point-of-interest",
+    "pluralName": "points-of-interest",
+    "displayName": "Point of interest",
+    "description": "Nearby points of interest; ALWAYS tied to a macroproject so locations never mix"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["commerce", "health", "education", "transport", "recreation"],
+      "required": true
+    },
+    "distanceText": {
+      "type": "string"
+    },
+    "macroproject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::macroproject.macroproject",
+      "inversedBy": "pointsOfInterest",
+      "required": true
+    }
+  }
+}

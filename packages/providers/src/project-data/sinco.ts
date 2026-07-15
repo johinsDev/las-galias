@@ -7,15 +7,15 @@ export interface SincoConfig {
 
 export class NotImplementedError extends Error {
   constructor(what: string) {
-    super(`${what} aún no está implementado: falta la documentación del API de Sinco`);
+    super(`${what} is not implemented yet: waiting on Sinco API documentation`);
     this.name = "NotImplementedError";
   }
 }
 
 /**
- * Provider para Sinco ERP (https://sincoerp.com).
- * TODO: implementar cuando haya documentación/credenciales del API.
- * El contrato ya está fijado — solo hay que rellenar los métodos.
+ * Provider for Sinco ERP (https://sincoerp.com).
+ * TODO: implement once API docs/credentials are available.
+ * The contract is already fixed — only the methods need filling in.
  */
 export class SincoProvider implements ProjectDataProvider {
   readonly name = "sinco";
@@ -23,15 +23,15 @@ export class SincoProvider implements ProjectDataProvider {
   constructor(private readonly config: SincoConfig) {}
 
   async getProjectById(externalId: string): Promise<ExternalProjectData | null> {
-    // TODO: GET `${this.config.baseUrl}/proyectos/${externalId}` con this.config.apiKey
-    // y mapear la respuesta a ExternalProjectData.
+    // TODO: GET `${this.config.baseUrl}/projects/${externalId}` with this.config.apiKey
+    // and map the response to ExternalProjectData.
     void externalId;
     throw new NotImplementedError("SincoProvider.getProjectById");
   }
 
   async healthCheck(): Promise<boolean> {
     if (!this.config.baseUrl || !this.config.apiKey) return false;
-    // TODO: ping real al API de Sinco cuando exista.
+    // TODO: real ping against the Sinco API once it exists.
     return false;
   }
 }

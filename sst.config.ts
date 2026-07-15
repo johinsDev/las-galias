@@ -1,15 +1,16 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
 /**
- * Infra del CMS (Strapi) en AWS. Todo se crea en la cuenta del AWS_PROFILE
- * activo — SST bootstrapea su estado en la cuenta destino en el primer deploy:
+ * CMS (Strapi) infrastructure on AWS. Everything is created in the account of
+ * the active AWS_PROFILE — SST bootstraps its state in the target account on
+ * the first deploy:
  *
- *   AWS_PROFILE=<perfil> bunx sst secret set StrapiAppKeys "$(openssl rand -base64 32),$(openssl rand -base64 32)" --stage production
- *   ... (resto de secrets, ver abajo)
- *   AWS_PROFILE=<perfil> bunx sst deploy --stage production
+ *   AWS_PROFILE=<profile> bunx sst secret set StrapiAppKeys "$(openssl rand -base64 32),$(openssl rand -base64 32)" --stage production
+ *   ... (remaining secrets, see below)
+ *   AWS_PROFILE=<profile> bunx sst deploy --stage production
  *
- * Perfil de costo dev: Fargate 0.25 vCPU single task + RDS t4g.micro single-AZ
- * + NAT instance ≈ USD 40-45/mes.
+ * Dev cost profile: Fargate 0.25 vCPU single task + RDS t4g.micro single-AZ
+ * + NAT instance ≈ USD 40-45/month.
  */
 export default $config({
   app(input) {
@@ -42,7 +43,7 @@ export default $config({
     const jwtSecret = new sst.Secret("StrapiJwtSecret");
     const transferTokenSalt = new sst.Secret("StrapiTransferTokenSalt");
     const encryptionKey = new sst.Secret("StrapiEncryptionKey");
-    // Placeholder hasta crear el Deploy Hook en Vercel; con "" Strapi no dispara rebuilds.
+    // Placeholder until the Vercel Deploy Hook exists; with "" Strapi skips rebuild triggers.
     const deployHookUrl = new sst.Secret("VercelDeployHookUrl", "");
 
     const cluster = new sst.aws.Cluster("Cluster", { vpc });

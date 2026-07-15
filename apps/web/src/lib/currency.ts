@@ -8,13 +8,13 @@ export function formatMoney(value: number, currency: Currency): string {
   }).format(value);
 }
 
-/** Convierte un precio en COP a la divisa destino usando tasas COP-por-unidad. */
+/** Converts a COP price into the target currency using COP-per-unit rates. */
 export function convertFromCOP(
   cop: number,
   currency: Currency,
-  rates: { copPorUsd: number; copPorEur: number },
+  rates: { copPerUsd: number; copPerEur: number },
 ): number {
-  if (currency === "USD") return cop / rates.copPorUsd;
-  if (currency === "EUR") return cop / rates.copPorEur;
+  if (currency === "USD") return cop / rates.copPerUsd;
+  if (currency === "EUR") return cop / rates.copPerEur;
   return cop;
 }

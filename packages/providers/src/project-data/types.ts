@@ -1,27 +1,27 @@
-export type EstadoObra = "lanzamiento" | "preventa" | "construccion" | "entrega-inmediata";
+export type ConstructionStatus = "launch" | "presale" | "construction" | "immediate-delivery";
 
-export interface ExternalTipologia {
-  nombre: string;
+export interface ExternalUnitType {
+  name: string;
   areaM2: number;
-  habitaciones: number;
-  banos: number;
-  precioCOP: number;
+  bedrooms: number;
+  bathrooms: number;
+  priceCOP: number;
 }
 
 export interface ExternalProjectData {
   externalId: string;
-  nombre?: string;
-  precioDesdeCOP?: number;
-  estadoObra?: EstadoObra;
-  tipologias?: ExternalTipologia[];
-  /** ISO date de la última actualización en la fuente externa */
-  actualizadoEn: string;
+  name?: string;
+  priceFromCOP?: number;
+  constructionStatus?: ConstructionStatus;
+  unitTypes?: ExternalUnitType[];
+  /** ISO date of the last update in the external source */
+  updatedAt: string;
 }
 
 /**
- * Contrato agnóstico para traer datos de proyectos desde una fuente externa
- * (hoy Sinco ERP; mañana un Excel, otro admin con API, etc.).
- * Cambiar de fuente = nueva implementación + PROJECT_DATA_PROVIDER, nada más.
+ * Source-agnostic contract to pull project data from an external system
+ * (Sinco ERP today; a spreadsheet or another admin API tomorrow).
+ * Switching sources = a new implementation + PROJECT_DATA_PROVIDER, nothing else.
  */
 export interface ProjectDataProvider {
   readonly name: string;

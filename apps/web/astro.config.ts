@@ -10,9 +10,9 @@ import { fetchRedirects } from "./redirects";
 export default defineConfig({
   site: "https://lasgalias.com",
   output: "static",
-  // El adapter se usa aunque el sitio sea 100% estático: emite las redirecciones
-  // del CMS como 301 reales en .vercel/output/config.json (SEO) y habilita la
-  // CDN de imágenes de Vercel para astro:assets.
+  // The adapter is used even though the site is 100% static: it emits the CMS
+  // redirects as real 301s in .vercel/output/config.json (SEO) and enables the
+  // Vercel image optimization CDN for astro:assets.
   adapter: vercel({ imageService: true }),
   redirects: await fetchRedirects(),
   integrations: [
@@ -25,29 +25,21 @@ export default defineConfig({
   ],
   image: {
     remotePatterns: [
-      // Uploads de Strapi en S3 (cualquier bucket/región de la cuenta activa).
+      // Strapi uploads on S3 (any bucket/region of the active AWS account).
       { protocol: "https", hostname: "**.amazonaws.com" },
-      // Strapi local en dev.
+      // Local Strapi in dev.
       { protocol: "http", hostname: "localhost" },
     ],
   },
   vite: {
     plugins: [tailwindcss()],
-    // Vite no pre-escanea deps de packages linkeados del workspace; sin esto
-    // las descubre en el primer load y 504ea re-optimizando (solo dev).
+    // Pre-bundle the island deps so dev doesn't 504 mid re-optimization.
+    // Only DIRECT deps of this app: with the isolated linker, deps that live
+    // inside @lasgalias/ui are not resolvable (nor needed) from here.
     optimizeDeps: {
-      include: [
-        "@base-ui/react/button",
-        "@base-ui/react/input",
-        "class-variance-authority",
-        "clsx",
-        "tailwind-merge",
-        "@formisch/react",
-        "valibot",
-        "motion",
-      ],
+      include: ["@formisch/react", "valibot", "motion"],
     },
-    // Evita copias duplicadas de React entre packages del workspace.
+    // Avoid duplicate React copies across workspace packages.
     resolve: {
       dedupe: ["react", "react-dom"],
     },

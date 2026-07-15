@@ -5,13 +5,13 @@
     "singularName": "lead",
     "pluralName": "leads",
     "displayName": "Lead",
-    "description": "Formularios guardados desde las PDP (especialmente proyectos en expectativa) para hacer push después"
+    "description": "Form submissions saved from PDPs (especially expectation-stage projects) for a later push"
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
-    "nombre": {
+    "name": {
       "type": "string",
       "required": true
     },
@@ -19,22 +19,22 @@
       "type": "email",
       "required": true
     },
-    "telefono": {
+    "phone": {
       "type": "string",
       "required": true
     },
-    "mensaje": {
+    "message": {
       "type": "text"
     },
-    "proyecto": {
+    "project": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::proyecto.proyecto"
+      "target": "api::project.project"
     },
-    "origen": {
+    "source": {
       "type": "string"
     },
-    "aceptaTratamientoDatos": {
+    "acceptsDataPolicy": {
       "type": "boolean",
       "required": true
     }

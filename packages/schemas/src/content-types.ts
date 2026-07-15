@@ -1,10 +1,10 @@
-// Tipos del contenido público de Strapi tal como lo consume el frontend
-// (REST API v5: los documentos exponen `documentId`; las media, `url`).
-// Mantener alineados con apps/cms/src/api/<ct>/content-types/<ct>/schema.json.
+// Types for the public Strapi content as consumed by the frontend
+// (REST API v5: documents expose `documentId`; media expose `url`).
+// Keep aligned with apps/cms/src/api/<ct>/content-types/<ct>/schema.json.
 
-export type Etapa = "expectativa" | "venta";
+export type Stage = "expectation" | "sale";
 
-export type EstadoObra = "lanzamiento" | "preventa" | "construccion" | "entrega-inmediata";
+export type ConstructionStatus = "launch" | "presale" | "construction" | "immediate-delivery";
 
 export interface Media {
   url: string;
@@ -23,112 +23,112 @@ export interface Seo {
 export interface Geo {
   lat?: number | null;
   lng?: number | null;
-  direccion?: string | null;
+  address?: string | null;
 }
 
-export interface Ciudad {
+export interface City {
   documentId: string;
-  nombre: string;
+  name: string;
   slug: string;
-  departamento?: string | null;
-  imagen?: Media | null;
+  department?: string | null;
+  image?: Media | null;
 }
 
-export interface ZonaDeInteres {
+export interface PointOfInterest {
   documentId: string;
-  nombre: string;
-  tipo: "comercio" | "salud" | "educacion" | "transporte" | "recreacion";
-  distanciaTexto?: string | null;
+  name: string;
+  category: "commerce" | "health" | "education" | "transport" | "recreation";
+  distanceText?: string | null;
 }
 
-export interface Macroproyecto {
+export interface Macroproject {
   documentId: string;
-  nombre: string;
+  name: string;
   slug: string;
-  descripcion?: unknown;
-  ciudad?: Ciudad | null;
-  galeria?: Media[];
-  ubicacion?: Geo | null;
-  zonasDeInteres?: ZonaDeInteres[];
+  description?: unknown;
+  city?: City | null;
+  gallery?: Media[];
+  location?: Geo | null;
+  pointsOfInterest?: PointOfInterest[];
 }
 
-export interface ZonaComun {
+export interface Amenity {
   documentId: string;
-  nombre: string;
-  icono?: Media | null;
-  descripcion?: string | null;
+  name: string;
+  icon?: Media | null;
+  description?: string | null;
 }
 
-export interface Tipologia {
-  nombre: string;
+export interface UnitType {
+  name: string;
   areaM2: number;
-  habitaciones: number;
-  banos: number;
-  precioCOP: number;
-  plano?: Media | null;
+  bedrooms: number;
+  bathrooms: number;
+  priceCOP: number;
+  floorPlan?: Media | null;
 }
 
-export interface Proyecto {
+export interface Project {
   documentId: string;
-  nombre: string;
+  name: string;
   slug: string;
-  etapa: Etapa;
-  estadoObra?: EstadoObra | null;
-  descripcion?: unknown;
-  precioDesdeCOP?: number | null;
-  ciudad: Ciudad;
-  macroproyecto?: Macroproyecto | null;
-  zonasComunes?: ZonaComun[];
-  recomendados?: Proyecto[];
-  tipologias?: Tipologia[];
-  galeria?: Media[];
+  stage: Stage;
+  constructionStatus?: ConstructionStatus | null;
+  description?: unknown;
+  priceFromCOP?: number | null;
+  city: City;
+  macroproject?: Macroproject | null;
+  amenities?: Amenity[];
+  recommended?: Project[];
+  unitTypes?: UnitType[];
+  gallery?: Media[];
   heroDesktop?: Media | null;
   heroMobile?: Media | null;
-  ubicacion?: Geo | null;
+  location?: Geo | null;
   video?: string | null;
   seo?: Seo | null;
 }
 
-export interface Entrada {
+export interface Post {
   documentId: string;
-  titulo: string;
+  title: string;
   slug: string;
-  extracto?: string | null;
-  portada?: Media | null;
-  contenido?: unknown;
+  excerpt?: string | null;
+  cover?: Media | null;
+  content?: unknown;
   seo?: Seo | null;
   publishedAt?: string;
 }
 
-export interface BannerHome {
+export interface HomeBanner {
   documentId: string;
-  titulo?: string | null;
-  imagenDesktop: Media;
-  imagenMobile: Media;
-  enlace?: string | null;
-  orden?: number | null;
-  activo?: boolean;
+  title?: string | null;
+  desktopImage: Media;
+  mobileImage: Media;
+  link?: string | null;
+  order?: number | null;
+  active?: boolean;
 }
 
-export interface Redireccion {
+export interface Redirect {
   documentId: string;
   from: string;
   to: string;
-  permanente: boolean;
-  habilitada: boolean;
+  permanent: boolean;
+  enabled: boolean;
 }
 
-export interface ConfiguracionCalculadora {
-  tasaInteresEA: number;
-  plazoMaxAnios: number;
-  porcentajeFinanciacionMax: number;
+export interface CalculatorConfig {
+  annualInterestRate: number;
+  maxTermYears: number;
+  maxFinancingPercent: number;
 }
 
-export interface TasaDeCambio {
-  copPorUsd: number;
-  copPorEur: number;
-  fuenteUsd?: string | null;
-  fuenteEur?: string | null;
-  vigenciaDesde?: string | null;
-  actualizadoEn?: string | null;
+export interface ExchangeRate {
+  copPerUsd: number;
+  copPerEur: number;
+  usdSource?: string | null;
+  eurSource?: string | null;
+  validFrom?: string | null;
+  fetchedAt?: string | null;
 }

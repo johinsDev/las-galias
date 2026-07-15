@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "macroprojects",
+  "info": {
+    "singularName": "macroproject",
+    "pluralName": "macroprojects",
+    "displayName": "Macroproject",
+    "description": "Master developments that group projects and points of interest of a single location"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "city": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::city.city"
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "location": {
+      "type": "component",
+      "component": "shared.geo",
+      "repeatable": false
+    },
+    "pointsOfInterest": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::point-of-interest.point-of-interest",
+      "mappedBy": "macroproject"
+    }
+  }
+}

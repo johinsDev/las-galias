@@ -1,8 +1,8 @@
 import type { ExternalProjectData, ProjectDataProvider } from "./types";
 
 /**
- * Provider no-op: el CMS es la fuente de verdad y los editores ingresan
- * todo manualmente (el toggle "datos desde Sinco" apagado).
+ * No-op provider: the CMS is the source of truth and editors type everything
+ * in by hand (the "sync from Sinco" toggle is off).
  */
 export class ManualProvider implements ProjectDataProvider {
   readonly name = "manual";

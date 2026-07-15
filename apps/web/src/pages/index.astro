@@ -1,12 +1,12 @@
 ---
 import { Image } from "astro:assets";
 
-import ProyectoCard from "@/components/ProyectoCard.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
 import Base from "@/layouts/Base.astro";
-import { getBannersHome, getProyectos, mediaUrl } from "@/lib/strapi";
+import { getHomeBanners, getProjects, mediaUrl } from "@/lib/strapi";
 
-const [banners, proyectos] = await Promise.all([getBannersHome(), getProyectos()]);
-const destacados = proyectos.slice(0, 6);
+const [banners, projects] = await Promise.all([getHomeBanners(), getProjects()]);
+const featured = projects.slice(0, 6);
 const banner = banners[0];
 ---
 
@@ -14,12 +14,12 @@ const banner = banners[0];
   <section class="bg-hero">
     {
       banner ? (
-        <a href={banner.enlace ?? "/proyectos"} class="block">
+        <a href={banner.link ?? "/proyectos"} class="block">
           <picture>
-            <source media="(min-width: 768px)" srcset={mediaUrl(banner.imagenDesktop?.url)} />
+            <source media="(min-width: 768px)" srcset={mediaUrl(banner.desktopImage?.url)} />
             <Image
-              src={mediaUrl(banner.imagenMobile?.url ?? banner.imagenDesktop?.url)}
-              alt={banner.titulo ?? "Las Galias"}
+              src={mediaUrl(banner.mobileImage?.url ?? banner.desktopImage?.url)}
+              alt={banner.title ?? "Las Galias"}
               width={1600}
               height={900}
               loading="eager"
@@ -52,7 +52,7 @@ const banner = banners[0];
   </section>
 
   {
-    destacados.length > 0 && (
+    featured.length > 0 && (
       <section class="container py-16 md:py-24">
         <div class="flex items-end justify-between" data-reveal>
           <div>
@@ -64,8 +64,8 @@ const banner = banners[0];
           </a>
         </div>
         <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {destacados.map((proyecto) => (
-            <ProyectoCard proyecto={proyecto} />
+          {featured.map((project) => (
+            <ProjectCard project={project} />
           ))}
         </div>
       </section>

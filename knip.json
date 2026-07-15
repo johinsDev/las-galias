@@ -4,6 +4,7 @@
   "workspaces": {
     ".": {
       "project": ["*.{js,mjs,ts}"],
+      "ignore": ["postcss.config.mjs"],
       "ignoreDependencies": ["astro-eslint-parser"]
     },
     "apps/web": {
@@ -12,12 +13,13 @@
       "ignoreDependencies": ["tailwindcss"]
     },
     "apps/cms": {
-      "entry": ["src/index.ts", "src/api/**/*.ts", "config/*.ts"],
-      "project": ["src/**/*.ts", "config/**/*.ts"],
+      "entry": ["src/index.ts", "src/api/**/*.ts", "config/*.ts", "scripts/*.cjs"],
+      "project": ["src/**/*.ts", "config/**/*.ts", "scripts/*.cjs"],
       "ignoreDependencies": [
         "ajv",
         "pg",
         "@strapi/plugin-users-permissions",
+        "@strapi/provider-email-nodemailer",
         "@strapi/provider-upload-aws-s3"
       ]
     },

@@ -2,27 +2,27 @@ import type { Core } from "@strapi/strapi";
 
 import { scheduleDeploy } from "./utils/deploy-hook";
 import {
-  crearRedireccionAutomatica,
-  deshabilitarRedireccionAutomatica,
-  mergeDatosDesdeSinco,
-  PROYECTO_UID,
-  validarCamposPorEtapa,
-  validarRecomendadosMismaCiudad,
-} from "./utils/proyecto-rules";
+  createAutoRedirect,
+  disableAutoRedirect,
+  mergeSincoData,
+  PROJECT_UID,
+  validateFieldsByStage,
+  validateRecommendedSameCity,
+} from "./utils/project-rules";
 
-/** Content types cuyo publish/unpublish debe reconstruir el sitio estático. */
-const UIDS_PUBLICOS = new Set<string>([
-  PROYECTO_UID,
-  "api::entrada.entrada",
-  "api::banner-home.banner-home",
-  "api::macroproyecto.macroproyecto",
-  "api::ciudad.ciudad",
-  "api::zona-comun.zona-comun",
-  "api::zona-de-interes.zona-de-interes",
-  "api::redireccion.redireccion",
+/** Content types whose publish/unpublish must rebuild the static site. */
+const PUBLIC_UIDS = new Set<string>([
+  PROJECT_UID,
+  "api::post.post",
+  "api::home-banner.home-banner",
+  "api::macroproject.macroproject",
+  "api::city.city",
+  "api::amenity.amenity",
+  "api::point-of-interest.point-of-interest",
+  "api::redirect.redirect",
 ]);
 
-const ACCIONES_QUE_DESPLIEGAN = new Set(["publish", "unpublish", "discardDraft", "delete"]);
+const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"]);
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
@@ -33,27 +33,27 @@ export default {
         data?: Record<string, unknown>;
       };
 
-      if (uid === PROYECTO_UID) {
+      if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {
-          await mergeDatosDesdeSinco(strapi, params);
-          await validarRecomendadosMismaCiudad(strapi, params);
+          await mergeSincoData(strapi, params);
+          await validateRecommendedSameCity(strapi, params);
         }
         if (action === "publish") {
-          await validarCamposPorEtapa(strapi, params);
+          await validateFieldsByStage(strapi, params);
         }
         if (action === "unpublish" || action === "delete") {
-          // Antes de next(): en delete el documento aún existe y podemos leer el slug.
-          await crearRedireccionAutomatica(strapi, params);
+          // Before next(): on delete the document still exists so we can read the slug.
+          await createAutoRedirect(strapi, params);
         }
       }
 
       const result = await next();
 
-      if (uid === PROYECTO_UID && action === "publish") {
-        await deshabilitarRedireccionAutomatica(strapi, params);
+      if (uid === PROJECT_UID && action === "publish") {
+        await disableAutoRedirect(strapi, params);
       }
 
-      if (UIDS_PUBLICOS.has(uid) && ACCIONES_QUE_DESPLIEGAN.has(action)) {
+      if (PUBLIC_UIDS.has(uid) && DEPLOY_ACTIONS.has(action)) {
         scheduleDeploy(strapi);
       }
 
@@ -62,8 +62,8 @@ export default {
   },
 
   /**
-   * Permisos del rol Public como código: lectura del contenido del sitio y
-   * SOLO create sobre leads. Idempotente — corre en cada arranque.
+   * Public role permissions as code: read access to the site content and
+   * create-only on leads. Idempotent — runs on every boot.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     const publicRole = await strapi
@@ -71,31 +71,31 @@ export default {
       .findOne({ where: { type: "public" } });
     if (!publicRole) return;
 
-    const lecturas = [
-      "api::proyecto.proyecto",
-      "api::entrada.entrada",
-      "api::ciudad.ciudad",
-      "api::macroproyecto.macroproyecto",
-      "api::zona-comun.zona-comun",
-      "api::zona-de-interes.zona-de-interes",
-      "api::banner-home.banner-home",
-      "api::redireccion.redireccion",
+    const reads = [
+      "api::project.project",
+      "api::post.post",
+      "api::city.city",
+      "api::macroproject.macroproject",
+      "api::amenity.amenity",
+      "api::point-of-interest.point-of-interest",
+      "api::home-banner.home-banner",
+      "api::redirect.redirect",
     ].flatMap((uid) => [`${uid}.find`, `${uid}.findOne`]);
     const singles = [
-      "api::configuracion-calculadora.configuracion-calculadora.find",
-      "api::tasa-de-cambio.tasa-de-cambio.find",
+      "api::calculator-config.calculator-config.find",
+      "api::exchange-rate.exchange-rate.find",
     ];
-    const acciones = [...lecturas, ...singles, "api::lead.lead.create"];
+    const actions = [...reads, ...singles, "api::lead.lead.create"];
 
-    for (const action of acciones) {
-      const existente = await strapi
+    for (const action of actions) {
+      const existing = await strapi
         .query("plugin::users-permissions.permission")
         .findOne({ where: { action, role: publicRole.id } });
-      if (!existente) {
+      if (!existing) {
         await strapi
           .query("plugin::users-permissions.permission")
           .create({ data: { action, role: publicRole.id } });
-        strapi.log.info(`Permiso público concedido: ${action}`);
+        strapi.log.info(`Public permission granted: ${action}`);
       }
     }
   },

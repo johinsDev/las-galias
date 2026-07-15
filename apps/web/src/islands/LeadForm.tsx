@@ -7,25 +7,25 @@ import { Input } from "@lasgalias/ui/components/input";
 import { Textarea } from "@lasgalias/ui/components/textarea";
 
 interface LeadFormProps {
-  proyectoDocumentId?: string;
-  origen: string;
+  projectDocumentId?: string;
+  source: string;
 }
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
 /**
- * Formulario de leads (PDP de expectativa y contacto). Los envíos se guardan
- * como `lead` en el CMS para hacer push después.
+ * Lead form (expectation-stage PDPs and contact page). Submissions are stored
+ * as `lead` entries in the CMS for a later push.
  */
-export default function LeadForm({ proyectoDocumentId, origen }: LeadFormProps) {
-  const [estado, setEstado] = useState<"idle" | "enviando" | "ok" | "error">("idle");
+export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const form = useForm({
     schema: LeadSchema,
-    initialInput: { proyectoDocumentId, origen },
+    initialInput: { projectDocumentId, source },
   });
 
-  if (estado === "ok") {
+  if (status === "ok") {
     return (
       <div className="bg-verde-100 text-verde-900 rounded-xl p-6 text-center">
         <p className="text-h4 font-bold">¡Gracias por tu interés!</p>
@@ -38,42 +38,37 @@ export default function LeadForm({ proyectoDocumentId, origen }: LeadFormProps) 
     <Form
       of={form}
       onSubmit={async (output) => {
-        setEstado("enviando");
+        setStatus("sending");
         try {
           const res = await fetch(`${STRAPI_URL}/api/leads`, {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
               data: {
-                nombre: output.nombre,
+                name: output.name,
                 email: output.email,
-                telefono: output.telefono,
-                mensaje: output.mensaje,
-                origen: output.origen,
-                aceptaTratamientoDatos: output.aceptaTratamientoDatos,
-                ...(output.proyectoDocumentId ? { proyecto: output.proyectoDocumentId } : {}),
+                phone: output.phone,
+                message: output.message,
+                source: output.source,
+                acceptsDataPolicy: output.acceptsDataPolicy,
+                ...(output.projectDocumentId ? { project: output.projectDocumentId } : {}),
               },
             }),
           });
-          setEstado(res.ok ? "ok" : "error");
+          setStatus(res.ok ? "ok" : "error");
         } catch {
-          setEstado("error");
+          setStatus("error");
         }
       }}
       className="space-y-4"
     >
-      <Field of={form} path={["nombre"]}>
+      <Field of={form} path={["name"]}>
         {(field) => (
           <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-nombre">
+            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-name">
               Nombre completo
             </label>
-            <Input
-              {...field.props}
-              id="lead-nombre"
-              value={field.input ?? ""}
-              autoComplete="name"
-            />
+            <Input {...field.props} id="lead-name" value={field.input ?? ""} autoComplete="name" />
             {field.errors && (
               <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
             )}
@@ -101,15 +96,15 @@ export default function LeadForm({ proyectoDocumentId, origen }: LeadFormProps) 
         )}
       </Field>
 
-      <Field of={form} path={["telefono"]}>
+      <Field of={form} path={["phone"]}>
         {(field) => (
           <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-telefono">
+            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-phone">
               Celular
             </label>
             <Input
               {...field.props}
-              id="lead-telefono"
+              id="lead-phone"
               type="tel"
               value={field.input ?? ""}
               autoComplete="tel"
@@ -122,18 +117,18 @@ export default function LeadForm({ proyectoDocumentId, origen }: LeadFormProps) 
         )}
       </Field>
 
-      <Field of={form} path={["mensaje"]}>
+      <Field of={form} path={["message"]}>
         {(field) => (
           <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-mensaje">
+            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-message">
               Mensaje (opcional)
             </label>
-            <Textarea {...field.props} id="lead-mensaje" value={field.input ?? ""} rows={3} />
+            <Textarea {...field.props} id="lead-message" value={field.input ?? ""} rows={3} />
           </div>
         )}
       </Field>
 
-      <Field of={form} path={["aceptaTratamientoDatos"]}>
+      <Field of={form} path={["acceptsDataPolicy"]}>
         {(field) => (
           <div>
             <label className="text-body-sm text-ink-muted flex items-start gap-2">
@@ -155,11 +150,11 @@ export default function LeadForm({ proyectoDocumentId, origen }: LeadFormProps) 
         )}
       </Field>
 
-      <Button type="submit" size="lg" loading={estado === "enviando"} className="w-full">
+      <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
         Quiero más información
       </Button>
 
-      {estado === "error" && (
+      {status === "error" && (
         <p className="text-destructive text-body-sm text-center">
           No pudimos enviar tus datos. Inténtalo de nuevo en unos minutos.
         </p>

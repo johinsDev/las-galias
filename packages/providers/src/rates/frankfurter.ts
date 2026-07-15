@@ -6,9 +6,9 @@ interface FrankfurterResponse {
 }
 
 /**
- * frankfurter.app expone las tasas de referencia del ECB (sin API key).
- * El ECB no publica COP, así que este provider solo entrega USD-por-EUR
- * para que CompositeRateProvider calcule el cross-rate COP/EUR.
+ * frankfurter.app exposes the ECB reference rates (no API key).
+ * The ECB does not publish COP, so this provider only returns USD-per-EUR
+ * for CompositeRateProvider to compute the COP/EUR cross-rate.
  */
 export class FrankfurterProvider {
   readonly name = "frankfurter.app (ECB)";
@@ -18,11 +18,11 @@ export class FrankfurterProvider {
       headers: { accept: "application/json" },
     });
     if (!res.ok) {
-      throw new Error(`frankfurter.app respondió ${res.status}`);
+      throw new Error(`frankfurter.app responded ${res.status}`);
     }
     const data = (await res.json()) as FrankfurterResponse;
     if (!data.rates.USD) {
-      throw new Error("frankfurter.app no devolvió la tasa USD");
+      throw new Error("frankfurter.app did not return the USD rate");
     }
     return { rate: data.rates.USD, asOf: data.date };
   }

@@ -3,9 +3,9 @@ export {
   ManualProvider,
   NotImplementedError,
   SincoProvider,
-  type EstadoObra,
+  type ConstructionStatus,
   type ExternalProjectData,
-  type ExternalTipologia,
+  type ExternalUnitType,
   type ProjectDataProvider,
   type SincoConfig,
 } from "./project-data";

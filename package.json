@@ -2,19 +2,18 @@
   "name": "las-galias",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.2.10",
+  "packageManager": "bun@1.3.14",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "overrides": {
-    "vite": "8.1.3"
-  },
   "trustedDependencies": [
     "sharp",
     "esbuild",
     "@swc/core",
-    "lefthook"
+    "lefthook",
+    "aws-sdk",
+    "core-js-pure"
   ],
   "scripts": {
     "dev": "turbo run dev",
@@ -31,6 +30,7 @@
     "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.2.0",
     "@eslint/js": "^10.0.1",
+    "@typescript-eslint/parser": "^8.62.1",
     "astro-eslint-parser": "^2.1.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",

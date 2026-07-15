@@ -1,0 +1,6 @@
+# Isolated (pnpm-style) linker: each package resolves ITS OWN dependency
+# versions. Required because astro needs vite 8 while @strapi/admin pins
+# vite 5.4.21 — with the default hoisted linker one of them would grab the
+# wrong copy.
+[install]
+linker = "isolated"

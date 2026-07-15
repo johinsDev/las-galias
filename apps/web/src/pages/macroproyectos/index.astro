@@ -2,9 +2,9 @@
 import { Image } from "astro:assets";
 
 import Base from "@/layouts/Base.astro";
-import { getMacroproyectos, mediaUrl } from "@/lib/strapi";
+import { getMacroprojects, mediaUrl } from "@/lib/strapi";
 
-const macroproyectos = await getMacroproyectos();
+const macroprojects = await getMacroprojects();
 ---
 
 <Base title="Macroproyectos — Las Galias" description="Los macroproyectos urbanos de Las Galias.">
@@ -13,18 +13,18 @@ const macroproyectos = await getMacroproyectos();
     <h1 class="text-h1 text-ink mt-1 font-bold">Ciudades dentro de la ciudad</h1>
 
     {
-      macroproyectos.length > 0 ? (
+      macroprojects.length > 0 ? (
         <div class="mt-8 grid gap-6 md:grid-cols-2">
-          {macroproyectos.map((macro) => (
+          {macroprojects.map((macro) => (
             <a
               href={`/macroproyectos/${macro.slug}`}
               class="shadow-card group relative block overflow-hidden rounded-xl"
               data-reveal
             >
-              {macro.galeria?.[0]?.url && (
+              {macro.gallery?.[0]?.url && (
                 <Image
-                  src={mediaUrl(macro.galeria[0].url)}
-                  alt={macro.nombre}
+                  src={mediaUrl(macro.gallery[0].url)}
+                  alt={macro.name}
                   width={800}
                   height={500}
                   class="aspect-[8/5] w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -32,8 +32,8 @@ const macroproyectos = await getMacroproyectos();
               )}
               <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               <div class="absolute bottom-0 p-6">
-                <p class="text-caption text-white/70 uppercase">{macro.ciudad?.nombre}</p>
-                <h2 class="text-h3 font-bold text-white">{macro.nombre}</h2>
+                <p class="text-caption text-white/70 uppercase">{macro.city?.name}</p>
+                <h2 class="text-h3 font-bold text-white">{macro.name}</h2>
               </div>
             </a>
           ))}

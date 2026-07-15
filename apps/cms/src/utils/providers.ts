@@ -2,7 +2,7 @@ import { createProjectDataProvider, type ProjectDataProvider } from "@lasgalias/
 
 let instance: ProjectDataProvider | undefined;
 
-/** Singleton del provider de datos de proyectos (strategy elegida por env). */
+/** Singleton for the project-data provider (strategy picked via env). */
 export function getProjectDataProvider(): ProjectDataProvider {
   if (!instance) {
     instance = createProjectDataProvider(process.env);
