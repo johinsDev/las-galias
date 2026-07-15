@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+
+import ProyectoCard from "@/components/ProyectoCard.astro";
+import Base from "@/layouts/Base.astro";
+import { getBannersHome, getProyectos, mediaUrl } from "@/lib/strapi";
+
+const [banners, proyectos] = await Promise.all([getBannersHome(), getProyectos()]);
+const destacados = proyectos.slice(0, 6);
+const banner = banners[0];
+---
+
+<Base title="Las Galias — Constructora de proyectos de vivienda en Colombia">
+  <section class="bg-hero">
+    {
+      banner ? (
+        <a href={banner.enlace ?? "/proyectos"} class="block">
+          <picture>
+            <source media="(min-width: 768px)" srcset={mediaUrl(banner.imagenDesktop?.url)} />
+            <Image
+              src={mediaUrl(banner.imagenMobile?.url ?? banner.imagenDesktop?.url)}
+              alt={banner.titulo ?? "Las Galias"}
+              width={1600}
+              height={900}
+              loading="eager"
+              class="max-h-[70vh] w-full object-cover"
+            />
+          </picture>
+        </a>
+      ) : (
+        <div class="container py-24 text-center md:py-36">
+          <p class="text-label text-verde-700 font-semibold uppercase" data-reveal>
+            Constructora Las Galias
+          </p>
+          <h1 class="text-hero text-ink mx-auto mt-4 max-w-3xl font-extrabold" data-reveal>
+            Construimos los lugares donde vive <span class="text-gradient-brand">Colombia</span>
+          </h1>
+          <p class="text-body-lg text-ink-muted mx-auto mt-6 max-w-xl" data-reveal>
+            Proyectos de vivienda pensados para tu familia, con la calidad y el respaldo de siempre.
+          </p>
+          <div class="mt-8" data-reveal>
+            <a
+              href="/proyectos"
+              class="bg-primary text-primary-foreground shadow-cta hover:bg-primary-bright inline-flex h-12 items-center rounded-lg px-6 font-semibold transition-colors"
+            >
+              Conoce nuestros proyectos
+            </a>
+          </div>
+        </div>
+      )
+    }
+  </section>
+
+  {
+    destacados.length > 0 && (
+      <section class="container py-16 md:py-24">
+        <div class="flex items-end justify-between" data-reveal>
+          <div>
+            <p class="text-label text-verde-700 font-semibold uppercase">Proyectos</p>
+            <h2 class="text-h2 text-ink mt-1 font-bold">Encuentra tu nuevo hogar</h2>
+          </div>
+          <a href="/proyectos" class="text-body-sm text-verde-700 font-semibold hover:underline">
+            Ver todos →
+          </a>
+        </div>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {destacados.map((proyecto) => (
+            <ProyectoCard proyecto={proyecto} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>

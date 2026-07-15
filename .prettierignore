@@ -1,0 +1,4 @@
+# Skills de terceros: no formatear (rompería los hashes de skills-lock.json)
+.agents/
+.claude/skills/
+apps/cms/types/generated/

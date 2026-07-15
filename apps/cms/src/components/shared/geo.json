@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_geos",
+  "info": {
+    "displayName": "Ubicación",
+    "description": "Coordenadas y dirección"
+  },
+  "attributes": {
+    "lat": {
+      "type": "float"
+    },
+    "lng": {
+      "type": "float"
+    },
+    "direccion": {
+      "type": "string"
+    }
+  }
+}

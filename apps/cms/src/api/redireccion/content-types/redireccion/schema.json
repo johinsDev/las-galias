@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "redirecciones",
+  "info": {
+    "singularName": "redireccion",
+    "pluralName": "redirecciones",
+    "displayName": "Redirección",
+    "description": "Redirecciones del sitio. Solo administradores. origen=auto-unpublish las crea el sistema al despublicar un proyecto"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "from": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "to": {
+      "type": "string",
+      "required": true
+    },
+    "permanente": {
+      "type": "boolean",
+      "default": true
+    },
+    "habilitada": {
+      "type": "boolean",
+      "default": true
+    },
+    "origen": {
+      "type": "enumeration",
+      "enum": ["manual", "auto-unpublish"],
+      "default": "manual"
+    }
+  }
+}

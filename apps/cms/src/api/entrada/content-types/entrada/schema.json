@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "entradas",
+  "info": {
+    "singularName": "entrada",
+    "pluralName": "entradas",
+    "displayName": "Entrada",
+    "description": "Entradas del blog"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "titulo",
+      "required": true
+    },
+    "extracto": {
+      "type": "text"
+    },
+    "portada": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "contenido": {
+      "type": "blocks"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@lasgalias/providers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint .",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@lasgalias/typescript-config": "workspace:*",
+    "@types/node": "^22",
+    "tsup": "^8.5.0",
+    "typescript": "^6"
+  }
+}

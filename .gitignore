@@ -1,0 +1,23 @@
+# deps
+node_modules/
+
+# builds
+dist/
+build/
+.astro/
+.vercel/
+.turbo/
+.strapi/
+
+# sst
+.sst/
+sst-env.d.ts
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log

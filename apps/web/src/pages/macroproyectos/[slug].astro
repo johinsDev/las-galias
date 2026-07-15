@@ -1,0 +1,74 @@
+---
+import { Image } from "astro:assets";
+
+import Blocks from "@/components/Blocks.astro";
+import Base from "@/layouts/Base.astro";
+import { getMacroproyectos, mediaUrl } from "@/lib/strapi";
+
+export async function getStaticPaths() {
+  const macroproyectos = await getMacroproyectos();
+  return macroproyectos.map((m) => ({ params: { slug: m.slug }, props: { macro: m } }));
+}
+
+const { macro } = Astro.props;
+const tipos: Record<string, string> = {
+  comercio: "Comercio",
+  salud: "Salud",
+  educacion: "Educación",
+  transporte: "Transporte",
+  recreacion: "Recreación",
+};
+---
+
+<Base title={`${macro.nombre} — Macroproyectos Las Galias`}>
+  <section class="container py-12 md:py-16">
+    <p class="text-label text-verde-700 font-semibold uppercase">
+      Macroproyecto · {macro.ciudad?.nombre}
+    </p>
+    <h1 class="text-h1 text-ink mt-1 font-extrabold">{macro.nombre}</h1>
+
+    {
+      macro.galeria?.[0]?.url && (
+        <Image
+          src={mediaUrl(macro.galeria[0].url)}
+          alt={macro.nombre}
+          width={1400}
+          height={700}
+          loading="eager"
+          class="mt-8 max-h-[55vh] w-full rounded-xl object-cover"
+        />
+      )
+    }
+
+    {
+      macro.descripcion != null && (
+        <div class="mt-10 max-w-3xl" data-reveal>
+          <Blocks content={macro.descripcion} />
+        </div>
+      )
+    }
+
+    {
+      (macro.zonasDeInteres?.length ?? 0) > 0 && (
+        <div class="mt-12">
+          <h2 class="text-h2 text-ink font-bold" data-reveal>
+            Zonas de interés
+          </h2>
+          <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {macro.zonasDeInteres!.map((zona) => (
+              <li class="border-line rounded-lg border p-4" data-reveal>
+                <p class="text-caption text-verde-700 font-semibold uppercase">
+                  {tipos[zona.tipo] ?? zona.tipo}
+                </p>
+                <p class="text-body text-ink mt-1 font-medium">{zona.nombre}</p>
+                {zona.distanciaTexto && (
+                  <p class="text-caption text-ink-muted mt-1">{zona.distanciaTexto}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </section>
+</Base>

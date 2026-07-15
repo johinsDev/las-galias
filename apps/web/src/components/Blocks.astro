@@ -1,0 +1,90 @@
+---
+/**
+ * Renderer mínimo del rich text "blocks" de Strapi (párrafos, títulos, listas,
+ * citas e imágenes). Los marks inline (bold/italic) se aplanan a texto.
+ */
+interface BlockChild {
+  text?: string;
+  children?: BlockChild[];
+}
+
+interface BlockNode {
+  type: string;
+  level?: number;
+  format?: "ordered" | "unordered";
+  children?: BlockChild[];
+  image?: { url: string; alternativeText?: string | null };
+}
+
+interface Props {
+  content: unknown;
+}
+
+type Rendered =
+  | { kind: "h2"; text: string }
+  | { kind: "h3"; text: string }
+  | { kind: "quote"; text: string }
+  | { kind: "p"; text: string }
+  | { kind: "ol"; items: string[] }
+  | { kind: "ul"; items: string[] }
+  | { kind: "img"; url: string; alt: string };
+
+const { content } = Astro.props;
+const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
+
+function textOf(children: BlockChild[] | undefined): string {
+  if (!children) return "";
+  return children.map((c) => c.text ?? textOf(c.children)).join("");
+}
+
+const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
+  if (block.type === "heading") {
+    const text = textOf(block.children);
+    return (block.level ?? 2) <= 2 ? [{ kind: "h2", text }] : [{ kind: "h3", text }];
+  }
+  if (block.type === "quote") {
+    return [{ kind: "quote", text: textOf(block.children) }];
+  }
+  if (block.type === "list") {
+    const items = (block.children ?? []).map((item) => textOf(item.children ?? [item]));
+    return block.format === "ordered" ? [{ kind: "ol", items }] : [{ kind: "ul", items }];
+  }
+  if (block.type === "image" && block.image?.url) {
+    return [{ kind: "img", url: block.image.url, alt: block.image.alternativeText ?? "" }];
+  }
+  const text = textOf(block.children);
+  return text ? [{ kind: "p", text }] : [];
+});
+---
+
+<div class="space-y-4">
+  {
+    rendered.map((node) =>
+      node.kind === "h2" ? (
+        <h2 class="text-h2 text-ink mt-8 font-bold">{node.text}</h2>
+      ) : node.kind === "h3" ? (
+        <h3 class="text-h3 text-ink mt-6 font-bold">{node.text}</h3>
+      ) : node.kind === "quote" ? (
+        <blockquote class="border-verde-500 text-body-lg text-ink-muted border-l-4 pl-4 italic">
+          {node.text}
+        </blockquote>
+      ) : node.kind === "ol" ? (
+        <ol class="text-body list-decimal space-y-1 pl-6">
+          {node.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ol>
+      ) : node.kind === "ul" ? (
+        <ul class="text-body list-disc space-y-1 pl-6">
+          {node.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      ) : node.kind === "img" ? (
+        <img src={node.url} alt={node.alt} loading="lazy" class="rounded-xl" />
+      ) : (
+        <p class="text-body text-ink">{node.text}</p>
+      ),
+    )
+  }
+</div>

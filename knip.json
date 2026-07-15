@@ -1,0 +1,37 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "includeEntryExports": false,
+  "workspaces": {
+    ".": {
+      "project": ["*.{js,mjs,ts}"],
+      "ignoreDependencies": ["astro-eslint-parser"]
+    },
+    "apps/web": {
+      "entry": ["src/pages/**/*.{astro,ts}", "src/scripts/**/*.ts", "src/islands/**/*.tsx"],
+      "project": ["src/**/*.{astro,ts,tsx}"],
+      "ignoreDependencies": ["tailwindcss"]
+    },
+    "apps/cms": {
+      "entry": ["src/index.ts", "src/api/**/*.ts", "config/*.ts"],
+      "project": ["src/**/*.ts", "config/**/*.ts"],
+      "ignoreDependencies": [
+        "ajv",
+        "pg",
+        "@strapi/plugin-users-permissions",
+        "@strapi/provider-upload-aws-s3"
+      ]
+    },
+    "packages/ui": {
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "packages/providers": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/schemas": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/typescript-config": {
+      "ignoreDependencies": ["react"]
+    }
+  }
+}

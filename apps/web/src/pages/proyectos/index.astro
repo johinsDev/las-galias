@@ -1,0 +1,79 @@
+---
+import ProyectoCard from "@/components/ProyectoCard.astro";
+import Base from "@/layouts/Base.astro";
+import { getProyectos } from "@/lib/strapi";
+
+const proyectos = await getProyectos();
+const ciudades = [
+  ...new Map(proyectos.filter((p) => p.ciudad).map((p) => [p.ciudad.slug, p.ciudad])).values(),
+];
+---
+
+<Base title="Proyectos — Las Galias" description="Todos los proyectos de vivienda de Las Galias.">
+  <section class="container py-12 md:py-16">
+    <p class="text-label text-verde-700 font-semibold uppercase">Proyectos</p>
+    <h1 class="text-h1 text-ink mt-1 font-bold">Nuestros proyectos</h1>
+
+    {
+      ciudades.length > 1 && (
+        <div class="mt-6 flex flex-wrap gap-2" id="filtro-ciudades">
+          <button
+            type="button"
+            data-filtro=""
+            class="bg-verde-700 text-caption rounded-full px-4 py-1.5 font-semibold text-white"
+          >
+            Todas
+          </button>
+          {ciudades.map((ciudad) => (
+            <button
+              type="button"
+              data-filtro={ciudad.slug}
+              class="bg-surface text-ink-muted text-caption hover:text-ink rounded-full px-4 py-1.5 font-semibold"
+            >
+              {ciudad.nombre}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      proyectos.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="grid-proyectos">
+          {proyectos.map((proyecto) => (
+            <ProyectoCard proyecto={proyecto} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-body text-ink-muted mt-8">
+          Muy pronto publicaremos nuestros proyectos. Vuelve pronto.
+        </p>
+      )
+    }
+  </section>
+
+  <script>
+    // Filtro por ciudad, puro DOM (cero framework): oculta cards por data-ciudad.
+    function initFiltro() {
+      const contenedor = document.getElementById("filtro-ciudades");
+      if (!contenedor) return;
+      contenedor.addEventListener("click", (event) => {
+        const boton = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filtro]");
+        if (!boton) return;
+        const filtro = boton.dataset.filtro ?? "";
+        contenedor.querySelectorAll<HTMLButtonElement>("[data-filtro]").forEach((b) => {
+          const activo = b === boton;
+          b.classList.toggle("bg-verde-700", activo);
+          b.classList.toggle("text-white", activo);
+          b.classList.toggle("bg-surface", !activo);
+          b.classList.toggle("text-ink-muted", !activo);
+        });
+        document.querySelectorAll<HTMLElement>("#grid-proyectos [data-ciudad]").forEach((card) => {
+          card.style.display = !filtro || card.dataset.ciudad === filtro ? "" : "none";
+        });
+      });
+    }
+    initFiltro();
+    document.addEventListener("astro:page-load", initFiltro);
+  </script>
+</Base>

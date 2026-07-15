@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: prettier
+      glob: "*.{astro,ts,tsx,js,jsx,json,css,md,yml,yaml}"
+      run: bunx prettier --write {staged_files}
+      stage_fixed: true
+    - name: eslint
+      glob: "*.{astro,ts,tsx,js,jsx}"
+      run: bunx eslint --fix {staged_files}
+      stage_fixed: true
+    - name: knip
+      run: bunx knip-bun
+    - name: typecheck
+      glob: "*.{astro,ts,tsx}"
+      run: bun run check
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: bunx commitlint --edit {1}

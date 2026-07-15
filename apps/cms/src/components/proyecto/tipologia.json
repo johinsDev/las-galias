@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_proyecto_tipologias",
+  "info": {
+    "displayName": "Tipología",
+    "description": "Tipología de vivienda dentro de un proyecto"
+  },
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "areaM2": {
+      "type": "decimal"
+    },
+    "habitaciones": {
+      "type": "integer"
+    },
+    "banos": {
+      "type": "integer"
+    },
+    "precioCOP": {
+      "type": "biginteger"
+    },
+    "plano": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images", "files"]
+    }
+  }
+}

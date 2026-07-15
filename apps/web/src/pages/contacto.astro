@@ -1,0 +1,20 @@
+---
+import LeadForm from "@/islands/LeadForm";
+import Base from "@/layouts/Base.astro";
+---
+
+<Base title="Contacto — Las Galias" description="Escríbenos y un asesor te contactará.">
+  <section class="container grid gap-12 py-12 md:grid-cols-2 md:py-20">
+    <div data-reveal>
+      <p class="text-label text-verde-700 font-semibold uppercase">Contacto</p>
+      <h1 class="text-h1 text-ink mt-1 font-bold">Hablemos de tu nuevo hogar</h1>
+      <p class="text-body-lg text-ink-muted mt-4 max-w-md">
+        Cuéntanos qué estás buscando y uno de nuestros asesores te contactará para acompañarte en
+        todo el proceso.
+      </p>
+    </div>
+    <div class="shadow-card rounded-xl bg-white p-6" data-reveal>
+      <LeadForm client:visible origen="contacto" />
+    </div>
+  </section>
+</Base>

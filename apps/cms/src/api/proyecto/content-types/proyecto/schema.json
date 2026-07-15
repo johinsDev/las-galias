@@ -1,0 +1,103 @@
+{
+  "kind": "collectionType",
+  "collectionName": "proyectos",
+  "info": {
+    "singularName": "proyecto",
+    "pluralName": "proyectos",
+    "displayName": "Proyecto",
+    "description": "Proyectos inmobiliarios. etapa=expectativa permite publicar con menos campos; etapa=venta exige la ficha completa"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "nombre",
+      "required": true
+    },
+    "etapa": {
+      "type": "enumeration",
+      "enum": ["expectativa", "venta"],
+      "default": "expectativa",
+      "required": true
+    },
+    "datosDesdeSinco": {
+      "type": "boolean",
+      "default": false
+    },
+    "sincoId": {
+      "type": "string"
+    },
+    "estadoObra": {
+      "type": "enumeration",
+      "enum": ["lanzamiento", "preventa", "construccion", "entrega-inmediata"]
+    },
+    "descripcion": {
+      "type": "blocks"
+    },
+    "precioDesdeCOP": {
+      "type": "biginteger"
+    },
+    "ciudad": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::ciudad.ciudad",
+      "inversedBy": "proyectos",
+      "required": true
+    },
+    "macroproyecto": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::macroproyecto.macroproyecto"
+    },
+    "zonasComunes": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::zona-comun.zona-comun",
+      "inversedBy": "proyectos"
+    },
+    "recomendados": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::proyecto.proyecto"
+    },
+    "tipologias": {
+      "type": "component",
+      "component": "proyecto.tipologia",
+      "repeatable": true
+    },
+    "galeria": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "heroDesktop": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "heroMobile": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "ubicacion": {
+      "type": "component",
+      "component": "shared.geo",
+      "repeatable": false
+    },
+    "video": {
+      "type": "string"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

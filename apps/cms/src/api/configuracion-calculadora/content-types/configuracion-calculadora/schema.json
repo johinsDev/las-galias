@@ -1,0 +1,27 @@
+{
+  "kind": "singleType",
+  "collectionName": "configuracion_calculadora",
+  "info": {
+    "singularName": "configuracion-calculadora",
+    "pluralName": "configuraciones-calculadora",
+    "displayName": "Configuración de calculadora",
+    "description": "Parámetros de la calculadora de crédito. Solo administradores"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "tasaInteresEA": {
+      "type": "decimal",
+      "required": true
+    },
+    "plazoMaxAnios": {
+      "type": "integer",
+      "default": 20
+    },
+    "porcentajeFinanciacionMax": {
+      "type": "decimal",
+      "default": 70
+    }
+  }
+}

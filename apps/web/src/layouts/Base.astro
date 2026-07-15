@@ -1,0 +1,54 @@
+---
+import "@lasgalias/ui/globals.css";
+import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = "Las Galias — constructora. Proyectos de vivienda en Colombia.",
+  ogImage,
+} = Astro.props;
+const GTM_ID = import.meta.env.PUBLIC_GTM_ID as string | undefined;
+const gtmSnippet = GTM_ID
+  ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`
+  : null;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <link rel="canonical" href={Astro.url.href} />
+    <Font cssVariable="--font-figtree" preload />
+    <ClientRouter />
+    {gtmSnippet && <script type="text/partytown" set:html={gtmSnippet} />}
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import { initReveals } from "@/scripts/reveal";
+
+      initReveals();
+      document.addEventListener("astro:page-load", initReveals);
+    </script>
+  </body>
+</html>

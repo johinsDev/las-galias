@@ -1,0 +1,33 @@
+{
+  "kind": "singleType",
+  "collectionName": "tasas_de_cambio",
+  "info": {
+    "singularName": "tasa-de-cambio",
+    "pluralName": "tasas-de-cambio",
+    "displayName": "Tasa de cambio",
+    "description": "Tasas COP→USD/EUR pobladas por el cron diario (TRM + ECB). Solo administradores"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "copPorUsd": {
+      "type": "decimal"
+    },
+    "copPorEur": {
+      "type": "decimal"
+    },
+    "fuenteUsd": {
+      "type": "string"
+    },
+    "fuenteEur": {
+      "type": "string"
+    },
+    "vigenciaDesde": {
+      "type": "datetime"
+    },
+    "actualizadoEn": {
+      "type": "datetime"
+    }
+  }
+}

@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+/* Content scanning across the monorepo. Paths are relative to THIS file
+   (packages/ui/src/styles/globals.css). Without these, utility classes used
+   in apps/web are purged with no error. */
+@source "../components/**/*.{ts,tsx}";
+@source "../../../../apps/web/src/**/*.{astro,html,js,jsx,ts,tsx,mdx}";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------------- */
+/* Las Galias — paleta de marca (placeholder hasta tener manual de marca)     */
+/* Verde bosque institucional + arena/dorado como acento, neutros cálidos.    */
+/* ------------------------------------------------------------------------- */
+:root {
+  /* brand palette */
+  --verde-950: #0e2418; /* superficie más profunda (footer) */
+  --verde-900: #14351f; /* verde institucional oscuro */
+  --verde-700: #1e5631; /* brand primario */
+  --verde-500: #2e7d46; /* verde medio (gradientes, hover) */
+  --verde-300: #8fbf9f; /* verde suave */
+  --verde-100: #dcefe2; /* verde muy claro (pills, fondos) */
+  --arena: #d9b45b; /* acento arena/dorado */
+  --arena-bright: #e6c76f; /* acento hover */
+  --arena-deep: #8a6d1f; /* arena con contraste para texto sobre claro */
+  --arena-soft: #faf5e6; /* fondo arena suave */
+  --ink: #1c2420; /* texto principal (verde-negro cálido) */
+  --ink-muted: #5b6660; /* texto secundario */
+  --ink-faint: #96a19a; /* captions / placeholders */
+  --bg: #fcfcfa; /* fondo página (blanco cálido) */
+  --surface: #f4f4ef; /* superficie clara */
+  --line: #e6e6de; /* borde por defecto */
+  --line-strong: #d4d4c8; /* borde marcado */
+  --line-dark: #26382d; /* borde sobre oscuro */
+
+  /* shadcn semantic tokens, mapped onto the brand palette */
+  --radius: 0.75rem;
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--verde-700);
+  --primary-bright: var(--verde-500);
+  --primary-foreground: #ffffff;
+  --secondary: var(--surface);
+  --secondary-foreground: var(--verde-900);
+  --muted: var(--surface);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--arena-soft);
+  --accent-foreground: var(--arena-deep);
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--verde-500);
+}
+
+@theme inline {
+  /* brand color utilities */
+  --color-verde-100: var(--verde-100);
+  --color-verde-300: var(--verde-300);
+  --color-verde-500: var(--verde-500);
+  --color-verde-700: var(--verde-700);
+  --color-verde-900: var(--verde-900);
+  --color-verde-950: var(--verde-950);
+  --color-arena: var(--arena);
+  --color-arena-bright: var(--arena-bright);
+  --color-arena-deep: var(--arena-deep);
+  --color-arena-soft: var(--arena-soft);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-line-dark: var(--line-dark);
+
+  /* shadcn semantic utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-bright: var(--primary-bright);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* radii */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* elevation */
+  --shadow-card: 0 1px 2px rgba(20, 30, 24, 0.05), 0 8px 24px rgba(20, 30, 24, 0.07);
+  --shadow-card-lg: 0 2px 4px rgba(20, 30, 24, 0.06), 0 20px 48px rgba(20, 30, 24, 0.12);
+  --shadow-nav: 0 2px 16px rgba(20, 30, 24, 0.05);
+  --shadow-cta: 0 6px 18px rgba(30, 86, 49, 0.35);
+
+  /* Type scale — fluid via clamp() (mobile → desktop) */
+  --text-hero: clamp(2.75rem, 7vw, 5rem);
+  --text-hero--line-height: 1.08;
+  --text-hero--letter-spacing: -0.035em;
+  --text-h1: clamp(2rem, 4vw + 1rem, 3rem);
+  --text-h1--line-height: 1.15;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h2: clamp(1.5rem, 2.5vw + 1rem, 2.25rem);
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h3: clamp(1.25rem, 1.5vw + 1rem, 1.75rem);
+  --text-h3--line-height: 1.25;
+  --text-h4: clamp(1.125rem, 1vw + 0.85rem, 1.375rem);
+  --text-h4--line-height: 1.3;
+  --text-body-lg: clamp(1.0625rem, 0.5vw + 1rem, 1.25rem);
+  --text-body-lg--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.12em;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+
+  /* fonts */
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Reusable page container (centered, max 1200px, responsive gutters) */
+@utility container {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 75rem;
+  padding-inline: --spacing(5);
+  @media (width >= 48rem) {
+    padding-inline: --spacing(8);
+  }
+}
+
+/* Brand gradient surfaces */
+@utility bg-hero {
+  background-image: linear-gradient(180deg, #f4f7f2 0%, var(--bg) 65%);
+}
+@utility bg-section {
+  background-image: linear-gradient(180deg, var(--bg), var(--surface));
+}
+@utility bg-cta {
+  background-image: linear-gradient(160deg, var(--verde-900), var(--verde-700));
+}
+@utility text-gradient-brand {
+  background-image: linear-gradient(
+    100deg,
+    var(--verde-900) 15%,
+    var(--verde-500) 70%,
+    var(--verde-300) 105%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+}

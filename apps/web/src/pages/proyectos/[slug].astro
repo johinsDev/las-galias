@@ -1,0 +1,237 @@
+---
+import { Image } from "astro:assets";
+
+import Blocks from "@/components/Blocks.astro";
+import Precio from "@/components/Precio.astro";
+import ProyectoCard from "@/components/ProyectoCard.astro";
+import CurrencySwitcher from "@/islands/CurrencySwitcher";
+import LeadForm from "@/islands/LeadForm";
+import MortgageCalculator from "@/islands/MortgageCalculator";
+import Base from "@/layouts/Base.astro";
+import {
+  getConfiguracionCalculadora,
+  getProyecto,
+  getProyectos,
+  getTasaDeCambio,
+  mediaUrl,
+} from "@/lib/strapi";
+
+export async function getStaticPaths() {
+  const proyectos = await getProyectos();
+  return proyectos.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const [proyecto, tasas, calculadora] = await Promise.all([
+  getProyecto(slug!),
+  getTasaDeCambio(),
+  getConfiguracionCalculadora(),
+]);
+
+if (!proyecto) {
+  return Astro.redirect("/proyectos");
+}
+
+const esExpectativa = proyecto.etapa === "expectativa";
+const hero = proyecto.heroDesktop ?? proyecto.heroMobile;
+const zonasDeInteres = proyecto.macroproyecto?.zonasDeInteres ?? [];
+const recomendados = proyecto.recomendados ?? [];
+const title = proyecto.seo?.metaTitle ?? `${proyecto.nombre} — Las Galias`;
+const description = proyecto.seo?.metaDescription ?? undefined;
+---
+
+<Base title={title} description={description} ogImage={mediaUrl(proyecto.seo?.ogImage?.url)}>
+  <section class="relative">
+    {
+      hero?.url && (
+        <picture>
+          {proyecto.heroDesktop?.url && (
+            <source media="(min-width: 768px)" srcset={mediaUrl(proyecto.heroDesktop.url)} />
+          )}
+          <Image
+            src={mediaUrl(hero.url)}
+            alt={hero.alternativeText ?? proyecto.nombre}
+            width={1600}
+            height={700}
+            loading="eager"
+            class="max-h-[60vh] w-full object-cover"
+          />
+        </picture>
+      )
+    }
+    <div class="container py-10">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p class="text-label text-verde-700 font-semibold uppercase">
+            {proyecto.ciudad?.nombre}
+            {
+              esExpectativa && (
+                <span class="bg-arena text-ink ml-2 rounded-full px-3 py-0.5">Muy pronto</span>
+              )
+            }
+          </p>
+          <h1 class="text-h1 text-ink mt-1 font-extrabold">{proyecto.nombre}</h1>
+          {
+            !esExpectativa && proyecto.precioDesdeCOP && (
+              <p class="text-h3 text-verde-700 mt-2 font-bold">
+                <Precio valorCOP={proyecto.precioDesdeCOP} prefix="Desde" />
+              </p>
+            )
+          }
+        </div>
+        {
+          !esExpectativa && tasas?.copPorUsd && tasas?.copPorEur && (
+            <CurrencySwitcher
+              client:visible
+              copPorUsd={tasas.copPorUsd}
+              copPorEur={tasas.copPorEur}
+            />
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    esExpectativa ? (
+      <section class="container grid gap-12 pb-16 md:grid-cols-2">
+        <div data-reveal>
+          <h2 class="text-h2 text-ink font-bold">Un nuevo proyecto está por llegar</h2>
+          <p class="text-body-lg text-ink-muted mt-4">
+            Déjanos tus datos y sé de los primeros en conocer los precios de lanzamiento, las
+            tipologías y los beneficios de preventa.
+          </p>
+          {proyecto.descripcion != null && (
+            <div class="mt-6">
+              <Blocks content={proyecto.descripcion} />
+            </div>
+          )}
+        </div>
+        <div class="shadow-card rounded-xl bg-white p-6" data-reveal>
+          <h3 class="text-h4 text-ink mb-4 font-bold">Quiero información de lanzamiento</h3>
+          <LeadForm
+            client:visible
+            proyectoDocumentId={proyecto.documentId}
+            origen={`pdp-expectativa:${proyecto.slug}`}
+          />
+        </div>
+      </section>
+    ) : (
+      <>
+        {proyecto.descripcion != null && (
+          <section class="container max-w-3xl pb-12" data-reveal>
+            <Blocks content={proyecto.descripcion} />
+          </section>
+        )}
+
+        {(proyecto.tipologias?.length ?? 0) > 0 && (
+          <section class="bg-section py-16">
+            <div class="container">
+              <h2 class="text-h2 text-ink font-bold" data-reveal>
+                Tipologías
+              </h2>
+              <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {proyecto.tipologias!.map((t) => (
+                  <div class="shadow-card rounded-xl bg-white p-5" data-reveal>
+                    {t.plano?.url && (
+                      <Image
+                        src={mediaUrl(t.plano.url)}
+                        alt={`Plano ${t.nombre}`}
+                        width={480}
+                        height={360}
+                        class="bg-surface mb-4 aspect-[4/3] w-full rounded-lg object-contain"
+                      />
+                    )}
+                    <h3 class="text-h4 text-ink font-bold">{t.nombre}</h3>
+                    <p class="text-body-sm text-ink-muted mt-1">
+                      {t.areaM2} m² · {t.habitaciones} hab · {t.banos} baños
+                    </p>
+                    {t.precioCOP && (
+                      <p class="text-body text-verde-700 mt-2 font-semibold">
+                        <Precio valorCOP={t.precioCOP} />
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {(proyecto.zonasComunes?.length ?? 0) > 0 && (
+          <section class="container py-16">
+            <h2 class="text-h2 text-ink font-bold" data-reveal>
+              Zonas comunes
+            </h2>
+            <ul class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {proyecto.zonasComunes!.map((zona) => (
+                <li class="bg-surface flex items-center gap-3 rounded-lg p-4" data-reveal>
+                  {zona.icono?.url && (
+                    <img src={mediaUrl(zona.icono.url)} alt="" width="28" height="28" />
+                  )}
+                  <span class="text-body-sm text-ink font-medium">{zona.nombre}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {zonasDeInteres.length > 0 && (
+          <section class="container pb-16">
+            <h2 class="text-h2 text-ink font-bold" data-reveal>
+              Cerca de ti
+            </h2>
+            <p class="text-body-sm text-ink-muted mt-1">
+              Zonas de interés del macroproyecto {proyecto.macroproyecto?.nombre}.
+            </p>
+            <ul class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {zonasDeInteres.map((zona) => (
+                <li class="border-line flex items-center justify-between rounded-lg border p-4">
+                  <span class="text-body-sm text-ink font-medium">{zona.nombre}</span>
+                  <span class="text-caption text-ink-muted">{zona.distanciaTexto}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {proyecto.precioDesdeCOP && calculadora?.tasaInteresEA && (
+          <section class="bg-section py-16">
+            <div class="container grid items-start gap-10 md:grid-cols-2">
+              <div data-reveal>
+                <h2 class="text-h2 text-ink font-bold">¿Cuánto pagarías al mes?</h2>
+                <p class="text-body text-ink-muted mt-3 max-w-md">
+                  Simula tu crédito hipotecario con la tasa de referencia vigente y descubre qué tan
+                  cerca estás de tu nuevo hogar.
+                </p>
+              </div>
+              <MortgageCalculator
+                client:visible
+                precioDesdeCOP={Number(proyecto.precioDesdeCOP)}
+                tasaInteresEA={calculadora.tasaInteresEA}
+                plazoMaxAnios={calculadora.plazoMaxAnios}
+                porcentajeFinanciacionMax={calculadora.porcentajeFinanciacionMax}
+              />
+            </div>
+          </section>
+        )}
+
+        {recomendados.length > 0 && (
+          <section class="container py-16">
+            <h2 class="text-h2 text-ink font-bold" data-reveal>
+              También te puede interesar
+            </h2>
+            <p class="text-body-sm text-ink-muted mt-1">
+              Otros proyectos en {proyecto.ciudad?.nombre}.
+            </p>
+            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {recomendados.map((rec) => (
+                <ProyectoCard proyecto={rec} />
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    )
+  }
+</Base>

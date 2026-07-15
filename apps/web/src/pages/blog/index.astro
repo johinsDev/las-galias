@@ -1,0 +1,47 @@
+---
+import { Image } from "astro:assets";
+
+import Base from "@/layouts/Base.astro";
+import { getEntradas, mediaUrl } from "@/lib/strapi";
+
+const entradas = await getEntradas();
+---
+
+<Base title="Blog — Las Galias" description="Noticias y consejos sobre vivienda y finca raíz.">
+  <section class="container py-12 md:py-16">
+    <p class="text-label text-verde-700 font-semibold uppercase">Blog</p>
+    <h1 class="text-h1 text-ink mt-1 font-bold">Historias y consejos</h1>
+
+    {
+      entradas.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {entradas.map((entrada) => (
+            <article class="shadow-card group overflow-hidden rounded-xl bg-white" data-reveal>
+              <a href={`/blog/${entrada.slug}`} class="block">
+                {entrada.portada?.url && (
+                  <div class="bg-surface aspect-[16/9] overflow-hidden">
+                    <Image
+                      src={mediaUrl(entrada.portada.url)}
+                      alt={entrada.portada.alternativeText ?? entrada.titulo}
+                      width={640}
+                      height={360}
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div class="p-5">
+                  <h2 class="text-h4 text-ink font-bold">{entrada.titulo}</h2>
+                  {entrada.extracto && (
+                    <p class="text-body-sm text-ink-muted mt-2 line-clamp-3">{entrada.extracto}</p>
+                  )}
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="text-body text-ink-muted mt-8">Aún no hay entradas publicadas.</p>
+      )
+    }
+  </section>
+</Base>

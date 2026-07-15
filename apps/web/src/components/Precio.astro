@@ -1,0 +1,18 @@
+---
+import { formatMoney } from "@/lib/currency";
+
+interface Props {
+  valorCOP: number | string;
+  prefix?: string;
+  class?: string;
+}
+
+const { valorCOP, prefix, class: className } = Astro.props;
+const cop = Number(valorCOP);
+---
+
+<span class:list={["whitespace-nowrap", className]}>
+  {prefix && <span class="text-ink-muted text-body-sm">{prefix} </span>}<span data-price-cop={cop}
+    >{formatMoney(cop, "COP")}</span
+  >
+</span>
