@@ -38,9 +38,9 @@ const gtmSnippet = GTM_ID
     <ClientRouter />
     {gtmSnippet && <script type="text/partytown" set:html={gtmSnippet} />}
   </head>
-  <body>
+  <body class="flex min-h-screen flex-col">
     <Header />
-    <main>
+    <main class="flex-1">
       <slot />
     </main>
     <Footer />
