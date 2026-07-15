@@ -24,7 +24,7 @@
     "format:check": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,json,css,md,yml,yaml}\"",
     "knip": "knip-bun",
     "deploy:cms": "sst deploy",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install || true"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.0",
