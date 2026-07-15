@@ -4,6 +4,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": ["STRAPI_URL", "STRAPI_API_TOKEN", "PUBLIC_STRAPI_URL", "PUBLIC_GTM_ID"],
       "outputs": ["dist/**", ".vercel/output/**", "build/**"]
     },
     "dev": {
