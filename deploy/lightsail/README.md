@@ -2,7 +2,8 @@
 
 Strapi + Postgres + Caddy (HTTPS automático) en **una sola instancia** Lightsail.
 Uploads e imágenes van a **S3**; los **backups** de la base van a S3 con `pg_dump`.
-Costo ≈ **12 USD/mes** (instancia 2 GB) + centavos de S3.
+Costo ≈ **12 USD/mes** (instancia 2 GB) + centavos de S3 + **~2 USD/mes** si activas
+la estrategia de backup recomendada (snapshot del disco + pg_dump horario) = **~14/mes**.
 
 ```
 Internet → cms.lasgalias.com → Caddy :443 (HTTPS) → Strapi :1337
@@ -44,21 +45,42 @@ Uploads → S3          Backups (pg_dump) → S3
    ```
    (genera el transfer token en el admin remoto → Settings → Transfer Tokens)
 
-## Backups automáticos
+## Backups — estrategia recomendada (activar las DOS)
 
-`pg_dump` diario a S3 (retención según lo que definas con lifecycle en el bucket):
+Coste total del backup ≈ **~2 USD/mes** (deja el hosting completo en ~14/mes).
+Cubren cosas distintas: el `pg_dump` salva los **datos**; el snapshot salva la
+**máquina entera** y acelera la recuperación de ~30 min a ~5 min.
+
+### 1) `pg_dump` → S3, **cada hora** (protege los datos · ~$0.06-0.25/mes)
 
 ```bash
 crontab -e
-# backup diario a las 3am
-0 3 * * * /opt/las-galias/deploy/lightsail/scripts/backup.sh >> /var/log/lg-backup.log 2>&1
+# backup cada hora, en el minuto 0
+0 * * * * /opt/las-galias/deploy/lightsail/scripts/backup.sh >> /var/log/lg-backup.log 2>&1
 ```
 
-**Doble cinturón (recomendado):** activa también los **snapshots automáticos** de
-la instancia en Lightsail (Storage → Snapshots → Automatic) — copia completa del
-disco restaurable en minutos, ~1-2 USD/mes.
+Ventana de pérdida máxima = 1 hora (importante por los leads). El `backup.sh` ya
+nombra cada copia con timestamp único, así que horario funciona sin cambios.
 
-**Restaurar** (en la instancia):
+**Retención automática de 30 días** (para que los horarios no se acumulen para
+siempre) — una regla de lifecycle en el bucket, S3 los borra solo (gratis):
+
+```bash
+aws s3api put-bucket-lifecycle-configuration \
+  --bucket "$BACKUP_BUCKET" \
+  --lifecycle-configuration file://s3-lifecycle-backups.json
+```
+
+(el archivo `s3-lifecycle-backups.json` está en esta carpeta)
+
+### 2) Snapshot automático del disco en Lightsail (protege la VM entera · ~$1-2/mes)
+
+En la consola de Lightsail: instancia → pestaña **Snapshots** → **Enable automatic
+snapshots** (elige la hora). Copia completa del disco (SO + Docker + `.env` +
+volúmenes) restaurable en minutos. Cubre el `.env` con los secrets, que no está
+en Git ni en la DB.
+
+**Restaurar la DB** (en la instancia):
 ```bash
 aws s3 cp s3://<bucket>/db-backups/<archivo>.sql.gz - | gunzip | \
   docker compose --env-file .env exec -T postgres psql -U strapi lasgalias

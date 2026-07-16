@@ -50,12 +50,15 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
 3. `docker compose up -d` levanta strapi + postgres + caddy.
 4. Redeploy de contenido: `bunx strapi transfer` desde local (como en el demo).
 
-**Backups / recuperación** (responsabilidad nuestra)
-- **`pg_dump` diario (o cada hora) → S3** vía cron o contenedor sidecar. Dump de
-  ~100 proyectos = pocos MB, coste en centavos. Ventana de pérdida = último dump.
-- **Snapshots automáticos del disco** (Lightsail: 1 clic; EC2: Data Lifecycle
-  Manager) → ~1–2 USD/mes. Restore = lanzar instancia desde el snapshot en minutos.
-- Restore de datos: `pg_restore` del último dump de S3 en una instancia nueva.
+**Backups / recuperación — estrategia recomendada (activar las dos, ~$2/mes)**
+- **`pg_dump` HORARIO → S3** (cron `0 * * * *`). Protege los datos; ventana de
+  pérdida = 1 h (importante por los leads). ~$0.06–0.25/mes. Retención 30 días con
+  una **S3 Lifecycle rule** (`deploy/lightsail/s3-lifecycle-backups.json`).
+- **Snapshot automático del disco** (Lightsail: 1 clic; EC2: Data Lifecycle
+  Manager) → ~$1–2/mes. Protege la VM entera (incluye el `.env` con secrets, que
+  no está en Git ni en la DB) y baja la recuperación de ~30 min a ~5 min.
+- Restore de datos: descomprimir el dump de S3 en `psql` (ver kit).
+- Kit completo listo en `deploy/lightsail/` (compose + Caddy + scripts + README).
 
 **Trade-offs**
 - Sin failover automático (si la VM cae, se reinicia/recrea a mano).
