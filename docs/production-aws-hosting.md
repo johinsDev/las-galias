@@ -103,16 +103,38 @@ Internet → (dominio) → Caddy :443 → Strapi :1337 (EC2, subred pública)
 
 ---
 
+## Opción A2 — Lightsail + Lightsail Managed Database · ~27 USD/mes
+
+Variante 100% Lightsail de A+, para máxima simplicidad y precio plano. La
+instancia Lightsail corre Strapi + Caddy; la base va en una **Lightsail Managed
+Database** (Postgres gestionado, backups automáticos), en vez de RDS.
+
+- Instancia Lightsail 2 GB (~$12) + Lightsail Managed DB micro (~$15) = ~$27/mes.
+- Backups automáticos gestionados (como RDS) sin administrar nada.
+- Todo con precio plano y consola simple.
+- **Contra:** menos integrable con el resto de AWS y **no encaja bien con SST/IaC**
+  (SST no tiene componentes de alto nivel para Lightsail; se opera por consola/CLI
+  o Pulumi crudo). Si el requisito "un comando despliega / cambio de cuenta" pesa,
+  A+ (EC2+RDS) es mejor encaje.
+
 ## Comparación
 
-| | Costo/mes | Backups DB | Si muere el server | HTTPS |
+| | Costo/mes | Backups DB | Si muere el server | Encaje SST/IaC |
 |---|---|---|---|---|
-| **A** — VM (Postgres local) | ~12–14 | nosotros (`pg_dump`→S3 + snapshots) | restaurar del último dump | Caddy (dominio) o CloudFront |
-| **A+** — EC2 + RDS | ~24 | **automáticos + PITR (AWS)** | **data intacta en RDS** | Caddy (dominio) o CloudFront |
-| Actual (dev) — Fargate+ALB+RDS+NAT | ~45 | automáticos + PITR | data intacta, con HA | ALB/CloudFront |
+| **A** — VM (Postgres local) | ~12–14 | nosotros (`pg_dump`→S3 + snapshots) | restaurar del último dump | medio (Pulumi EC2) |
+| **A2** — Lightsail + Managed DB | ~27 | **automáticos (Lightsail)** | **data intacta en la DB** | pobre (consola/CLI) |
+| **A+** — EC2 + RDS | ~24 | **automáticos + PITR (RDS)** | **data intacta en RDS** | **bueno** (nativo) |
+| Actual (dev) — Fargate+ALB+RDS+NAT | ~45 | automáticos + PITR | data intacta, con HA | bueno |
 
-**Recomendación:** si el driver es costo mínimo → **A**. Si preocupa perder
-contenido/leads (lo más común) → **A+**: casi la mitad del costo actual, datos
+Nota jerárquica (por si se retoma la discusión de contenedores): **ECR** guarda
+la imagen, **ECS vs Kubernetes/EKS** es la capa de orquestación, **EC2 vs
+Fargate** es dónde corre. Para este CMS (1 instancia, carga baja) cualquier
+orquestador es overkill → VM directa.
+
+**Recomendación:** si el driver es costo mínimo → **A**. Si quieres simplicidad
+total con backups gestionados y no importa perder el `sst deploy` → **A2**
+(Lightsail). Si preocupa perder contenido/leads y quieres mantener SST/IaC →
+**A+** (EC2+RDS): casi la mitad del costo actual, datos
 gestionados por AWS, mismo Strapi.
 
 ---
