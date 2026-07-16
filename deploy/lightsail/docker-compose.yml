@@ -1,0 +1,80 @@
+# Producción en una sola instancia (AWS Lightsail / EC2).
+# Strapi + Postgres + Caddy (HTTPS automático) en la misma máquina.
+# Uso: docker compose --env-file .env up -d --build   (ver scripts/deploy.sh)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  cms:
+    build:
+      # El Dockerfile necesita el monorepo completo → contexto = raíz del repo.
+      context: ../..
+      dockerfile: apps/cms/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "1337"
+      IS_PROXIED: "true" # detrás de Caddy → confía en X-Forwarded-*
+      # Secrets de Strapi (genera cada uno con: openssl rand -base64 32)
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      JWT_SECRET: ${JWT_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      # Base de datos (Postgres del compose, misma máquina)
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_SSL: "false"
+      # Uploads a S3 (mismo bucket/estrategia que ya usa el CMS)
+      UPLOADS_BUCKET: ${UPLOADS_BUCKET}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      # Rebuild del sitio en Vercel al publicar
+      VERCEL_DEPLOY_HOOK_URL: ${VERCEL_DEPLOY_HOOK_URL}
+      # Provider de datos (Sinco/manual)
+      PROJECT_DATA_PROVIDER: ${PROJECT_DATA_PROVIDER:-manual}
+    expose:
+      - "1337" # solo visible para Caddy, no al exterior
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - cms
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CMS_DOMAIN: ${CMS_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

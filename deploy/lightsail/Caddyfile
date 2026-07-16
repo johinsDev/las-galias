@@ -1,0 +1,6 @@
+# Caddy saca y renueva el certificado HTTPS solo (Let's Encrypt) para el dominio.
+# Requiere que CMS_DOMAIN apunte (registro A) a la IP estática de la instancia.
+{$CMS_DOMAIN} {
+	encode gzip
+	reverse_proxy cms:1337
+}
