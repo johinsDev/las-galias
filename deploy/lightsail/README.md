@@ -30,12 +30,14 @@ Uploads → S3          Backups (pg_dump) → S3
    bucket de uploads/backups, no admin) y su access key. Crea el bucket si no existe.
 
 6. **Configurar y desplegar** (dentro de la instancia):
+
    ```bash
    cd /opt/las-galias/deploy/lightsail
    cp .env.example .env
    nano .env            # secrets (openssl rand -base64 32), dominio, creds S3, deploy hook
    ./scripts/deploy.sh  # build + up; Caddy saca el certificado HTTPS solo
    ```
+
    Abre `https://cms.lasgalias.com/admin` y crea tu usuario admin.
 
 7. **Cargar contenido** → desde tu máquina, con la instancia arriba:
@@ -81,6 +83,7 @@ volúmenes) restaurable en minutos. Cubre el `.env` con los secrets, que no est�
 en Git ni en la DB.
 
 **Restaurar la DB** (en la instancia):
+
 ```bash
 aws s3 cp s3://<bucket>/db-backups/<archivo>.sql.gz - | gunzip | \
   docker compose --env-file .env exec -T postgres psql -U strapi lasgalias
@@ -88,12 +91,12 @@ aws s3 cp s3://<bucket>/db-backups/<archivo>.sql.gz - | gunzip | \
 
 ## Operación diaria
 
-| Acción | Comando |
-|---|---|
-| Actualizar el CMS (tras un push) | `./scripts/deploy.sh` |
-| Ver logs | `docker compose logs -f cms` |
-| Reiniciar | `docker compose --env-file .env restart cms` |
-| Backup manual | `./scripts/backup.sh` |
+| Acción                           | Comando                                      |
+| -------------------------------- | -------------------------------------------- |
+| Actualizar el CMS (tras un push) | `./scripts/deploy.sh`                        |
+| Ver logs                         | `docker compose logs -f cms`                 |
+| Reiniciar                        | `docker compose --env-file .env restart cms` |
+| Backup manual                    | `./scripts/backup.sh`                        |
 
 ## Qué NO se pierde aunque muera la instancia
 

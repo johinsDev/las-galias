@@ -36,6 +36,7 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
 ```
 
 **Componentes AWS**
+
 - **AWS Lightsail** plan 2 GB = **$12/mes fijo** (instancia + 60 GB SSD + IP
   estática + 3 TB transfer incluidos). _O_ EC2 `t4g.small` (~$14 on-demand,
   ~$8–10 reservada) + EBS 30 GB + Elastic IP.
@@ -44,6 +45,7 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
   CloudFront delante (cert `*.cloudfront.net`, como en el demo) y Caddy en HTTP.
 
 **Deploy** (mismo `Dockerfile` que ya existe)
+
 1. Provisionar la instancia (SST con `aws.ec2.Instance` + EIP + security group, o
    Lightsail vía consola/CLI).
 2. `user-data` instala Docker + Compose y clona/pull del repo.
@@ -51,6 +53,7 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
 4. Redeploy de contenido: `bunx strapi transfer` desde local (como en el demo).
 
 **Backups / recuperación — estrategia recomendada (activar las dos, ~$2/mes)**
+
 - **`pg_dump` HORARIO → S3** (cron `0 * * * *`). Protege los datos; ventana de
   pérdida = 1 h (importante por los leads). ~$0.06–0.25/mes. Retención 30 días con
   una **S3 Lifecycle rule** (`deploy/lightsail/s3-lifecycle-backups.json`).
@@ -61,6 +64,7 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
 - Kit completo listo en `deploy/lightsail/` (compose + Caddy + scripts + README).
 
 **Trade-offs**
+
 - Sin failover automático (si la VM cae, se reinicia/recrea a mano).
 - Los backups son configuración nuestra (no gestionados). Con el cron a S3 +
   snapshots queda cubierto, pero hay que montarlo y vigilar que corra.
@@ -68,7 +72,7 @@ Internet → (dominio) → Caddy :443 (HTTPS Let's Encrypt) → Strapi :1337
 
 ---
 
-## Opción A+ — EC2 + RDS (sin ALB ni NAT) · ~24 USD/mes  ⭐ recomendada si preocupa la data
+## Opción A+ — EC2 + RDS (sin ALB ni NAT) · ~24 USD/mes ⭐ recomendada si preocupa la data
 
 Igual de simple en red que A (una EC2 con Caddy, sin balanceador), pero la base
 de datos vive en **RDS gestionado** → backups automáticos y point-in-time
@@ -82,6 +86,7 @@ Internet → (dominio) → Caddy :443 → Strapi :1337 (EC2, subred pública)
 ```
 
 **Componentes AWS**
+
 - **EC2** `t4g.small` con Strapi + Caddy en Docker (~$10/mes) + EIP.
 - **RDS** Postgres `t4g.micro` (~$14/mes) — incluye **backups automáticos
   diarios + PITR** (retención 7 días gratis).
@@ -93,12 +98,14 @@ Internet → (dominio) → Caddy :443 → Strapi :1337 (EC2, subred pública)
 `DATABASE_HOST` apunta al endpoint de RDS.
 
 **Backups / recuperación** (gestionado por AWS)
+
 - RDS hace snapshots automáticos + PITR → recuperás a cualquier segundo de los
   últimos 7 días, **sin configurar nada**.
 - Si el server (EC2) muere: recrear la instancia; la data sigue intacta en RDS.
 - Opcional (doble cinturón): `pg_dump` semanal a S3 para retención larga/portátil.
 
 **Trade-offs**
+
 - ~12 USD/mes más que A, a cambio de cero mantenimiento de backups y datos
   seguros de raíz.
 - El server de Strapi sigue siendo una sola instancia (sin HA), pero eso no
@@ -122,12 +129,12 @@ Database** (Postgres gestionado, backups automáticos), en vez de RDS.
 
 ## Comparación
 
-| | Costo/mes | Backups DB | Si muere el server | Encaje SST/IaC |
-|---|---|---|---|---|
-| **A** — VM (Postgres local) | ~12–14 | nosotros (`pg_dump`→S3 + snapshots) | restaurar del último dump | medio (Pulumi EC2) |
-| **A2** — Lightsail + Managed DB | ~27 | **automáticos (Lightsail)** | **data intacta en la DB** | pobre (consola/CLI) |
-| **A+** — EC2 + RDS | ~24 | **automáticos + PITR (RDS)** | **data intacta en RDS** | **bueno** (nativo) |
-| Actual (dev) — Fargate+ALB+RDS+NAT | ~45 | automáticos + PITR | data intacta, con HA | bueno |
+|                                    | Costo/mes | Backups DB                          | Si muere el server        | Encaje SST/IaC      |
+| ---------------------------------- | --------- | ----------------------------------- | ------------------------- | ------------------- |
+| **A** — VM (Postgres local)        | ~12–14    | nosotros (`pg_dump`→S3 + snapshots) | restaurar del último dump | medio (Pulumi EC2)  |
+| **A2** — Lightsail + Managed DB    | ~27       | **automáticos (Lightsail)**         | **data intacta en la DB** | pobre (consola/CLI) |
+| **A+** — EC2 + RDS                 | ~24       | **automáticos + PITR (RDS)**        | **data intacta en RDS**   | **bueno** (nativo)  |
+| Actual (dev) — Fargate+ALB+RDS+NAT | ~45       | automáticos + PITR                  | data intacta, con HA      | bueno               |
 
 Nota jerárquica (por si se retoma la discusión de contenedores): **ECR** guarda
 la imagen, **ECS vs Kubernetes/EKS** es la capa de orquestación, **EC2 vs
@@ -144,7 +151,7 @@ gestionados por AWS, mismo Strapi.
 
 ## Lo que NO cambia respecto al demo
 
-- **Mismo código y mismo `Dockerfile`** — solo cambia *dónde* corre el contenedor.
+- **Mismo código y mismo `Dockerfile`** — solo cambia _dónde_ corre el contenedor.
 - **Uploads siguen en S3** (mismo provider, `config/plugins.ts` con `ACL: null`).
 - **Deploy Hook a Vercel** y el flujo publish→rebuild se mantienen.
 - **Un comando / cambio de cuenta**: se puede conservar en `sst.config.ts`
