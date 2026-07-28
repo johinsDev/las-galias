@@ -2,3 +2,6 @@
 .agents/
 .claude/skills/
 apps/cms/types/generated/
+
+# Spec de terceros descargado tal cual (fidelidad con el original de Sinco)
+docs/sinco/
