@@ -45,6 +45,13 @@
     "priceFromCOP": {
       "type": "biginteger"
     },
+    "priceLocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "priceFromSincoCOP": {
+      "type": "biginteger"
+    },
     "city": {
       "type": "relation",
       "relation": "manyToOne",

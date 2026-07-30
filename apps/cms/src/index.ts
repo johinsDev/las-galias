@@ -10,7 +10,11 @@ import {
   validateFieldsByStage,
   validateRecommendedSameCity,
 } from "./utils/project-rules";
-import { syncSincoCatalogIfEmpty } from "./utils/sinco-catalog";
+import {
+  guardSincoCatalog,
+  SINCO_PROJECT_UID,
+  syncSincoCatalogIfEmpty,
+} from "./utils/sinco-catalog";
 
 /** Content types whose publish/unpublish must rebuild the static site. */
 const PUBLIC_UIDS = new Set<string>([
@@ -34,6 +38,10 @@ export default {
         documentId?: string;
         data?: Record<string, unknown>;
       };
+
+      if (uid === SINCO_PROJECT_UID) {
+        guardSincoCatalog(action);
+      }
 
       if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {

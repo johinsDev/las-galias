@@ -1,8 +1,24 @@
 import type { Core } from "@strapi/strapi";
+import { errors } from "@strapi/utils";
 
 import { fetchProjectCatalog, sincoConfigFromEnv, SincoClient } from "@lasgalias/providers";
 
-const SINCO_PROJECT_UID = "api::sinco-project.sinco-project";
+export const SINCO_PROJECT_UID = "api::sinco-project.sinco-project";
+
+/**
+ * The catalog is a mirror, not content. Deleting an entry silently breaks the
+ * lead push of every project pointing at it — the form keeps answering 200 and
+ * the leads pile up in `failed` where nobody looks. Editing is pointless too:
+ * the next sync overwrites it.
+ */
+export function guardSincoCatalog(action: string): void {
+  if (action === "delete") {
+    throw new errors.ApplicationError(
+      "Las entradas del catálogo de Sinco no se borran: un proyecto puede estar apuntando a esta " +
+        "y sus leads dejarían de llegar al CRM. El catálogo se actualiza solo desde Sinco.",
+    );
+  }
+}
 
 interface CatalogRow {
   documentId: string;

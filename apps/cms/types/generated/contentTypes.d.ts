@@ -705,6 +705,8 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject">;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     priceFromCOP: Schema.Attribute.BigInteger;
+    priceFromSincoCOP: Schema.Attribute.BigInteger;
+    priceLocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     seo: Schema.Attribute.Component<"shared.seo", false>;

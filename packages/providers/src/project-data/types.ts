@@ -3,9 +3,14 @@ export type ConstructionStatus = "launch" | "presale" | "construction" | "immedi
 export interface ExternalUnitType {
   name: string;
   areaM2: number;
-  bedrooms: number;
-  bathrooms: number;
   priceCOP: number;
+  /**
+   * Optional on purpose: Sinco has no bathroom count at all, and its
+   * `cantidadAlcobas` is only filled on ~40% of projects — the CMS stays the
+   * source of truth for both.
+   */
+  bedrooms?: number;
+  bathrooms?: number;
 }
 
 export interface ExternalProjectData {

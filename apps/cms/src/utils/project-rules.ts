@@ -1,7 +1,7 @@
 import type { Core } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
 
-import { NotImplementedError } from "@lasgalias/providers";
+import { NotImplementedError, type ExternalProjectData } from "@lasgalias/providers";
 import { getProjectDataProvider } from "./providers";
 import { extractRelationIds } from "./relations";
 
@@ -38,11 +38,54 @@ async function resolveSincoId(
   return typeof entry?.sincoId === "string" ? entry.sincoId : "";
 }
 
+/** The stored "price fixed by hand" flag, for updates that omit it. */
+async function isPriceLocked(strapi: Core.Strapi, documentId?: string): Promise<boolean> {
+  if (!documentId) return false;
+  const current = await strapi.documents(PROJECT_UID).findOne({ documentId });
+  return current?.priceLocked === true;
+}
+
+interface UnitTypeEntry {
+  name?: string;
+  areaM2?: number;
+  priceCOP?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Field ownership. Sinco only writes what Sinco actually knows — price and
+ * areas. Everything else stays the CMS's:
+ *
+ * - `name`: in Sinco it is an operational code ("INACTIVO CONJUNTO RESIDENCIAL
+ *   ARBOLEDA DEL PARQUE-BLOQUE13A"), never a brand name.
+ * - `constructionStatus`: does not exist in Sinco (`etapa` labels towers).
+ * - `bathrooms`: does not exist. `bedrooms`: only filled on ~40% of projects,
+ *   so overwriting would replace good data with blanks.
+ *
+ * Unit types are matched by name and only their area and price are refreshed —
+ * a sync never adds, removes or reorders what an editor curated.
+ */
+function mergeUnitTypes(current: unknown, external: ExternalProjectData): UnitTypeEntry[] | null {
+  if (!external.unitTypes || !Array.isArray(current)) return null;
+  const bySincoName = new Map(external.unitTypes.map((u) => [u.name.trim().toLowerCase(), u]));
+  let touched = false;
+  const merged = (current as UnitTypeEntry[]).map((entry) => {
+    const match = bySincoName.get((entry.name ?? "").trim().toLowerCase());
+    if (!match) return entry;
+    touched = true;
+    return { ...entry, areaM2: match.areaM2, priceCOP: String(match.priceCOP) };
+  });
+  return touched ? merged : null;
+}
+
 /**
  * Rule: on create/update with "sync from Sinco" enabled and a Sinco project
- * picked, the external provider owns name/price/status/unit types (merged into
- * data before persisting). Provider failures never block the editor: log and
- * fall back to manual input.
+ * picked, Sinco refreshes price and areas. Provider failures never block the
+ * editor: log and fall back to what is stored.
+ *
+ * `priceFromSincoCOP` always records what the CRM says, so the editor can see
+ * the two side by side; `priceFromCOP` (what the site shows) is only touched
+ * while `priceLocked` is off.
  */
 export async function mergeSincoData(strapi: Core.Strapi, params: DocParams): Promise<void> {
   const data = params.data;
@@ -57,20 +100,17 @@ export async function mergeSincoData(strapi: Core.Strapi, params: DocParams): Pr
       strapi.log.warn(`Provider "${provider.name}" did not find external project ${sincoId}`);
       return;
     }
-    if (external.name !== undefined) data.name = external.name;
-    if (external.priceFromCOP !== undefined) data.priceFromCOP = String(external.priceFromCOP);
-    if (external.constructionStatus !== undefined)
-      data.constructionStatus = external.constructionStatus;
-    if (external.unitTypes !== undefined) {
-      data.unitTypes = external.unitTypes.map((u) => ({
-        name: u.name,
-        areaM2: u.areaM2,
-        bedrooms: u.bedrooms,
-        bathrooms: u.bathrooms,
-        priceCOP: String(u.priceCOP),
-      }));
+    if (external.priceFromCOP !== undefined) {
+      data.priceFromSincoCOP = String(external.priceFromCOP);
+      // A partial update may not carry the flag; falling back to the stored one
+      // means a locked price stays locked.
+      const locked = data.priceLocked ?? (await isPriceLocked(strapi, params.documentId));
+      if (locked !== true) data.priceFromCOP = String(external.priceFromCOP);
     }
-    strapi.log.info(`Project ${sincoId} data pulled from provider "${provider.name}"`);
+    const unitTypes = mergeUnitTypes(data.unitTypes, external);
+    if (unitTypes) data.unitTypes = unitTypes;
+
+    strapi.log.info(`Project ${sincoId} price and areas refreshed from "${provider.name}"`);
   } catch (err) {
     if (err instanceof NotImplementedError) {
       strapi.log.warn(

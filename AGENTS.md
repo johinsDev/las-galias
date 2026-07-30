@@ -61,6 +61,17 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - Only the Super Admin touches `redirect`, `calculator-config` and `exchange-rate`.
 - Base prices are COP; USD/EUR come from the daily cron rates (TRM datos.gov.co +
   ECB cross-rate) stored in `exchange-rate`.
+- **Sinco owns only price and areas.** Name, description, gallery,
+  `constructionStatus`, bedrooms and bathrooms are the CMS's and a sync must never
+  overwrite them — in Sinco the name is an operational code, `constructionStatus`
+  does not exist, bathrooms do not exist and bedrooms are unreliable. `priceLocked`
+  freezes `priceFromCOP` against the sync; `priceFromSincoCOP` always mirrors the
+  CRM so both can be compared.
+- `sinco-project` is a **read-only mirror** of the Sinco catalog, refreshed by
+  cron. Deleting an entry is blocked by middleware: a `project` may point at it and
+  its leads would silently stop reaching the CRM.
+- A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the
+  request path — `crmStatus` records the outcome and a cron retries.
 
 ## Quality gate — MANDATORY before every commit and push
 
