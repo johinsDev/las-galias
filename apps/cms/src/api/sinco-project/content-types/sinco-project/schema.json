@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sinco_projects",
+  "info": {
+    "singularName": "sinco-project",
+    "pluralName": "sinco-projects",
+    "displayName": "Sinco Project",
+    "description": "Read-only mirror of the Sinco project catalog, refreshed from the API. Pick one on a project so leads reach the right sales room; do not edit by hand"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "sincoId": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "macroSincoId": {
+      "type": "string",
+      "required": true
+    },
+    "macroName": {
+      "type": "string"
+    },
+    "lastSyncedAt": {
+      "type": "datetime"
+    }
+  }
+}

@@ -5,7 +5,7 @@
     "singularName": "lead",
     "pluralName": "leads",
     "displayName": "Lead",
-    "description": "Form submissions saved from PDPs (especially expectation-stage projects) for a later push"
+    "description": "Form submissions saved from PDPs (especially expectation-stage projects) and pushed to the Sinco CRM"
   },
   "options": {
     "draftAndPublish": false
@@ -37,6 +37,46 @@
     "acceptsDataPolicy": {
       "type": "boolean",
       "required": true
+    },
+    "acceptsEmail": {
+      "type": "boolean",
+      "default": false
+    },
+    "acceptsSms": {
+      "type": "boolean",
+      "default": false
+    },
+    "acceptsWhatsApp": {
+      "type": "boolean",
+      "default": false
+    },
+    "acceptsCall": {
+      "type": "boolean",
+      "default": false
+    },
+    "utmSource": {
+      "type": "string"
+    },
+    "utmMedium": {
+      "type": "string"
+    },
+    "utmCampaign": {
+      "type": "string"
+    },
+    "crmStatus": {
+      "type": "enumeration",
+      "enum": ["pending", "sent", "duplicate", "failed", "skipped"],
+      "default": "pending"
+    },
+    "crmVisitId": {
+      "type": "string"
+    },
+    "crmAttempts": {
+      "type": "integer",
+      "default": 0
+    },
+    "crmLastError": {
+      "type": "text"
     }
   }
 }

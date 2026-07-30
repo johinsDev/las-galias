@@ -30,8 +30,10 @@
       "type": "boolean",
       "default": false
     },
-    "sincoId": {
-      "type": "string"
+    "sincoProject": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sinco-project.sinco-project"
     },
     "constructionStatus": {
       "type": "enumeration",

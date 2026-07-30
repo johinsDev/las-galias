@@ -1,6 +1,7 @@
 import type { Core } from "@strapi/strapi";
 
 import { scheduleDeploy } from "./utils/deploy-hook";
+import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
 import {
   createAutoRedirect,
   disableAutoRedirect,
@@ -9,6 +10,7 @@ import {
   validateFieldsByStage,
   validateRecommendedSameCity,
 } from "./utils/project-rules";
+import { syncSincoCatalogIfEmpty } from "./utils/sinco-catalog";
 
 /** Content types whose publish/unpublish must rebuild the static site. */
 const PUBLIC_UIDS = new Set<string>([
@@ -51,6 +53,13 @@ export default {
 
       if (uid === PROJECT_UID && action === "publish") {
         await disableAutoRedirect(strapi, params);
+      }
+
+      // After next(): the lead must exist (and own a documentId) before it can
+      // be pushed. Not awaited — the public form never waits on the CRM.
+      if (uid === LEAD_UID && action === "create") {
+        const documentId = (result as { documentId?: string } | undefined)?.documentId;
+        if (documentId) schedulePushLeadToCrm(strapi, documentId);
       }
 
       if (PUBLIC_UIDS.has(uid) && DEPLOY_ACTIONS.has(action)) {
@@ -98,5 +107,9 @@ export default {
         strapi.log.info(`Public permission granted: ${action}`);
       }
     }
+
+    // The Sinco picker must not come up empty on a fresh install; afterwards the
+    // cron owns it. Not awaited — a slow ERP must not hold up the boot.
+    void syncSincoCatalogIfEmpty(strapi);
   },
 };

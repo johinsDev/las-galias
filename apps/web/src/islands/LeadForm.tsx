@@ -22,15 +22,29 @@ function formatCoPhone(value: string): string {
 }
 
 /**
+ * Campaign attribution off the landing URL. The CRM files the lead under the
+ * campaign that produced it, so this has to travel with the submission.
+ */
+function readUtm(): { utmSource?: string; utmMedium?: string; utmCampaign?: string } {
+  if (typeof location === "undefined") return {};
+  const params = new URLSearchParams(location.search);
+  return {
+    utmSource: params.get("utm_source") ?? undefined,
+    utmMedium: params.get("utm_medium") ?? undefined,
+    utmCampaign: params.get("utm_campaign") ?? undefined,
+  };
+}
+
+/**
  * Lead form (expectation-stage PDPs and contact page). Submissions are stored
- * as `lead` entries in the CMS for a later push.
+ * as `lead` entries in the CMS and pushed to the Sinco CRM from there.
  */
 export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const form = useForm({
     schema: LeadSchema,
-    initialInput: { projectDocumentId, source },
+    initialInput: { projectDocumentId, source, ...readUtm() },
   });
 
   if (status === "ok") {
@@ -59,6 +73,14 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
                 message: output.message,
                 source: output.source,
                 acceptsDataPolicy: output.acceptsDataPolicy,
+                // One checkbox in the UI; the CRM keeps a flag per channel.
+                acceptsWhatsApp: output.acceptsContact,
+                acceptsSms: output.acceptsContact,
+                acceptsCall: output.acceptsContact,
+                acceptsEmail: output.acceptsContact,
+                utmSource: output.utmSource,
+                utmMedium: output.utmMedium,
+                utmCampaign: output.utmCampaign,
                 ...(output.projectDocumentId ? { project: output.projectDocumentId } : {}),
               },
             }),
@@ -159,6 +181,23 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
               <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
             )}
           </div>
+        )}
+      </Field>
+
+      <Field of={form} path={["acceptsContact"]}>
+        {(field) => (
+          <label className="text-body-sm text-ink-muted flex items-start gap-2">
+            <input
+              {...field.props}
+              type="checkbox"
+              checked={field.input === true}
+              className="accent-ink mt-1"
+            />
+            <span>
+              Autorizo que me contacten por WhatsApp, mensaje de texto, llamada y correo electrónico
+              con información de este y otros proyectos.
+            </span>
+          </label>
         )}
       </Field>
 

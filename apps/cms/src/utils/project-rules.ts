@@ -14,16 +14,40 @@ interface DocParams {
   data?: Record<string, unknown>;
 }
 
+const SINCO_PROJECT_UID = "api::sinco-project.sinco-project";
+
 /**
- * Rule: on create/update with "sync from Sinco" enabled and a sincoId set,
- * the external provider owns name/price/status/unit types (merged into data
- * before persisting). Provider failures never block the editor: log and fall
- * back to manual input.
+ * The Sinco project code behind the picked catalog entry — from the payload if
+ * the editor just changed it, otherwise from what is already stored.
+ */
+async function resolveSincoId(
+  strapi: Core.Strapi,
+  data: Record<string, unknown>,
+  documentId?: string,
+): Promise<string> {
+  let entryId: string | undefined = extractRelationIds(data.sincoProject)[0];
+  if (!entryId && documentId) {
+    const current = await strapi.documents(PROJECT_UID).findOne({
+      documentId,
+      populate: ["sincoProject"],
+    });
+    entryId = (current?.sincoProject as { documentId?: string } | undefined)?.documentId;
+  }
+  if (!entryId) return "";
+  const entry = await strapi.documents(SINCO_PROJECT_UID).findOne({ documentId: entryId });
+  return typeof entry?.sincoId === "string" ? entry.sincoId : "";
+}
+
+/**
+ * Rule: on create/update with "sync from Sinco" enabled and a Sinco project
+ * picked, the external provider owns name/price/status/unit types (merged into
+ * data before persisting). Provider failures never block the editor: log and
+ * fall back to manual input.
  */
 export async function mergeSincoData(strapi: Core.Strapi, params: DocParams): Promise<void> {
   const data = params.data;
   if (!data || data.syncFromSinco !== true) return;
-  const sincoId = typeof data.sincoId === "string" ? data.sincoId.trim() : "";
+  const sincoId = await resolveSincoId(strapi, data, params.documentId);
   if (!sincoId) return;
 
   const provider = getProjectDataProvider();

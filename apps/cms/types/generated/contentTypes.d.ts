@@ -540,7 +540,7 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
 export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   collectionName: "leads";
   info: {
-    description: "Form submissions saved from PDPs (especially expectation-stage projects) for a later push";
+    description: "Form submissions saved from PDPs (especially expectation-stage projects) and pushed to the Sinco CRM";
     displayName: "Lead";
     pluralName: "leads";
     singularName: "lead";
@@ -549,9 +549,18 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    acceptsCall: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     acceptsDataPolicy: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    acceptsEmail: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    acceptsSms: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    acceptsWhatsApp: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    crmAttempts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    crmLastError: Schema.Attribute.Text;
+    crmStatus: Schema.Attribute.Enumeration<["pending", "sent", "duplicate", "failed", "skipped"]> &
+      Schema.Attribute.DefaultTo<"pending">;
+    crmVisitId: Schema.Attribute.String;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::lead.lead"> &
@@ -564,6 +573,9 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     source: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    utmCampaign: Schema.Attribute.String;
+    utmMedium: Schema.Attribute.String;
+    utmSource: Schema.Attribute.String;
   };
 }
 
@@ -696,7 +708,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     seo: Schema.Attribute.Component<"shared.seo", false>;
-    sincoId: Schema.Attribute.String;
+    sincoProject: Schema.Attribute.Relation<"oneToOne", "api::sinco-project.sinco-project">;
     slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
     stage: Schema.Attribute.Enumeration<["expectation", "sale"]> &
       Schema.Attribute.Required &
@@ -733,6 +745,35 @@ export interface ApiRedirectRedirect extends Struct.CollectionTypeSchema {
     source: Schema.Attribute.Enumeration<["manual", "auto-unpublish"]> &
       Schema.Attribute.DefaultTo<"manual">;
     to: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSincoProjectSincoProject extends Struct.CollectionTypeSchema {
+  collectionName: "sinco_projects";
+  info: {
+    description: "Read-only mirror of the Sinco project catalog, refreshed from the API. Pick one on a project so leads reach the right sales room; do not edit by hand";
+    displayName: "Sinco Project";
+    pluralName: "sinco-projects";
+    singularName: "sinco-project";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    lastSyncedAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::sinco-project.sinco-project"> &
+      Schema.Attribute.Private;
+    macroName: Schema.Attribute.String;
+    macroSincoId: Schema.Attribute.String & Schema.Attribute.Required;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    sincoId: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1178,6 +1219,7 @@ declare module "@strapi/strapi" {
       "api::post.post": ApiPostPost;
       "api::project.project": ApiProjectProject;
       "api::redirect.redirect": ApiRedirectRedirect;
+      "api::sinco-project.sinco-project": ApiSincoProjectSincoProject;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;
       "plugin::i18n.locale": PluginI18NLocale;
