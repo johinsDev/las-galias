@@ -1,21 +1,17 @@
+import { sincoConfigFromEnv, type SincoEnv } from "../sinco/types";
 import { ManualProvider } from "./manual";
 import { SincoProvider } from "./sinco";
 import type { ProjectDataProvider } from "./types";
 
-export interface ProjectDataEnv {
+export interface ProjectDataEnv extends SincoEnv {
   PROJECT_DATA_PROVIDER?: string;
-  SINCO_BASE_URL?: string;
-  SINCO_API_KEY?: string;
 }
 
 /** Strategy-pattern factory: the implementation is chosen via env, not code. */
 export function createProjectDataProvider(env: ProjectDataEnv): ProjectDataProvider {
   switch (env.PROJECT_DATA_PROVIDER) {
     case "sinco":
-      return new SincoProvider({
-        baseUrl: env.SINCO_BASE_URL ?? "",
-        apiKey: env.SINCO_API_KEY ?? "",
-      });
+      return new SincoProvider(sincoConfigFromEnv(env));
     case "manual":
     case undefined:
       return new ManualProvider();
@@ -25,7 +21,7 @@ export function createProjectDataProvider(env: ProjectDataEnv): ProjectDataProvi
 }
 
 export { ManualProvider } from "./manual";
-export { NotImplementedError, SincoProvider, type SincoConfig } from "./sinco";
+export { NotImplementedError, SincoProvider } from "./sinco";
 export type {
   ConstructionStatus,
   ExternalProjectData,

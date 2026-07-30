@@ -23,6 +23,16 @@ export const LeadSchema = v.object({
   projectDocumentId: v.optional(v.string()),
   source: v.optional(v.string()),
   acceptsDataPolicy: v.literal(true, "Debes aceptar la política de tratamiento de datos"),
+  /**
+   * Contact authorisation, separate from the data policy: the CRM stores one
+   * flag per channel and an advisor may only write/call on the ones granted.
+   * One checkbox in the UI, the three channels it enables here.
+   */
+  acceptsContact: v.optional(v.boolean(), false),
+  // Campaign attribution read from the landing URL; never typed by the user.
+  utmSource: v.optional(v.string()),
+  utmMedium: v.optional(v.string()),
+  utmCampaign: v.optional(v.string()),
 });
 
 export type Lead = v.InferOutput<typeof LeadSchema>;
