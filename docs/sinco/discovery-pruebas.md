@@ -48,6 +48,15 @@ Qué tan poblados están (sobre 565 proyectos muestreados):
 `/Unidades/PorProyecto/{id}` responde **409 "No existen unidades en el proyecto"**
 cuando no hay ninguna — un 409 esperado, no un error.
 
+### Tipologías: nombres sí, imágenes no
+
+`/TipoInmueble/IdProyecto/{id}` devuelve `id`, `nombre` ("TIPO A - 65.93 MT2"),
+`codigoAlterno`, `rutaImagen`, `descripcionImagen`, `imagenConBase64`.
+
+Sobre 30 proyectos con disponibilidad: 21 tienen tipologías (595 en total) y
+**ninguna trae imagen** — `rutaImagen` viene `null` e `imagenConBase64` vacío.
+Las plantas y renders siguen siendo del CMS.
+
 ### `etapa` no es el estado de obra
 
 Corrige la suposición del análisis original. Los valores distintos de
