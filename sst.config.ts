@@ -45,6 +45,11 @@ export default $config({
     const encryptionKey = new sst.Secret("StrapiEncryptionKey");
     // Placeholder until the Vercel Deploy Hook exists; with "" Strapi skips rebuild triggers.
     const deployHookUrl = new sst.Secret("VercelDeployHookUrl", "");
+    // Sinco CBR/CRM. Empty by default so a stage without credentials still
+    // deploys — the providers stay on "manual" and nothing calls out.
+    const sincoBaseUrl = new sst.Secret("SincoBaseUrl", "");
+    const sincoUser = new sst.Secret("SincoUser", "");
+    const sincoPassword = new sst.Secret("SincoPassword", "");
 
     const cluster = new sst.aws.Cluster("Cluster", { vpc });
 
@@ -79,6 +84,10 @@ export default $config({
         UPLOADS_BUCKET: uploads.name,
         AWS_REGION: "us-east-1",
         PROJECT_DATA_PROVIDER: "manual",
+        LEAD_PROVIDER: "manual",
+        SINCO_BASE_URL: sincoBaseUrl.value,
+        SINCO_USER: sincoUser.value,
+        SINCO_PASSWORD: sincoPassword.value,
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
         SHARP_CONCURRENCY: "1",
         // Sits behind CloudFront → trust X-Forwarded-* (see config/server.ts).

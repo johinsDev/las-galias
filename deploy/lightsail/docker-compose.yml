@@ -54,8 +54,15 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       # Rebuild del sitio en Vercel al publicar
       VERCEL_DEPLOY_HOOK_URL: ${VERCEL_DEPLOY_HOOK_URL}
-      # Provider de datos (Sinco/manual)
+      # Providers (Sinco/manual)
       PROJECT_DATA_PROVIDER: ${PROJECT_DATA_PROVIDER:-manual}
+      LEAD_PROVIDER: ${LEAD_PROVIDER:-manual}
+      SINCO_BASE_URL: ${SINCO_BASE_URL:-}
+      SINCO_USER: ${SINCO_USER:-}
+      SINCO_PASSWORD: ${SINCO_PASSWORD:-}
+      SINCO_ID_ORIGEN: ${SINCO_ID_ORIGEN:-}
+      SINCO_ID_EMPRESA: ${SINCO_ID_EMPRESA:-}
+      SINCO_ID_SUCURSAL: ${SINCO_ID_SUCURSAL:-1}
     expose:
       - "1337" # solo visible para Caddy, no al exterior
 
