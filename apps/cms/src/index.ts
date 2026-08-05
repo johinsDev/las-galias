@@ -16,16 +16,25 @@ import {
   syncSincoCatalogIfEmpty,
 } from "./utils/sinco-catalog";
 
-/** Content types whose publish/unpublish must rebuild the static site. */
+/**
+ * Content types whose publish/unpublish must rebuild the static site.
+ *
+ * The rule is simply "does the website read it": anything the build queries has
+ * to be here, or an editor publishes a change and the site never shows it —
+ * with nothing in any log to explain why.
+ */
 const PUBLIC_UIDS = new Set<string>([
   PROJECT_UID,
   "api::post.post",
   "api::home-banner.home-banner",
   "api::macroproject.macroproject",
   "api::city.city",
+  "api::zone.zone",
   "api::amenity.amenity",
   "api::point-of-interest.point-of-interest",
   "api::redirect.redirect",
+  "api::faq.faq",
+  "api::foreign-buyer-page.foreign-buyer-page",
 ]);
 
 const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"]);
