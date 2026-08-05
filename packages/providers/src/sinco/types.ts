@@ -43,13 +43,25 @@ export interface SincoEnv {
   SINCO_ID_SUCURSAL?: string;
 }
 
+/**
+ * ECS hands unset secrets over as `""`, and `??` does not catch an empty string
+ * — `config.idSucursal ?? "1"` would keep the `""` and build
+ * `.../Empresa/{id}/Sucursal/`, a 404 on the multi-database login. Normalise to
+ * `undefined` so the defaults downstream actually kick in.
+ */
+function optional(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
 export function sincoConfigFromEnv(env: SincoEnv): SincoConfig {
   return {
-    baseUrl: env.SINCO_BASE_URL ?? "",
-    usuario: env.SINCO_USER ?? "",
+    baseUrl: env.SINCO_BASE_URL?.trim() ?? "",
+    usuario: env.SINCO_USER?.trim() ?? "",
+    // NOT trimmed: the password is an encrypted blob that travels verbatim.
     clave: env.SINCO_PASSWORD ?? "",
-    idOrigen: env.SINCO_ID_ORIGEN,
-    idEmpresa: env.SINCO_ID_EMPRESA,
-    idSucursal: env.SINCO_ID_SUCURSAL,
+    idOrigen: optional(env.SINCO_ID_ORIGEN),
+    idEmpresa: optional(env.SINCO_ID_EMPRESA),
+    idSucursal: optional(env.SINCO_ID_SUCURSAL),
   };
 }

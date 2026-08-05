@@ -17,6 +17,12 @@ sst-env.d.ts
 .env
 .env.*
 !.env.example
+# `.env*` only matches names STARTING with .env — credential files like
+# .sinco.env need this one.
+*.env
+
+# Raw dump from scripts/sinco-discover.ts (~1.8 MB of live ERP data).
+sinco-discovery.json
 
 # misc
 .DS_Store

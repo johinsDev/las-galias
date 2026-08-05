@@ -1,3 +1,53 @@
+# Build context is the REPO ROOT, so everything not needed by apps/cms/Dockerfile
+# is pure upload cost. Target: < 20 MB of "transferring context".
+# Verify with: docker build -f apps/cms/Dockerfile . --progress=plain
 
-# sst
+# ── dependencies & caches ────────────────────────────────────────────────────
+node_modules
+**/node_modules
+.turbo
+**/.turbo
+.cache
+**/.cache
+
+# ── build output (packages/providers is rebuilt inside the image) ────────────
+dist
+**/dist
+build
+**/build
+apps/cms/.strapi
+apps/cms/.tmp
+apps/web/.astro
+apps/web/.vercel
+
+# ── the web app: only its package.json is needed, for `bun install` ──────────
+# (see the install stage — do NOT exclude apps/web wholesale)
+apps/web/src
+apps/web/public
+apps/web/scripts
+
+# ── vcs, infra, docs, editors ────────────────────────────────────────────────
+.git
+.gitignore
+.github
 .sst
+docs
+*.md
+.vscode
+.idea
+.DS_Store
+**/.DS_Store
+
+# ── local env & secrets: never bake these into an image ──────────────────────
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+# ── local dev only ───────────────────────────────────────────────────────────
+docker-compose.yml
+lefthook.yml
+*.log
+coverage
+qa-backup*

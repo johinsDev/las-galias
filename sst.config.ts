@@ -26,7 +26,9 @@ export default $config({
     };
   },
   async run() {
-    const vpc = new sst.aws.Vpc("Vpc", { nat: "ec2" });
+    // bastion reuses the NAT instance that already exists (no extra cost) and is
+    // the only way to run SQL against the stage database.
+    const vpc = new sst.aws.Vpc("Vpc", { nat: "ec2", bastion: true });
 
     const db = new sst.aws.Postgres("Db", {
       vpc,
@@ -50,6 +52,53 @@ export default $config({
     const sincoBaseUrl = new sst.Secret("SincoBaseUrl", "");
     const sincoUser = new sst.Secret("SincoUser", "");
     const sincoPassword = new sst.Secret("SincoPassword", "");
+    // Multi-database login (HTTP 300) and lead attribution. Left empty on
+    // purpose where the environment answers 200 — guessing ids breaks the login.
+    const sincoIdOrigen = new sst.Secret("SincoIdOrigen", "");
+    const sincoIdEmpresa = new sst.Secret("SincoIdEmpresa", "");
+    const sincoIdSucursal = new sst.Secret("SincoIdSucursal", "");
+    const sincoLeadOrigen = new sst.Secret("SincoLeadOrigenInformacion", "");
+    const sincoLeadMedio = new sst.Secret("SincoLeadMedioPublicitario", "");
+
+    // Strategy selection lives in runtime (createLeadProvider(process.env)), so
+    // SST only has to carry the string. Default "manual" so a brand-new stage
+    // never calls a CRM by accident.
+    const leadProvider = new sst.Secret("LeadProvider", "manual");
+    const projectDataProvider = new sst.Secret("ProjectDataProvider", "manual");
+    // Strapi's own public URL. Chicken-and-egg with the CDN below (the CDN's
+    // origin is this service), so it is set on a second pass:
+    //   deploy → read cmsHttpsUrl → sst secret set CmsPublicUrl → deploy again.
+    const cmsPublicUrl = new sst.Secret("CmsPublicUrl", "");
+
+    // Guardrails that Pulumi always evaluates, because the resolved value IS
+    // what the Service consumes — a throw here fails the deploy instead of
+    // publishing a broken stage.
+    const leadProviderChecked = $resolve([leadProvider.value, sincoBaseUrl.value]).apply(
+      ([provider, baseUrl]) => {
+        if (provider !== "manual" && provider !== "sinco")
+          throw new Error(`LeadProvider debe ser "manual" o "sinco", llegó "${provider}"`);
+        if (provider === "sinco" && !baseUrl)
+          throw new Error(`LeadProvider es "sinco" pero SincoBaseUrl está vacío en ${$app.stage}`);
+        // Sinco ids are NOT portable between environments: the same id is a
+        // different project in pruebas and in production.
+        if ($app.stage === "production" && baseUrl.includes("pruebas"))
+          throw new Error(`El stage "production" está apuntando al Sinco de *pruebas*.`);
+        return provider;
+      },
+    );
+
+    const projectDataProviderChecked = $resolve([
+      projectDataProvider.value,
+      sincoBaseUrl.value,
+    ]).apply(([provider, baseUrl]) => {
+      if (provider !== "manual" && provider !== "sinco")
+        throw new Error(`ProjectDataProvider debe ser "manual" o "sinco", llegó "${provider}"`);
+      if (provider === "sinco" && !baseUrl)
+        throw new Error(
+          `ProjectDataProvider es "sinco" pero SincoBaseUrl está vacío en ${$app.stage}`,
+        );
+      return provider;
+    });
 
     const cluster = new sst.aws.Cluster("Cluster", { vpc });
 
@@ -83,12 +132,22 @@ export default $config({
         DATABASE_SSL_REJECT_UNAUTHORIZED: "false",
         UPLOADS_BUCKET: uploads.name,
         AWS_REGION: "us-east-1",
-        PROJECT_DATA_PROVIDER: "manual",
-        LEAD_PROVIDER: "manual",
+        PROJECT_DATA_PROVIDER: projectDataProviderChecked,
+        LEAD_PROVIDER: leadProviderChecked,
         SINCO_BASE_URL: sincoBaseUrl.value,
         SINCO_USER: sincoUser.value,
         SINCO_PASSWORD: sincoPassword.value,
+        SINCO_ID_ORIGEN: sincoIdOrigen.value,
+        SINCO_ID_EMPRESA: sincoIdEmpresa.value,
+        SINCO_ID_SUCURSAL: sincoIdSucursal.value,
+        SINCO_LEAD_ORIGEN_INFORMACION: sincoLeadOrigen.value,
+        SINCO_LEAD_MEDIO_PUBLICITARIO: sincoLeadMedio.value,
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
+        // Absolute URL Strapi builds its links with (admin, media, webhooks).
+        PUBLIC_URL: cmsPublicUrl.value,
+        // The lead retry cron and the daily rates cron run in this container.
+        CRON_ENABLED: "true",
+        UPLOAD_MAX_BYTES: String(10 * 1024 * 1024),
         SHARP_CONCURRENCY: "1",
         // Sits behind CloudFront → trust X-Forwarded-* (see config/server.ts).
         IS_PROXIED: "true",

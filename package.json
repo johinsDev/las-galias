@@ -23,7 +23,8 @@
     "format": "prettier --write \"**/*.{astro,ts,tsx,js,jsx,json,css,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,json,css,md,yml,yaml}\"",
     "knip": "knip-bun",
-    "deploy:cms": "sst deploy",
+    "deploy:cms:qa": "sst deploy --stage qa",
+    "deploy:cms:production": "sst deploy --stage production",
     "prepare": "lefthook install || true"
   },
   "devDependencies": {

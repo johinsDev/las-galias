@@ -74,16 +74,35 @@ Everything (VPC, RDS Postgres, Fargate service, S3 uploads bucket, secrets) is c
 in the AWS account of the active `AWS_PROFILE`. One-time per account/stage:
 
 ```bash
-for s in StrapiAppKeys StrapiAdminJwtSecret StrapiApiTokenSalt StrapiJwtSecret StrapiTransferTokenSalt StrapiEncryptionKey; do
+# APP_KEYS is an ARRAY (env.array in config/server.ts) — it needs at least two
+# comma-separated values. A single key makes Strapi crash-loop on boot.
+AWS_PROFILE=<profile> bunx sst secret set StrapiAppKeys \
+  "$(openssl rand -base64 32),$(openssl rand -base64 32)" --stage production
+
+for s in StrapiAdminJwtSecret StrapiApiTokenSalt StrapiJwtSecret StrapiTransferTokenSalt StrapiEncryptionKey; do
   AWS_PROFILE=<profile> bunx sst secret set $s "$(openssl rand -base64 32)" --stage production
 done
 
 AWS_PROFILE=<profile> bunx sst deploy --stage production
 ```
 
-Outputs `cmsUrl` (the load balancer URL). Docker must be running locally (the image is
-built on your machine). Switching to another AWS account = same two commands with a
-different profile.
+Outputs `cmsUrl` (the HTTP load balancer) and `cmsHttpsUrl` (CloudFront). Docker must be
+running locally (the image is built on your machine) — deploy from Apple Silicon, an x86
+host falls back to QEMU emulation for the arm64 build. Switching to another AWS account =
+same two commands with a different profile.
+
+**Second pass for `PUBLIC_URL`:** the CDN's origin is the service, so the URL cannot be
+fed back in the same deploy. After the first one:
+
+```bash
+AWS_PROFILE=<profile> bunx sst secret set CmsPublicUrl "<cmsHttpsUrl>" --stage production
+AWS_PROFILE=<profile> bunx sst deploy --stage production   # ~3-5 min, task definition only
+```
+
+**Sinco** is off unless you turn it on — `LeadProvider` and `ProjectDataProvider` default
+to `manual`. Set `SincoBaseUrl`, `SincoUser`, `SincoPassword` (read the password from a
+file, never inline: it is an encrypted blob with shell metacharacters that would land in
+your history) and then flip `LeadProvider` to `sinco`. No code redeploy needed to switch.
 
 **Stages** are fully independent copies of the infrastructure, namespaced by name
 (`las-galias-<stage>-*`): own VPC, database, bucket and secrets. Use `--stage dev` for a
@@ -96,7 +115,10 @@ stage is fully deleted by `sst remove --stage <name>`. Every live stage costs it
 
 1. Import the repo in Vercel — the root `vercel.json` already defines the build
    (`turbo run build --filter=web`, bun install, Astro).
-2. Project env vars: `STRAPI_URL` and `PUBLIC_STRAPI_URL` = the `cmsUrl` from SST.
+2. Project env vars: `STRAPI_URL` and `PUBLIC_STRAPI_URL` = the **`cmsHttpsUrl`** from SST.
+   Not `cmsUrl`: `PUBLIC_STRAPI_URL` is fetched by `LeadForm` from the browser, and an
+   `http://` ALB called from an `https://` page is mixed content — every submission fails
+   silently.
 3. Create a Deploy Hook (Settings → Git → Deploy Hooks) and wire it into the CMS:
 
    ```bash
