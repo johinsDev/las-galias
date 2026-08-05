@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_project_spec_sheets",
+  "info": {
+    "displayName": "Spec sheet",
+    "description": "Project-level technical data for the PDP grid. Per-unit figures (area, bedrooms, bathrooms) live in unit-type, not here"
+  },
+  "attributes": {
+    "towers": {
+      "type": "integer"
+    },
+    "apartments": {
+      "type": "integer"
+    },
+    "elevatorsPerTower": {
+      "type": "integer"
+    },
+    "parking": {
+      "type": "string",
+      "description": "Free text: 'Comunal', 'Privado', 'Opcional'"
+    },
+    "stratum": {
+      "type": "integer",
+      "min": 1,
+      "max": 6
+    },
+    "deliveryYear": {
+      "type": "integer",
+      "description": "Estimated handover year, shown next to the construction status"
+    }
+  }
+}

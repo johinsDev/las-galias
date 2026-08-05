@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_project_financings",
+  "info": {
+    "displayName": "Financing",
+    "description": "Feeds the PDP sticky sidebar: instalment breakdown, trust details and the payments portal. Overrides the global calculator-config for this project"
+  },
+  "attributes": {
+    "annualRatePct": {
+      "type": "decimal",
+      "description": "Estimated mortgage rate, EA (e.g. 13.95). Falls back to calculator-config when empty"
+    },
+    "termYears": {
+      "type": "integer",
+      "description": "Mortgage term in years (e.g. 15)"
+    },
+    "downPaymentPct": {
+      "type": "integer",
+      "description": "Down payment as a percentage of the price (e.g. 30)"
+    },
+    "builderInstallmentMonths": {
+      "type": "integer",
+      "description": "Months to pay the down payment to the builder (e.g. 36)"
+    },
+    "trusteeName": {
+      "type": "string",
+      "description": "e.g. 'Fiduciaria Bogotá S.A.'"
+    },
+    "trustNumber": {
+      "type": "string",
+      "description": "Trust/fideicomiso number, e.g. 'FID-2024-8821'"
+    },
+    "clientPortalUrl": {
+      "type": "string",
+      "description": "'Zona clientes' payments portal for this project"
+    }
+  }
+}

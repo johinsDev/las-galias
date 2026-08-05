@@ -39,6 +39,27 @@
       "type": "enumeration",
       "enum": ["launch", "presale", "construction", "immediate-delivery"]
     },
+    "appliesSubsidy": {
+      "type": "boolean",
+      "default": false,
+      "description": "Badge 'Aplica subsidio' on the card and the PDP header"
+    },
+    "lastUnits": {
+      "type": "boolean",
+      "default": false,
+      "description": "Badge 'Últimas unidades'"
+    },
+    "hasDiscount": {
+      "type": "boolean",
+      "default": false,
+      "description": "Badge 'Descuento'"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Project logo, shown in the PDP header and over the card image"
+    },
     "description": {
       "type": "blocks"
     },
@@ -102,6 +123,30 @@
     },
     "video": {
       "type": "string"
+    },
+    "tour360Url": {
+      "type": "string",
+      "description": "360° virtual tour, shown as its own tab in the PDP gallery"
+    },
+    "constructionProgress": {
+      "type": "component",
+      "component": "project.construction-progress",
+      "repeatable": true
+    },
+    "specSheet": {
+      "type": "component",
+      "component": "project.spec-sheet",
+      "repeatable": false
+    },
+    "financing": {
+      "type": "component",
+      "component": "project.financing",
+      "repeatable": false
+    },
+    "salesRoom": {
+      "type": "component",
+      "component": "project.sales-room",
+      "repeatable": false
     },
     "seo": {
       "type": "component",

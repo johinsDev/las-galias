@@ -23,6 +23,10 @@
       "type": "string",
       "required": true
     },
+    "residenceCountry": {
+      "type": "string",
+      "description": "Country of residence, from the foreign-buyer landing. Stored even though POST /SalaVentas/Externo/Visitas has no country field today"
+    },
     "message": {
       "type": "text"
     },

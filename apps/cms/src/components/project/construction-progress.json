@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_project_construction_progress",
+  "info": {
+    "displayName": "Construction progress",
+    "description": "One entry per month; the PDP renders them as tabs, each with its own independent video"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Tab label, e.g. 'Mayo 2025'"
+    },
+    "date": {
+      "type": "date",
+      "description": "Used to sort the tabs newest-first; the label is what gets displayed"
+    },
+    "video": {
+      "type": "string",
+      "required": true,
+      "description": "Video URL for this month"
+    }
+  }
+}

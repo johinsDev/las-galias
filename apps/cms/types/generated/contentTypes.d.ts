@@ -508,6 +508,74 @@ export interface ApiExchangeRateExchangeRate extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
+  collectionName: "faqs";
+  info: {
+    description: "Accordion questions. `audience` scopes them to a page \u2014 the foreign-buyer landing renders audience=exterior";
+    displayName: "FAQ";
+    pluralName: "faqs";
+    singularName: "faq";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    answer: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    audience: Schema.Attribute.Enumeration<["general", "exterior"]> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"general">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::faq.faq"> &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiForeignBuyerPageForeignBuyerPage extends Struct.SingleTypeSchema {
+  collectionName: "foreign_buyer_page";
+  info: {
+    description: "The 'Colombianos en el exterior' landing. Its FAQ lives in the faq collection with audience=exterior; the project cards are the regular published projects, priced in USD off the daily exchange-rate";
+    displayName: "Foreign buyer page";
+    pluralName: "foreign-buyer-pages";
+    singularName: "foreign-buyer-page";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    eyebrow: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Colombianos en el exterior">;
+    formBody: Schema.Attribute.Text;
+    formBullets: Schema.Attribute.JSON;
+    formTitle: Schema.Attribute.String;
+    heroCtaLabel: Schema.Attribute.String & Schema.Attribute.DefaultTo<"D\u00E9janos tus datos">;
+    heroImage: Schema.Attribute.Media<"images">;
+    heroSubtitle: Schema.Attribute.Text;
+    heroTitle: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::foreign-buyer-page.foreign-buyer-page"
+    > &
+      Schema.Attribute.Private;
+    priceDisclaimer: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    steps: Schema.Attribute.Component<"page.step", true>;
+    stepsTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Conoce el paso a paso">;
+    trustBadges: Schema.Attribute.JSON;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
   collectionName: "home_banners";
   info: {
@@ -570,6 +638,7 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     phone: Schema.Attribute.String & Schema.Attribute.Required;
     project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
+    residenceCountry: Schema.Attribute.String;
     source: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
@@ -658,6 +727,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    category: Schema.Attribute.Enumeration<["financiacion", "guia-de-compra", "mercado"]>;
     content: Schema.Attribute.Blocks;
     cover: Schema.Attribute.Media<"images">;
     createdAt: Schema.Attribute.DateTime;
@@ -667,6 +737,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<"oneToMany", "api::post.post"> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    publishedOn: Schema.Attribute.Date;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -688,20 +759,26 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   };
   attributes: {
     amenities: Schema.Attribute.Relation<"manyToMany", "api::amenity.amenity">;
+    appliesSubsidy: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     city: Schema.Attribute.Relation<"manyToOne", "api::city.city"> & Schema.Attribute.Required;
+    constructionProgress: Schema.Attribute.Component<"project.construction-progress", true>;
     constructionStatus: Schema.Attribute.Enumeration<
       ["launch", "presale", "construction", "immediate-delivery"]
     >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     description: Schema.Attribute.Blocks;
+    financing: Schema.Attribute.Component<"project.financing", false>;
     gallery: Schema.Attribute.Media<"images", true>;
+    hasDiscount: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     heroDesktop: Schema.Attribute.Media<"images">;
     heroMobile: Schema.Attribute.Media<"images">;
+    lastUnits: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::project.project"> &
       Schema.Attribute.Private;
     location: Schema.Attribute.Component<"shared.geo", false>;
+    logo: Schema.Attribute.Media<"images">;
     macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject">;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     priceFromCOP: Schema.Attribute.BigInteger;
@@ -709,13 +786,16 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     priceLocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
+    salesRoom: Schema.Attribute.Component<"project.sales-room", false>;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     sincoProject: Schema.Attribute.Relation<"oneToOne", "api::sinco-project.sinco-project">;
     slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    specSheet: Schema.Attribute.Component<"project.spec-sheet", false>;
     stage: Schema.Attribute.Enumeration<["expectation", "sale"]> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<"expectation">;
     syncFromSinco: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tour360Url: Schema.Attribute.String;
     unitTypes: Schema.Attribute.Component<"project.unit-type", true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
@@ -1214,6 +1294,8 @@ declare module "@strapi/strapi" {
       "api::calculator-config.calculator-config": ApiCalculatorConfigCalculatorConfig;
       "api::city.city": ApiCityCity;
       "api::exchange-rate.exchange-rate": ApiExchangeRateExchangeRate;
+      "api::faq.faq": ApiFaqFaq;
+      "api::foreign-buyer-page.foreign-buyer-page": ApiForeignBuyerPageForeignBuyerPage;
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::lead.lead": ApiLeadLead;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;

@@ -5,7 +5,6 @@ import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
 import {
   createAutoRedirect,
   disableAutoRedirect,
-  mergeSincoData,
   PROJECT_UID,
   validateFieldsByStage,
   validateRecommendedSameCity,
@@ -45,7 +44,8 @@ export default {
 
       if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {
-          await mergeSincoData(strapi, params);
+          // NOTE: pulling from Sinco does NOT happen here on purpose — see
+          // syncProjectFromSinco. Saving must never wait on the ERP.
           await validateRecommendedSameCity(strapi, params);
         }
         if (action === "publish") {
@@ -97,10 +97,12 @@ export default {
       "api::point-of-interest.point-of-interest",
       "api::home-banner.home-banner",
       "api::redirect.redirect",
+      "api::faq.faq",
     ].flatMap((uid) => [`${uid}.find`, `${uid}.findOne`]);
     const singles = [
       "api::calculator-config.calculator-config.find",
       "api::exchange-rate.exchange-rate.find",
+      "api::foreign-buyer-page.foreign-buyer-page.find",
     ];
     const actions = [...reads, ...singles, "api::lead.lead.create"];
 

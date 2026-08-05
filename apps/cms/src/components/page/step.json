@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_page_steps",
+  "info": {
+    "displayName": "Step",
+    "description": "Numbered step in a 'how it works' block; the number is the position, not a field"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

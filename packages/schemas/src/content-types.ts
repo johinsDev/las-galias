@@ -61,11 +61,46 @@ export interface Amenity {
 
 export interface UnitType {
   name: string;
-  areaM2: number;
-  bedrooms: number;
-  bathrooms: number;
-  priceCOP: number;
+  // All optional in the Strapi schema, and `priceCOP` is a `biginteger` —
+  // which REST serialises as a STRING. Declaring these required was a lie that
+  // Frente B (real areas and prices from Sinco) would have surfaced as a crash.
+  areaM2?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  priceCOP?: number | string | null;
   floorPlan?: Media | null;
+}
+
+/** Project-level figures for the PDP spec grid; per-unit ones live in UnitType. */
+interface SpecSheet {
+  towers?: number | null;
+  apartments?: number | null;
+  elevatorsPerTower?: number | null;
+  parking?: string | null;
+  stratum?: number | null;
+  deliveryYear?: number | null;
+}
+
+interface ConstructionProgress {
+  label: string;
+  date?: string | null;
+  video: string;
+}
+
+interface Financing {
+  annualRatePct?: number | null;
+  termYears?: number | null;
+  downPaymentPct?: number | null;
+  builderInstallmentMonths?: number | null;
+  trusteeName?: string | null;
+  trustNumber?: string | null;
+  clientPortalUrl?: string | null;
+}
+
+interface SalesRoom {
+  schedule?: string | null;
+  phone?: string | null;
+  whatsappUrl?: string | null;
 }
 
 export interface Project {
@@ -74,6 +109,10 @@ export interface Project {
   slug: string;
   stage: Stage;
   constructionStatus?: ConstructionStatus | null;
+  appliesSubsidy?: boolean;
+  lastUnits?: boolean;
+  hasDiscount?: boolean;
+  logo?: Media | null;
   description?: unknown;
   priceFromCOP?: number | null;
   city: City;
@@ -86,18 +125,58 @@ export interface Project {
   heroMobile?: Media | null;
   location?: Geo | null;
   video?: string | null;
+  tour360Url?: string | null;
+  constructionProgress?: ConstructionProgress[];
+  specSheet?: SpecSheet | null;
+  financing?: Financing | null;
+  salesRoom?: SalesRoom | null;
   seo?: Seo | null;
 }
+
+type PostCategory = "financiacion" | "guia-de-compra" | "mercado";
 
 export interface Post {
   documentId: string;
   title: string;
   slug: string;
   excerpt?: string | null;
+  category?: PostCategory | null;
+  /** Editorial date shown on the card; independent from Strapi's publishedAt. */
+  publishedOn?: string | null;
   cover?: Media | null;
   content?: unknown;
   seo?: Seo | null;
   publishedAt?: string;
+}
+
+export interface Faq {
+  documentId: string;
+  question: string;
+  answer: unknown;
+  audience: "general" | "exterior";
+  order?: number | null;
+}
+
+interface Step {
+  title: string;
+  body: string;
+}
+
+/** Single type behind /compra-desde-el-exterior. */
+export interface ForeignBuyerPage {
+  eyebrow?: string | null;
+  heroTitle: string;
+  heroSubtitle?: string | null;
+  heroImage?: Media | null;
+  heroCtaLabel?: string | null;
+  trustBadges?: string[] | null;
+  stepsTitle?: string | null;
+  steps?: Step[];
+  priceDisclaimer?: string | null;
+  formTitle?: string | null;
+  formBody?: string | null;
+  formBullets?: string[] | null;
+  seo?: Seo | null;
 }
 
 export interface HomeBanner {

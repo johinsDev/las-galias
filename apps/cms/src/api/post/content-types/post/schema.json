@@ -23,6 +23,15 @@
     "excerpt": {
       "type": "text"
     },
+    "category": {
+      "type": "enumeration",
+      "enum": ["financiacion", "guia-de-compra", "mercado"],
+      "description": "Eyebrow label above the post title on the home blog cards"
+    },
+    "publishedOn": {
+      "type": "date",
+      "description": "Editorial date shown on the card; independent from Strapi's publishedAt"
+    },
     "cover": {
       "type": "media",
       "multiple": false,

@@ -1,0 +1,67 @@
+{
+  "kind": "singleType",
+  "collectionName": "foreign_buyer_page",
+  "info": {
+    "singularName": "foreign-buyer-page",
+    "pluralName": "foreign-buyer-pages",
+    "displayName": "Foreign buyer page",
+    "description": "The 'Colombianos en el exterior' landing. Its FAQ lives in the faq collection with audience=exterior; the project cards are the regular published projects, priced in USD off the daily exchange-rate"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "eyebrow": {
+      "type": "string",
+      "default": "Colombianos en el exterior"
+    },
+    "heroTitle": {
+      "type": "string",
+      "required": true
+    },
+    "heroSubtitle": {
+      "type": "text"
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "heroCtaLabel": {
+      "type": "string",
+      "default": "Déjanos tus datos"
+    },
+    "trustBadges": {
+      "type": "json",
+      "description": "Short labels under the hero CTA, e.g. [\"Broker autorizado\", \"Pagos por PSE\"]"
+    },
+    "stepsTitle": {
+      "type": "string",
+      "default": "Conoce el paso a paso"
+    },
+    "steps": {
+      "type": "component",
+      "component": "page.step",
+      "repeatable": true
+    },
+    "priceDisclaimer": {
+      "type": "text",
+      "description": "Shown under the USD project grid — the TRM reference note"
+    },
+    "formTitle": {
+      "type": "string"
+    },
+    "formBody": {
+      "type": "text"
+    },
+    "formBullets": {
+      "type": "json",
+      "description": "Checklist next to the form, e.g. [\"Sin costo · Sin compromiso\"]"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_project_sales_rooms",
+  "info": {
+    "displayName": "Sales room",
+    "description": "Shown under the map on the PDP. The street address lives in the project's location (shared.geo), not here"
+  },
+  "attributes": {
+    "schedule": {
+      "type": "string",
+      "description": "e.g. 'Lun–Dom 9:00am – 5:00pm'"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "whatsappUrl": {
+      "type": "string"
+    }
+  }
+}
