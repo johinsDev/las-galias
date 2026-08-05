@@ -175,6 +175,11 @@ interface Step {
   body: string;
 }
 
+/** Repeatable one-line item. Replaces what used to be a `json` field. */
+interface ListItem {
+  text: string;
+}
+
 /** Single type behind /compra-desde-el-exterior. */
 export interface ForeignBuyerPage {
   eyebrow?: string | null;
@@ -182,13 +187,13 @@ export interface ForeignBuyerPage {
   heroSubtitle?: string | null;
   heroImage?: Media | null;
   heroCtaLabel?: string | null;
-  trustBadges?: string[] | null;
+  trustBadges?: ListItem[] | null;
   stepsTitle?: string | null;
   steps?: Step[];
   priceDisclaimer?: string | null;
   formTitle?: string | null;
   formBody?: string | null;
-  formBullets?: string[] | null;
+  formBullets?: ListItem[] | null;
   seo?: Seo | null;
 }
 

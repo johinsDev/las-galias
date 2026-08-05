@@ -32,7 +32,9 @@
       "default": "Déjanos tus datos"
     },
     "trustBadges": {
-      "type": "json",
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true,
       "description": "Short labels under the hero CTA, e.g. [\"Broker autorizado\", \"Pagos por PSE\"]"
     },
     "stepsTitle": {
@@ -55,7 +57,9 @@
       "type": "text"
     },
     "formBullets": {
-      "type": "json",
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true,
       "description": "Checklist next to the form, e.g. [\"Sin costo · Sin compromiso\"]"
     },
     "seo": {

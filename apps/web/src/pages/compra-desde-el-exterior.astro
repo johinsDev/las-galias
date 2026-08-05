@@ -22,7 +22,7 @@ const heroSubtitle =
   page?.heroSubtitle ??
   "Asesoría personalizada, pagos 100% digitales y acompañamiento en cada paso, sin importar en qué país vivas hoy.";
 const heroCtaLabel = page?.heroCtaLabel ?? "Déjanos tus datos";
-const trustBadges = page?.trustBadges ?? ["Broker autorizado", "Pagos por PSE"];
+const trustBadges = page?.trustBadges?.map((b) => b.text) ?? ["Broker autorizado", "Pagos por PSE"];
 const stepsTitle = page?.stepsTitle ?? "Conoce el paso a paso";
 const steps = page?.steps?.length
   ? page.steps
@@ -47,7 +47,7 @@ const formTitle = page?.formTitle ?? "¿Listo para dar el primer paso?";
 const formBody =
   page?.formBody ??
   "Déjanos tus datos y uno de nuestros asesores especializados en compradores internacionales te contactará en menos de 24 horas.";
-const formBullets = page?.formBullets ?? [
+const formBullets = page?.formBullets?.map((b) => b.text) ?? [
   "Sin costo · Sin compromiso",
   "Atención en español · Inglés",
   "Proceso 100% digital",

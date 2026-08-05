@@ -1,5 +1,16 @@
 import type { Schema, Struct } from "@strapi/strapi";
 
+export interface PageListItem extends Struct.ComponentSchema {
+  collectionName: "components_page_list_items";
+  info: {
+    description: "Una l\u00EDnea suelta (badge, vi\u00F1eta). Existe para no usar un campo JSON: el editor de JSON del admin rompe la pantalla y adem\u00E1s obliga al editor a escribir sintaxis";
+    displayName: "\u00CDtem de lista";
+  };
+  attributes: {
+    text: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface PageStep extends Struct.ComponentSchema {
   collectionName: "components_page_steps";
   info: {
@@ -124,6 +135,7 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module "@strapi/strapi" {
   export namespace Public {
     export interface ComponentSchemas {
+      "page.list-item": PageListItem;
       "page.step": PageStep;
       "project.construction-progress": ProjectConstructionProgress;
       "project.financing": ProjectFinancing;

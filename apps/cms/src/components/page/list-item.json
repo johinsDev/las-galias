@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_page_list_items",
+  "info": {
+    "displayName": "Ítem de lista",
+    "description": "Una línea suelta (badge, viñeta). Existe para no usar un campo JSON: el editor de JSON del admin rompe la pantalla y además obliga al editor a escribir sintaxis"
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

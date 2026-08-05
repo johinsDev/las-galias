@@ -553,7 +553,7 @@ export interface ApiForeignBuyerPageForeignBuyerPage extends Struct.SingleTypeSc
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     eyebrow: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Colombianos en el exterior">;
     formBody: Schema.Attribute.Text;
-    formBullets: Schema.Attribute.JSON;
+    formBullets: Schema.Attribute.Component<"page.list-item", true>;
     formTitle: Schema.Attribute.String;
     heroCtaLabel: Schema.Attribute.String & Schema.Attribute.DefaultTo<"D\u00E9janos tus datos">;
     heroImage: Schema.Attribute.Media<"images">;
@@ -570,7 +570,7 @@ export interface ApiForeignBuyerPageForeignBuyerPage extends Struct.SingleTypeSc
     seo: Schema.Attribute.Component<"shared.seo", false>;
     steps: Schema.Attribute.Component<"page.step", true>;
     stepsTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Conoce el paso a paso">;
-    trustBadges: Schema.Attribute.JSON;
+    trustBadges: Schema.Attribute.Component<"page.list-item", true>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
