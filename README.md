@@ -121,10 +121,21 @@ stage is fully deleted by `sst remove --stage <name>`. Every live stage costs it
 | IP estática  | `44.208.234.104`                      | `sslip.io` la resuelve sola → HTTPS de Let's Encrypt sin DNS propio |
 | Sinco        | `pruebas4.sincoerp.com` (PRBINT)      | `LEAD_PROVIDER=sinco`, `PROJECT_DATA_PROVIDER=manual`               |
 
-Operación (por SSH a la instancia, `/opt/las-galias/deploy/lightsail`):
+Para entrar hay que bajar la llave por defecto de Lightsail. Ojo: la llave
+_temporal_ de `get-instance-access-details` **no sirve** aquí — la instancia
+solo confía en `LightsailDefaultKeyPair`:
 
 ```bash
-sudo ./scripts/deploy.sh                                   # actualizar tras un push
+export AWS_PROFILE=lasgalias
+aws lightsail download-default-key-pair --region us-east-1 \
+  --query 'privateKeyBase64' --output text > /tmp/ls.pem && chmod 600 /tmp/ls.pem
+ssh -i /tmp/ls.pem ubuntu@44.208.234.104
+```
+
+Operación (ya dentro, en `/opt/las-galias/deploy/lightsail`):
+
+```bash
+sudo ./scripts/deploy.sh                                   # actualizar tras un push (~12 min: compila el admin)
 sudo docker compose --env-file .env logs -f cms            # logs
 sudo docker compose --env-file .env restart cms            # reiniciar
 ```
