@@ -1,18 +1,32 @@
 ---
-import { formatMoney } from "@/lib/currency";
+import { convertFromCOP, formatMoney, type Currency } from "@/lib/currency";
 
 interface Props {
   copValue: number | string;
   prefix?: string;
   class?: string;
+  /**
+   * Render in this currency instead of COP (the foreign-buyer landing shows USD
+   * first). Needs `rates`; without them it falls back to COP rather than
+   * inventing a conversion.
+   */
+  currency?: Currency;
+  rates?: { copPerUsd: number; copPerEur: number } | null;
 }
 
-const { copValue, prefix, class: className } = Astro.props;
+const { copValue, prefix, class: className, currency = "COP", rates } = Astro.props;
 const cop = Number(copValue);
+
+const display = currency !== "COP" && rates ? convertFromCOP(cop, currency, rates) : cop;
+const displayCurrency = currency !== "COP" && rates ? currency : "COP";
 ---
 
 <span class:list={["whitespace-nowrap", className]}>
-  {prefix && <span class="text-ink-muted text-body-sm">{prefix} </span>}<span data-price-cop={cop}
-    >{formatMoney(cop, "COP")}</span
+  {prefix && <span class="text-ink-muted text-body-sm">{prefix} </span>}{
+    /* data-price-cop is the CurrencySwitcher contract — it rewrites this node's
+       text from the COP value. Only tag it when we are actually showing COP, so
+       a hard-coded USD price is not silently overwritten. */
+  }<span data-price-cop={displayCurrency === "COP" ? cop : undefined}
+    >{formatMoney(display, displayCurrency)}</span
   >
 </span>

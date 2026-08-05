@@ -1,6 +1,8 @@
 import type {
   CalculatorConfig,
   ExchangeRate,
+  Faq,
+  ForeignBuyerPage,
   HomeBanner,
   Macroproject,
   Post,
@@ -46,6 +48,12 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[heroDesktop]": "true",
   "populate[heroMobile]": "true",
   "populate[unitTypes]": "true",
+  // Card chrome from the Figma card spec: project logo, the delivery year in
+  // the footer, the WhatsApp CTA and the third level of the location trail.
+  "populate[logo]": "true",
+  "populate[specSheet]": "true",
+  "populate[salesRoom]": "true",
+  "populate[macroproject]": "true",
 };
 
 export async function getProjects(): Promise<Project[]> {
@@ -71,6 +79,12 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[amenities][populate][icon]": "true",
     "populate[macroproject][populate][pointsOfInterest]": "true",
     "populate[recommended][populate][city]": "true",
+    // PDP blocks added with the new wireframe.
+    "populate[logo]": "true",
+    "populate[specSheet]": "true",
+    "populate[financing]": "true",
+    "populate[salesRoom]": "true",
+    "populate[constructionProgress]": "true",
   });
   return data?.[0] ?? null;
 }
@@ -123,6 +137,24 @@ export async function getExchangeRate(): Promise<ExchangeRate | null> {
 
 export async function getCalculatorConfig(): Promise<CalculatorConfig | null> {
   return strapiFetch<CalculatorConfig>("calculator-config");
+}
+
+export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {
+  return strapiFetch<ForeignBuyerPage>("foreign-buyer-page", {
+    "populate[heroImage]": "true",
+    "populate[steps]": "true",
+    "populate[seo][populate][ogImage]": "true",
+  });
+}
+
+export async function getFaqs(audience: "general" | "exterior"): Promise<Faq[]> {
+  return (
+    (await strapiFetch<Faq[]>("faqs", {
+      "filters[audience][$eq]": audience,
+      sort: "order:asc",
+      "pagination[pageSize]": "100",
+    })) ?? []
+  );
 }
 
 /** Resolves relative media URLs (local dev provider) to absolute ones. */

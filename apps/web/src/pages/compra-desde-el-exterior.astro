@@ -1,0 +1,272 @@
+---
+import { Image } from "astro:assets";
+
+import Blocks from "@/components/Blocks.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import LeadForm from "@/islands/LeadForm";
+import Base from "@/layouts/Base.astro";
+import { getExchangeRate, getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
+
+const [page, projects, rates, faqs] = await Promise.all([
+  getForeignBuyerPage(),
+  getProjects(),
+  getExchangeRate(),
+  getFaqs("exterior"),
+]);
+
+// The page must build even before an editor fills the single type in, so every
+// piece of copy has a fallback taken from the wireframe.
+const eyebrow = page?.eyebrow ?? "Colombianos en el exterior";
+const heroTitle = page?.heroTitle ?? "Tu próxima inversión en Colombia, desde donde estés";
+const heroSubtitle =
+  page?.heroSubtitle ??
+  "Asesoría personalizada, pagos 100% digitales y acompañamiento en cada paso, sin importar en qué país vivas hoy.";
+const heroCtaLabel = page?.heroCtaLabel ?? "Déjanos tus datos";
+const trustBadges = page?.trustBadges ?? ["Broker autorizado", "Pagos por PSE"];
+const stepsTitle = page?.stepsTitle ?? "Conoce el paso a paso";
+const steps = page?.steps?.length
+  ? page.steps
+  : [
+      {
+        title: "Selecciona el proyecto de tu interés",
+        body: "Explora proyectos en Bogotá, Cali, Manizales y Pereira. Agenda una videollamada con un asesor especializado en compradores internacionales.",
+      },
+      {
+        title: "Validamos tu financiación",
+        body: "Revisamos tus recursos e ingresos en el exterior para confirmar tu capacidad de compra y las opciones de crédito disponibles.",
+      },
+      {
+        title: "Realiza el pago de separación",
+        body: "Pagas por PSE o, si tienes un apoderado en Colombia, a través de nuestros bancos aliados. Todo el proceso puede hacerse 100% en línea.",
+      },
+    ];
+const priceDisclaimer =
+  page?.priceDisclaimer ??
+  "Precios en USD calculados con referencia a la TRM del día de la consulta. Imágenes ilustrativas; planos y áreas sujetos a modificación por requerimientos técnicos y/o de curaduría.";
+const formTitle = page?.formTitle ?? "¿Listo para dar el primer paso?";
+const formBody =
+  page?.formBody ??
+  "Déjanos tus datos y uno de nuestros asesores especializados en compradores internacionales te contactará en menos de 24 horas.";
+const formBullets = page?.formBullets ?? [
+  "Sin costo · Sin compromiso",
+  "Atención en español · Inglés",
+  "Proceso 100% digital",
+];
+
+// Only projects actually on sale — an expectation-stage project has no price to
+// show in USD, which is the whole point of this grid.
+const sellable = projects.filter((p) => p.stage === "sale" && p.priceFromCOP);
+const cities = [...new Map(sellable.map((p) => [p.city?.slug, p.city])).entries()]
+  .filter(([slug]) => slug)
+  .map(([, city]) => city!);
+
+const title = page?.seo?.metaTitle ?? "Compra desde el exterior — Las Galias";
+const description = page?.seo?.metaDescription ?? heroSubtitle;
+---
+
+<Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
+  <!-- 01 Hero -->
+  <section class="border-line border-b">
+    <div class="container py-16 text-center md:py-20">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold">{heroTitle}</h1>
+      <p class="text-ink-muted mx-auto mt-4 max-w-2xl">{heroSubtitle}</p>
+      <a href="#datos" class="btn btn-primary mt-8">{heroCtaLabel}</a>
+      {
+        trustBadges.length > 0 && (
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            {trustBadges.map((badge) => (
+              <span class="badge badge-dark">{badge}</span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    {
+      page?.heroImage?.url && (
+        <div class="bg-surface aspect-[21/9] w-full overflow-hidden">
+          <Image
+            src={mediaUrl(page.heroImage.url)}
+            alt={page.heroImage.alternativeText ?? ""}
+            width={1600}
+            height={686}
+            loading="eager"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      )
+    }
+  </section>
+
+  <!-- 02 Paso a paso -->
+  <section class="bg-surface border-line border-b">
+    <div class="container py-16">
+      <p class="eyebrow text-center">Cómo funciona</p>
+      <h2 class="text-h3 text-ink mt-2 text-center font-bold">{stepsTitle}</h2>
+      <ol class="mt-10 grid gap-8 md:grid-cols-3">
+        {
+          steps.map((step, i) => (
+            <li data-reveal>
+              <span class="text-brand text-lg font-bold">{i + 1}</span>
+              <h3 class="text-h4 text-ink mt-2 font-semibold">{step.title}</h3>
+              <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 03 Proyectos destacados, en USD -->
+  <section class="border-line border-b">
+    <div class="container py-16">
+      <p class="eyebrow text-center">¡Invierte ahora!</p>
+      <h2 class="text-h3 text-ink mt-2 text-center font-bold">Proyectos disponibles para ti</h2>
+
+      {
+        cities.length > 1 && (
+          <div class="mt-6 flex flex-wrap justify-center gap-2" data-city-filter>
+            <button type="button" class="chip bg-ink border-ink text-white" data-city-all>
+              Todos
+            </button>
+            {cities.map((city) => (
+              <button type="button" class="chip" data-city-option={city.slug}>
+                {city.name}
+              </button>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        sellable.length > 0 ? (
+          <>
+            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-city-grid>
+              {sellable.map((project) => (
+                <ProjectCard project={project} usdFirst rates={rates} />
+              ))}
+            </div>
+            <p class="text-caption text-ink-muted mx-auto mt-8 max-w-3xl text-center">
+              {priceDisclaimer}
+            </p>
+            <div class="mt-6 text-center">
+              <a href="/proyectos" class="btn btn-outline">
+                Ver todos los proyectos
+              </a>
+            </div>
+          </>
+        ) : (
+          <p class="text-ink-muted mt-8 text-center">
+            Estamos preparando nuevos proyectos. Déjanos tus datos y te avisamos primero.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- 03B Formulario de refuerzo -->
+  <section class="bg-surface border-line border-b" id="datos">
+    <div class="container grid items-center gap-10 py-16 lg:grid-cols-2">
+      <div>
+        <h2 class="text-h3 text-ink font-bold">{formTitle}</h2>
+        <p class="text-ink-muted mt-3">{formBody}</p>
+        <ul class="mt-6 space-y-2">
+          {
+            formBullets.map((bullet) => (
+              <li class="text-body-sm text-ink flex items-center gap-2">
+                <span class="text-brand" aria-hidden="true">
+                  ✓
+                </span>
+                {bullet}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="border-line rounded-2xl border bg-white p-6 shadow-xs">
+        <h3 class="text-h4 text-ink font-semibold">Habla con un asesor →</h3>
+        <div class="mt-4">
+          <LeadForm
+            client:visible
+            source="exterior"
+            international
+            submitLabel="Déjanos tus datos"
+          />
+        </div>
+        <p class="text-caption text-ink-muted mt-3 text-center">
+          🔒 Tus datos están protegidos · Sin spam
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Preguntas frecuentes -->
+  {
+    faqs.length > 0 && (
+      <section class="border-line border-b">
+        <div class="container py-16">
+          <p class="eyebrow text-center">FAQ</p>
+          <h2 class="text-h3 text-ink mt-2 text-center font-bold">Preguntas frecuentes</h2>
+          <div class="mx-auto mt-8 max-w-3xl space-y-3">
+            {faqs.map((faq) => (
+              <details class="border-line group rounded-2xl border bg-white px-5 py-4">
+                <summary class="text-body-sm text-ink flex cursor-pointer items-center justify-between gap-4 font-medium">
+                  {faq.question}
+                  <span class="text-ink-muted shrink-0 transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <div class="text-body-sm text-ink-muted mt-3">
+                  <Blocks content={faq.answer} />
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 05 CTA final -->
+  <section>
+    <div class="container py-16 text-center">
+      <p class="eyebrow">CTA final</p>
+      <h2 class="text-h3 text-ink mt-2 font-bold">¿Listo para invertir en tu futuro?</h2>
+      <p class="text-ink-muted mt-3">
+        Un asesor te acompaña en todo el proceso, sin salir de donde estás.
+      </p>
+      <a href="#datos" class="btn btn-primary mt-8">Déjanos tus datos</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // City filter for the USD project grid. Plain DOM on purpose: the grid is
+  // static HTML, so an island here would ship React to filter a list.
+  function setupCityFilter() {
+    const bar = document.querySelector<HTMLElement>("[data-city-filter]");
+    const grid = document.querySelector<HTMLElement>("[data-city-grid]");
+    if (!bar || !grid) return;
+
+    // `astro:page-load` also fires on first load — guard against double binding.
+    if (bar.dataset.bound) return;
+    bar.dataset.bound = "1";
+
+    const active = "bg-ink border-ink text-white";
+    bar.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest("button");
+      if (!button) return;
+
+      bar.querySelectorAll("button").forEach((b) => b.classList.remove(...active.split(" ")));
+      button.classList.add(...active.split(" "));
+
+      const city = button.getAttribute("data-city-option");
+      grid.querySelectorAll<HTMLElement>("[data-city]").forEach((card) => {
+        card.hidden = city !== null && card.dataset.city !== city;
+      });
+    });
+  }
+
+  setupCityFilter();
+  document.addEventListener("astro:page-load", setupCityFilter);
+</script>

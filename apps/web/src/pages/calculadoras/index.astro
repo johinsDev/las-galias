@@ -1,0 +1,129 @@
+---
+import MortgageCalculator from "@/islands/MortgageCalculator";
+import Base from "@/layouts/Base.astro";
+import { getCalculatorConfig, getProjects } from "@/lib/strapi";
+
+const [calculator, projects] = await Promise.all([getCalculatorConfig(), getProjects()]);
+
+// Seed the simulator with the cheapest project actually on sale, so the sliders
+// open on a realistic figure instead of an arbitrary one.
+const prices = projects
+  .filter((p) => p.stage === "sale" && p.priceFromCOP)
+  .map((p) => Number(p.priceFromCOP));
+const startingPrice = prices.length > 0 ? Math.min(...prices) : 200_000_000;
+
+// 2026 figures. VIS/VIP ceilings are set in UVT and change every year, so they
+// live here as copy an editor can correct rather than as computed values.
+const subsidies = [
+  {
+    name: "Mi Casa Ya",
+    body: "Subsidio del Gobierno Nacional a la cuota inicial y a la tasa de interés. Aplica sobre vivienda VIS de hasta 135 SMMLV y depende de tus ingresos y de que no seas propietario de vivienda en Colombia.",
+  },
+  {
+    name: "Cajas de compensación",
+    body: "Si estás afiliado a una caja (Compensar, Colsubsidio, Cafam…), puedes postularte a su subsidio de vivienda. Es compatible con el crédito hipotecario y se asigna por puntaje.",
+  },
+  {
+    name: "Cesantías y ahorro programado",
+    body: "Tus cesantías pueden usarse para la cuota inicial sin sanción, y el ahorro programado con un banco cuenta como respaldo al momento de solicitar el crédito.",
+  },
+];
+---
+
+<Base
+  title="Calculadoras — Las Galias"
+  description="Simula tu cuota mensual y revisa a qué subsidios de vivienda puedes acceder."
+>
+  <section class="border-line border-b">
+    <div class="container py-12 text-center md:py-16">
+      <p class="eyebrow text-brand" data-reveal>Herramientas</p>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-2xl font-extrabold" data-reveal>
+        Planea tu compra
+      </h1>
+      <p class="text-ink-muted mx-auto mt-4 max-w-xl" data-reveal>
+        Calcula tu cuota mensual y revisa a qué beneficios puedes acceder antes de hablar con un
+        asesor.
+      </p>
+    </div>
+  </section>
+
+  <section class="container py-12 md:py-16" id="simulador">
+    <div class="grid gap-10 lg:grid-cols-[1fr_420px]">
+      <div data-reveal>
+        <p class="eyebrow">Simulador de crédito</p>
+        <h2 class="text-h3 text-ink mt-2 font-bold">¿Cuánto pagarías al mes?</h2>
+        <p class="text-ink-muted mt-3">
+          Mueve el valor del inmueble, la cuota inicial y el plazo para ver cómo cambia tu cuota
+          mensual estimada. La tasa de referencia la administra Las Galias desde el CMS y se
+          actualiza cuando cambian las condiciones del mercado.
+        </p>
+        <ul class="text-body-sm text-ink-muted mt-6 space-y-2">
+          <li>
+            · La cuota mensual se calcula con la tasa efectiva anual, como la cotizan los bancos.
+          </li>
+          <li>· No incluye seguros, avalúo ni gastos de escrituración.</li>
+          <li>· Es una estimación con fines informativos, no una oferta de crédito.</li>
+        </ul>
+        <a href="/proyectos" class="btn btn-primary mt-8">Ver proyectos disponibles</a>
+      </div>
+
+      <div data-reveal>
+        {
+          calculator?.annualInterestRate ? (
+            <MortgageCalculator
+              client:visible
+              priceFromCOP={startingPrice}
+              annualInterestRate={calculator.annualInterestRate}
+              maxTermYears={calculator.maxTermYears}
+              maxFinancingPercent={calculator.maxFinancingPercent}
+            />
+          ) : (
+            <div class="border-line rounded-2xl border bg-white p-6">
+              <h3 class="text-h4 text-ink font-semibold">Simulador no disponible</h3>
+              <p class="text-body-sm text-ink-muted mt-2">
+                Falta configurar la tasa de referencia en el CMS. Escríbenos y te hacemos la
+                simulación con un asesor.
+              </p>
+              <a href="/contacto" class="btn btn-primary mt-4">
+                Hablar con un asesor
+              </a>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-surface border-line border-y" id="subsidio">
+    <div class="container py-12 md:py-16">
+      <div class="text-center" data-reveal>
+        <p class="eyebrow">Subsidios</p>
+        <h2 class="text-h3 text-ink mt-2 font-bold">¿Aplicas a subsidio VIS?</h2>
+        <p class="text-ink-muted mx-auto mt-3 max-w-2xl">
+          La vivienda de interés social tiene beneficios que pueden reducir de forma importante lo
+          que financias. Estos son los que más usan nuestros compradores.
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {
+          subsidies.map((subsidy) => (
+            <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+              <h3 class="text-h4 text-ink font-semibold">{subsidy.name}</h3>
+              <p class="text-body-sm text-ink-muted mt-2">{subsidy.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="text-caption text-ink-muted mx-auto mt-8 max-w-2xl text-center">
+        Los topes y requisitos los fija el Gobierno Nacional y cambian cada año. Confirma tu caso
+        con un asesor antes de tomar una decisión.
+      </p>
+
+      <div class="mt-8 text-center" data-reveal>
+        <a href="/contacto" class="btn btn-primary">Quiero que me asesoren</a>
+      </div>
+    </div>
+  </section>
+</Base>

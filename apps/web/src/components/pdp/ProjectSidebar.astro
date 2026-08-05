@@ -1,0 +1,83 @@
+---
+import type { Project } from "@lasgalias/schemas";
+
+import LeadForm from "@/islands/LeadForm";
+import StickyQuote from "@/islands/StickyQuote";
+import type { QuoteTerms } from "@/lib/mortgage";
+
+interface Props {
+  project: Project;
+  terms: QuoteTerms;
+}
+
+const { project, terms } = Astro.props;
+
+const isExpectation = project.stage === "expectation";
+const basePrice = Number(project.priceFromCOP ?? 0);
+const showQuote = !isExpectation && basePrice > 0;
+const salesRoom = project.salesRoom;
+---
+
+<aside class="lg:sticky lg:top-24 lg:h-fit">
+  <div class="space-y-4">
+    {
+      showQuote ? (
+        <StickyQuote
+          client:visible
+          basePrice={basePrice}
+          terms={terms}
+          trusteeName={project.financing?.trusteeName}
+          trustNumber={project.financing?.trustNumber}
+          clientPortalUrl={project.financing?.clientPortalUrl}
+        />
+      ) : (
+        <div class="border-line rounded-2xl border bg-white p-6">
+          <h3 class="text-h4 text-ink font-semibold">Un nuevo proyecto está por llegar</h3>
+          <p class="text-body-sm text-ink-muted mt-2">
+            Sé de los primeros en conocer precios de lanzamiento y beneficios de preventa.
+          </p>
+        </div>
+      )
+    }
+
+    <div class="border-line rounded-2xl border bg-white p-6" id="lead">
+      <h3 class="text-h4 text-ink font-semibold">¿Te interesa este proyecto?</h3>
+      <p class="text-body-sm text-ink-muted mt-1 mb-4">
+        Déjanos tus datos — un asesor te contacta hoy.
+      </p>
+      <LeadForm
+        client:visible
+        projectDocumentId={project.documentId}
+        source={`pdp:${project.slug}`}
+        submitLabel="Quiero que me contacten"
+      />
+    </div>
+
+    {
+      (salesRoom?.schedule || salesRoom?.phone || salesRoom?.whatsappUrl) && (
+        <div class="border-line rounded-2xl border bg-white p-6">
+          <h3 class="text-h4 text-ink font-semibold">¿Tienes preguntas?</h3>
+          {salesRoom.schedule && (
+            <p class="text-body-sm text-ink-muted mt-1">{salesRoom.schedule}</p>
+          )}
+          {salesRoom.phone && <p class="text-body-sm text-ink mt-1">{salesRoom.phone}</p>}
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a href="#lead" class="btn btn-outline px-4 py-2.5 text-sm">
+              Déjanos tus datos
+            </a>
+            {salesRoom.whatsappUrl && (
+              <a
+                href={salesRoom.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary px-4 py-2.5 text-sm"
+              >
+                WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</aside>

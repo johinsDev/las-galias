@@ -1,0 +1,122 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getProjects } from "@/lib/strapi";
+
+const projects = await getProjects();
+
+// Cities come from the CMS, so this stays true as the portfolio grows.
+const cities = [
+  ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
+];
+
+// Same figures as the home stats band. They are business claims, so they should
+// end up in an editable single type rather than living in two files — see the
+// note in the plan about the stats band.
+const stats = [
+  { value: "+30.000", label: "Viviendas entregadas" },
+  { value: "+30", label: "Proyectos activos" },
+  { value: "#1", label: "En ventas VIS · Colombia" },
+  { value: "30 años", label: "De trayectoria" },
+];
+
+const pillars = [
+  {
+    title: "Vivienda que sí se entrega",
+    body: "Cada proyecto se estructura con fiducia y punto de equilibrio antes de iniciar obra, para que la entrega no dependa del ritmo de ventas.",
+  },
+  {
+    title: "Acompañamiento hasta la escritura",
+    body: "Un asesor te guía en crédito, subsidios y trámites. No te dejamos solo entre la separación y la entrega.",
+  },
+  {
+    title: "Postventa incluida",
+    body: "La relación no termina con las llaves: acompañamos la garantía y el proceso de postventa de cada unidad entregada.",
+  },
+];
+---
+
+<Base
+  title="Nosotros — Las Galias"
+  description="Constructora colombiana con más de 30 años entregando vivienda de calidad."
+>
+  <section class="border-line border-b">
+    <div class="container py-12 text-center md:py-16">
+      <p class="eyebrow text-brand" data-reveal>Nosotros</p>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold" data-reveal>
+        Construimos los barrios donde la gente se queda
+      </h1>
+      <p class="text-ink-muted mx-auto mt-4 max-w-2xl" data-reveal>
+        Somos una constructora colombiana con más de 30 años de experiencia entregando vivienda de
+        calidad en las principales ciudades del país.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-ink-900 text-white">
+    <div class="container grid grid-cols-2 gap-8 py-14 text-center lg:grid-cols-4">
+      {
+        stats.map((stat) => (
+          <div data-reveal>
+            <p
+              class="text-hero font-extrabold tracking-tight"
+              style="font-size:clamp(2.25rem,4vw,3.25rem)"
+            >
+              {stat.value}
+            </p>
+            <p class="text-body-sm mt-1 text-white/55">{stat.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container py-12 md:py-16">
+    <div class="text-center" data-reveal>
+      <p class="eyebrow">Cómo trabajamos</p>
+      <h2 class="text-h3 text-ink mt-2 font-bold">Lo que nos hace diferentes</h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-3">
+      {
+        pillars.map((pillar) => (
+          <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+            <h3 class="text-h4 text-ink font-semibold">{pillar.title}</h3>
+            <p class="text-body-sm text-ink-muted mt-2">{pillar.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    cities.length > 0 && (
+      <section class="bg-surface border-line border-y">
+        <div class="container py-12 md:py-16">
+          <div class="text-center" data-reveal>
+            <p class="eyebrow">Presencia</p>
+            <h2 class="text-h3 text-ink mt-2 font-bold">Dónde estamos</h2>
+          </div>
+          <div class="mt-8 flex flex-wrap justify-center gap-2" data-reveal>
+            {cities.map((city) => (
+              <a href="/proyectos" class="chip hover:bg-surface-2 transition-colors">
+                {city.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="container py-16 text-center" data-reveal>
+    <h2 class="text-h2 text-ink mx-auto max-w-2xl font-extrabold">
+      ¿Quieres conocer nuestros proyectos?
+    </h2>
+    <p class="text-ink-muted mx-auto mt-4 max-w-xl">
+      Agenda una cita sin costo y te acompañamos por las opciones que se ajustan a ti.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/proyectos" class="btn btn-primary">Ver proyectos</a>
+      <a href="/contacto" class="btn btn-outline">Agenda tu cita</a>
+    </div>
+  </section>
+</Base>

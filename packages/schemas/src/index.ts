@@ -1,10 +1,12 @@
-export { LeadSchema, type Lead } from "./lead";
+export { ForeignLeadSchema, LeadSchema, type ForeignLead, type Lead } from "./lead";
 export type {
   Amenity,
   CalculatorConfig,
   City,
   ConstructionStatus,
   ExchangeRate,
+  Faq,
+  ForeignBuyerPage,
   Geo,
   HomeBanner,
   Macroproject,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Field, Form, setInput, useForm } from "@formisch/react";
 
-import { LeadSchema } from "@lasgalias/schemas";
+import { ForeignLeadSchema, LeadSchema } from "@lasgalias/schemas";
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
 import { Textarea } from "@lasgalias/ui/components/textarea";
@@ -9,6 +9,13 @@ import { Textarea } from "@lasgalias/ui/components/textarea";
 interface LeadFormProps {
   projectDocumentId?: string;
   source: string;
+  /**
+   * Foreign-buyer mode: adds "País de residencia" and accepts any country's
+   * number in E.164. The default form only accepts Colombian numbers, which
+   * would reject this page's entire audience.
+   */
+  international?: boolean;
+  submitLabel?: string;
 }
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
@@ -39,11 +46,16 @@ function readUtm(): { utmSource?: string; utmMedium?: string; utmCampaign?: stri
  * Lead form (expectation-stage PDPs and contact page). Submissions are stored
  * as `lead` entries in the CMS and pushed to the Sinco CRM from there.
  */
-export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
+export default function LeadForm({
+  projectDocumentId,
+  source,
+  international = false,
+  submitLabel,
+}: LeadFormProps) {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const form = useForm({
-    schema: LeadSchema,
+    schema: international ? ForeignLeadSchema : LeadSchema,
     initialInput: { projectDocumentId, source, ...readUtm() },
   });
 
@@ -81,6 +93,9 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
                 utmSource: output.utmSource,
                 utmMedium: output.utmMedium,
                 utmCampaign: output.utmCampaign,
+                ...("residenceCountry" in output
+                  ? { residenceCountry: output.residenceCountry }
+                  : {}),
                 ...(output.projectDocumentId ? { project: output.projectDocumentId } : {}),
               },
             }),
@@ -130,18 +145,26 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
         {(field) => (
           <div>
             <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-phone">
-              Celular
+              {international ? "WhatsApp / Celular" : "Celular"}
             </label>
             <Input
               {...field.props}
               id="lead-phone"
               type="tel"
-              inputMode="numeric"
+              inputMode="tel"
               value={field.input ?? ""}
               autoComplete="tel"
-              placeholder="300 123 4567"
-              onChange={(e) =>
-                setInput(form, { path: ["phone"], input: formatCoPhone(e.currentTarget.value) })
+              placeholder={international ? "+1 / +34 / +57…" : "300 123 4567"}
+              // International numbers must NOT be reformatted: formatCoPhone
+              // truncates to 10 digits, which mangles most country codes.
+              onChange={
+                international
+                  ? undefined
+                  : (e) =>
+                      setInput(form, {
+                        path: ["phone"],
+                        input: formatCoPhone(e.currentTarget.value),
+                      })
               }
             />
             {field.errors && (
@@ -150,6 +173,31 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
           </div>
         )}
       </Field>
+
+      {international && (
+        <Field of={form} path={["residenceCountry"]}>
+          {(field) => (
+            <div>
+              <label
+                className="text-body-sm text-ink mb-1 block font-medium"
+                htmlFor="lead-country"
+              >
+                País de residencia
+              </label>
+              <Input
+                {...field.props}
+                id="lead-country"
+                value={field.input ?? ""}
+                autoComplete="country-name"
+                placeholder="EE.UU., España, Canadá…"
+              />
+              {field.errors && (
+                <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+              )}
+            </div>
+          )}
+        </Field>
+      )}
 
       <Field of={form} path={["message"]}>
         {(field) => (
@@ -202,7 +250,7 @@ export default function LeadForm({ projectDocumentId, source }: LeadFormProps) {
       </Field>
 
       <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
-        Quiero más información
+        {submitLabel ?? "Quiero más información"}
       </Button>
 
       {status === "error" && (

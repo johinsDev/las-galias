@@ -17,26 +17,33 @@ const cities = [
 const steps = [
   {
     n: 1,
-    title: "Explora y elige tu proyecto",
-    text: "Filtra por ciudad, precio y tipología. Encuentra el que se ajusta a tu familia.",
+    title: "Elige tu proyecto",
+    text: "Filtra por ciudad, precio y área. Agenda visita virtual o presencial sin costo.",
   },
   {
     n: 2,
-    title: "Simula tu crédito y subsidio",
-    text: "Calcula tu cuota inicial y mensual con nuestras herramientas en línea.",
+    title: "Aparta y financia",
+    text: "Aparta con cuota inicial desde el 20%. Te asesoramos en crédito y subsidios VIS.",
   },
   {
     n: 3,
-    title: "Agenda tu cita y sepárala",
-    text: "Un asesor te acompaña en la firma y en todo el proceso de compra.",
+    title: "Recibe tu hogar",
+    text: "Entrega con estándares de alta calidad y acompañamiento postventa incluido.",
   },
 ];
 
 const stats = [
-  { value: "+30 mil", label: "viviendas entregadas" },
-  { value: "#1", label: "en ventas VIS" },
-  { value: "+30", label: "proyectos activos" },
+  { value: "+30.000", label: "Viviendas entregadas" },
+  { value: "+30", label: "Proyectos activos" },
+  { value: "#1", label: "En ventas VIS · Colombia" },
+  { value: "30 años", label: "De trayectoria" },
 ];
+
+const postCategories: Record<string, string> = {
+  financiacion: "Financiación",
+  "guia-de-compra": "Guía de compra",
+  mercado: "Mercado",
+};
 
 const blogPosts = posts.slice(0, 3);
 ---
@@ -45,32 +52,41 @@ const blogPosts = posts.slice(0, 3);
   <!-- Hero -->
   <section class="border-line border-b">
     <div class="container pt-16 pb-10 text-center md:pt-24">
-      <p class="eyebrow" data-reveal>Vivienda nueva · Colombia</p>
+      <p class="eyebrow text-brand" data-reveal>Vivienda nueva · Colombia</p>
       <h1 class="text-hero text-ink mx-auto mt-4 max-w-4xl font-extrabold" data-reveal>
-        Encuentra el hogar donde empieza tu próxima historia
+        Tu hogar en la ciudad que amas
       </h1>
       <p class="text-body-lg text-ink-muted mx-auto mt-5 max-w-2xl" data-reveal>
-        Proyectos de vivienda nueva en las principales ciudades del país, con el respaldo de más de
-        30 mil familias que ya viven en Las Galias.
+        Encuentra vivienda nueva en las mejores ciudades de Colombia.<br />Cuota inicial desde el
+        20%.
       </p>
       <form
         action="/proyectos"
         method="get"
-        class="border-line-strong mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-2xl border bg-white p-2 shadow-xs"
+        class="border-line-strong mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-full border bg-white p-2 pl-4 shadow-xs"
         data-reveal
       >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          class="text-ink-faint shrink-0"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
         <input
           type="text"
           name="q"
-          placeholder="Encuentra tu vivienda en… (ciudad)"
-          class="text-body placeholder:text-ink-faint h-11 w-full min-w-0 rounded-xl bg-transparent px-3 outline-none"
+          placeholder="Busca por ciudad, zona o proyecto…"
+          class="text-body placeholder:text-ink-faint h-11 w-full min-w-0 bg-transparent outline-none"
         />
-        <button
-          type="submit"
-          class="bg-primary text-primary-foreground hover:bg-primary-bright inline-flex h-11 shrink-0 items-center rounded-xl px-5 text-sm font-semibold transition-colors"
-        >
-          Buscar
-        </button>
+        <button type="submit" class="btn btn-primary shrink-0 py-3">Buscar</button>
       </form>
     </div>
     <div class="container pb-14" data-reveal>
@@ -128,10 +144,7 @@ const blogPosts = posts.slice(0, 3);
         </div>
 
         <div class="mt-10 text-center" data-reveal>
-          <a
-            href="/proyectos"
-            class="border-line-strong text-ink hover:bg-surface inline-flex h-11 items-center rounded-xl border px-6 text-sm font-semibold transition-colors"
-          >
+          <a href="/proyectos" class="btn btn-outline">
             Ver todos los proyectos
           </a>
         </div>
@@ -149,12 +162,9 @@ const blogPosts = posts.slice(0, 3);
       <div class="mt-12 grid gap-6 md:grid-cols-3">
         {
           steps.map((step) => (
-            <div class="border-line rounded-2xl border bg-white p-6 shadow-xs" data-reveal>
-              <span class="border-line text-ink-muted flex size-9 items-center justify-center rounded-full border text-sm font-semibold">
-                {step.n}
-              </span>
-              <div class="bg-surface mt-5 aspect-[4/3] w-full rounded-xl" />
-              <h3 class="text-h4 text-ink mt-5 font-semibold">{step.title}</h3>
+            <div data-reveal>
+              <span class="text-brand text-lg font-bold">{step.n}</span>
+              <h3 class="text-h4 text-ink mt-2 font-semibold">{step.title}</h3>
               <p class="text-body-sm text-ink-muted mt-2">{step.text}</p>
             </div>
           ))
@@ -171,41 +181,63 @@ const blogPosts = posts.slice(0, 3);
     </div>
     <div class="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
       <a
-        href="/proyectos"
-        class="group border-line hover:border-line-strong hover:shadow-card flex items-center gap-4 rounded-2xl border bg-white p-6 transition-all"
+        href="/calculadoras#simulador"
+        class="group border-line hover:border-line-strong hover:shadow-card block rounded-2xl border bg-white p-6 transition-all"
         data-reveal
       >
-        <span
-          class="bg-surface flex size-11 shrink-0 items-center justify-center rounded-xl text-lg"
-          >📊</span
-        >
-        <div>
-          <p class="text-ink font-semibold">Simula tu crédito</p>
-          <p class="text-body-sm text-ink-muted mt-0.5">Cuota inicial, mensual y plazo</p>
-        </div>
-        <span class="text-ink-muted group-hover:text-ink ml-auto transition-colors">→</span>
+        <span class="text-brand inline-flex" aria-hidden="true">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          >
+            <rect x="2.5" y="5" width="19" height="14" rx="2.5"></rect>
+            <path d="M2.5 10h19"></path>
+          </svg>
+        </span>
+        <p class="text-ink mt-4 font-semibold">Simulador de crédito</p>
+        <p class="text-body-sm text-ink-muted mt-1">
+          Calcula tu cuota mensual según precio, cuota inicial y plazo.
+        </p>
+        <span class="text-body-sm text-ink mt-4 inline-block font-medium">Ir →</span>
       </a>
       <a
-        href="/contacto"
-        class="group border-line hover:border-line-strong hover:shadow-card flex items-center gap-4 rounded-2xl border bg-white p-6 transition-all"
+        href="/calculadoras#subsidio"
+        class="group border-line hover:border-line-strong hover:shadow-card block rounded-2xl border bg-white p-6 transition-all"
         data-reveal
       >
-        <span
-          class="bg-surface flex size-11 shrink-0 items-center justify-center rounded-xl text-lg"
-          >🏡</span
-        >
-        <div>
-          <p class="text-ink font-semibold">Ver subsidios</p>
-          <p class="text-body-sm text-ink-muted mt-0.5">Mi Casa Ya y cajas de compensación</p>
-        </div>
-        <span class="text-ink-muted group-hover:text-ink ml-auto transition-colors">→</span>
+        <span class="text-brand inline-flex" aria-hidden="true">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+          >
+            <path d="M12 2v20"></path>
+            <path
+              d="M16.5 6.5A3.5 3.5 0 0 0 13 4h-2a3.5 3.5 0 0 0 0 7h2a3.5 3.5 0 0 1 0 7h-2A3.5 3.5 0 0 1 7.5 17.5"
+            ></path>
+          </svg>
+        </span>
+        <p class="text-ink mt-4 font-semibold">¿Aplica subsidio VIS?</p>
+        <p class="text-body-sm text-ink-muted mt-1">
+          Verifica si accedes a subsidio Mi Casa Ya y cuánto te descuentan.
+        </p>
+        <span class="text-body-sm text-ink mt-4 inline-block font-medium">Ir →</span>
       </a>
     </div>
   </section>
 
   <!-- Banda de stats -->
   <section class="bg-ink-900 text-white">
-    <div class="container grid gap-8 py-14 text-center sm:grid-cols-3">
+    <div class="container grid grid-cols-2 gap-8 py-14 text-center lg:grid-cols-4">
       {
         stats.map((stat) => (
           <div data-reveal>
@@ -257,9 +289,23 @@ const blogPosts = posts.slice(0, 3);
                   )}
                 </div>
                 <div class="p-5">
-                  <h3 class="text-h4 text-ink font-semibold">{post.title}</h3>
+                  {post.category && (
+                    <p class="eyebrow text-brand">
+                      {postCategories[post.category] ?? post.category}
+                    </p>
+                  )}
+                  <h3 class="text-h4 text-ink mt-1 font-semibold">{post.title}</h3>
                   {post.excerpt && (
                     <p class="text-body-sm text-ink-muted mt-2 line-clamp-2">{post.excerpt}</p>
+                  )}
+                  {post.publishedOn && (
+                    <p class="text-caption text-ink-faint mt-2">
+                      {new Date(post.publishedOn).toLocaleDateString("es-CO", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
                   )}
                 </div>
               </a>
@@ -273,18 +319,11 @@ const blogPosts = posts.slice(0, 3);
   <!-- Final CTA -->
   <section class="bg-surface border-line border-t">
     <div class="container py-20 text-center" data-reveal>
-      <h2 class="text-h1 text-ink mx-auto max-w-2xl font-extrabold">
-        Da el primer paso hacia tu nuevo hogar
-      </h2>
+      <h2 class="text-h1 text-ink mx-auto max-w-2xl font-extrabold">Agenda tu cita sin costo</h2>
       <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-xl">
-        Agenda una cita con nuestros asesores y encuentra el proyecto perfecto para ti.
+        Un asesor te acompañará por todos los proyectos y opciones de financiación.
       </p>
-      <a
-        href="/contacto"
-        class="bg-primary text-primary-foreground shadow-cta hover:bg-primary-bright mt-8 inline-flex h-12 items-center rounded-xl px-7 font-semibold transition-colors"
-      >
-        Agenda tu cita
-      </a>
+      <a href="/contacto" class="btn btn-primary mt-8">Agenda tu cita</a>
     </div>
   </section>
 
@@ -292,6 +331,11 @@ const blogPosts = posts.slice(0, 3);
     function initCityFilter() {
       const container = document.getElementById("city-filter");
       if (!container) return;
+
+      // `astro:page-load` also fires on first load — guard against double binding.
+      if (container.dataset.bound) return;
+      container.dataset.bound = "1";
+
       container.addEventListener("click", (event) => {
         const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
         if (!button) return;

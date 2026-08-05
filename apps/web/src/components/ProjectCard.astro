@@ -7,10 +7,14 @@ import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
+  /** Dense listing grid: drops the logo, the delivery footer and the CTA. */
   compact?: boolean;
+  /** Price rendered in USD first, for the foreign-buyer landing. */
+  usdFirst?: boolean;
+  rates?: { copPerUsd: number; copPerEur: number } | null;
 }
 
-const { project, compact = false } = Astro.props;
+const { project, compact = false, usdFirst = false, rates = null } = Astro.props;
 const hero = project.heroDesktop ?? project.heroMobile;
 const isExpectation = project.stage === "expectation";
 
@@ -24,6 +28,16 @@ const statusLabel = isExpectation
   ? "Muy pronto"
   : (project.constructionStatus && statusLabels[project.constructionStatus]) || null;
 
+// Delivery line in the card footer: "En construcción · 2027".
+const deliveryYear = project.specSheet?.deliveryYear;
+const deliveryLine = [statusLabel, deliveryYear].filter(Boolean).join(" · ");
+
+// Location trail: "Bogotá · Norte · San Antonio" in the design; we have city +
+// department, and the macroproject name is the closest thing to the third level.
+const locationTrail = [project.city?.name, project.city?.department, project.macroproject?.name]
+  .filter(Boolean)
+  .join(" · ");
+
 // Derive area + bedroom range from the unit types for the spec chips.
 const units = project.unitTypes ?? [];
 const areas = units.map((u) => u.areaM2).filter((n): n is number => typeof n === "number");
@@ -36,20 +50,50 @@ function range(nums: number[], unit: string): string | null {
 }
 const areaChip = range(areas, "m²");
 const bedChip = range(beds, "hab");
+
+const whatsappHref = project.salesRoom?.whatsappUrl;
 ---
 
 <article
-  class="group border-line hover:shadow-card-lg flex flex-col overflow-hidden rounded-2xl border bg-white shadow-xs transition-shadow duration-300"
+  class="group border-line hover:shadow-card-lg relative flex flex-col overflow-hidden rounded-2xl border bg-white shadow-xs transition-shadow duration-300"
   data-city={project.city?.slug}
   data-reveal
 >
+  {
+    /* Sibling of the <a>, never inside it: a <button> nested in a link is
+      invalid HTML and swallows the card's own navigation. There is no user
+      session, so this is device-local (localStorage), not a saved account list. */
+  }
+  <button
+    type="button"
+    class="text-ink absolute top-3 right-3 z-10 inline-flex size-9 items-center justify-center rounded-full bg-white/95 shadow-xs backdrop-blur transition-colors hover:bg-white"
+    data-favourite={project.documentId}
+    aria-pressed="false"
+    aria-label={`Guardar ${project.name} en favoritos`}
+  >
+    <svg
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path
+        d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"
+      ></path>
+    </svg>
+  </button>
+
   <a href={`/proyectos/${project.slug}`} class="flex flex-1 flex-col">
     <div
       class="bg-surface relative aspect-[4/3] overflow-hidden"
       transition:name={`project-hero-${project.slug}`}
     >
       {
-        hero?.url && (
+        hero?.url ? (
           <Image
             src={mediaUrl(hero.url)}
             alt={hero.alternativeText ?? project.name}
@@ -57,28 +101,78 @@ const bedChip = range(beds, "hab");
             height={480}
             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
+        ) : (
+          <div class="text-ink-faint flex h-full w-full flex-col items-center justify-center gap-2">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="m3 16 5-5 4 4 3-3 6 6" />
+              <path d="m21 3-18 18" />
+            </svg>
+            <span class="text-caption">Sin imagen disponible</span>
+          </div>
         )
       }
+
+      {/* Status + commercial badges, top-left, stacked in the design's order. */}
+      <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 pr-14">
+        {statusLabel && <span class="badge badge-brand">{statusLabel}</span>}
+        {project.hasDiscount && <span class="badge badge-dark">Descuento</span>}
+        {project.appliesSubsidy && <span class="badge badge-light">Aplica subsidio</span>}
+        {project.lastUnits && <span class="badge badge-dark">Últimas unidades</span>}
+      </div>
+
       {
-        statusLabel && (
-          <span class="text-caption text-ink absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 font-semibold shadow-xs backdrop-blur">
-            {statusLabel}
+        !compact && project.logo?.url && (
+          <span class="absolute right-3 bottom-3 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 p-1.5 shadow-xs backdrop-blur">
+            <img
+              src={mediaUrl(project.logo.url)}
+              alt=""
+              class="max-h-full max-w-full object-contain"
+            />
           </span>
         )
       }
     </div>
 
     <div class="flex flex-1 flex-col p-5">
-      <p class="text-caption text-ink-muted">
-        {project.city?.name}{project.city?.department ? ` · ${project.city.department}` : ""}
+      <p class="text-caption text-ink-muted flex items-center gap-1.5">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+          class="shrink-0"
+        >
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        {locationTrail}
       </p>
       <h3 class="text-h4 text-ink mt-1 font-semibold">{project.name}</h3>
 
       {
         !isExpectation && project.priceFromCOP ? (
-          <p class="text-ink mt-3 text-lg font-bold">
-            <Price copValue={project.priceFromCOP} prefix="Desde" />
-          </p>
+          <>
+            <p class="text-caption text-ink-muted mt-3">Precio desde</p>
+            <p class="text-ink text-lg font-bold">
+              <Price
+                copValue={project.priceFromCOP}
+                currency={usdFirst ? "USD" : "COP"}
+                rates={rates}
+              />
+            </p>
+          </>
         ) : (
           <p class="text-body-sm text-ink-muted mt-3">Precios de lanzamiento muy pronto</p>
         )
@@ -87,24 +181,131 @@ const bedChip = range(beds, "hab");
       {
         (areaChip || bedChip) && (
           <div class="mt-4 flex flex-wrap gap-2">
-            {areaChip && <span class="chip">{areaChip}</span>}
-            {bedChip && <span class="chip">{bedChip}</span>}
-          </div>
-        )
-      }
-
-      {
-        !compact && (
-          <div class="border-line mt-5 flex items-center justify-between border-t pt-4">
-            <span class="text-caption text-ink-muted">
-              {isExpectation ? "En expectativa" : "Disponible"}
-            </span>
-            <span class="bg-primary text-primary-foreground group-hover:bg-primary-bright inline-flex h-9 items-center rounded-lg px-4 text-sm font-semibold transition-colors">
-              Ver proyecto
-            </span>
+            {areaChip && (
+              <span class="chip">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 10.5 12 3l9 7.5" />
+                  <path d="M5 9.5V21h14V9.5" />
+                </svg>
+                {areaChip}
+              </span>
+            )}
+            {bedChip && (
+              <span class="chip">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 18v-6h18v6" />
+                  <path d="M3 12V7" />
+                  <path d="M21 18v2M3 18v2" />
+                  <path d="M7 12v-2h5v2" />
+                </svg>
+                {bedChip}
+              </span>
+            )}
           </div>
         )
       }
     </div>
   </a>
+
+  {
+    !compact && (
+      <div class="border-line mt-auto flex items-center justify-between gap-3 border-t p-5 pt-4">
+        <span class="text-caption text-ink-muted">
+          {deliveryLine || (isExpectation ? "En expectativa" : "Disponible")}
+        </span>
+        {whatsappHref ? (
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary px-4 py-2.5 text-sm"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2a10 10 0 0 0-8.7 15l-1.2 4.3 4.4-1.2A10 10 0 1 0 12 2Zm5.5 14c-.3.8-1.5 1.4-2.2 1.5-.6.1-1.3.1-2.1-.1a13 13 0 0 1-6.2-5.3c-.5-.8-.9-1.8-.9-2.7 0-.9.5-1.6.9-1.9.3-.2.7-.2 1-.2h.4c.3 0 .5.1.7.6l.9 2c.1.2 0 .5-.1.7l-.4.5c-.2.2-.3.4-.1.7a9 9 0 0 0 3.7 3.2c.3.1.5.1.7-.1l.7-.8c.2-.2.4-.2.6-.1l2 1c.3.1.4.3.4.5s0 .4-.1.5Z" />
+            </svg>
+            WhatsApp
+          </a>
+        ) : (
+          <a href={`/proyectos/${project.slug}`} class="btn btn-primary px-4 py-2.5 text-sm">
+            Ver proyecto
+          </a>
+        )}
+      </div>
+    )
+  }
 </article>
+
+<script>
+  // Astro bundles this once no matter how many cards render it.
+  const KEY = "lg:favourites";
+
+  function readFavourites(): string[] {
+    try {
+      const raw = localStorage.getItem(KEY);
+      return raw ? (JSON.parse(raw) as string[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function paint(button: HTMLElement, on: boolean) {
+    button.setAttribute("aria-pressed", String(on));
+    const icon = button.querySelector("svg");
+    // Filled heart when saved; outline when not.
+    icon?.setAttribute("fill", on ? "currentColor" : "none");
+    button.classList.toggle("text-brand", on);
+    button.classList.toggle("text-ink", !on);
+  }
+
+  function setupFavourites() {
+    const saved = new Set(readFavourites());
+    document.querySelectorAll<HTMLElement>("[data-favourite]").forEach((button) => {
+      const id = button.dataset.favourite!;
+      paint(button, saved.has(id));
+
+      // `astro:page-load` also fires on the FIRST load, so without this guard
+      // every listener is attached twice and each click toggles twice — the
+      // favourite would appear to do nothing at all.
+      if (button.dataset.bound) return;
+      button.dataset.bound = "1";
+
+      button.addEventListener("click", (event) => {
+        // The button sits inside the card's <a>; without this the click
+        // navigates to the PDP instead of toggling.
+        event.preventDefault();
+        event.stopPropagation();
+
+        const current = new Set(readFavourites());
+        const on = !current.has(id);
+        if (on) current.add(id);
+        else current.delete(id);
+        localStorage.setItem(KEY, JSON.stringify([...current]));
+
+        document
+          .querySelectorAll<HTMLElement>(`[data-favourite="${id}"]`)
+          .forEach((b) => paint(b, on));
+      });
+    });
+  }
+
+  setupFavourites();
+  document.addEventListener("astro:page-load", setupFavourites);
+</script>

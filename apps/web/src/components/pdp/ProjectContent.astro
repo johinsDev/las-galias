@@ -1,0 +1,276 @@
+---
+import type { Project } from "@lasgalias/schemas";
+
+import Blocks from "@/components/Blocks.astro";
+import TypologySimulator, { type TypologyOption } from "@/islands/TypologySimulator";
+import { mediaUrl } from "@/lib/strapi";
+import type { QuoteTerms } from "@/lib/mortgage";
+
+interface Props {
+  project: Project;
+  terms: QuoteTerms;
+}
+
+const { project, terms } = Astro.props;
+
+const pointsOfInterest = project.macroproject?.pointsOfInterest ?? [];
+const spec = project.specSheet;
+const units = project.unitTypes ?? [];
+
+// Ranges across typologies, for the project-level spec grid.
+function range(nums: number[], unit: string): string | null {
+  if (nums.length === 0) return null;
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+  return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
+}
+const areas = units.map((u) => u.areaM2).filter((n): n is number => typeof n === "number");
+const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
+const baths = units.map((u) => u.bathrooms).filter((n): n is number => typeof n === "number");
+
+const specs = [
+  { label: "Área privada", value: range(areas, "m²") },
+  { label: "Habitaciones", value: range(beds, "") },
+  { label: "Baños", value: range(baths, "") },
+  { label: "Torres", value: spec?.towers != null ? String(spec.towers) : null },
+  { label: "Apartamentos", value: spec?.apartments != null ? String(spec.apartments) : null },
+  {
+    label: "Asc. / torre",
+    value: spec?.elevatorsPerTower != null ? String(spec.elevatorsPerTower) : null,
+  },
+  { label: "Parqueadero", value: spec?.parking ?? null },
+  { label: "Estrato", value: spec?.stratum != null ? String(spec.stratum) : null },
+  { label: "Entrega", value: spec?.deliveryYear != null ? String(spec.deliveryYear) : null },
+].filter((s) => s.value);
+
+// Only typologies with a price can drive the simulator.
+const typologies: TypologyOption[] = units
+  .filter((u) => u.priceCOP != null && Number(u.priceCOP) > 0)
+  .map((u) => ({
+    name: u.name,
+    areaM2: u.areaM2 ?? null,
+    priceCOP: Number(u.priceCOP),
+    floorPlanUrl: u.floorPlan?.url ? mediaUrl(u.floorPlan.url) : null,
+  }));
+
+// Newest month first; the label is what the editor typed, the date only sorts.
+const progress = [...(project.constructionProgress ?? [])].sort((a, b) =>
+  (b.date ?? "").localeCompare(a.date ?? ""),
+);
+
+const address = project.location?.address;
+const lat = project.location?.lat;
+const lng = project.location?.lng;
+const mapsHref =
+  lat && lng ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}` : null;
+const wazeHref = lat && lng ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : null;
+---
+
+<div class="min-w-0">
+  {
+    project.description != null && (
+      <div data-reveal>
+        <p class="eyebrow">Descripción</p>
+        <div class="mt-3" data-clamp>
+          <Blocks content={project.description} />
+        </div>
+        <button type="button" class="text-body-sm text-ink mt-2 font-semibold" data-clamp-toggle>
+          Ver más ↓
+        </button>
+      </div>
+    )
+  }
+
+  {
+    specs.length > 0 && (
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" data-reveal>
+        {specs.map((item) => (
+          <div class="border-line rounded-xl border p-3">
+            <p class="eyebrow">{item.label}</p>
+            <p class="text-ink mt-1 font-bold">{item.value}</p>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    pointsOfInterest.length > 0 && (
+      <div class="mt-12" data-reveal>
+        <p class="eyebrow">Zonas de interés</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {pointsOfInterest.map((poi) => (
+            <span class="chip">
+              {poi.name}
+              {poi.distanceText ? ` · ${poi.distanceText}` : ""}
+            </span>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    typologies.length > 0 && (
+      <div class="mt-12" data-reveal>
+        <p class="eyebrow">Planos por tipología + simulador</p>
+        <div class="mt-4">
+          <TypologySimulator client:visible typologies={typologies} terms={terms} />
+        </div>
+      </div>
+    )
+  }
+
+  {
+    (project.amenities?.length ?? 0) > 0 && (
+      <div class="mt-12" data-reveal>
+        <p class="eyebrow">Zonas comunes</p>
+        <div class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-5">
+          {project.amenities!.map((amenity) => (
+            <div class="border-line rounded-xl border p-4 text-center">
+              <div class="bg-surface mx-auto flex size-11 items-center justify-center rounded-xl">
+                {amenity.icon?.url ? (
+                  <img src={mediaUrl(amenity.icon.url)} alt="" width="22" height="22" />
+                ) : (
+                  <span>✦</span>
+                )}
+              </div>
+              <p class="text-caption text-ink mt-2 font-medium">{amenity.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    progress.length > 0 && (
+      <div class="mt-12" data-reveal data-progress>
+        <p class="eyebrow">Avance de obra</p>
+        <div class="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Avance de obra por mes">
+          {progress.map((entry, i) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+              data-progress-tab={String(i)}
+              class:list={["chip transition-colors", i === 0 && "!bg-ink !border-ink !text-white"]}
+            >
+              {entry.label}
+            </button>
+          ))}
+        </div>
+        {progress.map((entry, i) => (
+          <div class="mt-4" data-progress-panel={String(i)} hidden={i !== 0}>
+            <div class="bg-surface aspect-video overflow-hidden rounded-2xl">
+              <iframe
+                src={entry.video}
+                title={`Avance de obra ${entry.label}`}
+                loading="lazy"
+                allowfullscreen
+                class="h-full w-full border-0"
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    (address || mapsHref) && (
+      <div class="mt-12" data-reveal>
+        <p class="eyebrow">Ubicación{address ? ` · ${address}` : ""}</p>
+        {mapsHref && (
+          <div class="mt-3 flex flex-wrap gap-2">
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline px-4 py-2.5 text-sm"
+            >
+              Ir con Google Maps
+            </a>
+            <a
+              href={wazeHref!}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline px-4 py-2.5 text-sm"
+            >
+              Ir con Waze
+            </a>
+          </div>
+        )}
+        {(address || project.salesRoom?.schedule || project.salesRoom?.phone) && (
+          <div class="bg-surface mt-4 grid gap-4 rounded-2xl p-5 sm:grid-cols-3">
+            {address && (
+              <div>
+                <p class="eyebrow">Dirección</p>
+                <p class="text-body-sm text-ink mt-1">{address}</p>
+              </div>
+            )}
+            {project.salesRoom?.schedule && (
+              <div>
+                <p class="eyebrow">Horario</p>
+                <p class="text-body-sm text-ink mt-1">{project.salesRoom.schedule}</p>
+              </div>
+            )}
+            {project.salesRoom?.phone && (
+              <div>
+                <p class="eyebrow">Teléfono</p>
+                <p class="text-body-sm text-ink mt-1">{project.salesRoom.phone}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<script>
+  function setupPdpContent() {
+    // "Ver más" on the description.
+    document.querySelectorAll<HTMLElement>("[data-clamp-toggle]").forEach((toggle) => {
+      const body = toggle.parentElement?.querySelector<HTMLElement>("[data-clamp]");
+      if (!body) return;
+      body.classList.add("line-clamp-5");
+
+      // `astro:page-load` also fires on first load; a double-bound toggle would
+      // clamp and unclamp in the same click.
+      if (toggle.dataset.bound) return;
+      toggle.dataset.bound = "1";
+
+      toggle.addEventListener("click", () => {
+        const clamped = body.classList.toggle("line-clamp-5");
+        toggle.textContent = clamped ? "Ver más ↓" : "Ver menos ↑";
+      });
+    });
+
+    // Construction-progress month tabs: one independent video per month.
+    document.querySelectorAll<HTMLElement>("[data-progress]").forEach((root) => {
+      const tabs = root.querySelectorAll<HTMLButtonElement>("[data-progress-tab]");
+      tabs.forEach((tab) => {
+        if (tab.dataset.bound) return;
+        tab.dataset.bound = "1";
+
+        tab.addEventListener("click", () => {
+          const index = tab.dataset.progressTab;
+          tabs.forEach((t) => {
+            const on = t === tab;
+            t.setAttribute("aria-selected", String(on));
+            t.classList.toggle("!bg-ink", on);
+            t.classList.toggle("!border-ink", on);
+            t.classList.toggle("!text-white", on);
+          });
+          root.querySelectorAll<HTMLElement>("[data-progress-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.progressPanel !== index;
+          });
+        });
+      });
+    });
+  }
+
+  setupPdpContent();
+  document.addEventListener("astro:page-load", setupPdpContent);
+</script>

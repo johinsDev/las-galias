@@ -1,0 +1,154 @@
+---
+import { Image } from "astro:assets";
+import type { Project } from "@lasgalias/schemas";
+
+import { mediaUrl } from "@/lib/strapi";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const hero = project.heroDesktop ?? project.heroMobile;
+const gallery = project.gallery ?? [];
+const secondary = gallery.slice(0, 2);
+const hasTour = Boolean(project.tour360Url);
+const hasMap = Boolean(project.location?.lat && project.location?.lng);
+
+// Tabs only earn their place when there is more than one thing to switch to.
+const tabs = [
+  { id: "galeria", label: "Galería", enabled: Boolean(hero?.url) },
+  { id: "tour", label: "Recorrido 360°", enabled: hasTour },
+  { id: "mapa", label: "Mapa", enabled: hasMap },
+].filter((tab) => tab.enabled);
+
+const mapSrc = hasMap
+  ? `https://www.google.com/maps?q=${project.location!.lat},${project.location!.lng}&z=15&output=embed`
+  : null;
+---
+
+{
+  hero?.url && (
+    <section class="container py-6" data-gallery>
+      <div data-panel="galeria">
+        <div class="grid gap-3 md:grid-cols-[1.7fr_1fr]">
+          {/* transition:name must stay in sync with ProjectCard.astro — it is what
+              makes the card→PDP hero morph work under View Transitions. */}
+          <div
+            class="bg-surface aspect-[16/11] overflow-hidden rounded-2xl"
+            transition:name={`project-hero-${project.slug}`}
+          >
+            <picture>
+              {project.heroDesktop?.url && (
+                <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
+              )}
+              <Image
+                src={mediaUrl(hero.url)}
+                alt={hero.alternativeText ?? project.name}
+                width={1200}
+                height={825}
+                loading="eager"
+                class="h-full w-full object-cover"
+              />
+            </picture>
+          </div>
+          {/* `h-0 min-h-full` is the load-bearing bit: h-0 stops this column from
+              contributing its content height to the row (which made it taller
+              than the hero), and min-h-full stretches it to the height the hero
+              defines. The two 1fr rows then split that height exactly. */}
+          <div class="grid h-0 min-h-full grid-rows-2 gap-3">
+            {(secondary.length > 0 ? secondary : [null, null]).map((img) => (
+              <div class="bg-surface min-h-0 overflow-hidden rounded-2xl">
+                {img?.url && (
+                  <Image
+                    src={mediaUrl(img.url)}
+                    alt={img.alternativeText ?? project.name}
+                    width={600}
+                    height={375}
+                    class="h-full w-full object-cover"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {hasTour && (
+        <div data-panel="tour" hidden>
+          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-2xl">
+            <iframe
+              src={project.tour360Url!}
+              title={`Recorrido 360° de ${project.name}`}
+              loading="lazy"
+              allowfullscreen
+              class="h-full w-full border-0"
+            />
+          </div>
+        </div>
+      )}
+
+      {mapSrc && (
+        <div data-panel="mapa" hidden>
+          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-2xl">
+            <iframe
+              src={mapSrc}
+              title={`Ubicación de ${project.name}`}
+              loading="lazy"
+              class="h-full w-full border-0"
+            />
+          </div>
+        </div>
+      )}
+
+      {tabs.length > 1 && (
+        <div class="mt-4 flex flex-wrap gap-2" role="tablist" aria-label="Medios del proyecto">
+          {tabs.map((tab, i) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+              data-tab={tab.id}
+              class:list={["chip transition-colors", i === 0 && "!bg-ink !border-ink !text-white"]}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+<script>
+  // Plain DOM: the panels are static markup, so an island here would ship React
+  // just to toggle `hidden`.
+  function setupGalleryTabs() {
+    document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((root) => {
+      const buttons = root.querySelectorAll<HTMLButtonElement>("[data-tab]");
+      buttons.forEach((button) => {
+        // `astro:page-load` also fires on first load — guard against double binding.
+        if (button.dataset.bound) return;
+        button.dataset.bound = "1";
+
+        button.addEventListener("click", () => {
+          const target = button.dataset.tab;
+          buttons.forEach((b) => {
+            const on = b === button;
+            b.setAttribute("aria-selected", String(on));
+            b.classList.toggle("!bg-ink", on);
+            b.classList.toggle("!border-ink", on);
+            b.classList.toggle("!text-white", on);
+          });
+          root.querySelectorAll<HTMLElement>("[data-panel]").forEach((panel) => {
+            panel.hidden = panel.dataset.panel !== target;
+          });
+        });
+      });
+    });
+  }
+
+  setupGalleryTabs();
+  document.addEventListener("astro:page-load", setupGalleryTabs);
+</script>

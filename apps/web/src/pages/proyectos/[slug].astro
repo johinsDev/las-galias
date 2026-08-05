@@ -1,13 +1,11 @@
 ---
-import { Image } from "astro:assets";
-
-import Blocks from "@/components/Blocks.astro";
-import Price from "@/components/Price.astro";
-import ProjectCard from "@/components/ProjectCard.astro";
-import CurrencySwitcher from "@/islands/CurrencySwitcher";
-import LeadForm from "@/islands/LeadForm";
-import MortgageCalculator from "@/islands/MortgageCalculator";
+import ProjectContent from "@/components/pdp/ProjectContent.astro";
+import ProjectGallery from "@/components/pdp/ProjectGallery.astro";
+import ProjectHeader from "@/components/pdp/ProjectHeader.astro";
+import ProjectSidebar from "@/components/pdp/ProjectSidebar.astro";
+import RecommendedProjects from "@/components/pdp/RecommendedProjects.astro";
 import Base from "@/layouts/Base.astro";
+import type { QuoteTerms } from "@/lib/mortgage";
 import {
   getCalculatorConfig,
   getExchangeRate,
@@ -32,259 +30,39 @@ if (!project) {
   return Astro.redirect("/proyectos");
 }
 
-const isExpectation = project.stage === "expectation";
-const hero = project.heroDesktop ?? project.heroMobile;
-const gallery = (project.gallery ?? []).slice(0, 2);
-const pointsOfInterest = project.macroproject?.pointsOfInterest ?? [];
-const recommended = project.recommended ?? [];
+/**
+ * Financing terms: the project overrides the global `calculator-config` field
+ * by field, so an editor only fills in what differs for that project.
+ */
+const financing = project.financing;
+const terms: QuoteTerms = {
+  annualRatePct: financing?.annualRatePct ?? calculator?.annualInterestRate ?? 13.95,
+  termYears: financing?.termYears ?? calculator?.maxTermYears ?? 15,
+  downPaymentPct:
+    financing?.downPaymentPct ??
+    (calculator?.maxFinancingPercent != null ? 100 - calculator.maxFinancingPercent : 30),
+  builderInstallmentMonths: financing?.builderInstallmentMonths ?? 36,
+};
+
 const title = project.seo?.metaTitle ?? `${project.name} — Las Galias`;
 const description = project.seo?.metaDescription ?? undefined;
-
-const statusLabels: Record<string, string> = {
-  launch: "Lanzamiento",
-  presale: "Preventa",
-  construction: "En construcción",
-  "immediate-delivery": "Entrega inmediata",
-};
-const statusLabel = isExpectation
-  ? "Muy pronto"
-  : (project.constructionStatus && statusLabels[project.constructionStatus]) || null;
-const showCalculator = !isExpectation && project.priceFromCOP && calculator?.annualInterestRate;
 ---
 
 <Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
   <!-- 01 Encabezado -->
-  <section class="border-line border-b">
-    <div class="container py-8">
-      <nav class="text-caption text-ink-muted flex items-center gap-2" aria-label="breadcrumb">
-        <a href="/" class="hover:text-ink">Home</a>
-        <span>›</span>
-        <a href="/proyectos" class="hover:text-ink">{project.city?.name}</a>
-        <span>›</span>
-        <span class="text-ink font-medium">{project.name}</span>
-      </nav>
-      <div class="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p class="text-caption text-ink-muted uppercase">{project.city?.name}</p>
-          <h1 class="text-h1 text-ink mt-1 font-extrabold">{project.name}</h1>
-          <div class="mt-3 flex flex-wrap gap-2">
-            {statusLabel && <span class="chip">{statusLabel}</span>}
-            {
-              calculator?.maxTermYears && !isExpectation && (
-                <span class="chip">Hasta {calculator.maxTermYears} años de financiación</span>
-              )
-            }
-          </div>
-        </div>
-        {
-          !isExpectation && project.priceFromCOP && (
-            <div class="text-right">
-              <p class="text-caption text-ink-muted">Precio desde</p>
-              <p class="text-h3 text-ink font-extrabold">
-                <Price copValue={project.priceFromCOP} />
-              </p>
-              {rates?.copPerUsd && rates?.copPerEur && (
-                <div class="mt-2 flex justify-end">
-                  <CurrencySwitcher
-                    client:visible
-                    copPerUsd={rates.copPerUsd}
-                    copPerEur={rates.copPerEur}
-                  />
-                </div>
-              )}
-            </div>
-          )
-        }
-      </div>
-    </div>
-  </section>
+  <ProjectHeader project={project} rates={rates} />
 
   <!-- 02 Galería -->
-  {
-    hero?.url && (
-      <section class="container py-6">
-        <div class="grid gap-3 md:grid-cols-[1.7fr_1fr]">
-          <div
-            class="bg-surface aspect-[16/11] overflow-hidden rounded-2xl"
-            transition:name={`project-hero-${project.slug}`}
-          >
-            <picture>
-              {project.heroDesktop?.url && (
-                <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
-              )}
-              <Image
-                src={mediaUrl(hero.url)}
-                alt={hero.alternativeText ?? project.name}
-                width={1200}
-                height={825}
-                loading="eager"
-                class="h-full w-full object-cover"
-              />
-            </picture>
-          </div>
-          <div class="grid gap-3">
-            {(gallery.length > 0 ? gallery : [null, null]).map((img) => (
-              <div class="bg-surface aspect-[16/10] overflow-hidden rounded-2xl">
-                {img?.url && (
-                  <Image
-                    src={mediaUrl(img.url)}
-                    alt={img.alternativeText ?? project.name}
-                    width={600}
-                    height={375}
-                    class="h-full w-full object-cover"
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    )
-  }
+  <ProjectGallery project={project} />
 
-  <!-- 03 Contenido + Simulador -->
+  <!-- 03 Contenido + simulador -->
   <section class="container py-10">
     <div class="grid gap-10 lg:grid-cols-[1fr_360px]">
-      <!-- contenido -->
-      <div class="min-w-0">
-        {
-          project.description != null && (
-            <div data-reveal>
-              <p class="eyebrow">Descripción</p>
-              <div class="mt-3">
-                <Blocks content={project.description} />
-              </div>
-            </div>
-          )
-        }
-
-        {
-          (project.unitTypes?.length ?? 0) > 0 && (
-            <div class="mt-12" data-reveal>
-              <p class="eyebrow">Planos por tipología</p>
-              <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                {project.unitTypes!.map((unit) => (
-                  <div class="border-line rounded-2xl border p-4">
-                    {unit.floorPlan?.url && (
-                      <Image
-                        src={mediaUrl(unit.floorPlan.url)}
-                        alt={`Plano ${unit.name}`}
-                        width={480}
-                        height={360}
-                        class="bg-surface aspect-[4/3] w-full rounded-xl object-contain"
-                      />
-                    )}
-                    <h3 class="text-h4 text-ink mt-4 font-semibold">{unit.name}</h3>
-                    <div class="mt-2 flex flex-wrap gap-2">
-                      <span class="chip">{unit.areaM2} m²</span>
-                      <span class="chip">{unit.bedrooms} hab</span>
-                      <span class="chip">{unit.bathrooms} baños</span>
-                    </div>
-                    {unit.priceCOP && (
-                      <p class="text-ink mt-3 font-bold">
-                        <Price copValue={unit.priceCOP} prefix="Desde" />
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        }
-
-        {
-          (project.amenities?.length ?? 0) > 0 && (
-            <div class="mt-12" data-reveal>
-              <p class="eyebrow">Zonas comunes</p>
-              <div class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-5">
-                {project.amenities!.map((amenity) => (
-                  <div class="text-center">
-                    <div class="bg-surface mx-auto flex size-14 items-center justify-center rounded-2xl">
-                      {amenity.icon?.url ? (
-                        <img src={mediaUrl(amenity.icon.url)} alt="" width="26" height="26" />
-                      ) : (
-                        <span class="text-lg">✦</span>
-                      )}
-                    </div>
-                    <p class="text-caption text-ink mt-2 font-medium">{amenity.name}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        }
-
-        {
-          pointsOfInterest.length > 0 && (
-            <div class="mt-12" data-reveal>
-              <p class="eyebrow">Ubicación · cerca de ti</p>
-              <p class="text-body-sm text-ink-muted mt-1">
-                Zonas de interés del macroproyecto {project.macroproject?.name}.
-              </p>
-              <ul class="mt-4 grid gap-3 sm:grid-cols-2">
-                {pointsOfInterest.map((poi) => (
-                  <li class="border-line flex items-center justify-between rounded-xl border p-4">
-                    <span class="text-body-sm text-ink font-medium">{poi.name}</span>
-                    <span class="text-caption text-ink-muted">{poi.distanceText}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        }
-      </div>
-
-      <!-- sidebar sticky: simulador + lead capture -->
-      <aside class="lg:sticky lg:top-24 lg:h-fit">
-        <div class="space-y-4">
-          {
-            showCalculator ? (
-              <MortgageCalculator
-                client:visible
-                priceFromCOP={Number(project.priceFromCOP)}
-                annualInterestRate={calculator!.annualInterestRate}
-                maxTermYears={calculator!.maxTermYears}
-                maxFinancingPercent={calculator!.maxFinancingPercent}
-              />
-            ) : (
-              <div class="border-line rounded-2xl border bg-white p-6">
-                <h3 class="text-h4 text-ink font-semibold">Un nuevo proyecto está por llegar</h3>
-                <p class="text-body-sm text-ink-muted mt-2">
-                  Sé de los primeros en conocer precios de lanzamiento y beneficios de preventa.
-                </p>
-              </div>
-            )
-          }
-          <div class="border-line rounded-2xl border bg-white p-6" id="lead">
-            <h3 class="text-h4 text-ink font-semibold">Quiero más información</h3>
-            <p class="text-body-sm text-ink-muted mt-1 mb-4">
-              Déjanos tus datos y un asesor te contactará.
-            </p>
-            <LeadForm
-              client:visible
-              projectDocumentId={project.documentId}
-              source={`pdp:${project.slug}`}
-            />
-          </div>
-        </div>
-      </aside>
+      <ProjectContent project={project} terms={terms} />
+      <ProjectSidebar project={project} terms={terms} />
     </div>
   </section>
 
   <!-- 04 Proyectos similares -->
-  {
-    recommended.length > 0 && (
-      <section class="bg-surface border-line border-t">
-        <div class="container py-16">
-          <p class="eyebrow">Proyectos similares</p>
-          <h2 class="text-h3 text-ink mt-2 font-bold">También en {project.city?.name}</h2>
-          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {recommended.map((rec) => (
-              <ProjectCard project={rec} />
-            ))}
-          </div>
-        </div>
-      </section>
-    )
-  }
+  <RecommendedProjects project={project} />
 </Base>

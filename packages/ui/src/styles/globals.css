@@ -9,8 +9,11 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------------- */
-/* Las Galias — neutral, Linear-style system: near-black ink, white surfaces, */
-/* soft grays, black CTAs, dark bands for stats/footer. No brand color.       */
+/* Las Galias — near-black ink, white surfaces, soft grays, dark bands for     */
+/* stats/footer, plus the brand red the Figma UI introduces.                   */
+/*                                                                            */
+/* Per the Figma UI: primary CTAs are brand red and pill-shaped; dark bands    */
+/* (stats strip, footer) stay near-black.                                      */
 /* ------------------------------------------------------------------------- */
 :root {
   /* neutral ramp */
@@ -26,6 +29,15 @@
   --line-strong: #d7d7dc; /* stronger border (chips, dividers) */
   --line-dark: #262a31; /* border on dark bands */
 
+  /* brand red — CTAs, badges, step numbers and section eyebrows in the UI.
+     APPROXIMATED from the Figma screenshots; the Figma MCP seat ran out of
+     monthly calls before the variables could be read. Confirm against
+     get_variable_defs (or the design team) before launch. */
+  --brand: #e11d2e;
+  --brand-bright: #c2172a; /* hover / pressed */
+  --brand-foreground: #ffffff;
+  --brand-subtle: #fdf5f6; /* pale section background under red headings */
+
   /* shadcn semantic tokens, mapped onto the neutral ramp */
   --radius: 0.875rem;
   --background: var(--bg);
@@ -34,9 +46,9 @@
   --card-foreground: var(--ink);
   --popover: #ffffff;
   --popover-foreground: var(--ink);
-  --primary: var(--ink); /* black CTAs */
-  --primary-bright: #22252d; /* CTA hover */
-  --primary-foreground: #ffffff;
+  --primary: var(--brand); /* red CTAs */
+  --primary-bright: var(--brand-bright); /* CTA hover */
+  --primary-foreground: var(--brand-foreground);
   --secondary: var(--surface);
   --secondary-foreground: var(--ink);
   --muted: var(--surface);
@@ -62,6 +74,10 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-line-dark: var(--line-dark);
+  --color-brand: var(--brand);
+  --color-brand-bright: var(--brand-bright);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-subtle: var(--brand-subtle);
 
   /* shadcn semantic utilities */
   --color-background: var(--background);
@@ -150,6 +166,75 @@
   text-transform: uppercase;
   font-weight: 600;
   color: var(--ink-faint);
+}
+
+/* Pill CTA. The UI uses fully-rounded buttons everywhere; `btn-primary` is the
+   red one, `btn-outline` the bordered secondary. */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: --spacing(2);
+  border-radius: 9999px;
+  padding-inline: --spacing(6);
+  padding-block: --spacing(3);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+@utility btn-primary {
+  background: var(--brand);
+  color: var(--brand-foreground);
+  &:hover {
+    background: var(--brand-bright);
+  }
+}
+
+@utility btn-outline {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  &:hover {
+    background: var(--surface);
+  }
+}
+
+/* Card badge overlaid on the project image. `badge-brand` is the red
+   LANZAMIENTO one, `badge-dark` DESCUENTO, `badge-light` APLICA SUBSIDIO. */
+@utility badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding-inline: --spacing(2.5);
+  padding-block: --spacing(1);
+  font-size: var(--text-label);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+@utility badge-brand {
+  background: var(--brand);
+  color: var(--brand-foreground);
+}
+
+@utility badge-dark {
+  background: var(--ink);
+  color: #fff;
+}
+
+@utility badge-light {
+  background: rgb(255 255 255 / 0.95);
+  color: var(--ink);
+  backdrop-filter: blur(4px);
 }
 
 /* Spec chip / pill (m², rooms, tags) */

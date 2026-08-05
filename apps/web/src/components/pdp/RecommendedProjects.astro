@@ -1,0 +1,31 @@
+---
+import type { Project } from "@lasgalias/schemas";
+
+import ProjectCard from "@/components/ProjectCard.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+// A middleware enforces that every recommended project shares the city, so the
+// heading can safely name it.
+const recommended = project.recommended ?? [];
+---
+
+{
+  recommended.length > 0 && (
+    <section class="bg-surface border-line border-t">
+      <div class="container py-16">
+        <p class="eyebrow">Proyectos similares</p>
+        <h2 class="text-h3 text-ink mt-2 font-bold">También en {project.city?.name}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {recommended.map((rec) => (
+            <ProjectCard project={rec} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
