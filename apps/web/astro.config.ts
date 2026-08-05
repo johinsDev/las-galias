@@ -6,6 +6,20 @@ import tailwindcss from "@tailwindcss/vite";
 
 import { fetchRedirects } from "./redirects";
 
+/**
+ * Host of whatever CMS this build points at, so its uploads survive Vercel's
+ * image-optimization allowlist. Derived from STRAPI_URL instead of hard-coded:
+ * the CMS has already moved (S3 → CloudFront → Lightsail) and every move
+ * silently broke every image until the list was updated by hand.
+ */
+const cmsHost = (() => {
+  try {
+    return new URL(process.env.STRAPI_URL ?? "").hostname || null;
+  } catch {
+    return null;
+  }
+})();
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://lasgalias.com",
@@ -29,6 +43,8 @@ export default defineConfig({
       { protocol: "https", hostname: "**.amazonaws.com" },
       // Local Strapi in dev.
       { protocol: "http", hostname: "localhost" },
+      // Whatever CMS this build points at (self-hosted Strapi serving /uploads).
+      ...(cmsHost ? [{ protocol: "https" as const, hostname: cmsHost }] : []),
     ],
   },
   vite: {
