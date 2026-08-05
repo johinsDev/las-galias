@@ -111,6 +111,60 @@ disposable test environment and `--stage production` for the real one. Per
 stage is fully deleted by `sst remove --stage <name>`. Every live stage costs its own
 ~USD 40–45/month (ALB + NAT + RDS), so tear down what you're not using.
 
+## Ambiente de QA (vivo)
+
+| Qué          | Dónde                                 | Notas                                                               |
+| ------------ | ------------------------------------- | ------------------------------------------------------------------- |
+| Sitio        | https://las-galias.vercel.app         | Producción en Vercel, contenido del CMS de QA                       |
+| CMS / admin  | https://44-208-234-104.sslip.io/admin | Strapi                                                              |
+| Host del CMS | AWS Lightsail `las-galias-qa`         | 2 GB, **~12 USD/mes**, cuenta 256435679520                          |
+| IP estática  | `44.208.234.104`                      | `sslip.io` la resuelve sola → HTTPS de Let's Encrypt sin DNS propio |
+| Sinco        | `pruebas4.sincoerp.com` (PRBINT)      | `LEAD_PROVIDER=sinco`, `PROJECT_DATA_PROVIDER=manual`               |
+
+Operación (por SSH a la instancia, `/opt/las-galias/deploy/lightsail`):
+
+```bash
+sudo ./scripts/deploy.sh                                   # actualizar tras un push
+sudo docker compose --env-file .env logs -f cms            # logs
+sudo docker compose --env-file .env restart cms            # reiniciar
+```
+
+Variables en Vercel (Production): `STRAPI_URL`, `PUBLIC_STRAPI_URL` (ambas el
+`https://` del CMS), `STRAPI_API_TOKEN` (solo lectura) y `USE_CMS_SNAPSHOT=false`.
+
+**Esto es QA, no producción.** Antes de considerarlo definitivo: mover el CMS a
+un dominio propio (`sslip.io` no sirve de cara al cliente), activar los backups
+del `deploy/lightsail/README.md`, y mover los uploads a S3 — hoy viven en el
+disco de la instancia.
+
+### Verificación de la integración con Sinco
+
+Escalera corrida el 2026-08-05 contra `pruebas`:
+
+| Paso | Qué prueba                     | Resultado                                                                           |
+| ---- | ------------------------------ | ----------------------------------------------------------------------------------- |
+| V0   | El CMS responde                | ✅ `/_health` 204                                                                   |
+| V1   | Egress a Sinco desde el host   | ✅ `Sinco catalog synced: 662 projects` — **no hay allowlist de IPs bloqueándonos** |
+| V2   | API pública                    | ✅ `/api/projects` 200                                                              |
+| V3   | Push de un lead                | ✅ `Lead ... pushed in "sinco": 921268`                                             |
+| V4   | **La visita existe en el CRM** | ✅ leída con `GET /SalaVentas/Visitantes/Celular/{cel}`                             |
+| V5   | Deduplicación                  | ✅ `duplicate` con el **mismo** `crmVisitId`                                        |
+
+Dos cosas verificadas que conviene no olvidar:
+
+- **Bug de Sinco (reportar):** mandando los cinco consentimientos en `true`, el
+  CRM guarda `haAutorizadoEnvioWhatsApp` y `haAutorizadoLlamada` en **`false`**.
+  Es habeas data. Strapi sí guarda los cuatro, así que el registro no se pierde.
+- **Al probar, email Y teléfono únicos en cada corrida.** Sinco deduplica por
+  cualquiera de los dos; reciclar un teléfono devuelve `duplicate` y parece
+  integración rota cuando no lo está.
+
+**Emparejar un proyecto con el catálogo de Sinco:** hazlo desde el admin. Si lo
+haces por SQL, Strapi v5 guarda **dos filas por documento** (borrador y
+publicada) y hay que amarrar las dos: al poblar la relación resuelve al
+borrador, así que amarrar solo la publicada hace fallar el push con
+`has no usable Sinco project id`.
+
 ### Contenido de demostración (temporal, sin CMS desplegado)
 
 Mientras no exista un Strapi accesible, el build cae a
