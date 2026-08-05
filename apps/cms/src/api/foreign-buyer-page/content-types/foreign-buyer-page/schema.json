@@ -4,7 +4,7 @@
   "info": {
     "singularName": "foreign-buyer-page",
     "pluralName": "foreign-buyer-pages",
-    "displayName": "Foreign buyer page",
+    "displayName": "Página · Compra desde el exterior",
     "description": "The 'Colombianos en el exterior' landing. Its FAQ lives in the faq collection with audience=exterior; the project cards are the regular published projects, priced in USD off the daily exchange-rate"
   },
   "options": {

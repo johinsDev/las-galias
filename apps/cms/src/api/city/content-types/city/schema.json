@@ -4,7 +4,7 @@
   "info": {
     "singularName": "city",
     "pluralName": "cities",
-    "displayName": "City",
+    "displayName": "Ciudad",
     "description": "Cities where Las Galias builds projects"
   },
   "options": {

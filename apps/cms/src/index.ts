@@ -1,5 +1,6 @@
 import type { Core } from "@strapi/strapi";
 
+import { applySpanishAdminLabels } from "./utils/admin-labels";
 import { scheduleDeploy } from "./utils/deploy-hook";
 import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
 import {
@@ -118,6 +119,10 @@ export default {
         strapi.log.info(`Public permission granted: ${action}`);
       }
     }
+
+    // Field labels in Spanish. Idempotent and cheap: it only writes when a
+    // label actually differs.
+    await applySpanishAdminLabels(strapi);
 
     // The Sinco picker must not come up empty on a fresh install; afterwards the
     // cron owns it. Not awaited — a slow ERP must not hold up the boot.

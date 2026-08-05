@@ -4,7 +4,7 @@
   "info": {
     "singularName": "home-banner",
     "pluralName": "home-banners",
-    "displayName": "Home banner",
+    "displayName": "Banner del home",
     "description": "Home banners with dedicated desktop and mobile images"
   },
   "options": {

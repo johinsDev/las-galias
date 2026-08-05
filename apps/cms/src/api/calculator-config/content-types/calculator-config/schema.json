@@ -4,7 +4,7 @@
   "info": {
     "singularName": "calculator-config",
     "pluralName": "calculator-configs",
-    "displayName": "Calculator config",
+    "displayName": "Configuración del simulador",
     "description": "Mortgage calculator parameters. Admins only"
   },
   "options": {

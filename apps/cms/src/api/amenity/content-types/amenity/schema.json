@@ -4,7 +4,7 @@
   "info": {
     "singularName": "amenity",
     "pluralName": "amenities",
-    "displayName": "Amenity",
+    "displayName": "Zona común",
     "description": "Common areas reusable across projects (pool, gym, etc.)"
   },
   "options": {

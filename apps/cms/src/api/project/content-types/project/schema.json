@@ -4,7 +4,7 @@
   "info": {
     "singularName": "project",
     "pluralName": "projects",
-    "displayName": "Project",
+    "displayName": "Proyecto",
     "description": "Real-estate projects. stage=expectation publishes with fewer required fields; stage=sale requires the full listing"
   },
   "options": {

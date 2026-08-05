@@ -4,7 +4,7 @@
   "info": {
     "singularName": "faq",
     "pluralName": "faqs",
-    "displayName": "FAQ",
+    "displayName": "Pregunta frecuente",
     "description": "Accordion questions. `audience` scopes them to a page — the foreign-buyer landing renders audience=exterior"
   },
   "options": {

@@ -4,7 +4,7 @@
   "info": {
     "singularName": "sinco-project",
     "pluralName": "sinco-projects",
-    "displayName": "Sinco Project",
+    "displayName": "Proyecto de Sinco",
     "description": "Read-only mirror of the Sinco project catalog, refreshed from the API. Pick one on a project so leads reach the right sales room; do not edit by hand"
   },
   "options": {

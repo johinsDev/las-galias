@@ -4,7 +4,7 @@
   "info": {
     "singularName": "zone",
     "pluralName": "zones",
-    "displayName": "Zone",
+    "displayName": "Zona",
     "description": "Area within a city (Norte, Centro-Norte, Sur...). A content type and not a free-text field so the same zone reads identically across every project, and so listings can be filtered by it later"
   },
   "options": {

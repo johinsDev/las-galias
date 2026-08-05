@@ -4,7 +4,7 @@
   "info": {
     "singularName": "point-of-interest",
     "pluralName": "points-of-interest",
-    "displayName": "Point of interest",
+    "displayName": "Punto de interés",
     "description": "Nearby points of interest; ALWAYS tied to a macroproject so locations never mix"
   },
   "options": {

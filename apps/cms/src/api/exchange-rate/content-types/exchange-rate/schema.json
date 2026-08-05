@@ -4,7 +4,7 @@
   "info": {
     "singularName": "exchange-rate",
     "pluralName": "exchange-rates",
-    "displayName": "Exchange rate",
+    "displayName": "Tasa de cambio",
     "description": "COP→USD/EUR rates populated by the daily cron (TRM + ECB). Admins only"
   },
   "options": {
