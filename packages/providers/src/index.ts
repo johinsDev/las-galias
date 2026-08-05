@@ -1,7 +1,6 @@
 export {
   createProjectDataProvider,
   ManualProvider,
-  NotImplementedError,
   SincoProvider,
   type ConstructionStatus,
   type ExternalProjectData,

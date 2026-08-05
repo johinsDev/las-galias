@@ -1,7 +1,7 @@
 import type { Core } from "@strapi/strapi";
 import { errors } from "@strapi/utils";
 
-import { NotImplementedError, type ExternalProjectData } from "@lasgalias/providers";
+import type { ExternalProjectData } from "@lasgalias/providers";
 import { getProjectDataProvider } from "./providers";
 import { extractRelationIds } from "./relations";
 
@@ -79,47 +79,79 @@ function mergeUnitTypes(current: unknown, external: ExternalProjectData): UnitTy
 }
 
 /**
- * Rule: on create/update with "sync from Sinco" enabled and a Sinco project
- * picked, Sinco refreshes price and areas. Provider failures never block the
- * editor: log and fall back to what is stored.
+ * Pulls price and areas for ONE project and writes them back.
  *
- * `priceFromSincoCOP` always records what the CRM says, so the editor can see
- * the two side by side; `priceFromCOP` (what the site shows) is only touched
+ * Deliberately NOT a create/update middleware: every "Save" in the admin would
+ * cost an auth plus 2-3 HTTP calls against an ERP that is also serving live
+ * sales rooms. It runs from the nightly cron and from the explicit
+ * `POST /api/projects/:documentId/sync-sinco` action instead.
+ *
+ * Ownership is unchanged (see `mergeUnitTypes`): Sinco only ever writes price
+ * and areas. `priceFromSincoCOP` always records what the CRM says so an editor
+ * can compare the two; `priceFromCOP` — what the site shows — is only touched
  * while `priceLocked` is off.
+ *
+ * Returns whether anything actually changed.
  */
-export async function mergeSincoData(strapi: Core.Strapi, params: DocParams): Promise<void> {
-  const data = params.data;
-  if (!data || data.syncFromSinco !== true) return;
-  const sincoId = await resolveSincoId(strapi, data, params.documentId);
-  if (!sincoId) return;
+export async function syncProjectFromSinco(
+  strapi: Core.Strapi,
+  documentId: string,
+): Promise<boolean> {
+  const doc = await strapi.documents(PROJECT_UID).findOne({
+    documentId,
+    populate: ["sincoProject", "unitTypes"],
+  });
+  if (!doc || doc.syncFromSinco !== true) return false;
+
+  const sincoId = await resolveSincoId(strapi, {}, documentId);
+  if (!sincoId) return false;
 
   const provider = getProjectDataProvider();
-  try {
-    const external = await provider.getProjectById(sincoId);
-    if (!external) {
-      strapi.log.warn(`Provider "${provider.name}" did not find external project ${sincoId}`);
-      return;
-    }
-    if (external.priceFromCOP !== undefined) {
-      data.priceFromSincoCOP = String(external.priceFromCOP);
-      // A partial update may not carry the flag; falling back to the stored one
-      // means a locked price stays locked.
-      const locked = data.priceLocked ?? (await isPriceLocked(strapi, params.documentId));
-      if (locked !== true) data.priceFromCOP = String(external.priceFromCOP);
-    }
-    const unitTypes = mergeUnitTypes(data.unitTypes, external);
-    if (unitTypes) data.unitTypes = unitTypes;
-
-    strapi.log.info(`Project ${sincoId} price and areas refreshed from "${provider.name}"`);
-  } catch (err) {
-    if (err instanceof NotImplementedError) {
-      strapi.log.warn(
-        `Provider "${provider.name}" not implemented yet — manual input: ${err.message}`,
-      );
-      return;
-    }
-    strapi.log.error(`Provider "${provider.name}" lookup failed: ${String(err)}`);
+  const external = await provider.getProjectById(sincoId);
+  if (!external) {
+    strapi.log.warn(`Provider "${provider.name}" did not find external project ${sincoId}`);
+    return false;
   }
+
+  const data: Record<string, unknown> = {};
+  if (external.priceFromCOP !== undefined) {
+    data.priceFromSincoCOP = String(external.priceFromCOP);
+    if (!(await isPriceLocked(strapi, documentId))) {
+      data.priceFromCOP = String(external.priceFromCOP);
+    }
+  }
+  const unitTypes = mergeUnitTypes(doc.unitTypes, external);
+  if (unitTypes) data.unitTypes = unitTypes;
+
+  if (Object.keys(data).length === 0) return false;
+
+  await strapi.documents(PROJECT_UID).update({ documentId, data });
+  strapi.log.info(`Project ${sincoId} price and areas refreshed from "${provider.name}"`);
+  return true;
+}
+
+/**
+ * Nightly pass over every project with "sync from Sinco" enabled. One failing
+ * project never stops the rest — the ERP is flaky enough that an all-or-nothing
+ * pass would mean no project ever syncs.
+ */
+export async function syncAllProjectsFromSinco(strapi: Core.Strapi): Promise<void> {
+  const projects = await strapi.documents(PROJECT_UID).findMany({
+    filters: { syncFromSinco: true },
+    fields: ["name"],
+    status: "draft",
+  });
+  if (projects.length === 0) return;
+
+  let updated = 0;
+  for (const project of projects) {
+    try {
+      if (await syncProjectFromSinco(strapi, project.documentId)) updated += 1;
+    } catch (err) {
+      strapi.log.error(`Sinco sync failed for project ${project.documentId}: ${String(err)}`);
+    }
+  }
+  strapi.log.info(`Sinco project sync: ${updated}/${projects.length} project(s) updated`);
 }
 
 /**

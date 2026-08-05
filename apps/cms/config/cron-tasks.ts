@@ -2,6 +2,7 @@ import type { Core } from "@strapi/strapi";
 import { createRateProvider } from "@lasgalias/providers";
 
 import { retryPendingLeads } from "../src/utils/lead-rules";
+import { syncAllProjectsFromSinco } from "../src/utils/project-rules";
 import { syncSincoCatalog } from "../src/utils/sinco-catalog";
 
 const RATE_UID = "api::exchange-rate.exchange-rate";
@@ -23,6 +24,27 @@ export default {
     },
     options: {
       rule: "0 30 5 * * *",
+      tz: "America/Bogota",
+    },
+  },
+
+  /**
+   * Pulls price and areas for every project with "sync from Sinco" enabled.
+   * Runs after refreshSincoCatalog so a project picked yesterday already has
+   * its catalog entry, and well before office hours — this is the only place
+   * that reads project data from the ERP in bulk.
+   */
+  syncProjectsFromSinco: {
+    async task({ strapi }: { strapi: Core.Strapi }) {
+      if (process.env.PROJECT_DATA_PROVIDER !== "sinco") return;
+      try {
+        await syncAllProjectsFromSinco(strapi);
+      } catch (err) {
+        strapi.log.error(`Sinco project sync failed: ${String(err)}`);
+      }
+    },
+    options: {
+      rule: "0 45 5 * * *",
       tz: "America/Bogota",
     },
   },

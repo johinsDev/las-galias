@@ -21,7 +21,7 @@ export function createProjectDataProvider(env: ProjectDataEnv): ProjectDataProvi
 }
 
 export { ManualProvider } from "./manual";
-export { NotImplementedError, SincoProvider } from "./sinco";
+export { SincoProvider } from "./sinco";
 export type {
   ConstructionStatus,
   ExternalProjectData,
