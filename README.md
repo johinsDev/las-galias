@@ -111,6 +111,30 @@ disposable test environment and `--stage production` for the real one. Per
 stage is fully deleted by `sst remove --stage <name>`. Every live stage costs its own
 ~USD 40–45/month (ALB + NAT + RDS), so tear down what you're not using.
 
+### Contenido de demostración (temporal, sin CMS desplegado)
+
+Mientras no exista un Strapi accesible, el build cae a
+`apps/web/src/fixtures/cms-snapshot.json`, una grabación de un CMS local, con
+las imágenes copiadas a `apps/web/public/uploads`.
+
+**Es contenido DEMO: nombres y precios inventados.** Dos consecuencias que hay
+que tener presentes mientras esté activo:
+
+- El sitio muestra proyectos que no existen, con precios que no son reales.
+- **No se captura ni un lead.** Sin CMS, `PUBLIC_STRAPI_URL` no apunta a
+  ningún lado y cada envío del formulario falla (el usuario ve el mensaje de
+  error, no un falso éxito).
+
+Para apagarlo, en cuanto haya CMS: `USE_CMS_SNAPSHOT=false` en Vercel, o
+borrar el fixture. Para regrabarlo contra un CMS vivo:
+
+```bash
+cd apps/web && SNAPSHOT_CMS=1 STRAPI_URL=<url> bun run build
+```
+
+El recorder indexa por la petición exacta que hace el build, así que no se
+desincroniza de los `populate` del código.
+
 ### Web → Vercel
 
 1. Import the repo in Vercel — the root `vercel.json` already defines the build

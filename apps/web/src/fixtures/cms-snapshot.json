@@ -1,0 +1,2686 @@
+{
+  "posts?pagination%5BpageSize%5D=100&populate%5Bcover%5D=true&sort=publishedAt%3Adesc": [
+    {
+      "id": 4,
+      "documentId": "vp3qzjqj23qknyhqb4322jsc",
+      "title": "Así avanza Ciudad Verde Norte",
+      "slug": "asi-avanza-ciudad-verde-norte",
+      "excerpt": "Un recorrido por las obras del macroproyecto más grande del norte de Bogotá.",
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "children": [
+            {
+              "text": "Así avanza Ciudad Verde Norte",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Un recorrido por las obras del macroproyecto más grande del norte de Bogotá.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Revisa la fiducia y la licencia de construcción.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Compara la tasa de interés con la calculadora del proyecto.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Visita la sala de ventas y el apartamento modelo.",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-15T01:47:10.567Z",
+      "updatedAt": "2026-07-15T01:47:10.567Z",
+      "publishedAt": "2026-07-15T01:47:10.573Z",
+      "category": null,
+      "publishedOn": null,
+      "cover": {
+        "id": 31,
+        "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
+        "name": "post-asi-avanza-ciudad-verde-norte",
+        "alternativeText": "Así avanza Ciudad Verde Norte",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1280,
+        "height": 720,
+        "formats": null,
+        "hash": "post_asi_avanza_ciudad_verde_norte_4f72e2a425",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/post_asi_avanza_ciudad_verde_norte_4f72e2a425.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.561Z",
+        "updatedAt": "2026-07-15T01:47:10.561Z",
+        "publishedAt": "2026-07-15T01:47:10.561Z"
+      }
+    },
+    {
+      "id": 2,
+      "documentId": "x8wyyjtetxpfkja1asy0q2vg",
+      "title": "5 claves para comprar vivienda sobre planos",
+      "slug": "claves-comprar-vivienda-sobre-planos",
+      "excerpt": "Lo que debes revisar antes de firmar una promesa de compraventa.",
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "children": [
+            {
+              "text": "5 claves para comprar vivienda sobre planos",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Lo que debes revisar antes de firmar una promesa de compraventa.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Revisa la fiducia y la licencia de construcción.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Compara la tasa de interés con la calculadora del proyecto.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Visita la sala de ventas y el apartamento modelo.",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-15T01:47:10.510Z",
+      "updatedAt": "2026-07-15T01:47:10.510Z",
+      "publishedAt": "2026-07-15T01:47:10.518Z",
+      "category": null,
+      "publishedOn": null,
+      "cover": {
+        "id": 30,
+        "documentId": "x8k0yzpol1nqdufinq3kfurx",
+        "name": "post-claves-comprar-vivienda-sobre-planos",
+        "alternativeText": "5 claves para comprar vivienda sobre planos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1280,
+        "height": 720,
+        "formats": null,
+        "hash": "post_claves_comprar_vivienda_sobre_planos_e03d97d022",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.55,
+        "url": "/uploads/post_claves_comprar_vivienda_sobre_planos_e03d97d022.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.505Z",
+        "updatedAt": "2026-07-15T01:47:10.505Z",
+        "publishedAt": "2026-07-15T01:47:10.505Z"
+      }
+    }
+  ],
+  "macroprojects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5Bgallery%5D=true&populate%5Blocation%5D=true&populate%5BpointsOfInterest%5D=true": [
+    {
+      "id": 2,
+      "documentId": "jzrkass0ijwrv0wj5igsoazs",
+      "name": "Ciudad Verde Norte",
+      "slug": "ciudad-verde-norte",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-15T01:47:08.802Z",
+      "updatedAt": "2026-07-15T01:47:08.802Z",
+      "publishedAt": "2026-07-15T01:47:08.811Z",
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "gallery": [
+        {
+          "id": 1,
+          "documentId": "ge3yactow7g6nx7odaqfbkcq",
+          "name": "macro-ciudad-verde",
+          "alternativeText": "Ciudad Verde Norte",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1600,
+          "height": 1000,
+          "formats": null,
+          "hash": "macro_ciudad_verde_5678733335",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/macro_ciudad_verde_5678733335.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:08.794Z",
+          "updatedAt": "2026-07-15T01:47:08.794Z",
+          "publishedAt": "2026-07-15T01:47:08.794Z"
+        }
+      ],
+      "location": {
+        "id": 2,
+        "lat": 4.7601,
+        "lng": -74.0465,
+        "address": "Autopista Norte km 21, Bogotá"
+      },
+      "pointsOfInterest": [
+        {
+          "id": 1,
+          "documentId": "isx999b166x0vg43ciiylr15",
+          "name": "Centro Comercial Verde Plaza",
+          "category": "commerce",
+          "distanceText": "5 min",
+          "createdAt": "2026-07-15T01:47:08.822Z",
+          "updatedAt": "2026-07-15T01:47:08.822Z",
+          "publishedAt": "2026-07-15T01:47:08.820Z"
+        },
+        {
+          "id": 2,
+          "documentId": "mtx12a6atciqa2ekdepqg2ki",
+          "name": "Clínica del Norte",
+          "category": "health",
+          "distanceText": "10 min",
+          "createdAt": "2026-07-15T01:47:08.827Z",
+          "updatedAt": "2026-07-15T01:47:08.827Z",
+          "publishedAt": "2026-07-15T01:47:08.825Z"
+        },
+        {
+          "id": 3,
+          "documentId": "qpws7v9pcoevrhm59x41nqkg",
+          "name": "Colegio Nueva Granada Norte",
+          "category": "education",
+          "distanceText": "8 min",
+          "createdAt": "2026-07-15T01:47:08.831Z",
+          "updatedAt": "2026-07-15T01:47:08.831Z",
+          "publishedAt": "2026-07-15T01:47:08.829Z"
+        },
+        {
+          "id": 4,
+          "documentId": "t0u2ts0q4k82y6325jgmfuu2",
+          "name": "Estación TransMilenio Terminal",
+          "category": "transport",
+          "distanceText": "12 min",
+          "createdAt": "2026-07-15T01:47:08.834Z",
+          "updatedAt": "2026-07-15T01:47:08.834Z",
+          "publishedAt": "2026-07-15T01:47:08.832Z"
+        },
+        {
+          "id": 5,
+          "documentId": "tivhldx7ueyf4hunl5qgb4ff",
+          "name": "Parque Metropolitano",
+          "category": "recreation",
+          "distanceText": "3 min",
+          "createdAt": "2026-07-15T01:47:08.838Z",
+          "updatedAt": "2026-07-15T01:47:08.838Z",
+          "publishedAt": "2026-07-15T01:47:08.836Z"
+        }
+      ]
+    }
+  ],
+  "projects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D=true&populate%5BsalesRoom%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D=true&sort=name%3Aasc": [
+    {
+      "id": 6,
+      "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
+      "name": "Altos de la Sabana",
+      "slug": "altos-de-la-sabana",
+      "stage": "expectation",
+      "syncFromSinco": false,
+      "constructionStatus": null,
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Muy pronto: un nuevo concepto de vivienda campestre urbana al norte de Bogotá.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": null,
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.484Z",
+      "updatedAt": "2026-07-15T01:47:09.484Z",
+      "publishedAt": "2026-07-15T01:47:09.499Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "heroDesktop": {
+        "id": 12,
+        "documentId": "may7706ddcvyy94q7g53qcwy",
+        "name": "altos-de-la-sabana-hero-desktop",
+        "alternativeText": "Altos de la Sabana",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "altos_de_la_sabana_hero_desktop_9587b1c9a5",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/altos_de_la_sabana_hero_desktop_9587b1c9a5.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.437Z",
+        "updatedAt": "2026-07-15T01:47:09.437Z",
+        "publishedAt": "2026-07-15T01:47:09.437Z"
+      },
+      "heroMobile": {
+        "id": 13,
+        "documentId": "j7iwlmz95fjqpx24qicpbpb4",
+        "name": "altos-de-la-sabana-hero-mobile",
+        "alternativeText": "Altos de la Sabana",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "altos_de_la_sabana_hero_mobile_dd4d6d0f47",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/altos_de_la_sabana_hero_mobile_dd4d6d0f47.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.477Z",
+        "updatedAt": "2026-07-15T01:47:09.477Z",
+        "publishedAt": "2026-07-15T01:47:09.477Z"
+      },
+      "unitTypes": [],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": null
+    },
+    {
+      "id": 14,
+      "documentId": "m7yi0bt025kvwmyuwyj451aj",
+      "name": "Balcones de Provenza",
+      "slug": "balcones-de-provenza",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "immediate-delivery",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Entrega inmediata en el corazón de Provenza: balcones amplios y acabados premium.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "410000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.752Z",
+      "updatedAt": "2026-07-15T01:47:10.174Z",
+      "publishedAt": "2026-07-15T01:47:10.223Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "heroDesktop": {
+        "id": 14,
+        "documentId": "d1q1wu2iyzcsalcpajrxbiqk",
+        "name": "balcones-de-provenza-hero-desktop",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_desktop_19a7af4a57",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_desktop_19a7af4a57.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.559Z",
+        "updatedAt": "2026-07-15T01:47:09.559Z",
+        "publishedAt": "2026-07-15T01:47:09.559Z"
+      },
+      "heroMobile": {
+        "id": 15,
+        "documentId": "jkwa7lvrhp6lpzlp0q9ttvnm",
+        "name": "balcones-de-provenza-hero-mobile",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_mobile_6112f0c6ea",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_mobile_6112f0c6ea.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.598Z",
+        "updatedAt": "2026-07-15T01:47:09.598Z",
+        "publishedAt": "2026-07-15T01:47:09.598Z"
+      },
+      "unitTypes": [
+        {
+          "id": 28,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "410000000"
+        },
+        {
+          "id": 29,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "512500000"
+        },
+        {
+          "id": 30,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "635500000"
+        }
+      ],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": null
+    },
+    {
+      "id": 4,
+      "documentId": "xgq1gkv616o17gctywpqgpas",
+      "name": "Mirador del Parque",
+      "slug": "mirador-del-parque",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "presale",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Torres de vivienda con vista al humedal y zonas comunes en el piso 12.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "280000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.350Z",
+      "updatedAt": "2026-07-15T01:47:09.350Z",
+      "publishedAt": "2026-07-15T01:47:09.371Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "heroDesktop": {
+        "id": 7,
+        "documentId": "db35vx3n0re0xrjkk9wo1ryg",
+        "name": "mirador-del-parque-hero-desktop",
+        "alternativeText": "Mirador del Parque",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "mirador_del_parque_hero_desktop_d9cc3b5dfa",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/mirador_del_parque_hero_desktop_d9cc3b5dfa.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.154Z",
+        "updatedAt": "2026-07-15T01:47:09.154Z",
+        "publishedAt": "2026-07-15T01:47:09.154Z"
+      },
+      "heroMobile": {
+        "id": 8,
+        "documentId": "vr0a9eekyjrl1s67e19082fu",
+        "name": "mirador-del-parque-hero-mobile",
+        "alternativeText": "Mirador del Parque",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "mirador_del_parque_hero_mobile_934f21838a",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/mirador_del_parque_hero_mobile_934f21838a.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.192Z",
+        "updatedAt": "2026-07-15T01:47:09.192Z",
+        "publishedAt": "2026-07-15T01:47:09.192Z"
+      },
+      "unitTypes": [
+        {
+          "id": 10,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "280000000"
+        },
+        {
+          "id": 11,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "350000000"
+        },
+        {
+          "id": 12,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "434000000"
+        }
+      ],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": {
+        "id": 2,
+        "documentId": "jzrkass0ijwrv0wj5igsoazs",
+        "name": "Ciudad Verde Norte",
+        "slug": "ciudad-verde-norte",
+        "description": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "createdAt": "2026-07-15T01:47:08.802Z",
+        "updatedAt": "2026-07-15T01:47:08.802Z",
+        "publishedAt": "2026-07-15T01:47:08.811Z"
+      }
+    },
+    {
+      "id": 12,
+      "documentId": "t667t7mp8ez7ciokzf7q2blu",
+      "name": "Portal del Poblado",
+      "slug": "portal-del-poblado",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "launch",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Lanzamiento exclusivo: apartamentos de lujo con club house privado en El Poblado.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "520000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:10.124Z",
+      "updatedAt": "2026-07-15T01:47:10.124Z",
+      "publishedAt": "2026-07-15T01:47:10.141Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "heroDesktop": {
+        "id": 21,
+        "documentId": "vy4g5sxyl59qtr1f6ojgh22y",
+        "name": "portal-del-poblado-hero-desktop",
+        "alternativeText": "Portal del Poblado",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "portal_del_poblado_hero_desktop_493b03158a",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/portal_del_poblado_hero_desktop_493b03158a.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.944Z",
+        "updatedAt": "2026-07-15T01:47:09.944Z",
+        "publishedAt": "2026-07-15T01:47:09.944Z"
+      },
+      "heroMobile": {
+        "id": 22,
+        "documentId": "o9dzfsoke59vm55zgbh9bzo8",
+        "name": "portal-del-poblado-hero-mobile",
+        "alternativeText": "Portal del Poblado",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "portal_del_poblado_hero_mobile_c4602f4491",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/portal_del_poblado_hero_mobile_c4602f4491.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.982Z",
+        "updatedAt": "2026-07-15T01:47:09.982Z",
+        "publishedAt": "2026-07-15T01:47:09.982Z"
+      },
+      "unitTypes": [
+        {
+          "id": 22,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "520000000"
+        },
+        {
+          "id": 23,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "650000000"
+        },
+        {
+          "id": 24,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "806000000"
+        }
+      ],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": null
+    },
+    {
+      "id": 13,
+      "documentId": "fyms43ocvurmb4hr9a2i0yjk",
+      "name": "Reserva de los Alisos",
+      "slug": "reserva-de-los-alisos",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "construction",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Apartamentos de 2 y 3 alcobas rodeados de senderos ecológicos, a 5 minutos del parque metropolitano.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "320000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.070Z",
+      "updatedAt": "2026-07-15T01:47:10.162Z",
+      "publishedAt": "2026-07-15T01:47:10.192Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "heroDesktop": {
+        "id": 2,
+        "documentId": "fauanaj6r9y004dgowy1783d",
+        "name": "reserva-de-los-alisos-hero-desktop",
+        "alternativeText": "Reserva de los Alisos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "reserva_de_los_alisos_hero_desktop_0db936b676",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/reserva_de_los_alisos_hero_desktop_0db936b676.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:08.886Z",
+        "updatedAt": "2026-07-15T01:47:08.886Z",
+        "publishedAt": "2026-07-15T01:47:08.886Z"
+      },
+      "heroMobile": {
+        "id": 3,
+        "documentId": "ilzh86f8mphjqp14ak4gkxmm",
+        "name": "reserva-de-los-alisos-hero-mobile",
+        "alternativeText": "Reserva de los Alisos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "reserva_de_los_alisos_hero_mobile_b79f3c39cd",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/reserva_de_los_alisos_hero_mobile_b79f3c39cd.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:08.925Z",
+        "updatedAt": "2026-07-15T01:47:08.925Z",
+        "publishedAt": "2026-07-15T01:47:08.925Z"
+      },
+      "unitTypes": [
+        {
+          "id": 25,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "320000000"
+        },
+        {
+          "id": 26,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "400000000"
+        },
+        {
+          "id": 27,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "496000000"
+        }
+      ],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": {
+        "id": 2,
+        "documentId": "jzrkass0ijwrv0wj5igsoazs",
+        "name": "Ciudad Verde Norte",
+        "slug": "ciudad-verde-norte",
+        "description": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "createdAt": "2026-07-15T01:47:08.802Z",
+        "updatedAt": "2026-07-15T01:47:08.802Z",
+        "publishedAt": "2026-07-15T01:47:08.811Z"
+      }
+    },
+    {
+      "id": 10,
+      "documentId": "u6f2h266w0ybzpg06rioc28t",
+      "name": "Sendero del Río",
+      "slug": "sendero-del-rio",
+      "stage": "expectation",
+      "syncFromSinco": false,
+      "constructionStatus": null,
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Muy pronto: vive frente al río con el skyline de Medellín de fondo.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": null,
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.875Z",
+      "updatedAt": "2026-07-15T01:47:09.875Z",
+      "publishedAt": "2026-07-15T01:47:09.887Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "heroDesktop": {
+        "id": 19,
+        "documentId": "n6ao00dmvymqlzu8snxt0wes",
+        "name": "sendero-del-rio-hero-desktop",
+        "alternativeText": "Sendero del Río",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "sendero_del_rio_hero_desktop_19c09518b5",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/sendero_del_rio_hero_desktop_19c09518b5.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.829Z",
+        "updatedAt": "2026-07-15T01:47:09.829Z",
+        "publishedAt": "2026-07-15T01:47:09.829Z"
+      },
+      "heroMobile": {
+        "id": 20,
+        "documentId": "jgtqs6ml8i646q544kql8871",
+        "name": "sendero-del-rio-hero-mobile",
+        "alternativeText": "Sendero del Río",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "sendero_del_rio_hero_mobile_243ae71345",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/sendero_del_rio_hero_mobile_243ae71345.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.868Z",
+        "updatedAt": "2026-07-15T01:47:09.868Z",
+        "publishedAt": "2026-07-15T01:47:09.868Z"
+      },
+      "unitTypes": [],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": null,
+      "macroproject": null
+    }
+  ],
+  "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+    {
+      "id": 4,
+      "documentId": "vp3qzjqj23qknyhqb4322jsc",
+      "title": "Así avanza Ciudad Verde Norte",
+      "slug": "asi-avanza-ciudad-verde-norte",
+      "excerpt": "Un recorrido por las obras del macroproyecto más grande del norte de Bogotá.",
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "children": [
+            {
+              "text": "Así avanza Ciudad Verde Norte",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Un recorrido por las obras del macroproyecto más grande del norte de Bogotá.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Revisa la fiducia y la licencia de construcción.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Compara la tasa de interés con la calculadora del proyecto.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Visita la sala de ventas y el apartamento modelo.",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-15T01:47:10.567Z",
+      "updatedAt": "2026-07-15T01:47:10.567Z",
+      "publishedAt": "2026-07-15T01:47:10.573Z",
+      "category": null,
+      "publishedOn": null,
+      "cover": {
+        "id": 31,
+        "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
+        "name": "post-asi-avanza-ciudad-verde-norte",
+        "alternativeText": "Así avanza Ciudad Verde Norte",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1280,
+        "height": 720,
+        "formats": null,
+        "hash": "post_asi_avanza_ciudad_verde_norte_4f72e2a425",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/post_asi_avanza_ciudad_verde_norte_4f72e2a425.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.561Z",
+        "updatedAt": "2026-07-15T01:47:10.561Z",
+        "publishedAt": "2026-07-15T01:47:10.561Z"
+      },
+      "seo": null
+    }
+  ],
+  "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+    {
+      "id": 2,
+      "documentId": "x8wyyjtetxpfkja1asy0q2vg",
+      "title": "5 claves para comprar vivienda sobre planos",
+      "slug": "claves-comprar-vivienda-sobre-planos",
+      "excerpt": "Lo que debes revisar antes de firmar una promesa de compraventa.",
+      "content": [
+        {
+          "type": "heading",
+          "level": 2,
+          "children": [
+            {
+              "text": "5 claves para comprar vivienda sobre planos",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Lo que debes revisar antes de firmar una promesa de compraventa.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Revisa la fiducia y la licencia de construcción.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Compara la tasa de interés con la calculadora del proyecto.",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "text": "Visita la sala de ventas y el apartamento modelo.",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-15T01:47:10.510Z",
+      "updatedAt": "2026-07-15T01:47:10.510Z",
+      "publishedAt": "2026-07-15T01:47:10.518Z",
+      "category": null,
+      "publishedOn": null,
+      "cover": {
+        "id": 30,
+        "documentId": "x8k0yzpol1nqdufinq3kfurx",
+        "name": "post-claves-comprar-vivienda-sobre-planos",
+        "alternativeText": "5 claves para comprar vivienda sobre planos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1280,
+        "height": 720,
+        "formats": null,
+        "hash": "post_claves_comprar_vivienda_sobre_planos_e03d97d022",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.55,
+        "url": "/uploads/post_claves_comprar_vivienda_sobre_planos_e03d97d022.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.505Z",
+        "updatedAt": "2026-07-15T01:47:10.505Z",
+        "publishedAt": "2026-07-15T01:47:10.505Z"
+      },
+      "seo": null
+    }
+  ],
+  "calculator-config": {
+    "id": 1,
+    "documentId": "fuxq9yto6yf290wzdv9ac5cy",
+    "annualInterestRate": 12.5,
+    "maxTermYears": 20,
+    "maxFinancingPercent": 70,
+    "createdAt": "2026-07-15T01:47:10.577Z",
+    "updatedAt": "2026-07-15T01:47:10.577Z",
+    "publishedAt": "2026-07-15T01:47:10.576Z"
+  },
+  "exchange-rate": {
+    "id": 1,
+    "documentId": "itib3fovp1r0pqwcornfusw3",
+    "copPerUsd": 3252.11,
+    "copPerEur": 3709.03,
+    "usdSource": "trm-datos.gov.co",
+    "eurSource": "trm-datos.gov.co × frankfurter.app (ECB)",
+    "validFrom": "2026-07-15T05:00:00.000Z",
+    "fetchedAt": "2026-07-15T11:05:39.633Z",
+    "createdAt": "2026-07-15T01:47:11.795Z",
+    "updatedAt": "2026-07-15T11:05:39.657Z",
+    "publishedAt": "2026-07-15T11:05:39.650Z"
+  },
+  "faqs?filters%5Baudience%5D%5B%24eq%5D=exterior&pagination%5BpageSize%5D=100&sort=order%3Aasc": [],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 6,
+      "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
+      "name": "Altos de la Sabana",
+      "slug": "altos-de-la-sabana",
+      "stage": "expectation",
+      "syncFromSinco": false,
+      "constructionStatus": null,
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Muy pronto: un nuevo concepto de vivienda campestre urbana al norte de Bogotá.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": null,
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.484Z",
+      "updatedAt": "2026-07-15T01:47:09.484Z",
+      "publishedAt": "2026-07-15T01:47:09.499Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "gallery": null,
+      "heroDesktop": {
+        "id": 12,
+        "documentId": "may7706ddcvyy94q7g53qcwy",
+        "name": "altos-de-la-sabana-hero-desktop",
+        "alternativeText": "Altos de la Sabana",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "altos_de_la_sabana_hero_desktop_9587b1c9a5",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/altos_de_la_sabana_hero_desktop_9587b1c9a5.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.437Z",
+        "updatedAt": "2026-07-15T01:47:09.437Z",
+        "publishedAt": "2026-07-15T01:47:09.437Z"
+      },
+      "heroMobile": {
+        "id": 13,
+        "documentId": "j7iwlmz95fjqpx24qicpbpb4",
+        "name": "altos-de-la-sabana-hero-mobile",
+        "alternativeText": "Altos de la Sabana",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "altos_de_la_sabana_hero_mobile_dd4d6d0f47",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/altos_de_la_sabana_hero_mobile_dd4d6d0f47.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.477Z",
+        "updatedAt": "2026-07-15T01:47:09.477Z",
+        "publishedAt": "2026-07-15T01:47:09.477Z"
+      },
+      "location": null,
+      "unitTypes": [],
+      "amenities": [],
+      "macroproject": null,
+      "recommended": [],
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 6,
+        "metaTitle": "Altos de la Sabana — Las Galias",
+        "metaDescription": "Muy pronto: un nuevo concepto de vivienda campestre urbana al norte de Bogotá.",
+        "ogImage": null
+      }
+    }
+  ],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 14,
+      "documentId": "m7yi0bt025kvwmyuwyj451aj",
+      "name": "Balcones de Provenza",
+      "slug": "balcones-de-provenza",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "immediate-delivery",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Entrega inmediata en el corazón de Provenza: balcones amplios y acabados premium.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "410000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.752Z",
+      "updatedAt": "2026-07-15T01:47:10.174Z",
+      "publishedAt": "2026-07-15T01:47:10.223Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "gallery": [
+        {
+          "id": 16,
+          "documentId": "ibatk2swps3pbwsnoaan03v9",
+          "name": "balcones-de-provenza-gallery-1",
+          "alternativeText": "Balcones de Provenza · 1",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_1_6c25c50f9c",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_1_6c25c50f9c.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.644Z",
+          "updatedAt": "2026-07-15T01:47:09.644Z",
+          "publishedAt": "2026-07-15T01:47:09.644Z"
+        },
+        {
+          "id": 17,
+          "documentId": "xw94tt7k4e0qb8ufeynaktxw",
+          "name": "balcones-de-provenza-gallery-2",
+          "alternativeText": "Balcones de Provenza · 2",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_2_0ce8d56dc0",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_2_0ce8d56dc0.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.691Z",
+          "updatedAt": "2026-07-15T01:47:09.691Z",
+          "publishedAt": "2026-07-15T01:47:09.691Z"
+        },
+        {
+          "id": 18,
+          "documentId": "ekw7xk8bwri7glsnl27jf1db",
+          "name": "balcones-de-provenza-gallery-3",
+          "alternativeText": "Balcones de Provenza · 3",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_3_a728c39b9b",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_3_a728c39b9b.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.740Z",
+          "updatedAt": "2026-07-15T01:47:09.740Z",
+          "publishedAt": "2026-07-15T01:47:09.740Z"
+        }
+      ],
+      "heroDesktop": {
+        "id": 14,
+        "documentId": "d1q1wu2iyzcsalcpajrxbiqk",
+        "name": "balcones-de-provenza-hero-desktop",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_desktop_19a7af4a57",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_desktop_19a7af4a57.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.559Z",
+        "updatedAt": "2026-07-15T01:47:09.559Z",
+        "publishedAt": "2026-07-15T01:47:09.559Z"
+      },
+      "heroMobile": {
+        "id": 15,
+        "documentId": "jkwa7lvrhp6lpzlp0q9ttvnm",
+        "name": "balcones-de-provenza-hero-mobile",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_mobile_6112f0c6ea",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_mobile_6112f0c6ea.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.598Z",
+        "updatedAt": "2026-07-15T01:47:09.598Z",
+        "publishedAt": "2026-07-15T01:47:09.598Z"
+      },
+      "location": null,
+      "macroproject": null,
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 14,
+        "metaTitle": "Balcones de Provenza — Las Galias",
+        "metaDescription": "Entrega inmediata en el corazón de Provenza: balcones amplios y acabados premium.",
+        "ogImage": null
+      },
+      "unitTypes": [
+        {
+          "id": 28,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "410000000",
+          "floorPlan": null
+        },
+        {
+          "id": 29,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "512500000",
+          "floorPlan": null
+        },
+        {
+          "id": 30,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "635500000",
+          "floorPlan": null
+        }
+      ],
+      "amenities": [
+        {
+          "id": 1,
+          "documentId": "emggxkyejovmoooxju350g27",
+          "name": "Piscina",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.586Z",
+          "updatedAt": "2026-07-15T01:47:08.586Z",
+          "publishedAt": "2026-07-15T01:47:08.586Z",
+          "icon": null
+        },
+        {
+          "id": 2,
+          "documentId": "j1dzzxz4y5dd0bxjsmckxw8k",
+          "name": "Gimnasio",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.588Z",
+          "updatedAt": "2026-07-15T01:47:08.588Z",
+          "publishedAt": "2026-07-15T01:47:08.588Z",
+          "icon": null
+        },
+        {
+          "id": 3,
+          "documentId": "ydg1dfn251ndim1lv7i2sitb",
+          "name": "Zona BBQ",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.590Z",
+          "updatedAt": "2026-07-15T01:47:08.590Z",
+          "publishedAt": "2026-07-15T01:47:08.590Z",
+          "icon": null
+        },
+        {
+          "id": 4,
+          "documentId": "oxqcs0dme506plfcii532jyi",
+          "name": "Parque infantil",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.592Z",
+          "updatedAt": "2026-07-15T01:47:08.592Z",
+          "publishedAt": "2026-07-15T01:47:08.591Z",
+          "icon": null
+        }
+      ],
+      "recommended": [
+        {
+          "id": 12,
+          "documentId": "t667t7mp8ez7ciokzf7q2blu",
+          "name": "Portal del Poblado",
+          "slug": "portal-del-poblado",
+          "stage": "sale",
+          "syncFromSinco": false,
+          "constructionStatus": "launch",
+          "description": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "text": "Lanzamiento exclusivo: apartamentos de lujo con club house privado en El Poblado.",
+                  "type": "text"
+                }
+              ]
+            }
+          ],
+          "priceFromCOP": "520000000",
+          "video": null,
+          "createdAt": "2026-07-15T01:47:10.124Z",
+          "updatedAt": "2026-07-15T01:47:10.124Z",
+          "publishedAt": "2026-07-15T01:47:10.141Z",
+          "priceLocked": null,
+          "priceFromSincoCOP": null,
+          "appliesSubsidy": null,
+          "lastUnits": null,
+          "hasDiscount": null,
+          "tour360Url": null,
+          "city": {
+            "id": 4,
+            "documentId": "vkmbl3cyolh62yjlfrybppke",
+            "name": "Medellín",
+            "slug": "medellin",
+            "department": "Antioquia",
+            "createdAt": "2026-07-15T01:47:08.580Z",
+            "updatedAt": "2026-07-15T01:47:08.580Z",
+            "publishedAt": "2026-07-15T01:47:08.583Z"
+          }
+        }
+      ]
+    }
+  ],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 4,
+      "documentId": "xgq1gkv616o17gctywpqgpas",
+      "name": "Mirador del Parque",
+      "slug": "mirador-del-parque",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "presale",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Torres de vivienda con vista al humedal y zonas comunes en el piso 12.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "280000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.350Z",
+      "updatedAt": "2026-07-15T01:47:09.350Z",
+      "publishedAt": "2026-07-15T01:47:09.371Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "gallery": [
+        {
+          "id": 9,
+          "documentId": "r8jsd5q5xoel0h9olpb1alqf",
+          "name": "mirador-del-parque-gallery-1",
+          "alternativeText": "Mirador del Parque · 1",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "mirador_del_parque_gallery_1_26fce3ccb6",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/mirador_del_parque_gallery_1_26fce3ccb6.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.237Z",
+          "updatedAt": "2026-07-15T01:47:09.237Z",
+          "publishedAt": "2026-07-15T01:47:09.237Z"
+        },
+        {
+          "id": 10,
+          "documentId": "bmsd8s5l53okk10apqvoq75j",
+          "name": "mirador-del-parque-gallery-2",
+          "alternativeText": "Mirador del Parque · 2",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "mirador_del_parque_gallery_2_ee11ae7d79",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/mirador_del_parque_gallery_2_ee11ae7d79.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.285Z",
+          "updatedAt": "2026-07-15T01:47:09.285Z",
+          "publishedAt": "2026-07-15T01:47:09.285Z"
+        },
+        {
+          "id": 11,
+          "documentId": "tnaxpe7brqgpw745w55zkbgx",
+          "name": "mirador-del-parque-gallery-3",
+          "alternativeText": "Mirador del Parque · 3",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "mirador_del_parque_gallery_3_72f3bd329c",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/mirador_del_parque_gallery_3_72f3bd329c.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.333Z",
+          "updatedAt": "2026-07-15T01:47:09.333Z",
+          "publishedAt": "2026-07-15T01:47:09.333Z"
+        }
+      ],
+      "heroDesktop": {
+        "id": 7,
+        "documentId": "db35vx3n0re0xrjkk9wo1ryg",
+        "name": "mirador-del-parque-hero-desktop",
+        "alternativeText": "Mirador del Parque",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "mirador_del_parque_hero_desktop_d9cc3b5dfa",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/mirador_del_parque_hero_desktop_d9cc3b5dfa.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.154Z",
+        "updatedAt": "2026-07-15T01:47:09.154Z",
+        "publishedAt": "2026-07-15T01:47:09.154Z"
+      },
+      "heroMobile": {
+        "id": 8,
+        "documentId": "vr0a9eekyjrl1s67e19082fu",
+        "name": "mirador-del-parque-hero-mobile",
+        "alternativeText": "Mirador del Parque",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "mirador_del_parque_hero_mobile_934f21838a",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/mirador_del_parque_hero_mobile_934f21838a.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.192Z",
+        "updatedAt": "2026-07-15T01:47:09.192Z",
+        "publishedAt": "2026-07-15T01:47:09.192Z"
+      },
+      "location": null,
+      "recommended": [],
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 4,
+        "metaTitle": "Mirador del Parque — Las Galias",
+        "metaDescription": "Torres de vivienda con vista al humedal y zonas comunes en el piso 12.",
+        "ogImage": null
+      },
+      "unitTypes": [
+        {
+          "id": 10,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "280000000",
+          "floorPlan": null
+        },
+        {
+          "id": 11,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "350000000",
+          "floorPlan": null
+        },
+        {
+          "id": 12,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "434000000",
+          "floorPlan": null
+        }
+      ],
+      "amenities": [
+        {
+          "id": 1,
+          "documentId": "emggxkyejovmoooxju350g27",
+          "name": "Piscina",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.586Z",
+          "updatedAt": "2026-07-15T01:47:08.586Z",
+          "publishedAt": "2026-07-15T01:47:08.586Z",
+          "icon": null
+        },
+        {
+          "id": 2,
+          "documentId": "j1dzzxz4y5dd0bxjsmckxw8k",
+          "name": "Gimnasio",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.588Z",
+          "updatedAt": "2026-07-15T01:47:08.588Z",
+          "publishedAt": "2026-07-15T01:47:08.588Z",
+          "icon": null
+        },
+        {
+          "id": 3,
+          "documentId": "ydg1dfn251ndim1lv7i2sitb",
+          "name": "Zona BBQ",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.590Z",
+          "updatedAt": "2026-07-15T01:47:08.590Z",
+          "publishedAt": "2026-07-15T01:47:08.590Z",
+          "icon": null
+        },
+        {
+          "id": 4,
+          "documentId": "oxqcs0dme506plfcii532jyi",
+          "name": "Parque infantil",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.592Z",
+          "updatedAt": "2026-07-15T01:47:08.592Z",
+          "publishedAt": "2026-07-15T01:47:08.591Z",
+          "icon": null
+        }
+      ],
+      "macroproject": {
+        "id": 2,
+        "documentId": "jzrkass0ijwrv0wj5igsoazs",
+        "name": "Ciudad Verde Norte",
+        "slug": "ciudad-verde-norte",
+        "description": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "createdAt": "2026-07-15T01:47:08.802Z",
+        "updatedAt": "2026-07-15T01:47:08.802Z",
+        "publishedAt": "2026-07-15T01:47:08.811Z",
+        "pointsOfInterest": [
+          {
+            "id": 1,
+            "documentId": "isx999b166x0vg43ciiylr15",
+            "name": "Centro Comercial Verde Plaza",
+            "category": "commerce",
+            "distanceText": "5 min",
+            "createdAt": "2026-07-15T01:47:08.822Z",
+            "updatedAt": "2026-07-15T01:47:08.822Z",
+            "publishedAt": "2026-07-15T01:47:08.820Z"
+          },
+          {
+            "id": 2,
+            "documentId": "mtx12a6atciqa2ekdepqg2ki",
+            "name": "Clínica del Norte",
+            "category": "health",
+            "distanceText": "10 min",
+            "createdAt": "2026-07-15T01:47:08.827Z",
+            "updatedAt": "2026-07-15T01:47:08.827Z",
+            "publishedAt": "2026-07-15T01:47:08.825Z"
+          },
+          {
+            "id": 3,
+            "documentId": "qpws7v9pcoevrhm59x41nqkg",
+            "name": "Colegio Nueva Granada Norte",
+            "category": "education",
+            "distanceText": "8 min",
+            "createdAt": "2026-07-15T01:47:08.831Z",
+            "updatedAt": "2026-07-15T01:47:08.831Z",
+            "publishedAt": "2026-07-15T01:47:08.829Z"
+          },
+          {
+            "id": 4,
+            "documentId": "t0u2ts0q4k82y6325jgmfuu2",
+            "name": "Estación TransMilenio Terminal",
+            "category": "transport",
+            "distanceText": "12 min",
+            "createdAt": "2026-07-15T01:47:08.834Z",
+            "updatedAt": "2026-07-15T01:47:08.834Z",
+            "publishedAt": "2026-07-15T01:47:08.832Z"
+          },
+          {
+            "id": 5,
+            "documentId": "tivhldx7ueyf4hunl5qgb4ff",
+            "name": "Parque Metropolitano",
+            "category": "recreation",
+            "distanceText": "3 min",
+            "createdAt": "2026-07-15T01:47:08.838Z",
+            "updatedAt": "2026-07-15T01:47:08.838Z",
+            "publishedAt": "2026-07-15T01:47:08.836Z"
+          }
+        ]
+      }
+    }
+  ],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 12,
+      "documentId": "t667t7mp8ez7ciokzf7q2blu",
+      "name": "Portal del Poblado",
+      "slug": "portal-del-poblado",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "launch",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Lanzamiento exclusivo: apartamentos de lujo con club house privado en El Poblado.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "520000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:10.124Z",
+      "updatedAt": "2026-07-15T01:47:10.124Z",
+      "publishedAt": "2026-07-15T01:47:10.141Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "gallery": [
+        {
+          "id": 23,
+          "documentId": "n4hfg3xe9zcod2kzk016uwtn",
+          "name": "portal-del-poblado-gallery-1",
+          "alternativeText": "Portal del Poblado · 1",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "portal_del_poblado_gallery_1_868c0d9922",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/portal_del_poblado_gallery_1_868c0d9922.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:10.025Z",
+          "updatedAt": "2026-07-15T01:47:10.025Z",
+          "publishedAt": "2026-07-15T01:47:10.026Z"
+        },
+        {
+          "id": 24,
+          "documentId": "y1bgrsetchfu2ku65mrnzczw",
+          "name": "portal-del-poblado-gallery-2",
+          "alternativeText": "Portal del Poblado · 2",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "portal_del_poblado_gallery_2_cebf0d264d",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/portal_del_poblado_gallery_2_cebf0d264d.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:10.069Z",
+          "updatedAt": "2026-07-15T01:47:10.069Z",
+          "publishedAt": "2026-07-15T01:47:10.069Z"
+        },
+        {
+          "id": 25,
+          "documentId": "jj2u4oidnbg0jn3r7hifp3lf",
+          "name": "portal-del-poblado-gallery-3",
+          "alternativeText": "Portal del Poblado · 3",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "portal_del_poblado_gallery_3_93cf83d4ef",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/portal_del_poblado_gallery_3_93cf83d4ef.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:10.112Z",
+          "updatedAt": "2026-07-15T01:47:10.112Z",
+          "publishedAt": "2026-07-15T01:47:10.112Z"
+        }
+      ],
+      "heroDesktop": {
+        "id": 21,
+        "documentId": "vy4g5sxyl59qtr1f6ojgh22y",
+        "name": "portal-del-poblado-hero-desktop",
+        "alternativeText": "Portal del Poblado",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "portal_del_poblado_hero_desktop_493b03158a",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/portal_del_poblado_hero_desktop_493b03158a.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.944Z",
+        "updatedAt": "2026-07-15T01:47:09.944Z",
+        "publishedAt": "2026-07-15T01:47:09.944Z"
+      },
+      "heroMobile": {
+        "id": 22,
+        "documentId": "o9dzfsoke59vm55zgbh9bzo8",
+        "name": "portal-del-poblado-hero-mobile",
+        "alternativeText": "Portal del Poblado",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "portal_del_poblado_hero_mobile_c4602f4491",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/portal_del_poblado_hero_mobile_c4602f4491.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.982Z",
+        "updatedAt": "2026-07-15T01:47:09.982Z",
+        "publishedAt": "2026-07-15T01:47:09.982Z"
+      },
+      "location": null,
+      "macroproject": null,
+      "recommended": [],
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 12,
+        "metaTitle": "Portal del Poblado — Las Galias",
+        "metaDescription": "Lanzamiento exclusivo: apartamentos de lujo con club house privado en El Poblado.",
+        "ogImage": null
+      },
+      "unitTypes": [
+        {
+          "id": 22,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "520000000",
+          "floorPlan": null
+        },
+        {
+          "id": 23,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "650000000",
+          "floorPlan": null
+        },
+        {
+          "id": 24,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "806000000",
+          "floorPlan": null
+        }
+      ],
+      "amenities": [
+        {
+          "id": 1,
+          "documentId": "emggxkyejovmoooxju350g27",
+          "name": "Piscina",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.586Z",
+          "updatedAt": "2026-07-15T01:47:08.586Z",
+          "publishedAt": "2026-07-15T01:47:08.586Z",
+          "icon": null
+        },
+        {
+          "id": 2,
+          "documentId": "j1dzzxz4y5dd0bxjsmckxw8k",
+          "name": "Gimnasio",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.588Z",
+          "updatedAt": "2026-07-15T01:47:08.588Z",
+          "publishedAt": "2026-07-15T01:47:08.588Z",
+          "icon": null
+        },
+        {
+          "id": 3,
+          "documentId": "ydg1dfn251ndim1lv7i2sitb",
+          "name": "Zona BBQ",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.590Z",
+          "updatedAt": "2026-07-15T01:47:08.590Z",
+          "publishedAt": "2026-07-15T01:47:08.590Z",
+          "icon": null
+        },
+        {
+          "id": 4,
+          "documentId": "oxqcs0dme506plfcii532jyi",
+          "name": "Parque infantil",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.592Z",
+          "updatedAt": "2026-07-15T01:47:08.592Z",
+          "publishedAt": "2026-07-15T01:47:08.591Z",
+          "icon": null
+        }
+      ]
+    }
+  ],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 13,
+      "documentId": "fyms43ocvurmb4hr9a2i0yjk",
+      "name": "Reserva de los Alisos",
+      "slug": "reserva-de-los-alisos",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": "construction",
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Apartamentos de 2 y 3 alcobas rodeados de senderos ecológicos, a 5 minutos del parque metropolitano.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "320000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.070Z",
+      "updatedAt": "2026-07-15T01:47:10.162Z",
+      "publishedAt": "2026-07-15T01:47:10.192Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 2,
+        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+        "name": "Bogotá",
+        "slug": "bogota",
+        "department": "Cundinamarca",
+        "createdAt": "2026-07-15T01:47:08.568Z",
+        "updatedAt": "2026-07-15T01:47:08.568Z",
+        "publishedAt": "2026-07-15T01:47:08.575Z"
+      },
+      "gallery": [
+        {
+          "id": 4,
+          "documentId": "ncf0kv9ojr216icgd2wotcep",
+          "name": "reserva-de-los-alisos-gallery-1",
+          "alternativeText": "Reserva de los Alisos · 1",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "reserva_de_los_alisos_gallery_1_c8441c8c74",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/reserva_de_los_alisos_gallery_1_c8441c8c74.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:08.968Z",
+          "updatedAt": "2026-07-15T01:47:08.968Z",
+          "publishedAt": "2026-07-15T01:47:08.968Z"
+        },
+        {
+          "id": 5,
+          "documentId": "dctro832xoky612lstrdaj2h",
+          "name": "reserva-de-los-alisos-gallery-2",
+          "alternativeText": "Reserva de los Alisos · 2",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "reserva_de_los_alisos_gallery_2_ec861162ce",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/reserva_de_los_alisos_gallery_2_ec861162ce.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.009Z",
+          "updatedAt": "2026-07-15T01:47:09.009Z",
+          "publishedAt": "2026-07-15T01:47:09.010Z"
+        },
+        {
+          "id": 6,
+          "documentId": "xef22fbljb3bikgnns49atv9",
+          "name": "reserva-de-los-alisos-gallery-3",
+          "alternativeText": "Reserva de los Alisos · 3",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "reserva_de_los_alisos_gallery_3_21ef6d0aea",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/reserva_de_los_alisos_gallery_3_21ef6d0aea.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.052Z",
+          "updatedAt": "2026-07-15T01:47:09.052Z",
+          "publishedAt": "2026-07-15T01:47:09.052Z"
+        }
+      ],
+      "heroDesktop": {
+        "id": 2,
+        "documentId": "fauanaj6r9y004dgowy1783d",
+        "name": "reserva-de-los-alisos-hero-desktop",
+        "alternativeText": "Reserva de los Alisos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "reserva_de_los_alisos_hero_desktop_0db936b676",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/reserva_de_los_alisos_hero_desktop_0db936b676.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:08.886Z",
+        "updatedAt": "2026-07-15T01:47:08.886Z",
+        "publishedAt": "2026-07-15T01:47:08.886Z"
+      },
+      "heroMobile": {
+        "id": 3,
+        "documentId": "ilzh86f8mphjqp14ak4gkxmm",
+        "name": "reserva-de-los-alisos-hero-mobile",
+        "alternativeText": "Reserva de los Alisos",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "reserva_de_los_alisos_hero_mobile_b79f3c39cd",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/reserva_de_los_alisos_hero_mobile_b79f3c39cd.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:08.925Z",
+        "updatedAt": "2026-07-15T01:47:08.925Z",
+        "publishedAt": "2026-07-15T01:47:08.925Z"
+      },
+      "location": null,
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 13,
+        "metaTitle": "Reserva de los Alisos — Las Galias",
+        "metaDescription": "Apartamentos de 2 y 3 alcobas rodeados de senderos ecológicos, a 5 minutos del parque metropolitano.",
+        "ogImage": null
+      },
+      "unitTypes": [
+        {
+          "id": 25,
+          "name": "Tipo A",
+          "areaM2": 58,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "priceCOP": "320000000",
+          "floorPlan": null
+        },
+        {
+          "id": 26,
+          "name": "Tipo B",
+          "areaM2": 74,
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "priceCOP": "400000000",
+          "floorPlan": null
+        },
+        {
+          "id": 27,
+          "name": "Tipo C",
+          "areaM2": 92,
+          "bedrooms": 3,
+          "bathrooms": 3,
+          "priceCOP": "496000000",
+          "floorPlan": null
+        }
+      ],
+      "amenities": [
+        {
+          "id": 1,
+          "documentId": "emggxkyejovmoooxju350g27",
+          "name": "Piscina",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.586Z",
+          "updatedAt": "2026-07-15T01:47:08.586Z",
+          "publishedAt": "2026-07-15T01:47:08.586Z",
+          "icon": null
+        },
+        {
+          "id": 2,
+          "documentId": "j1dzzxz4y5dd0bxjsmckxw8k",
+          "name": "Gimnasio",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.588Z",
+          "updatedAt": "2026-07-15T01:47:08.588Z",
+          "publishedAt": "2026-07-15T01:47:08.588Z",
+          "icon": null
+        },
+        {
+          "id": 3,
+          "documentId": "ydg1dfn251ndim1lv7i2sitb",
+          "name": "Zona BBQ",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.590Z",
+          "updatedAt": "2026-07-15T01:47:08.590Z",
+          "publishedAt": "2026-07-15T01:47:08.590Z",
+          "icon": null
+        },
+        {
+          "id": 4,
+          "documentId": "oxqcs0dme506plfcii532jyi",
+          "name": "Parque infantil",
+          "description": null,
+          "createdAt": "2026-07-15T01:47:08.592Z",
+          "updatedAt": "2026-07-15T01:47:08.592Z",
+          "publishedAt": "2026-07-15T01:47:08.591Z",
+          "icon": null
+        }
+      ],
+      "macroproject": {
+        "id": 2,
+        "documentId": "jzrkass0ijwrv0wj5igsoazs",
+        "name": "Ciudad Verde Norte",
+        "slug": "ciudad-verde-norte",
+        "description": [
+          {
+            "type": "paragraph",
+            "children": [
+              {
+                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
+                "type": "text"
+              }
+            ]
+          }
+        ],
+        "createdAt": "2026-07-15T01:47:08.802Z",
+        "updatedAt": "2026-07-15T01:47:08.802Z",
+        "publishedAt": "2026-07-15T01:47:08.811Z",
+        "pointsOfInterest": [
+          {
+            "id": 1,
+            "documentId": "isx999b166x0vg43ciiylr15",
+            "name": "Centro Comercial Verde Plaza",
+            "category": "commerce",
+            "distanceText": "5 min",
+            "createdAt": "2026-07-15T01:47:08.822Z",
+            "updatedAt": "2026-07-15T01:47:08.822Z",
+            "publishedAt": "2026-07-15T01:47:08.820Z"
+          },
+          {
+            "id": 2,
+            "documentId": "mtx12a6atciqa2ekdepqg2ki",
+            "name": "Clínica del Norte",
+            "category": "health",
+            "distanceText": "10 min",
+            "createdAt": "2026-07-15T01:47:08.827Z",
+            "updatedAt": "2026-07-15T01:47:08.827Z",
+            "publishedAt": "2026-07-15T01:47:08.825Z"
+          },
+          {
+            "id": 3,
+            "documentId": "qpws7v9pcoevrhm59x41nqkg",
+            "name": "Colegio Nueva Granada Norte",
+            "category": "education",
+            "distanceText": "8 min",
+            "createdAt": "2026-07-15T01:47:08.831Z",
+            "updatedAt": "2026-07-15T01:47:08.831Z",
+            "publishedAt": "2026-07-15T01:47:08.829Z"
+          },
+          {
+            "id": 4,
+            "documentId": "t0u2ts0q4k82y6325jgmfuu2",
+            "name": "Estación TransMilenio Terminal",
+            "category": "transport",
+            "distanceText": "12 min",
+            "createdAt": "2026-07-15T01:47:08.834Z",
+            "updatedAt": "2026-07-15T01:47:08.834Z",
+            "publishedAt": "2026-07-15T01:47:08.832Z"
+          },
+          {
+            "id": 5,
+            "documentId": "tivhldx7ueyf4hunl5qgb4ff",
+            "name": "Parque Metropolitano",
+            "category": "recreation",
+            "distanceText": "3 min",
+            "createdAt": "2026-07-15T01:47:08.838Z",
+            "updatedAt": "2026-07-15T01:47:08.838Z",
+            "publishedAt": "2026-07-15T01:47:08.836Z"
+          }
+        ]
+      },
+      "recommended": [
+        {
+          "id": 4,
+          "documentId": "xgq1gkv616o17gctywpqgpas",
+          "name": "Mirador del Parque",
+          "slug": "mirador-del-parque",
+          "stage": "sale",
+          "syncFromSinco": false,
+          "constructionStatus": "presale",
+          "description": [
+            {
+              "type": "paragraph",
+              "children": [
+                {
+                  "text": "Torres de vivienda con vista al humedal y zonas comunes en el piso 12.",
+                  "type": "text"
+                }
+              ]
+            }
+          ],
+          "priceFromCOP": "280000000",
+          "video": null,
+          "createdAt": "2026-07-15T01:47:09.350Z",
+          "updatedAt": "2026-07-15T01:47:09.350Z",
+          "publishedAt": "2026-07-15T01:47:09.371Z",
+          "priceLocked": null,
+          "priceFromSincoCOP": null,
+          "appliesSubsidy": null,
+          "lastUnits": null,
+          "hasDiscount": null,
+          "tour360Url": null,
+          "city": {
+            "id": 2,
+            "documentId": "tlwq8dibh033cbs9t4gy0mw4",
+            "name": "Bogotá",
+            "slug": "bogota",
+            "department": "Cundinamarca",
+            "createdAt": "2026-07-15T01:47:08.568Z",
+            "updatedAt": "2026-07-15T01:47:08.568Z",
+            "publishedAt": "2026-07-15T01:47:08.575Z"
+          }
+        }
+      ]
+    }
+  ],
+  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+    {
+      "id": 10,
+      "documentId": "u6f2h266w0ybzpg06rioc28t",
+      "name": "Sendero del Río",
+      "slug": "sendero-del-rio",
+      "stage": "expectation",
+      "syncFromSinco": false,
+      "constructionStatus": null,
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "text": "Muy pronto: vive frente al río con el skyline de Medellín de fondo.",
+              "type": "text"
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": null,
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.875Z",
+      "updatedAt": "2026-07-15T01:47:09.875Z",
+      "publishedAt": "2026-07-15T01:47:09.887Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "gallery": null,
+      "heroDesktop": {
+        "id": 19,
+        "documentId": "n6ao00dmvymqlzu8snxt0wes",
+        "name": "sendero-del-rio-hero-desktop",
+        "alternativeText": "Sendero del Río",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "sendero_del_rio_hero_desktop_19c09518b5",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/sendero_del_rio_hero_desktop_19c09518b5.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.829Z",
+        "updatedAt": "2026-07-15T01:47:09.829Z",
+        "publishedAt": "2026-07-15T01:47:09.829Z"
+      },
+      "heroMobile": {
+        "id": 20,
+        "documentId": "jgtqs6ml8i646q544kql8871",
+        "name": "sendero-del-rio-hero-mobile",
+        "alternativeText": "Sendero del Río",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "sendero_del_rio_hero_mobile_243ae71345",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/sendero_del_rio_hero_mobile_243ae71345.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.868Z",
+        "updatedAt": "2026-07-15T01:47:09.868Z",
+        "publishedAt": "2026-07-15T01:47:09.868Z"
+      },
+      "location": null,
+      "unitTypes": [],
+      "amenities": [],
+      "macroproject": null,
+      "recommended": [],
+      "logo": null,
+      "specSheet": null,
+      "financing": null,
+      "salesRoom": null,
+      "constructionProgress": [],
+      "seo": {
+        "id": 10,
+        "metaTitle": "Sendero del Río — Las Galias",
+        "metaDescription": "Muy pronto: vive frente al río con el skyline de Medellín de fondo.",
+        "ogImage": null
+      }
+    }
+  ],
+  "home-banners?filters%5Bactive%5D%5B%24eq%5D=true&populate%5BdesktopImage%5D=true&populate%5BmobileImage%5D=true&sort=order%3Aasc": [
+    {
+      "id": 2,
+      "documentId": "cqvxmqo532l7xlpc2hbj8k91",
+      "title": "Vive donde florece la ciudad",
+      "link": "/proyectos",
+      "order": 0,
+      "active": true,
+      "createdAt": "2026-07-15T01:47:10.341Z",
+      "updatedAt": "2026-07-15T01:47:10.341Z",
+      "publishedAt": "2026-07-15T01:47:10.346Z",
+      "desktopImage": {
+        "id": 26,
+        "documentId": "ftawj4nqsjkzrim8ddh029s4",
+        "name": "banner-1-desktop",
+        "alternativeText": "Vive donde florece la ciudad",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1920,
+        "height": 800,
+        "formats": null,
+        "hash": "banner_1_desktop_8811a5846c",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/banner_1_desktop_8811a5846c.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.298Z",
+        "updatedAt": "2026-07-15T01:47:10.298Z",
+        "publishedAt": "2026-07-15T01:47:10.298Z"
+      },
+      "mobileImage": {
+        "id": 27,
+        "documentId": "n9ippihtsn5dbldd34dikezd",
+        "name": "banner-1-mobile",
+        "alternativeText": "Vive donde florece la ciudad",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "banner_1_mobile_4b2cd34d6a",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/banner_1_mobile_4b2cd34d6a.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.337Z",
+        "updatedAt": "2026-07-15T01:47:10.337Z",
+        "publishedAt": "2026-07-15T01:47:10.337Z"
+      }
+    },
+    {
+      "id": 4,
+      "documentId": "dy2h65d24ftkfzwwe1eoip7y",
+      "title": "Entrega inmediata en Medellín",
+      "link": "/proyectos/balcones-de-provenza",
+      "order": 1,
+      "active": true,
+      "createdAt": "2026-07-15T01:47:10.455Z",
+      "updatedAt": "2026-07-15T01:47:10.455Z",
+      "publishedAt": "2026-07-15T01:47:10.460Z",
+      "desktopImage": {
+        "id": 28,
+        "documentId": "hkfgnw3m54djsg5h5dabtc19",
+        "name": "banner-2-desktop",
+        "alternativeText": "Entrega inmediata en Medellín",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1920,
+        "height": 800,
+        "formats": null,
+        "hash": "banner_2_desktop_7003e3a6ff",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/banner_2_desktop_7003e3a6ff.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.411Z",
+        "updatedAt": "2026-07-15T01:47:10.411Z",
+        "publishedAt": "2026-07-15T01:47:10.412Z"
+      },
+      "mobileImage": {
+        "id": 29,
+        "documentId": "tiwpbswcw6s9f3gjdo7ztim5",
+        "name": "banner-2-mobile",
+        "alternativeText": "Entrega inmediata en Medellín",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "banner_2_mobile_11958d9fbd",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.53,
+        "url": "/uploads/banner_2_mobile_11958d9fbd.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:10.451Z",
+        "updatedAt": "2026-07-15T01:47:10.451Z",
+        "publishedAt": "2026-07-15T01:47:10.451Z"
+      }
+    }
+  ]
+}
