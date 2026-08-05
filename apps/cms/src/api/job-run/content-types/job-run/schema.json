@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "job_runs",
+  "info": {
+    "singularName": "job-run",
+    "pluralName": "job-runs",
+    "displayName": "Registro de tareas",
+    "description": "Bitácora de los procesos automáticos (crons y sincronizaciones). Se ve en el Content Manager para no tener que entrar al servidor por SSH"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "task": {
+      "type": "string",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["ok", "error", "skipped"],
+      "required": true
+    },
+    "message": {
+      "type": "text"
+    },
+    "durationMs": {
+      "type": "integer"
+    },
+    "ranAt": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

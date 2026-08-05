@@ -124,6 +124,13 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     },
     order: { label: "Orden" },
   },
+  "api::job-run.job-run": {
+    task: { label: "Tarea" },
+    status: { label: "Resultado" },
+    message: { label: "Detalle" },
+    durationMs: { label: "Duración (ms)" },
+    ranAt: { label: "Cuándo corrió" },
+  },
   "api::post.post": {
     title: { label: "Título" },
     slug: { label: "URL (slug)" },

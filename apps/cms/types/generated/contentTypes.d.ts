@@ -399,7 +399,7 @@ export interface ApiAmenityAmenity extends Struct.CollectionTypeSchema {
   collectionName: "amenities";
   info: {
     description: "Common areas reusable across projects (pool, gym, etc.)";
-    displayName: "Amenity";
+    displayName: "Zona com\u00FAn";
     pluralName: "amenities";
     singularName: "amenity";
   };
@@ -426,7 +426,7 @@ export interface ApiCalculatorConfigCalculatorConfig extends Struct.SingleTypeSc
   collectionName: "calculator_config";
   info: {
     description: "Mortgage calculator parameters. Admins only";
-    displayName: "Calculator config";
+    displayName: "Configuraci\u00F3n del simulador";
     pluralName: "calculator-configs";
     singularName: "calculator-config";
   };
@@ -455,7 +455,7 @@ export interface ApiCityCity extends Struct.CollectionTypeSchema {
   collectionName: "cities";
   info: {
     description: "Cities where Las Galias builds projects";
-    displayName: "City";
+    displayName: "Ciudad";
     pluralName: "cities";
     singularName: "city";
   };
@@ -483,7 +483,7 @@ export interface ApiExchangeRateExchangeRate extends Struct.SingleTypeSchema {
   collectionName: "exchange_rates";
   info: {
     description: "COP\u2192USD/EUR rates populated by the daily cron (TRM + ECB). Admins only";
-    displayName: "Exchange rate";
+    displayName: "Tasa de cambio";
     pluralName: "exchange-rates";
     singularName: "exchange-rate";
   };
@@ -512,7 +512,7 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   collectionName: "faqs";
   info: {
     description: "Accordion questions. `audience` scopes them to a page \u2014 the foreign-buyer landing renders audience=exterior";
-    displayName: "FAQ";
+    displayName: "Pregunta frecuente";
     pluralName: "faqs";
     singularName: "faq";
   };
@@ -541,7 +541,7 @@ export interface ApiForeignBuyerPageForeignBuyerPage extends Struct.SingleTypeSc
   collectionName: "foreign_buyer_page";
   info: {
     description: "The 'Colombianos en el exterior' landing. Its FAQ lives in the faq collection with audience=exterior; the project cards are the regular published projects, priced in USD off the daily exchange-rate";
-    displayName: "Foreign buyer page";
+    displayName: "P\u00E1gina \u00B7 Compra desde el exterior";
     pluralName: "foreign-buyer-pages";
     singularName: "foreign-buyer-page";
   };
@@ -580,7 +580,7 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
   collectionName: "home_banners";
   info: {
     description: "Home banners with dedicated desktop and mobile images";
-    displayName: "Home banner";
+    displayName: "Banner del home";
     pluralName: "home-banners";
     singularName: "home-banner";
   };
@@ -600,6 +600,34 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiJobRunJobRun extends Struct.CollectionTypeSchema {
+  collectionName: "job_runs";
+  info: {
+    description: "Bit\u00E1cora de los procesos autom\u00E1ticos (crons y sincronizaciones). Se ve en el Content Manager para no tener que entrar al servidor por SSH";
+    displayName: "Registro de tareas";
+    pluralName: "job-runs";
+    singularName: "job-run";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    durationMs: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::job-run.job-run"> &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    ranAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<["ok", "error", "skipped"]> & Schema.Attribute.Required;
+    task: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -652,7 +680,7 @@ export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema
   collectionName: "macroprojects";
   info: {
     description: "Master developments that group projects and points of interest of a single location";
-    displayName: "Macroproject";
+    displayName: "Macroproyecto";
     pluralName: "macroprojects";
     singularName: "macroproject";
   };
@@ -685,7 +713,7 @@ export interface ApiPointOfInterestPointOfInterest extends Struct.CollectionType
   collectionName: "points_of_interest";
   info: {
     description: "Nearby points of interest; ALWAYS tied to a macroproject so locations never mix";
-    displayName: "Point of interest";
+    displayName: "Punto de inter\u00E9s";
     pluralName: "points-of-interest";
     singularName: "point-of-interest";
   };
@@ -719,7 +747,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   collectionName: "posts";
   info: {
     description: "Blog posts";
-    displayName: "Post";
+    displayName: "Art\u00EDculo del blog";
     pluralName: "posts";
     singularName: "post";
   };
@@ -750,7 +778,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   collectionName: "projects";
   info: {
     description: "Real-estate projects. stage=expectation publishes with fewer required fields; stage=sale requires the full listing";
-    displayName: "Project";
+    displayName: "Proyecto";
     pluralName: "projects";
     singularName: "project";
   };
@@ -809,7 +837,7 @@ export interface ApiRedirectRedirect extends Struct.CollectionTypeSchema {
   collectionName: "redirects";
   info: {
     description: "Site redirects. Admins only. source=auto-unpublish entries are created by the system when a project is unpublished";
-    displayName: "Redirect";
+    displayName: "Redirecci\u00F3n";
     pluralName: "redirects";
     singularName: "redirect";
   };
@@ -838,7 +866,7 @@ export interface ApiSincoProjectSincoProject extends Struct.CollectionTypeSchema
   collectionName: "sinco_projects";
   info: {
     description: "Read-only mirror of the Sinco project catalog, refreshed from the API. Pick one on a project so leads reach the right sales room; do not edit by hand";
-    displayName: "Sinco Project";
+    displayName: "Proyecto de Sinco";
     pluralName: "sinco-projects";
     singularName: "sinco-project";
   };
@@ -867,7 +895,7 @@ export interface ApiZoneZone extends Struct.CollectionTypeSchema {
   collectionName: "zones";
   info: {
     description: "Area within a city (Norte, Centro-Norte, Sur...). A content type and not a free-text field so the same zone reads identically across every project, and so listings can be filtered by it later";
-    displayName: "Zone";
+    displayName: "Zona";
     pluralName: "zones";
     singularName: "zone";
   };
@@ -1325,6 +1353,7 @@ declare module "@strapi/strapi" {
       "api::faq.faq": ApiFaqFaq;
       "api::foreign-buyer-page.foreign-buyer-page": ApiForeignBuyerPageForeignBuyerPage;
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
+      "api::job-run.job-run": ApiJobRunJobRun;
       "api::lead.lead": ApiLeadLead;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;
       "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;

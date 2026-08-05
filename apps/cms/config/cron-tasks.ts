@@ -1,6 +1,7 @@
 import type { Core } from "@strapi/strapi";
 import { createRateProvider } from "@lasgalias/providers";
 
+import { recordJobRun, runTracked } from "../src/utils/job-log";
 import { retryPendingLeads } from "../src/utils/lead-rules";
 import { syncAllProjectsFromSinco } from "../src/utils/project-rules";
 import { syncSincoCatalog } from "../src/utils/sinco-catalog";
@@ -15,12 +16,11 @@ export default {
    */
   refreshSincoCatalog: {
     async task({ strapi }: { strapi: Core.Strapi }) {
-      if (!process.env.SINCO_BASE_URL || !process.env.SINCO_PASSWORD) return;
-      try {
-        await syncSincoCatalog(strapi);
-      } catch (err) {
-        strapi.log.error(`Sinco catalog refresh failed: ${String(err)}`);
+      if (!process.env.SINCO_BASE_URL || !process.env.SINCO_PASSWORD) {
+        await recordJobRun(strapi, "Catálogo de Sinco", "skipped", "Sin credenciales de Sinco");
+        return;
       }
+      await runTracked(strapi, "Catálogo de Sinco", () => syncSincoCatalog(strapi));
     },
     options: {
       rule: "0 30 5 * * *",
@@ -36,12 +36,18 @@ export default {
    */
   syncProjectsFromSinco: {
     async task({ strapi }: { strapi: Core.Strapi }) {
-      if (process.env.PROJECT_DATA_PROVIDER !== "sinco") return;
-      try {
-        await syncAllProjectsFromSinco(strapi);
-      } catch (err) {
-        strapi.log.error(`Sinco project sync failed: ${String(err)}`);
+      if (process.env.PROJECT_DATA_PROVIDER !== "sinco") {
+        await recordJobRun(
+          strapi,
+          "Precios y áreas desde Sinco",
+          "skipped",
+          "PROJECT_DATA_PROVIDER no es sinco",
+        );
+        return;
       }
+      await runTracked(strapi, "Precios y áreas desde Sinco", () =>
+        syncAllProjectsFromSinco(strapi),
+      );
     },
     options: {
       rule: "0 45 5 * * *",
@@ -56,11 +62,7 @@ export default {
    */
   retryCrmLeads: {
     async task({ strapi }: { strapi: Core.Strapi }) {
-      try {
-        await retryPendingLeads(strapi);
-      } catch (err) {
-        strapi.log.error(`Lead retry pass failed: ${String(err)}`);
-      }
+      await runTracked(strapi, "Reintento de leads", () => retryPendingLeads(strapi));
     },
     options: {
       rule: "0 */15 * * * *",
