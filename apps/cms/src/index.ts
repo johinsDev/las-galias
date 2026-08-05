@@ -41,6 +41,30 @@ const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
+    /**
+     * "Sincronizar desde Sinco" for the Content Manager button.
+     *
+     * Registered here and NOT as a route file under an api folder: Strapi's
+     * registerAPIRoutes does `router.type = "content-api"` unconditionally, so
+     * a route declared there can never accept the admin JWT — which is the only
+     * credential the admin panel has. Every click answered "Missing or invalid
+     * credentials", then 405 once the path fell through to the panel's
+     * catch-all. Going through server.routes({ type: "admin" }) is what
+     * actually mounts it on the admin router.
+     */
+    strapi.server.routes({
+      type: "admin",
+      routes: [
+        {
+          method: "POST",
+          path: "/projects/:documentId/sync-sinco",
+          handler: "api::project.project.syncSinco",
+          config: { policies: [] },
+          info: { pluginName: "admin", type: "admin" },
+        },
+      ],
+    });
+
     strapi.documents.use(async (context, next) => {
       const { uid, action } = context;
       const params = context.params as {
