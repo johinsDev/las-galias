@@ -87,6 +87,13 @@ inmediata`. **Sinco no tiene un campo de estado de obra**, así que
 `/TiposIdentificacion` — 15 (`CC`, `CE`, `NIT`, `PA`, `TI`, …). Hoy no lo usamos:
 el formulario público no pide documento.
 
+`/Paises` — **239 entradas** (`{ id, nombre }`, en mayúsculas: `COLOMBIA`,
+`ESTADOS UNIDOS`, `ESPAÑA`, …). Verificado el 2026-08-05. Importa para la landing
+de "Colombianos en el exterior": su formulario pide **país de residencia**, así
+que ese campo puede mapear a un id real del CRM en vez de quedar como texto
+libre. Falta confirmar con Sinco **en qué campo del visitante** se envía — el
+`POST /SalaVentas/Externo/Visitas` que usamos hoy no lo incluye.
+
 `/SalaVentas/Vendedores` — 1722 registros. Solo relevante si algún día hay que
 asignar asesor (`idResponsable` en los seguimientos).
 
