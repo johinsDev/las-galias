@@ -80,6 +80,16 @@
       "inversedBy": "projects",
       "required": true
     },
+    "zone": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::zone.zone",
+      "description": "Second level of the location trail: Bogotá · Norte · San Antonio"
+    },
+    "neighborhood": {
+      "type": "string",
+      "description": "Third level of the location trail. Free text: too granular to curate as its own type"
+    },
     "macroproject": {
       "type": "relation",
       "relation": "manyToOne",

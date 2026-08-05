@@ -9,8 +9,13 @@
       "type": "string",
       "required": true
     },
-    "areaM2": {
-      "type": "decimal"
+    "builtAreaM2": {
+      "type": "decimal",
+      "description": "Área construida. Sinco: areaConstruida. Was `areaM2` — see database/migrations/2026-08-05-split-unit-type-areas.js"
+    },
+    "privateAreaM2": {
+      "type": "decimal",
+      "description": "Área privada. Sinco: areaPrivada"
     },
     "bedrooms": {
       "type": "integer"

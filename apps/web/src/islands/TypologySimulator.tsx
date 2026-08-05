@@ -10,8 +10,8 @@ import {
 
 export interface TypologyOption {
   name: string;
-  /** The schema has a single area per unit type, so that is what we show. */
-  areaM2?: number | null;
+  builtAreaM2?: number | null;
+  privateAreaM2?: number | null;
   priceCOP: number;
   floorPlanUrl?: string | null;
 }
@@ -65,7 +65,7 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
               }`}
             >
               {typology.name}
-              {typology.areaM2 ? ` · ${typology.areaM2} m²` : ""}
+              {typology.builtAreaM2 ? ` · ${typology.builtAreaM2} m²` : ""}
             </button>
           ))}
         </div>
@@ -84,10 +84,20 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
               <span className="text-caption text-ink-faint">Plano no disponible</span>
             )}
           </div>
-          {current.areaM2 != null && (
-            <div className="border-line mt-3 rounded-xl border p-3">
-              <p className="eyebrow">Área</p>
-              <p className="text-ink mt-1 font-bold">{current.areaM2} m²</p>
+          {(current.builtAreaM2 != null || current.privateAreaM2 != null) && (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {current.builtAreaM2 != null && (
+                <div className="border-line rounded-xl border p-3">
+                  <p className="eyebrow">Área construida</p>
+                  <p className="text-ink mt-1 font-bold">{current.builtAreaM2} m²</p>
+                </div>
+              )}
+              {current.privateAreaM2 != null && (
+                <div className="border-line rounded-xl border p-3">
+                  <p className="eyebrow">Área privada</p>
+                  <p className="text-ink mt-1 font-bold">{current.privateAreaM2} m²</p>
+                </div>
+              )}
             </div>
           )}
         </div>

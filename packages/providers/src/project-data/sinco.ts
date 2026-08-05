@@ -31,9 +31,14 @@ function isAvailable(unit: SincoUnit): boolean {
   return (unit.estado ?? "").trim().toUpperCase() === AVAILABLE;
 }
 
-/** Sinco reports several areas; the built area is the one the site shows. */
-function areaOf(unit: SincoUnit): number | undefined {
-  const area = unit.areaConstruida ?? unit.areaPrivada ?? unit.areaTotal;
+/** Sinco reports built and private area separately; both reach the CMS. */
+function builtAreaOf(unit: SincoUnit): number | undefined {
+  const area = unit.areaConstruida ?? unit.areaTotal;
+  return typeof area === "number" && area > 0 ? area : undefined;
+}
+
+function privateAreaOf(unit: SincoUnit): number | undefined {
+  const area = unit.areaPrivada;
   return typeof area === "number" && area > 0 ? area : undefined;
 }
 
@@ -137,8 +142,9 @@ export class SincoProvider implements ProjectDataProvider {
     const result: ExternalUnitType[] = [];
     for (const [name, bucket] of grouped) {
       const prices = bucket.map(priceOf).filter((n): n is number => n !== undefined);
-      const areas = bucket.map(areaOf).filter((n): n is number => n !== undefined);
-      if (prices.length === 0 || areas.length === 0) continue;
+      const builtAreas = bucket.map(builtAreaOf).filter((n): n is number => n !== undefined);
+      const privateAreas = bucket.map(privateAreaOf).filter((n): n is number => n !== undefined);
+      if (prices.length === 0 || builtAreas.length === 0) continue;
 
       // `cantidadAlcobas` is unreliable (222/565); only forward a value the
       // whole typology agrees on, so a stray row cannot rewrite good CMS data.
@@ -151,7 +157,8 @@ export class SincoProvider implements ProjectDataProvider {
 
       result.push({
         name,
-        areaM2: Math.min(...areas),
+        builtAreaM2: Math.min(...builtAreas),
+        ...(privateAreas.length > 0 ? { privateAreaM2: Math.min(...privateAreas) } : {}),
         priceCOP: Math.min(...prices),
         ...(bedrooms !== undefined ? { bedrooms } : {}),
       });

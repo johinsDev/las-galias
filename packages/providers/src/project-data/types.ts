@@ -2,7 +2,10 @@ export type ConstructionStatus = "launch" | "presale" | "construction" | "immedi
 
 export interface ExternalUnitType {
   name: string;
-  areaM2: number;
+  /** Área construida — Sinco's `areaConstruida`. */
+  builtAreaM2?: number;
+  /** Área privada — Sinco's `areaPrivada`. Reported separately by the ERP. */
+  privateAreaM2?: number;
   priceCOP: number;
   /**
    * Optional on purpose: Sinco has no bathroom count at all, and its

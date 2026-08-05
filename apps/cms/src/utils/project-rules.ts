@@ -47,7 +47,8 @@ async function isPriceLocked(strapi: Core.Strapi, documentId?: string): Promise<
 
 interface UnitTypeEntry {
   name?: string;
-  areaM2?: number;
+  builtAreaM2?: number;
+  privateAreaM2?: number;
   priceCOP?: string;
   [key: string]: unknown;
 }
@@ -73,7 +74,14 @@ function mergeUnitTypes(current: unknown, external: ExternalProjectData): UnitTy
     const match = bySincoName.get((entry.name ?? "").trim().toLowerCase());
     if (!match) return entry;
     touched = true;
-    return { ...entry, areaM2: match.areaM2, priceCOP: String(match.priceCOP) };
+    return {
+      ...entry,
+      // Only overwrite an area the ERP actually reported: `areaPrivada` is not
+      // populated on every project, and a blank there must not wipe the CMS's.
+      ...(match.builtAreaM2 !== undefined ? { builtAreaM2: match.builtAreaM2 } : {}),
+      ...(match.privateAreaM2 !== undefined ? { privateAreaM2: match.privateAreaM2 } : {}),
+      priceCOP: String(match.priceCOP),
+    };
   });
   return touched ? merged : null;
 }

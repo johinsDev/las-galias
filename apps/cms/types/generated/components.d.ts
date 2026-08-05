@@ -85,12 +85,13 @@ export interface ProjectUnitType extends Struct.ComponentSchema {
     displayName: "Unit type";
   };
   attributes: {
-    areaM2: Schema.Attribute.Decimal;
     bathrooms: Schema.Attribute.Integer;
     bedrooms: Schema.Attribute.Integer;
+    builtAreaM2: Schema.Attribute.Decimal;
     floorPlan: Schema.Attribute.Media<"images" | "files">;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     priceCOP: Schema.Attribute.BigInteger;
+    privateAreaM2: Schema.Attribute.Decimal;
   };
 }
 

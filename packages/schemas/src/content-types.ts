@@ -64,7 +64,10 @@ export interface UnitType {
   // All optional in the Strapi schema, and `priceCOP` is a `biginteger` —
   // which REST serialises as a STRING. Declaring these required was a lie that
   // Frente B (real areas and prices from Sinco) would have surfaced as a crash.
-  areaM2?: number | null;
+  /** Área construida (was `areaM2`). */
+  builtAreaM2?: number | null;
+  /** Área privada. Sinco only populates it on part of its catalog. */
+  privateAreaM2?: number | null;
   bedrooms?: number | null;
   bathrooms?: number | null;
   priceCOP?: number | string | null;
@@ -103,11 +106,21 @@ interface SalesRoom {
   whatsappUrl?: string | null;
 }
 
+/** Not exported: only reachable through `Project["zone"]` today. */
+interface Zone {
+  documentId: string;
+  name: string;
+  slug: string;
+}
+
 export interface Project {
   documentId: string;
   name: string;
   slug: string;
   stage: Stage;
+  /** Second and third level of the location trail: Bogotá · Norte · San Antonio. */
+  zone?: Zone | null;
+  neighborhood?: string | null;
   constructionStatus?: ConstructionStatus | null;
   appliesSubsidy?: boolean;
   lastUnits?: boolean;

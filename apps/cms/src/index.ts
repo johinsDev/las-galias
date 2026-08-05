@@ -92,6 +92,7 @@ export default {
       "api::project.project",
       "api::post.post",
       "api::city.city",
+      "api::zone.zone",
       "api::macroproject.macroproject",
       "api::amenity.amenity",
       "api::point-of-interest.point-of-interest",

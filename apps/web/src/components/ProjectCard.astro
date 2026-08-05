@@ -32,15 +32,20 @@ const statusLabel = isExpectation
 const deliveryYear = project.specSheet?.deliveryYear;
 const deliveryLine = [statusLabel, deliveryYear].filter(Boolean).join(" · ");
 
-// Location trail: "Bogotá · Norte · San Antonio" in the design; we have city +
-// department, and the macroproject name is the closest thing to the third level.
-const locationTrail = [project.city?.name, project.city?.department, project.macroproject?.name]
+// Design trail: "Bogotá · Norte · San Antonio" — city, zone, neighborhood.
+// Falls back to the city's department while a project has no zone assigned, so
+// the trail never collapses to just the city name.
+const locationTrail = [
+  project.city?.name,
+  project.zone?.name ?? project.city?.department,
+  project.neighborhood,
+]
   .filter(Boolean)
   .join(" · ");
 
 // Derive area + bedroom range from the unit types for the spec chips.
 const units = project.unitTypes ?? [];
-const areas = units.map((u) => u.areaM2).filter((n): n is number => typeof n === "number");
+const areas = units.map((u) => u.builtAreaM2).filter((n): n is number => typeof n === "number");
 const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
 function range(nums: number[], unit: string): string | null {
   if (nums.length === 0) return null;

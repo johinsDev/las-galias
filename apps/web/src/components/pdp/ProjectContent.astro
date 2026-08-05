@@ -24,12 +24,18 @@ function range(nums: number[], unit: string): string | null {
   const max = Math.max(...nums);
   return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
 }
-const areas = units.map((u) => u.areaM2).filter((n): n is number => typeof n === "number");
+const builtAreas = units
+  .map((u) => u.builtAreaM2)
+  .filter((n): n is number => typeof n === "number");
+const privateAreas = units
+  .map((u) => u.privateAreaM2)
+  .filter((n): n is number => typeof n === "number");
 const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
 const baths = units.map((u) => u.bathrooms).filter((n): n is number => typeof n === "number");
 
 const specs = [
-  { label: "Área privada", value: range(areas, "m²") },
+  { label: "Área construida", value: range(builtAreas, "m²") },
+  { label: "Área privada", value: range(privateAreas, "m²") },
   { label: "Habitaciones", value: range(beds, "") },
   { label: "Baños", value: range(baths, "") },
   { label: "Torres", value: spec?.towers != null ? String(spec.towers) : null },
@@ -48,7 +54,8 @@ const typologies: TypologyOption[] = units
   .filter((u) => u.priceCOP != null && Number(u.priceCOP) > 0)
   .map((u) => ({
     name: u.name,
-    areaM2: u.areaM2 ?? null,
+    builtAreaM2: u.builtAreaM2 ?? null,
+    privateAreaM2: u.privateAreaM2 ?? null,
     priceCOP: Number(u.priceCOP),
     floorPlanUrl: u.floorPlan?.url ? mediaUrl(u.floorPlan.url) : null,
   }));

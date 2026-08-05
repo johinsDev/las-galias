@@ -114,7 +114,7 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[logo]": "true",
   "populate[specSheet]": "true",
   "populate[salesRoom]": "true",
-  "populate[macroproject]": "true",
+  "populate[zone]": "true",
 };
 
 export async function getProjects(): Promise<Project[]> {
@@ -139,6 +139,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[unitTypes][populate][floorPlan]": "true",
     "populate[amenities][populate][icon]": "true",
     "populate[macroproject][populate][pointsOfInterest]": "true",
+    "populate[zone]": "true",
     "populate[recommended][populate][city]": "true",
     // PDP blocks added with the new wireframe.
     "populate[logo]": "true",

@@ -25,7 +25,9 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...eslintPluginAstro.configs.recommended,
   {
-    files: ["**/*.cjs"],
+    // Strapi database migrations must be CommonJS `.js`: its loader globs
+    // `*.{js,sql}`, so a `.cjs` file would simply never run.
+    files: ["**/*.cjs", "apps/cms/database/migrations/**/*.js"],
     languageOptions: {
       sourceType: "commonjs",
       globals: { ...globals.node },

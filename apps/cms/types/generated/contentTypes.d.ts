@@ -781,6 +781,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     logo: Schema.Attribute.Media<"images">;
     macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject">;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    neighborhood: Schema.Attribute.String;
     priceFromCOP: Schema.Attribute.BigInteger;
     priceFromSincoCOP: Schema.Attribute.BigInteger;
     priceLocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -800,6 +801,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     video: Schema.Attribute.String;
+    zone: Schema.Attribute.Relation<"manyToOne", "api::zone.zone">;
   };
 }
 
@@ -856,6 +858,32 @@ export interface ApiSincoProjectSincoProject extends Struct.CollectionTypeSchema
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     sincoId: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiZoneZone extends Struct.CollectionTypeSchema {
+  collectionName: "zones";
+  info: {
+    description: "Area within a city (Norte, Centro-Norte, Sur...). A content type and not a free-text field so the same zone reads identically across every project, and so listings can be filtered by it later";
+    displayName: "Zone";
+    pluralName: "zones";
+    singularName: "zone";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    city: Schema.Attribute.Relation<"manyToOne", "api::city.city"> & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::zone.zone"> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1304,6 +1332,7 @@ declare module "@strapi/strapi" {
       "api::project.project": ApiProjectProject;
       "api::redirect.redirect": ApiRedirectRedirect;
       "api::sinco-project.sinco-project": ApiSincoProjectSincoProject;
+      "api::zone.zone": ApiZoneZone;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;
       "plugin::i18n.locale": PluginI18NLocale;

@@ -291,7 +291,7 @@
       ]
     }
   ],
-  "projects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D=true&populate%5BsalesRoom%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D=true&sort=name%3Aasc": [
+  "projects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blogo%5D=true&populate%5BsalesRoom%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D=true&populate%5Bzone%5D=true&sort=name%3Aasc": [
     {
       "id": 6,
       "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
@@ -322,6 +322,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -380,7 +381,15 @@
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": null
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      }
     },
     {
       "id": 14,
@@ -412,6 +421,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -470,32 +480,43 @@
         {
           "id": 28,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
-          "priceCOP": "410000000"
+          "priceCOP": "410000000",
+          "privateAreaM2": 50.46
         },
         {
           "id": 29,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
-          "priceCOP": "512500000"
+          "priceCOP": "512500000",
+          "privateAreaM2": 64.38
         },
         {
           "id": 30,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
-          "priceCOP": "635500000"
+          "priceCOP": "635500000",
+          "privateAreaM2": 80.04
         }
       ],
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": null
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      }
     },
     {
       "id": 4,
@@ -527,6 +548,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "San Antonio",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -585,50 +607,42 @@
         {
           "id": 10,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
-          "priceCOP": "280000000"
+          "priceCOP": "280000000",
+          "privateAreaM2": 50.46
         },
         {
           "id": 11,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
-          "priceCOP": "350000000"
+          "priceCOP": "350000000",
+          "privateAreaM2": 64.38
         },
         {
           "id": 12,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
-          "priceCOP": "434000000"
+          "priceCOP": "434000000",
+          "privateAreaM2": 80.04
         }
       ],
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": {
-        "id": 2,
-        "documentId": "jzrkass0ijwrv0wj5igsoazs",
-        "name": "Ciudad Verde Norte",
-        "slug": "ciudad-verde-norte",
-        "description": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-                "type": "text"
-              }
-            ]
-          }
-        ],
-        "createdAt": "2026-07-15T01:47:08.802Z",
-        "updatedAt": "2026-07-15T01:47:08.802Z",
-        "publishedAt": "2026-07-15T01:47:08.811Z"
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
       }
     },
     {
@@ -661,6 +675,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "San Antonio",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -719,32 +734,43 @@
         {
           "id": 22,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
-          "priceCOP": "520000000"
+          "priceCOP": "520000000",
+          "privateAreaM2": 50.46
         },
         {
           "id": 23,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
-          "priceCOP": "650000000"
+          "priceCOP": "650000000",
+          "privateAreaM2": 64.38
         },
         {
           "id": 24,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
-          "priceCOP": "806000000"
+          "priceCOP": "806000000",
+          "privateAreaM2": 80.04
         }
       ],
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": null
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      }
     },
     {
       "id": 13,
@@ -776,6 +802,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Chapinero",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -834,50 +861,42 @@
         {
           "id": 25,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
-          "priceCOP": "320000000"
+          "priceCOP": "320000000",
+          "privateAreaM2": 50.46
         },
         {
           "id": 26,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
-          "priceCOP": "400000000"
+          "priceCOP": "400000000",
+          "privateAreaM2": 64.38
         },
         {
           "id": 27,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
-          "priceCOP": "496000000"
+          "priceCOP": "496000000",
+          "privateAreaM2": 80.04
         }
       ],
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": {
+      "zone": {
         "id": 2,
-        "documentId": "jzrkass0ijwrv0wj5igsoazs",
-        "name": "Ciudad Verde Norte",
-        "slug": "ciudad-verde-norte",
-        "description": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-                "type": "text"
-              }
-            ]
-          }
-        ],
-        "createdAt": "2026-07-15T01:47:08.802Z",
-        "updatedAt": "2026-07-15T01:47:08.802Z",
-        "publishedAt": "2026-07-15T01:47:08.811Z"
+        "documentId": "zonedemocnorte0000000000",
+        "name": "Centro-Norte",
+        "slug": "centro-norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
       }
     },
     {
@@ -910,6 +929,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -968,7 +988,15 @@
       "logo": null,
       "specSheet": null,
       "salesRoom": null,
-      "macroproject": null
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      }
     }
   ],
   "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
@@ -1177,7 +1205,7 @@
     "publishedAt": "2026-07-15T11:05:39.650Z"
   },
   "faqs?filters%5Baudience%5D%5B%24eq%5D=exterior&pagination%5BpageSize%5D=100&sort=order%3Aasc": [],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 6,
       "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
@@ -1208,6 +1236,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -1267,6 +1296,15 @@
       "unitTypes": [],
       "amenities": [],
       "macroproject": null,
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "recommended": [],
       "logo": null,
       "specSheet": null,
@@ -1281,7 +1319,7 @@
       }
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 14,
       "documentId": "m7yi0bt025kvwmyuwyj451aj",
@@ -1312,6 +1350,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -1436,6 +1475,15 @@
       },
       "location": null,
       "macroproject": null,
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "logo": null,
       "specSheet": null,
       "financing": null,
@@ -1451,28 +1499,31 @@
         {
           "id": 28,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
           "priceCOP": "410000000",
+          "privateAreaM2": 50.46,
           "floorPlan": null
         },
         {
           "id": 29,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
           "priceCOP": "512500000",
+          "privateAreaM2": 64.38,
           "floorPlan": null
         },
         {
           "id": 30,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
           "priceCOP": "635500000",
+          "privateAreaM2": 80.04,
           "floorPlan": null
         }
       ],
@@ -1549,6 +1600,7 @@
           "lastUnits": null,
           "hasDiscount": null,
           "tour360Url": null,
+          "neighborhood": "San Antonio",
           "city": {
             "id": 4,
             "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -1563,7 +1615,7 @@
       ]
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 4,
       "documentId": "xgq1gkv616o17gctywpqgpas",
@@ -1594,6 +1646,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "San Antonio",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -1717,6 +1770,15 @@
         "publishedAt": "2026-07-15T01:47:09.192Z"
       },
       "location": null,
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "recommended": [],
       "logo": null,
       "specSheet": null,
@@ -1733,28 +1795,31 @@
         {
           "id": 10,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
           "priceCOP": "280000000",
+          "privateAreaM2": 50.46,
           "floorPlan": null
         },
         {
           "id": 11,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
           "priceCOP": "350000000",
+          "privateAreaM2": 64.38,
           "floorPlan": null
         },
         {
           "id": 12,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
           "priceCOP": "434000000",
+          "privateAreaM2": 80.04,
           "floorPlan": null
         }
       ],
@@ -1874,7 +1939,7 @@
       }
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 12,
       "documentId": "t667t7mp8ez7ciokzf7q2blu",
@@ -1905,6 +1970,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "San Antonio",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -2029,6 +2095,15 @@
       },
       "location": null,
       "macroproject": null,
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "recommended": [],
       "logo": null,
       "specSheet": null,
@@ -2045,28 +2120,31 @@
         {
           "id": 22,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
           "priceCOP": "520000000",
+          "privateAreaM2": 50.46,
           "floorPlan": null
         },
         {
           "id": 23,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
           "priceCOP": "650000000",
+          "privateAreaM2": 64.38,
           "floorPlan": null
         },
         {
           "id": 24,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
           "priceCOP": "806000000",
+          "privateAreaM2": 80.04,
           "floorPlan": null
         }
       ],
@@ -2114,7 +2192,7 @@
       ]
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 13,
       "documentId": "fyms43ocvurmb4hr9a2i0yjk",
@@ -2145,6 +2223,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Chapinero",
       "city": {
         "id": 2,
         "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -2268,6 +2347,15 @@
         "publishedAt": "2026-07-15T01:47:08.925Z"
       },
       "location": null,
+      "zone": {
+        "id": 2,
+        "documentId": "zonedemocnorte0000000000",
+        "name": "Centro-Norte",
+        "slug": "centro-norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "logo": null,
       "specSheet": null,
       "financing": null,
@@ -2283,28 +2371,31 @@
         {
           "id": 25,
           "name": "Tipo A",
-          "areaM2": 58,
+          "builtAreaM2": 58,
           "bedrooms": 2,
           "bathrooms": 2,
           "priceCOP": "320000000",
+          "privateAreaM2": 50.46,
           "floorPlan": null
         },
         {
           "id": 26,
           "name": "Tipo B",
-          "areaM2": 74,
+          "builtAreaM2": 74,
           "bedrooms": 3,
           "bathrooms": 2,
           "priceCOP": "400000000",
+          "privateAreaM2": 64.38,
           "floorPlan": null
         },
         {
           "id": 27,
           "name": "Tipo C",
-          "areaM2": 92,
+          "builtAreaM2": 92,
           "bedrooms": 3,
           "bathrooms": 3,
           "priceCOP": "496000000",
+          "privateAreaM2": 80.04,
           "floorPlan": null
         }
       ],
@@ -2453,6 +2544,7 @@
           "lastUnits": null,
           "hasDiscount": null,
           "tour360Url": null,
+          "neighborhood": "San Antonio",
           "city": {
             "id": 2,
             "documentId": "tlwq8dibh033cbs9t4gy0mw4",
@@ -2467,7 +2559,7 @@
       ]
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 10,
       "documentId": "u6f2h266w0ybzpg06rioc28t",
@@ -2498,6 +2590,7 @@
       "lastUnits": null,
       "hasDiscount": null,
       "tour360Url": null,
+      "neighborhood": "Granada",
       "city": {
         "id": 4,
         "documentId": "vkmbl3cyolh62yjlfrybppke",
@@ -2557,6 +2650,15 @@
       "unitTypes": [],
       "amenities": [],
       "macroproject": null,
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
       "recommended": [],
       "logo": null,
       "specSheet": null,

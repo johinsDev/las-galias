@@ -24,7 +24,14 @@ const statusLabel = isExpectation
   ? "Muy pronto"
   : (project.constructionStatus && statusLabels[project.constructionStatus]) || null;
 
-const locationTrail = [project.city?.name, project.city?.department, project.macroproject?.name]
+// Design trail: "Bogotá · Norte · San Antonio" — city, zone, neighborhood.
+// Falls back to the city's department while a project has no zone assigned, so
+// the trail never collapses to just the city name.
+const locationTrail = [
+  project.city?.name,
+  project.zone?.name ?? project.city?.department,
+  project.neighborhood,
+]
   .filter(Boolean)
   .join(" · ");
 
