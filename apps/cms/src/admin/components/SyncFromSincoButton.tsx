@@ -26,7 +26,9 @@ export default function SyncFromSincoButton() {
   const onClick = async () => {
     setLoading(true);
     try {
-      const { data } = await post(`/api/projects/${id}/sync-sinco`);
+      // No `/api` prefix: the route is registered as an admin route so it
+      // accepts the admin JWT this client sends.
+      const { data } = await post(`/projects/${id}/sync-sinco`);
       toggleNotification({
         type: "success",
         message: data?.data?.updated
