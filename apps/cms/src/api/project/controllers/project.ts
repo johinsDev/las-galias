@@ -1,6 +1,7 @@
 import { factories } from "@strapi/strapi";
 import type { Core } from "@strapi/strapi";
 
+import { recordJobRun } from "../../../utils/job-log";
 import { syncProjectFromSinco } from "../../../utils/project-rules";
 
 export default factories.createCoreController(
@@ -31,11 +32,32 @@ export default factories.createCoreController(
         );
       }
 
+      // A manual run belongs in the same log as the nightly one: otherwise the
+      // "Registro de tareas" screen only ever shows the cron, and an editor
+      // clicking the button has no trace of what happened.
+      const startedAt = Date.now();
+      const task = "Sincronización manual desde Sinco";
       try {
         const updated = await syncProjectFromSinco(strapi, documentId);
+        await recordJobRun(
+          strapi,
+          task,
+          "ok",
+          updated
+            ? `${project.name}: precio y áreas actualizados`
+            : `${project.name}: Sinco no devolvió cambios`,
+          Date.now() - startedAt,
+        );
         return { data: { documentId, updated } };
       } catch (err) {
         strapi.log.error(`Manual Sinco sync failed for ${documentId}: ${String(err)}`);
+        await recordJobRun(
+          strapi,
+          task,
+          "error",
+          `${project.name}: ${String(err)}`,
+          Date.now() - startedAt,
+        );
         // The ERP being down is not the editor's fault and not a 500 in our app.
         return ctx.badGateway(`Sinco no respondió: ${String(err)}`);
       }

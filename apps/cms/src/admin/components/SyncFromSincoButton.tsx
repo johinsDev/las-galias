@@ -26,9 +26,11 @@ export default function SyncFromSincoButton() {
   const onClick = async () => {
     setLoading(true);
     try {
-      // Admin router, mounted under /admin — that is where the admin JWT this
-      // client sends is accepted. See the route registration in src/index.ts.
-      const { data } = await post(`/admin/projects/${id}/sync-sinco`);
+      // No `/admin` prefix and no `/api` one either: Strapi's admin API router
+      // is created with `prefix: ''`, so a route registered on it lands at the
+      // server root. It is still admin-authenticated — an anonymous POST here
+      // gets 401.
+      const { data } = await post(`/projects/${id}/sync-sinco`);
       toggleNotification({
         type: "success",
         message: data?.data?.updated
