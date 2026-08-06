@@ -8,9 +8,13 @@ set -euo pipefail
 REPO_URL="https://github.com/johinsDev/las-galias.git"
 APP_DIR="/opt/las-galias"
 
-echo "▶ 1/4 swap de 2 GB (evita OOM al buildear el admin de Strapi)…"
+# 6 GB y no 2: con 2 GB de swap el build del admin todavía se queda corto si
+# algo más está corriendo, y BuildKit muere con "frontend grpc server closed
+# unexpectedly" — un error que no menciona la memoria por ningún lado. El disco
+# son 58 GB, así que sobra sitio.
+echo "▶ 1/4 swap de 6 GB (evita OOM al buildear el admin de Strapi)…"
 if [ ! -f /swapfile ]; then
-	fallocate -l 2G /swapfile
+	fallocate -l 6G /swapfile
 	chmod 600 /swapfile
 	mkswap /swapfile
 	swapon /swapfile
