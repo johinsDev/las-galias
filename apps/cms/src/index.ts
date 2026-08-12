@@ -2,7 +2,7 @@ import type { Core } from "@strapi/strapi";
 
 import { applySpanishAdminLabels } from "./utils/admin-labels";
 import { scheduleDeploy } from "./utils/deploy-hook";
-import { invalidateContext } from "./utils/faq-bot-context";
+import { ensureConfig, invalidateContext } from "./utils/faq-bot-context";
 import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
 import {
   createAutoRedirect,
@@ -165,6 +165,10 @@ export default {
         strapi.log.info(`Public permission granted: ${action}`);
       }
     }
+
+    // El asistente arranca con su configuración lista para editar, en vez de
+    // obligar a alguien a escribir cinco campos antes de poder encenderlo.
+    await ensureConfig(strapi);
 
     // Field labels in Spanish. Idempotent and cheap: it only writes when a
     // label actually differs.

@@ -13,9 +13,12 @@ import type { Core } from "@strapi/strapi";
 const CONFIG_UID = "api::faq-bot-config.faq-bot-config";
 export const QUESTION_UID = "api::faq-bot-question.faq-bot-question";
 
+/** Los IDs que acepta el proveedor de Anthropic; deben coincidir con el enum del schema. */
+type FaqBotModel = "claude-haiku-4-5" | "claude-sonnet-5" | "claude-opus-5";
+
 export interface FaqBotConfig {
   enabled: boolean;
-  model: string;
+  model: FaqBotModel;
   maxAnswerTokens: number;
   organizationContext?: string | null;
   promptExtra?: string | null;
@@ -37,7 +40,7 @@ export const DEFAULT_FALLBACK =
   "Ahora mismo no puedo responder por aquí. Escríbenos y un asesor te resuelve la duda sin costo.";
 
 /** Los únicos IDs que el proveedor de Anthropic acepta. */
-const ALLOWED_MODELS = new Set(["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5"]);
+const ALLOWED_MODELS = new Set<string>(["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5"]);
 
 export async function getConfig(strapi: Core.Strapi): Promise<FaqBotConfig> {
   const stored = (await strapi.documents(CONFIG_UID).findFirst({
@@ -54,6 +57,40 @@ export async function getConfig(strapi: Core.Strapi): Promise<FaqBotConfig> {
     config.model = DEFAULTS.model;
   }
   return config;
+}
+
+/**
+ * Creates the config single type on first boot, already filled in, so an editor
+ * only has to flip one switch instead of writing five fields from scratch.
+ *
+ * Runs on every boot and does nothing when the document exists, like the public
+ * permissions and the Spanish labels. It deliberately leaves `enabled` OFF: a
+ * boot script must never switch on a public endpoint that spends money — that
+ * is a decision, and it belongs to whoever reads the copy below and agrees with it.
+ */
+export async function ensureConfig(strapi: Core.Strapi): Promise<void> {
+  const existing = await strapi.documents(CONFIG_UID).findFirst({});
+  if (existing) return;
+
+  await strapi.documents(CONFIG_UID).create({
+    data: {
+      enabled: false,
+      model: DEFAULTS.model,
+      maxAnswerTokens: DEFAULTS.maxAnswerTokens,
+      dailyQuestionCap: DEFAULTS.dailyQuestionCap,
+      ratePerIpPerHour: DEFAULTS.ratePerIpPerHour,
+      organizationContext:
+        "Las Galias es una constructora colombiana con más de 30 años de experiencia y más de 30.000 viviendas entregadas. Vende vivienda nueva sobre planos y con entrega inmediata. El proceso de compra es: elegir el proyecto, separar con una cuota inicial que se paga por cuotas durante la construcción, tramitar el crédito hipotecario con acompañamiento de un asesor, y escriturar. La atención es en español y sin costo.",
+      fallbackMessage:
+        "Ahora mismo no puedo responderte por aquí. Déjanos tus datos y un asesor resuelve tu duda sin costo.",
+      suggestedQuestions: [
+        { text: "¿Cuánto necesito para la cuota inicial?" },
+        { text: "¿Qué proyectos tienen disponibles?" },
+        { text: "¿Puedo comprar con subsidio?" },
+      ],
+    },
+  });
+  strapi.log.info("[faq-bot] configuración creada (apagada — enciéndela desde el admin)");
 }
 
 /**
