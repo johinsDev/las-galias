@@ -264,6 +264,16 @@ export interface CalculatorConfig {
   paymentIncomeRatioPercent?: number | null;
 }
 
+/**
+ * Only what the site needs to render the assistant. The rest of the config
+ * (prompt, context, spend caps) stays private to the CMS — see the
+ * `faq-bot/config` route.
+ */
+export interface FaqBotPublicConfig {
+  enabled: boolean;
+  suggestedQuestions: string[];
+}
+
 export interface ExchangeRate {
   copPerUsd: number;
   copPerEur: number;

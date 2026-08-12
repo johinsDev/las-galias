@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "faq_bot_questions",
+  "info": {
+    "singularName": "faq-bot-question",
+    "pluralName": "faq-bot-questions",
+    "displayName": "Pregunta al asistente",
+    "description": "Log of what visitors actually asked. Doubles as the answer cache (`cacheKey`) and as the editor's backlog of FAQs worth writing"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "question": {
+      "type": "text",
+      "required": true
+    },
+    "answer": {
+      "type": "text"
+    },
+    "cacheKey": {
+      "type": "string",
+      "description": "Hash of the normalized question. A repeat hit is answered from here, at zero cost"
+    },
+    "wasCached": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when this one was served from a previous answer instead of the model"
+    },
+    "model": {
+      "type": "string"
+    },
+    "inputTokens": {
+      "type": "integer"
+    },
+    "outputTokens": {
+      "type": "integer"
+    },
+    "cacheReadTokens": {
+      "type": "integer",
+      "description": "Input tokens billed at cache-read rates. Zero means prompt caching never engaged"
+    },
+    "askedAt": {
+      "type": "datetime"
+    }
+  }
+}

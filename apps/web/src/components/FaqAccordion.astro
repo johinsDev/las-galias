@@ -2,6 +2,8 @@
 import type { Faq } from "@lasgalias/schemas";
 
 import Blocks from "@/components/Blocks.astro";
+import FaqBot from "@/islands/FaqBot";
+import { getFaqBotConfig } from "@/lib/strapi";
 
 /**
  * The wireframe's FAQ block: a single accordion, no tabs and no categories —
@@ -18,7 +20,19 @@ interface Props {
 
 const { faqs, initial = faqs.length } = Astro.props;
 const hidden = Math.max(0, faqs.length - initial);
+
+// The assistant answers the questions the accordion does not cover. Off in the
+// CMS (or unreachable at build time) simply means it never renders.
+const bot = await getFaqBotConfig();
 ---
+
+{
+  bot.enabled && (
+    <div class="mb-8">
+      <FaqBot client:visible suggestedQuestions={bot.suggestedQuestions} />
+    </div>
+  )
+}
 
 <div class="mx-auto max-w-3xl" data-faq>
   <div class="space-y-3">

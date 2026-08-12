@@ -1,0 +1,68 @@
+{
+  "kind": "singleType",
+  "collectionName": "faq_bot_config",
+  "info": {
+    "singularName": "faq-bot-config",
+    "pluralName": "faq-bot-configs",
+    "displayName": "Asistente de preguntas (IA)",
+    "description": "Prompt, contexto y topes de gasto del bot de preguntas frecuentes. Admins only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Master switch. Off hides the bot on the site and makes the endpoint refuse"
+    },
+    "model": {
+      "type": "enumeration",
+      "enum": [
+        "anthropic/claude-haiku-4.5",
+        "anthropic/claude-sonnet-5",
+        "anthropic/claude-opus-5"
+      ],
+      "default": "anthropic/claude-haiku-4.5",
+      "required": true,
+      "description": "Routed through the Vercel AI Gateway, so swapping is just this string"
+    },
+    "maxAnswerTokens": {
+      "type": "integer",
+      "default": 400,
+      "min": 80,
+      "max": 2000,
+      "description": "Hard ceiling per answer. FAQ answers should be short"
+    },
+    "organizationContext": {
+      "type": "text",
+      "description": "Who Las Galias is, how buying works, the tone. Goes into the prompt verbatim"
+    },
+    "promptExtra": {
+      "type": "text",
+      "description": "Extra rules appended to the prompt. The safety rules live in code and cannot be edited away"
+    },
+    "fallbackMessage": {
+      "type": "text",
+      "description": "Shown when the bot is off, the daily cap is spent, or the model fails"
+    },
+    "suggestedQuestions": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true,
+      "description": "Chips shown under the input as examples"
+    },
+    "dailyQuestionCap": {
+      "type": "integer",
+      "default": 500,
+      "min": 0,
+      "description": "Model calls per day across ALL visitors. The ceiling on a day's bill"
+    },
+    "ratePerIpPerHour": {
+      "type": "integer",
+      "default": 10,
+      "min": 1,
+      "description": "Questions one visitor can ask per hour"
+    }
+  }
+}

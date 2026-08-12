@@ -2,6 +2,7 @@ import type { Core } from "@strapi/strapi";
 
 import { applySpanishAdminLabels } from "./utils/admin-labels";
 import { scheduleDeploy } from "./utils/deploy-hook";
+import { invalidateContext } from "./utils/faq-bot-context";
 import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
 import {
   createAutoRedirect,
@@ -106,6 +107,10 @@ export default {
 
       if (PUBLIC_UIDS.has(uid) && DEPLOY_ACTIONS.has(action)) {
         scheduleDeploy(strapi);
+        // The assistant answers from a snapshot of this same content, so the
+        // snapshot — and any cached answer built on it — dies with the change.
+        // Otherwise a corrected price keeps being quoted from the answer cache.
+        invalidateContext();
       }
 
       return result;
@@ -139,7 +144,15 @@ export default {
       "api::exchange-rate.exchange-rate.find",
       "api::foreign-buyer-page.foreign-buyer-page.find",
     ];
-    const actions = [...reads, ...singles, "api::lead.lead.create"];
+    const actions = [
+      ...reads,
+      ...singles,
+      "api::lead.lead.create",
+      // The assistant. Its config single type is deliberately NOT public — the
+      // site reads the two fields it needs through faq-bot.publicConfig.
+      "api::faq-bot.faq-bot.ask",
+      "api::faq-bot.faq-bot.publicConfig",
+    ];
 
     for (const action of actions) {
       const existing = await strapi

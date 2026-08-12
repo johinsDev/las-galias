@@ -537,6 +537,99 @@ export interface ApiExchangeRateExchangeRate extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiFaqBotConfigFaqBotConfig extends Struct.SingleTypeSchema {
+  collectionName: "faq_bot_config";
+  info: {
+    description: "Prompt, contexto y topes de gasto del bot de preguntas frecuentes. Admins only";
+    displayName: "Asistente de preguntas (IA)";
+    pluralName: "faq-bot-configs";
+    singularName: "faq-bot-config";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    dailyQuestionCap: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<500>;
+    enabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    fallbackMessage: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::faq-bot-config.faq-bot-config"> &
+      Schema.Attribute.Private;
+    maxAnswerTokens: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 2000;
+          min: 80;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<400>;
+    model: Schema.Attribute.Enumeration<
+      ["anthropic/claude-haiku-4.5", "anthropic/claude-sonnet-5", "anthropic/claude-opus-5"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"anthropic/claude-haiku-4.5">;
+    organizationContext: Schema.Attribute.Text;
+    promptExtra: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    ratePerIpPerHour: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<10>;
+    suggestedQuestions: Schema.Attribute.Component<"page.list-item", true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFaqBotQuestionFaqBotQuestion extends Struct.CollectionTypeSchema {
+  collectionName: "faq_bot_questions";
+  info: {
+    description: "Log of what visitors actually asked. Doubles as the answer cache (`cacheKey`) and as the editor's backlog of FAQs worth writing";
+    displayName: "Pregunta al asistente";
+    pluralName: "faq-bot-questions";
+    singularName: "faq-bot-question";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    answer: Schema.Attribute.Text;
+    askedAt: Schema.Attribute.DateTime;
+    cacheKey: Schema.Attribute.String;
+    cacheReadTokens: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    inputTokens: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::faq-bot-question.faq-bot-question"
+    > &
+      Schema.Attribute.Private;
+    model: Schema.Attribute.String;
+    outputTokens: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    question: Schema.Attribute.Text & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    wasCached: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+  };
+}
+
 export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   collectionName: "faqs";
   info: {
@@ -1384,6 +1477,8 @@ declare module "@strapi/strapi" {
       "api::calculator-config.calculator-config": ApiCalculatorConfigCalculatorConfig;
       "api::city.city": ApiCityCity;
       "api::exchange-rate.exchange-rate": ApiExchangeRateExchangeRate;
+      "api::faq-bot-config.faq-bot-config": ApiFaqBotConfigFaqBotConfig;
+      "api::faq-bot-question.faq-bot-question": ApiFaqBotQuestionFaqBotQuestion;
       "api::faq.faq": ApiFaqFaq;
       "api::foreign-buyer-page.foreign-buyer-page": ApiForeignBuyerPageForeignBuyerPage;
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;

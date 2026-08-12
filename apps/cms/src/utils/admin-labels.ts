@@ -207,6 +207,63 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       description: "Regla general con la que el simulador recomienda la cuota máxima.",
     },
   },
+  "api::faq-bot-config.faq-bot-config": {
+    enabled: {
+      label: "Asistente encendido",
+      description: "Apagado, el sitio no muestra la caja de preguntas y el bot no responde.",
+    },
+    model: {
+      label: "Modelo",
+      description: "Haiku es el más barato; Sonnet y Opus responden mejor y cuestan más.",
+    },
+    maxAnswerTokens: {
+      label: "Largo máximo de la respuesta",
+      description: "En tokens. 400 ≈ dos párrafos cortos. Subirlo encarece cada pregunta.",
+    },
+    organizationContext: {
+      label: "Contexto de la empresa",
+      description: "Quiénes somos, cómo es el proceso de compra, el tono. El bot lo lee tal cual.",
+    },
+    promptExtra: {
+      label: "Indicaciones adicionales",
+      description:
+        "Reglas extra para el bot. Las reglas de seguridad (no inventar precios) están en el código y no se pueden quitar desde aquí.",
+    },
+    fallbackMessage: {
+      label: "Mensaje de reserva",
+      description: "Lo que responde si está apagado, si se acabó el tope del día o si algo falla.",
+    },
+    suggestedQuestions: {
+      label: "Preguntas sugeridas",
+      description: "Aparecen como botones debajo de la caja de texto.",
+    },
+    dailyQuestionCap: {
+      label: "Tope de preguntas por día",
+      description:
+        "Cuántas preguntas al día puede contestar el modelo entre TODOS los visitantes. Es el techo de la factura diaria. Las repetidas no cuentan: salen del caché.",
+    },
+    ratePerIpPerHour: {
+      label: "Preguntas por visitante y hora",
+      description: "Evita que una sola persona dispare el gasto.",
+    },
+  },
+  "api::faq-bot-question.faq-bot-question": {
+    question: { label: "Pregunta" },
+    answer: { label: "Respuesta" },
+    cacheKey: { label: "Clave de caché", description: "Solo lectura: agrupa preguntas iguales." },
+    wasCached: {
+      label: "Salió del caché",
+      description: "Si está marcada, esta respuesta no costó nada.",
+    },
+    model: { label: "Modelo" },
+    inputTokens: { label: "Tokens de entrada" },
+    outputTokens: { label: "Tokens de salida" },
+    cacheReadTokens: {
+      label: "Tokens leídos de caché",
+      description: "En cero significa que el caché del modelo no se está activando.",
+    },
+    askedAt: { label: "Cuándo se preguntó" },
+  },
   "api::exchange-rate.exchange-rate": {
     copPerUsd: { label: "COP por USD" },
     copPerEur: { label: "COP por EUR" },

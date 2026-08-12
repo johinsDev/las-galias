@@ -454,6 +454,24 @@ async function main() {
     log(`FAQs (${faqs.length})`);
 
     /* singles */
+    // El asistente arranca APAGADO a propósito: sin AI_GATEWAY_API_KEY no puede
+    // responder, y encenderlo es una decisión de quien despliega, no del seed.
+    await app.documents("api::faq-bot-config.faq-bot-config").create({
+      data: {
+        enabled: false,
+        organizationContext:
+          "Las Galias es una constructora colombiana con más de 30 años de experiencia y más de 30.000 viviendas entregadas. Vende vivienda nueva sobre planos y con entrega inmediata. El proceso es: elegir proyecto, separar con cuota inicial, tramitar el crédito con acompañamiento de un asesor, y escriturar.",
+        fallbackMessage:
+          "Ahora mismo no puedo responderte por aquí. Déjanos tus datos y un asesor resuelve tu duda sin costo.",
+        suggestedQuestions: [
+          { text: "¿Cuánto necesito para la cuota inicial?" },
+          { text: "¿Qué proyectos tienen disponibles?" },
+          { text: "¿Puedo comprar con subsidio?" },
+        ],
+      },
+    });
+    log("Asistente de preguntas (IA): configurado y apagado");
+
     await app.documents("api::calculator-config.calculator-config").create({
       data: {
         annualInterestRate: 12.5,

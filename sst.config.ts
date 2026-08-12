@@ -70,6 +70,11 @@ export default $config({
     //   deploy → read cmsHttpsUrl → sst secret set CmsPublicUrl → deploy again.
     const cmsPublicUrl = new sst.Secret("CmsPublicUrl", "");
 
+    // Vercel AI Gateway key for the FAQ assistant. Empty by default so a stage
+    // without it simply cannot answer (the endpoint falls back) instead of
+    // failing to deploy — the assistant is optional, the CMS is not.
+    const aiGatewayApiKey = new sst.Secret("AiGatewayApiKey", "");
+
     // Guardrails that Pulumi always evaluates, because the resolved value IS
     // what the Service consumes — a throw here fails the deploy instead of
     // publishing a broken stage.
@@ -143,6 +148,9 @@ export default $config({
         SINCO_LEAD_ORIGEN_INFORMACION: sincoLeadOrigen.value,
         SINCO_LEAD_MEDIO_PUBLICITARIO: sincoLeadMedio.value,
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
+        AI_GATEWAY_API_KEY: aiGatewayApiKey.value,
+        // Locks CORS to the public site (see config/middlewares.ts).
+        CORS_ORIGINS: "https://lasgalias.com,https://www.lasgalias.com",
         // Absolute URL Strapi builds its links with (admin, media, webhooks).
         PUBLIC_URL: cmsPublicUrl.value,
         // The lead retry cron and the daily rates cron run in this container.

@@ -7,6 +7,7 @@ export type {
   ConstructionStatus,
   ExchangeRate,
   Faq,
+  FaqBotPublicConfig,
   ForeignBuyerPage,
   Geo,
   HomeBanner,

@@ -38,6 +38,11 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - Pinned quirks: `overrides.vite = 8.1.3` in the root package.json
   (`@tailwindcss/vite` breaks on vite 8.1.4) and `ajv@^8` as a cms dependency
   (bun hoists eslint's ajv@6 otherwise, which breaks Strapi).
+- After `bun add` in a workspace, the web build can die with
+  `Cannot read properties of null (reading 'useContext')` from `@base-ui/react`.
+  It is not a code bug: the incremental install leaves a second physical copy of
+  React in the root `node_modules`, so SSR loads two instances. Fix with
+  `rm -rf node_modules apps/*/node_modules packages/*/node_modules && bun install`.
 - Git hooks: **lefthook** (pre-commit: prettier + eslint on staged files;
   commit-msg: commitlint / Conventional Commits). Installed on `bun install`.
 - Design tokens live only in `packages/ui/src/styles/globals.css` (Tailwind v4
@@ -76,6 +81,15 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   its leads would silently stop reaching the CRM.
 - A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the
   request path — `crmStatus` records the outcome and a cron retries.
+- The FAQ assistant (`POST /api/faq-bot/ask`) answers one question at a time —
+  no chat, no history — streaming SSE from the CMS. It answers ONLY from a
+  context built out of published FAQs, published projects and
+  `faq-bot-config`; the rules that stop it inventing prices live in
+  `systemPrompt()`, not in the admin, so an editor cannot remove them. Model
+  routing goes through the Vercel AI Gateway (`AI_GATEWAY_API_KEY`), so
+  switching model is just the enum on that single type. It is a public endpoint
+  that spends money, so it is braked by an answer cache (repeat question = zero
+  tokens), a per-IP rate limit and a daily cap — never remove all three.
 
 ## Quality gate — MANDATORY before every commit and push
 

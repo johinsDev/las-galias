@@ -2,6 +2,7 @@ import type {
   CalculatorConfig,
   ExchangeRate,
   Faq,
+  FaqBotPublicConfig,
   ForeignBuyerPage,
   HomeBanner,
   Macroproject,
@@ -207,6 +208,15 @@ export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {
     "populate[steps]": "true",
     "populate[seo][populate][ogImage]": "true",
   });
+}
+
+/**
+ * Whether to render the AI assistant, and the example chips. Kept to these two
+ * fields on purpose — the prompt and the spend caps are not public.
+ */
+export async function getFaqBotConfig(): Promise<FaqBotPublicConfig> {
+  const data = await strapiFetch<FaqBotPublicConfig>("faq-bot/config");
+  return data ?? { enabled: false, suggestedQuestions: [] };
 }
 
 export async function getFaqs(audience: "general" | "exterior"): Promise<Faq[]> {
