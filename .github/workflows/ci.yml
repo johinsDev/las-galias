@@ -73,8 +73,12 @@ jobs:
           echo "Archivos cambiados:"
           echo "$CHANGED"
 
+          # La documentación y las plantillas no entran en la imagen, así que
+          # cambiarlas no justifica 20 min con el panel caído.
+          RELEVANTES=$(echo "$CHANGED" | grep -vE '(\.md$|\.env\.example$)' || true)
+
           # packages/* entra porque el CMS los compila dentro de su imagen.
-          if echo "$CHANGED" | grep -qE '^(apps/cms/|deploy/lightsail/|packages/(providers|schemas)/|bun\.lock$)'; then
+          if echo "$RELEVANTES" | grep -qE '^(apps/cms/|deploy/lightsail/|packages/(providers|schemas)/|bun\.lock$)'; then
             echo "cms=true" >> "$GITHUB_OUTPUT"
           else
             echo "cms=false" >> "$GITHUB_OUTPUT"

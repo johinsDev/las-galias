@@ -29,3 +29,6 @@ sinco-discovery.json
 *.log
 .vercel
 .env*
+# Las plantillas SÍ van al repo: bootstrap.sh clona en una máquina nueva y el
+# README pide `cp .env.example .env`. Sin esto, ese archivo no existe allí.
+!**/.env.example
