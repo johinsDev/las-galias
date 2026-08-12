@@ -2,46 +2,206 @@
 import { Image } from "astro:assets";
 
 import Base from "@/layouts/Base.astro";
+import {
+  categoryLabel,
+  featuredPost,
+  formatPostDate,
+  POST_CATEGORIES,
+  sortPosts,
+} from "@/lib/blog";
 import { getPosts, mediaUrl } from "@/lib/strapi";
 
-const posts = await getPosts();
+const posts = sortPosts(await getPosts());
+const featured = featuredPost(posts);
+const rest = posts.filter((post) => post.slug !== featured?.slug);
+
+// Only offer filters that would actually return something.
+const used = new Set(posts.map((post) => post.category).filter(Boolean));
+const filters = POST_CATEGORIES.filter((category) => used.has(category.value));
+
+/** How many cards show before "Cargar más artículos". */
+const PAGE_SIZE = 6;
 ---
 
-<Base title="Blog — Las Galias" description="Noticias y consejos sobre vivienda y finca raíz.">
-  <section class="container py-12 md:py-16">
-    <p class="text-label text-ink font-semibold uppercase">Blog</p>
-    <h1 class="text-h1 text-ink mt-1 font-bold">Historias y consejos</h1>
+<Base
+  title="Blog — Las Galias"
+  description="Consejos, guías y tendencias sobre vivienda, financiación y decoración."
+>
+  <!-- 01 Encabezado -->
+  <section class="border-line border-b">
+    <div class="container py-12 md:py-16">
+      <h1 class="text-h1 text-ink font-extrabold" data-reveal>Blog</h1>
+      <p class="text-body-lg text-ink-muted mt-3 max-w-xl" data-reveal>
+        Consejos, guías y tendencias sobre vivienda, financiación y decoración.
+      </p>
+
+      {
+        filters.length > 1 && (
+          <div class="mt-8 flex flex-wrap gap-2" id="post-filter" data-reveal>
+            <button
+              type="button"
+              data-filter=""
+              class="bg-ink text-body-sm rounded-full px-4 py-2 font-medium text-white"
+            >
+              Todos
+            </button>
+            {filters.map((category) => (
+              <button
+                type="button"
+                data-filter={category.value}
+                class="border-line-strong text-ink-muted hover:text-ink text-body-sm rounded-full border px-4 py-2 font-medium transition-colors"
+              >
+                {category.label}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- 02 Artículo destacado -->
+  {
+    featured && (
+      <section class="border-line border-b">
+        <div class="container py-10 md:py-14">
+          <p class="eyebrow">Artículo destacado</p>
+          <a
+            href={`/blog/${featured.slug}`}
+            class="group mt-4 grid items-center gap-8 md:grid-cols-2"
+            data-reveal
+          >
+            <div class="bg-surface aspect-[4/3] overflow-hidden rounded-2xl">
+              {featured.cover?.url && (
+                <Image
+                  src={mediaUrl(featured.cover.url)}
+                  alt={featured.cover.alternativeText ?? featured.title}
+                  width={800}
+                  height={600}
+                  loading="eager"
+                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+              )}
+            </div>
+            <div>
+              {categoryLabel(featured.category) && (
+                <p class="eyebrow">{categoryLabel(featured.category)}</p>
+              )}
+              <h2 class="text-h2 text-ink mt-2 font-bold group-hover:underline">
+                {featured.title}
+              </h2>
+              {featured.excerpt && (
+                <p class="text-body text-ink-muted mt-3 line-clamp-3">{featured.excerpt}</p>
+              )}
+              <p class="text-caption text-ink-faint mt-4">{formatPostDate(featured)}</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 03 Todos los artículos -->
+  <section class="container py-10 md:py-14">
+    <p class="eyebrow">Todos los artículos</p>
 
     {
-      posts.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <article class="shadow-card group overflow-hidden rounded-xl bg-white" data-reveal>
-              <a href={`/blog/${post.slug}`} class="block">
-                {post.cover?.url && (
-                  <div class="bg-surface aspect-[16/9] overflow-hidden">
+      rest.length > 0 ? (
+        <div
+          class="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          id="posts-grid"
+          data-page-size={PAGE_SIZE}
+        >
+          {rest.map((post, i) => (
+            <article data-post data-category={post.category ?? ""} hidden={i >= PAGE_SIZE}>
+              <a href={`/blog/${post.slug}`} class="group block">
+                <div class="bg-surface aspect-[4/3] overflow-hidden rounded-2xl">
+                  {post.cover?.url && (
                     <Image
                       src={mediaUrl(post.cover.url)}
                       alt={post.cover.alternativeText ?? post.title}
                       width={640}
-                      height={360}
-                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      height={480}
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
-                  </div>
-                )}
-                <div class="p-5">
-                  <h2 class="text-h4 text-ink font-bold">{post.title}</h2>
-                  {post.excerpt && (
-                    <p class="text-body-sm text-ink-muted mt-2 line-clamp-3">{post.excerpt}</p>
                   )}
                 </div>
+                {categoryLabel(post.category) && (
+                  <p class="eyebrow mt-4">{categoryLabel(post.category)}</p>
+                )}
+                <h3 class="text-h4 text-ink mt-1 font-semibold group-hover:underline">
+                  {post.title}
+                </h3>
+                <p class="text-caption text-ink-faint mt-2">{formatPostDate(post)}</p>
               </a>
             </article>
           ))}
         </div>
       ) : (
-        <p class="text-body text-ink-muted mt-8">Aún no hay entradas publicadas.</p>
+        <p class="text-body text-ink-muted mt-6">Aún no hay entradas publicadas.</p>
+      )
+    }
+
+    {
+      rest.length > PAGE_SIZE && (
+        <div class="mt-10 text-center">
+          <button type="button" class="btn btn-outline" id="posts-more">
+            Cargar más artículos
+          </button>
+        </div>
       )
     }
   </section>
+
+  <script>
+    function initBlogListing() {
+      const grid = document.getElementById("posts-grid");
+      // `astro:page-load` fires on the first load too — without this guard the
+      // listeners are bound twice and one click pages forward twice.
+      if (!grid || grid.dataset.bound) return;
+      grid.dataset.bound = "1";
+
+      const pageSize = Number(grid.dataset.pageSize) || 6;
+      const cards = [...grid.querySelectorAll<HTMLElement>("[data-post]")];
+      const more = document.getElementById("posts-more");
+      const filterBar = document.getElementById("post-filter");
+      let category = "";
+      let visible = pageSize;
+
+      function paint() {
+        const matching = cards.filter((card) => !category || card.dataset.category === category);
+        cards.forEach((card) => (card.hidden = true));
+        matching.slice(0, visible).forEach((card) => (card.hidden = false));
+        if (more) more.hidden = matching.length <= visible;
+      }
+
+      more?.addEventListener("click", () => {
+        visible += pageSize;
+        paint();
+      });
+
+      filterBar?.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
+        if (!button) return;
+        category = button.dataset.filter ?? "";
+        // A new filter starts a new page: otherwise "cargar más" would carry
+        // over a count that belongs to a different, longer list.
+        visible = pageSize;
+        filterBar.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
+          const active = b === button;
+          b.classList.toggle("bg-ink", active);
+          b.classList.toggle("text-white", active);
+          b.classList.toggle("border", !active);
+          b.classList.toggle("border-line-strong", !active);
+          b.classList.toggle("text-ink-muted", !active);
+        });
+        paint();
+      });
+
+      paint();
+    }
+
+    initBlogListing();
+    document.addEventListener("astro:page-load", initBlogListing);
+  </script>
 </Base>

@@ -1,0 +1,75 @@
+---
+import type { Faq } from "@lasgalias/schemas";
+
+import Blocks from "@/components/Blocks.astro";
+
+/**
+ * The wireframe's FAQ block: a single accordion, no tabs and no categories —
+ * the questions themselves are edited in the CMS ("Pregunta frecuente"), which
+ * is what the design review asked for.
+ *
+ * `initial` renders the rest collapsed behind "Ver más preguntas" instead of
+ * paginating, so every question still ships in the HTML for search engines.
+ */
+interface Props {
+  faqs: Faq[];
+  initial?: number;
+}
+
+const { faqs, initial = faqs.length } = Astro.props;
+const hidden = Math.max(0, faqs.length - initial);
+---
+
+<div class="mx-auto max-w-3xl" data-faq>
+  <div class="space-y-3">
+    {
+      faqs.map((faq, i) => (
+        <details
+          class="border-line group rounded-2xl border bg-white px-5 py-4"
+          data-faq-item
+          hidden={i >= initial}
+        >
+          <summary class="text-body-sm text-ink flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+            {faq.question}
+            <span class="text-ink-muted shrink-0 text-lg leading-none transition-transform group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <div class="text-body-sm text-ink-muted mt-3">
+            <Blocks content={faq.answer} />
+          </div>
+        </details>
+      ))
+    }
+  </div>
+
+  {
+    hidden > 0 && (
+      <div class="mt-6 text-center">
+        <button type="button" class="btn btn-outline" data-faq-more>
+          Ver más preguntas
+        </button>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  function setupFaq() {
+    document.querySelectorAll<HTMLElement>("[data-faq]").forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>("[data-faq-more]");
+      if (!button || button.dataset.bound) return;
+      button.dataset.bound = "1";
+
+      button.addEventListener("click", () => {
+        root
+          .querySelectorAll<HTMLElement>("[data-faq-item][hidden]")
+          .forEach((item) => (item.hidden = false));
+        button.parentElement?.remove();
+      });
+    });
+  }
+
+  setupFaq();
+  document.addEventListener("astro:page-load", setupFaq);
+</script>

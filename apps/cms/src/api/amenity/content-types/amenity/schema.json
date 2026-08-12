@@ -15,10 +15,42 @@
       "type": "string",
       "required": true
     },
+    "iconKey": {
+      "type": "enumeration",
+      "enum": [
+        "piscina",
+        "gimnasio",
+        "coworking",
+        "salon-social",
+        "zona-infantil",
+        "zona-bbq",
+        "zona-verde",
+        "senderos",
+        "zona-mascotas",
+        "cancha-deportiva",
+        "sauna-turco",
+        "jacuzzi",
+        "cine",
+        "sala-juegos",
+        "lavanderia",
+        "porteria",
+        "parqueadero",
+        "ascensor",
+        "terraza",
+        "bicicletero"
+      ],
+      "description": "Built-in line icon. Drawn with currentColor, so `iconColor` recolors it"
+    },
+    "iconColor": {
+      "type": "string",
+      "regex": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Hex color for the icon (#0f172a). Empty = the site's default ink"
+    },
     "icon": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": ["images"],
+      "description": "Only used when no `iconKey` is picked. An SVG is inlined and follows `iconColor`; a PNG/JPG cannot be recolored"
     },
     "description": {
       "type": "text"

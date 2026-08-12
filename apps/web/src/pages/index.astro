@@ -3,6 +3,7 @@ import { Image } from "astro:assets";
 
 import ProjectCard from "@/components/ProjectCard.astro";
 import Base from "@/layouts/Base.astro";
+import { categoryLabel, formatPostDate, sortPosts } from "@/lib/blog";
 import { getHomeBanners, getPosts, getProjects, mediaUrl } from "@/lib/strapi";
 
 const [banners, projects, posts] = await Promise.all([getHomeBanners(), getProjects(), getPosts()]);
@@ -39,13 +40,7 @@ const stats = [
   { value: "30 años", label: "De trayectoria" },
 ];
 
-const postCategories: Record<string, string> = {
-  financiacion: "Financiación",
-  "guia-de-compra": "Guía de compra",
-  mercado: "Mercado",
-};
-
-const blogPosts = posts.slice(0, 3);
+const blogPosts = sortPosts(posts).slice(0, 3);
 ---
 
 <Base title="Las Galias — Constructora de proyectos de vivienda en Colombia">
@@ -181,7 +176,7 @@ const blogPosts = posts.slice(0, 3);
     </div>
     <div class="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
       <a
-        href="/calculadoras#simulador"
+        href="/calculadoras#credito-hipotecario"
         class="group border-line hover:border-line-strong hover:shadow-card block rounded-2xl border bg-white p-6 transition-all"
         data-reveal
       >
@@ -289,23 +284,15 @@ const blogPosts = posts.slice(0, 3);
                   )}
                 </div>
                 <div class="p-5">
-                  {post.category && (
-                    <p class="eyebrow text-brand">
-                      {postCategories[post.category] ?? post.category}
-                    </p>
+                  {categoryLabel(post.category) && (
+                    <p class="eyebrow text-brand">{categoryLabel(post.category)}</p>
                   )}
                   <h3 class="text-h4 text-ink mt-1 font-semibold">{post.title}</h3>
                   {post.excerpt && (
                     <p class="text-body-sm text-ink-muted mt-2 line-clamp-2">{post.excerpt}</p>
                   )}
-                  {post.publishedOn && (
-                    <p class="text-caption text-ink-faint mt-2">
-                      {new Date(post.publishedOn).toLocaleDateString("es-CO", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </p>
+                  {formatPostDate(post) && (
+                    <p class="text-caption text-ink-faint mt-2">{formatPostDate(post)}</p>
                   )}
                 </div>
               </a>

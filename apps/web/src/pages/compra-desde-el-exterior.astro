@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
-import Blocks from "@/components/Blocks.astro";
+import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import LeadForm from "@/islands/LeadForm";
 import Base from "@/layouts/Base.astro";
@@ -207,20 +207,8 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
         <div class="container py-16">
           <p class="eyebrow text-center">FAQ</p>
           <h2 class="text-h3 text-ink mt-2 text-center font-bold">Preguntas frecuentes</h2>
-          <div class="mx-auto mt-8 max-w-3xl space-y-3">
-            {faqs.map((faq) => (
-              <details class="border-line group rounded-2xl border bg-white px-5 py-4">
-                <summary class="text-body-sm text-ink flex cursor-pointer items-center justify-between gap-4 font-medium">
-                  {faq.question}
-                  <span class="text-ink-muted shrink-0 transition-transform group-open:rotate-45">
-                    +
-                  </span>
-                </summary>
-                <div class="text-body-sm text-ink-muted mt-3">
-                  <Blocks content={faq.answer} />
-                </div>
-              </details>
-            ))}
+          <div class="mt-8">
+            <FaqAccordion faqs={faqs} initial={5} />
           </div>
         </div>
       </section>

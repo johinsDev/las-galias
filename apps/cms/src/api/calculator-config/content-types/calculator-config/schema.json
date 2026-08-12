@@ -22,6 +22,26 @@
     "maxFinancingPercent": {
       "type": "decimal",
       "default": 70
+    },
+    "leasingFinancingPercent": {
+      "type": "decimal",
+      "default": 80,
+      "description": "Leasing habitacional usually finances more than a mortgage; drives the minimum down payment the first simulator asks for"
+    },
+    "visFinancingPercent": {
+      "type": "decimal",
+      "default": 80,
+      "description": "How much of a VIS home can be financed. Drives the «vivienda desde ~$X» hint in the affordability simulator"
+    },
+    "maxIncomeRatioPercent": {
+      "type": "decimal",
+      "default": 40,
+      "description": "Debt ceiling: the mortgage simulator warns above this share of the household income"
+    },
+    "paymentIncomeRatioPercent": {
+      "type": "decimal",
+      "default": 30,
+      "description": "Share of the DISPOSABLE income the affordability simulator recommends as instalment"
     }
   }
 }

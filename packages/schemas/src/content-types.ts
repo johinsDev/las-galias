@@ -52,9 +52,39 @@ export interface Macroproject {
   pointsOfInterest?: PointOfInterest[];
 }
 
+/**
+ * Keys of the site's built-in line-icon set. They are drawn with
+ * `currentColor`, which is what makes `Amenity["iconColor"]` work.
+ */
+export type AmenityIconKey =
+  | "piscina"
+  | "gimnasio"
+  | "coworking"
+  | "salon-social"
+  | "zona-infantil"
+  | "zona-bbq"
+  | "zona-verde"
+  | "senderos"
+  | "zona-mascotas"
+  | "cancha-deportiva"
+  | "sauna-turco"
+  | "jacuzzi"
+  | "cine"
+  | "sala-juegos"
+  | "lavanderia"
+  | "porteria"
+  | "parqueadero"
+  | "ascensor"
+  | "terraza"
+  | "bicicletero";
+
 export interface Amenity {
   documentId: string;
   name: string;
+  iconKey?: AmenityIconKey | null;
+  /** Hex color the editor picked for the icon (#C8102E). */
+  iconColor?: string | null;
+  /** Editor-uploaded fallback, only when no `iconKey` is set. */
   icon?: Media | null;
   description?: string | null;
 }
@@ -146,7 +176,7 @@ export interface Project {
   seo?: Seo | null;
 }
 
-type PostCategory = "financiacion" | "guia-de-compra" | "mercado";
+export type PostCategory = "financiacion" | "guia-de-compra" | "mercado" | "decoracion";
 
 export interface Post {
   documentId: string;
@@ -154,6 +184,11 @@ export interface Post {
   slug: string;
   excerpt?: string | null;
   category?: PostCategory | null;
+  /** Pins the post to the big slot at the top of /blog. */
+  featured?: boolean;
+  author?: string | null;
+  /** Editor override for the "5 min de lectura" line; estimated when empty. */
+  readingMinutes?: number | null;
   /** Editorial date shown on the card; independent from Strapi's publishedAt. */
   publishedOn?: string | null;
   cover?: Media | null;
@@ -219,6 +254,14 @@ export interface CalculatorConfig {
   annualInterestRate: number;
   maxTermYears: number;
   maxFinancingPercent: number;
+  /** Leasing habitacional finances more than a plain mortgage. */
+  leasingFinancingPercent?: number | null;
+  /** VIS homes take a higher LTV than the rest. */
+  visFinancingPercent?: number | null;
+  /** Debt ceiling the mortgage simulator warns above (percent of income). */
+  maxIncomeRatioPercent?: number | null;
+  /** Share of the disposable income recommended as an instalment. */
+  paymentIncomeRatioPercent?: number | null;
 }
 
 export interface ExchangeRate {
