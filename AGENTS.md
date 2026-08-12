@@ -97,9 +97,10 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   no chat, no history — streaming SSE from the CMS. It answers ONLY from a
   context built out of published FAQs, published projects and
   `faq-bot-config`; the rules that stop it inventing prices live in
-  `systemPrompt()`, not in the admin, so an editor cannot remove them. Model
-  routing goes through the Vercel AI Gateway (`AI_GATEWAY_API_KEY`), so
-  switching model is just the enum on that single type. It is a public endpoint
+  `systemPrompt()`, not in the admin, so an editor cannot remove them. It calls
+  Anthropic directly (`ANTHROPIC_API_KEY`) rather than through the Vercel AI
+  Gateway — the CMS runs on AWS, so the gateway would only add a network hop to
+  a streamed answer; switching model is still just the enum on that single type. It is a public endpoint
   that spends money, so it is braked by an answer cache (repeat question = zero
   tokens), a per-IP rate limit and a daily cap — never remove all three.
 

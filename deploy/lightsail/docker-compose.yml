@@ -55,8 +55,8 @@ services:
       # Rebuild del sitio en Vercel al publicar
       VERCEL_DEPLOY_HOOK_URL: ${VERCEL_DEPLOY_HOOK_URL}
       # Asistente de preguntas (IA). Vacío = el bot no puede responder, aunque
-      # esté encendido en el admin. Va por el AI Gateway de Vercel.
-      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      # esté encendido en el admin. Se llama directo a Anthropic.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # Orígenes que pueden llamar al CMS desde un navegador. Vacío = "*", que es
       # lo que necesita hoy el sitio (vive en una URL *.vercel.app que cambia).
       CORS_ORIGINS: ${CORS_ORIGINS:-}

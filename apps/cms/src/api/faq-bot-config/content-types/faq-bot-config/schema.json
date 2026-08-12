@@ -18,14 +18,10 @@
     },
     "model": {
       "type": "enumeration",
-      "enum": [
-        "anthropic/claude-haiku-4.5",
-        "anthropic/claude-sonnet-5",
-        "anthropic/claude-opus-5"
-      ],
-      "default": "anthropic/claude-haiku-4.5",
+      "enum": ["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5"],
+      "default": "claude-haiku-4-5",
       "required": true,
-      "description": "Routed through the Vercel AI Gateway, so swapping is just this string"
+      "description": "Called directly against Anthropic. Swapping is just this string"
     },
     "maxAnswerTokens": {
       "type": "integer",

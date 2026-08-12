@@ -1,5 +1,6 @@
 import { PassThrough } from "node:stream";
 
+import { anthropic } from "@ai-sdk/anthropic";
 import type { Core } from "@strapi/strapi";
 import { streamText } from "ai";
 
@@ -119,7 +120,11 @@ export default {
       let answer = "";
       try {
         const result = streamText({
-          model: config.model,
+          // Directo a Anthropic, sin pasar por el AI Gateway: este CMS corre en
+          // AWS, así que el Gateway solo añadiría un salto de red en una
+          // respuesta que se escribe en pantalla, y ataría la llave a una cuenta
+          // de Vercel más. Cambiar entre modelos Claude sigue siendo un string.
+          model: anthropic(config.model),
           maxOutputTokens: config.maxAnswerTokens,
           instructions: {
             role: "system",

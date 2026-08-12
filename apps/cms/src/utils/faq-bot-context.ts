@@ -27,7 +27,7 @@ export interface FaqBotConfig {
 
 const DEFAULTS: FaqBotConfig = {
   enabled: false,
-  model: "anthropic/claude-haiku-4.5",
+  model: "claude-haiku-4-5",
   maxAnswerTokens: 400,
   dailyQuestionCap: 500,
   ratePerIpPerHour: 10,
@@ -36,11 +36,24 @@ const DEFAULTS: FaqBotConfig = {
 export const DEFAULT_FALLBACK =
   "Ahora mismo no puedo responder por aquí. Escríbenos y un asesor te resuelve la duda sin costo.";
 
+/** Los únicos IDs que el proveedor de Anthropic acepta. */
+const ALLOWED_MODELS = new Set(["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5"]);
+
 export async function getConfig(strapi: Core.Strapi): Promise<FaqBotConfig> {
   const stored = (await strapi.documents(CONFIG_UID).findFirst({
     populate: { suggestedQuestions: true },
   })) as Partial<FaqBotConfig> | null;
-  return { ...DEFAULTS, ...(stored ?? {}) };
+  const config = { ...DEFAULTS, ...(stored ?? {}) };
+
+  // Una base creada antes de pasar del AI Gateway a Anthropic directo guarda
+  // IDs con otro formato ("anthropic/claude-haiku-4.5"), que el enum nuevo ya no
+  // permite pero que siguen ahí. Mandarlos al proveedor sería un 404 en cada
+  // pregunta, así que se cae al default en vez de romperse.
+  if (!ALLOWED_MODELS.has(config.model)) {
+    strapi.log.warn(`[faq-bot] modelo desconocido "${config.model}"; usando ${DEFAULTS.model}`);
+    config.model = DEFAULTS.model;
+  }
+  return config;
 }
 
 /**

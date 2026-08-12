@@ -70,10 +70,10 @@ export default $config({
     //   deploy → read cmsHttpsUrl → sst secret set CmsPublicUrl → deploy again.
     const cmsPublicUrl = new sst.Secret("CmsPublicUrl", "");
 
-    // Vercel AI Gateway key for the FAQ assistant. Empty by default so a stage
+    // Anthropic API key for the FAQ assistant. Empty by default so a stage
     // without it simply cannot answer (the endpoint falls back) instead of
     // failing to deploy — the assistant is optional, the CMS is not.
-    const aiGatewayApiKey = new sst.Secret("AiGatewayApiKey", "");
+    const anthropicApiKey = new sst.Secret("AnthropicApiKey", "");
 
     // Origins allowed to call this CMS from a browser (lead form, assistant).
     // EMPTY MEANS "*", which is what the site needs today: it is served from a
@@ -155,7 +155,7 @@ export default $config({
         SINCO_LEAD_ORIGEN_INFORMACION: sincoLeadOrigen.value,
         SINCO_LEAD_MEDIO_PUBLICITARIO: sincoLeadMedio.value,
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
-        AI_GATEWAY_API_KEY: aiGatewayApiKey.value,
+        ANTHROPIC_API_KEY: anthropicApiKey.value,
         CORS_ORIGINS: corsOrigins.value,
         // Absolute URL Strapi builds its links with (admin, media, webhooks).
         PUBLIC_URL: cmsPublicUrl.value,

@@ -573,11 +573,9 @@ export interface ApiFaqBotConfigFaqBotConfig extends Struct.SingleTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<400>;
-    model: Schema.Attribute.Enumeration<
-      ["anthropic/claude-haiku-4.5", "anthropic/claude-sonnet-5", "anthropic/claude-opus-5"]
-    > &
+    model: Schema.Attribute.Enumeration<["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5"]> &
       Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<"anthropic/claude-haiku-4.5">;
+      Schema.Attribute.DefaultTo<"claude-haiku-4-5">;
     organizationContext: Schema.Attribute.Text;
     promptExtra: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
