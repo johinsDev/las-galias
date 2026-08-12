@@ -155,7 +155,19 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
   },
   "api::amenity.amenity": {
     name: { label: "Nombre" },
-    icon: { label: "Ícono" },
+    iconKey: {
+      label: "Ícono",
+      description: "Ícono del sitio. Es el que se puede pintar del color de abajo.",
+    },
+    iconColor: {
+      label: "Color del ícono",
+      description: "Hexadecimal, por ejemplo #C8102E. Vacío usa el color por defecto del sitio.",
+    },
+    icon: {
+      label: "Ícono propio (archivo)",
+      description:
+        "Solo se usa si arriba no elegiste ícono. Un SVG se puede pintar con el color; un PNG o JPG no.",
+    },
     description: { label: "Descripción" },
     projects: { label: "Proyectos" },
   },
@@ -178,6 +190,22 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     annualInterestRate: { label: "Tasa de interés E.A. (%)" },
     maxTermYears: { label: "Plazo máximo (años)" },
     maxFinancingPercent: { label: "Financiación máxima (%)" },
+    leasingFinancingPercent: {
+      label: "Financiación máxima leasing (%)",
+      description: "El leasing habitacional suele financiar más que el crédito hipotecario.",
+    },
+    visFinancingPercent: {
+      label: "Financiación máxima VIS (%)",
+      description: "Con esto el simulador de capacidad estima «vivienda VIS desde ~$X».",
+    },
+    maxIncomeRatioPercent: {
+      label: "Tope de endeudamiento (%)",
+      description: "El simulador de crédito avisa cuando la cuota supera este % del ingreso.",
+    },
+    paymentIncomeRatioPercent: {
+      label: "% del ingreso disponible para la cuota",
+      description: "Regla general con la que el simulador recomienda la cuota máxima.",
+    },
   },
   "api::exchange-rate.exchange-rate": {
     copPerUsd: { label: "COP por USD" },
@@ -206,7 +234,16 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     title: { label: "Título" },
     slug: { label: "URL (slug)" },
     excerpt: { label: "Resumen" },
-    category: { label: "Categoría" },
+    category: { label: "Categoría", description: "También es el filtro del listado del blog." },
+    featured: {
+      label: "Artículo destacado",
+      description: "Lo sube al bloque grande de /blog. Si hay varios, gana el más reciente.",
+    },
+    author: { label: "Autor", description: "Vacío firma como «equipo editorial Galias»." },
+    readingMinutes: {
+      label: "Minutos de lectura",
+      description: "Vacío se calcula solo a partir del contenido.",
+    },
     publishedOn: { label: "Fecha editorial", description: "La que se muestra en la card." },
     cover: { label: "Portada" },
     content: { label: "Contenido" },

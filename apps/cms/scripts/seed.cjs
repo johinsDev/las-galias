@@ -95,21 +95,21 @@ async function main() {
     log("Cities: Bogotá, Medellín");
 
     /* amenities */
-    const amenityNames = [
-      "Piscina",
-      "Gimnasio",
-      "Zona BBQ",
-      "Parque infantil",
-      "Salón social",
-      "Coworking",
+    // `iconKey` picks one of the site's built-in line icons; they are drawn
+    // with currentColor, so `iconColor` repaints them without a new asset.
+    const amenitySpecs = [
+      { name: "Piscina", iconKey: "piscina" },
+      { name: "Gimnasio", iconKey: "gimnasio" },
+      { name: "Zona BBQ", iconKey: "zona-bbq" },
+      { name: "Parque infantil", iconKey: "zona-infantil" },
+      { name: "Salón social", iconKey: "salon-social" },
+      { name: "Coworking", iconKey: "coworking", iconColor: "#C8102E" },
     ];
     const amenities = [];
-    for (const name of amenityNames) {
-      amenities.push(
-        await app.documents("api::amenity.amenity").create({ data: { name } }),
-      );
+    for (const spec of amenitySpecs) {
+      amenities.push(await app.documents("api::amenity.amenity").create({ data: spec }));
     }
-    log(`Amenities: ${amenityNames.join(", ")}`);
+    log(`Amenities: ${amenitySpecs.map((a) => a.name).join(", ")}`);
 
     /* macroproject + points of interest */
     const macroGallery = await uploadSvg("macro-ciudad-verde", {
@@ -155,6 +155,7 @@ async function main() {
       {
         name: "Reserva de los Alisos",
         slug: "reserva-de-los-alisos",
+        location: { lat: 4.7601, lng: -74.0465, address: "Calle 175 N° 22 – 10, Bogotá" },
         stage: "sale",
         constructionStatus: "construction",
         priceFromCOP: "320000000",
@@ -167,6 +168,7 @@ async function main() {
       {
         name: "Mirador del Parque",
         slug: "mirador-del-parque",
+        location: { lat: 4.7150, lng: -74.0840, address: "Carrera 104 N° 152 – 30, Bogotá" },
         stage: "sale",
         constructionStatus: "presale",
         priceFromCOP: "280000000",
@@ -186,6 +188,7 @@ async function main() {
       {
         name: "Balcones de Provenza",
         slug: "balcones-de-provenza",
+        location: { lat: 6.2090, lng: -75.5680, address: "Carrera 35 N° 8 – 24, Medellín" },
         stage: "sale",
         constructionStatus: "immediate-delivery",
         priceFromCOP: "410000000",
@@ -204,6 +207,7 @@ async function main() {
       {
         name: "Portal del Poblado",
         slug: "portal-del-poblado",
+        location: { lat: 6.2050, lng: -75.5700, address: "Carrera 43A N° 5 – 15, Medellín" },
         stage: "sale",
         constructionStatus: "launch",
         priceFromCOP: "520000000",
@@ -269,6 +273,10 @@ async function main() {
         priceFromCOP: spec.priceFromCOP,
         city: spec.city.documentId,
         macroproject: spec.macroproject,
+        location: spec.location,
+        salesRoom: isSale
+          ? { schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.", phone: "300 000 0000" }
+          : undefined,
         amenities: isSale ? amenities.slice(0, 4).map((a) => a.documentId) : [],
         unitTypes,
         gallery,
@@ -327,18 +335,52 @@ async function main() {
     log("Home banners (desktop + mobile)");
 
     /* posts */
+    // One post per category, so the blog listing's filters have something to
+    // filter and the article sidebar shows each contextual CTA.
     const posts = [
+      {
+        title: "7 pasos para comprar tu primera vivienda en Colombia",
+        slug: "pasos-comprar-primera-vivienda",
+        excerpt:
+          "Todo lo que necesitas saber antes de firmar: desde elegir el proyecto correcto hasta entender los tiempos de entrega y la documentación exigida.",
+        category: "guia-de-compra",
+        featured: true,
+        readingMinutes: 6,
+        publishedOn: "2025-06-04",
+        palette: "forest",
+      },
+      {
+        title: "Estos son los subsidios de vivienda vigentes en 2026",
+        slug: "subsidios-vivienda-vigentes",
+        excerpt: "Cuáles siguen activos, quién puede acceder y cómo verificar tu elegibilidad.",
+        category: "financiacion",
+        readingMinutes: 5,
+        publishedOn: "2025-06-02",
+        palette: "sky",
+      },
       {
         title: "5 claves para comprar vivienda sobre planos",
         slug: "claves-comprar-vivienda-sobre-planos",
         excerpt: "Lo que debes revisar antes de firmar una promesa de compraventa.",
+        category: "guia-de-compra",
+        publishedOn: "2025-05-14",
         palette: "sand",
       },
       {
         title: "Así avanza Ciudad Verde Norte",
         slug: "asi-avanza-ciudad-verde-norte",
         excerpt: "Un recorrido por las obras del macroproyecto más grande del norte de Bogotá.",
+        category: "mercado",
+        publishedOn: "2025-05-20",
         palette: "dusk",
+      },
+      {
+        title: "Ideas para decorar apartamentos pequeños",
+        slug: "ideas-decorar-apartamentos-pequenos",
+        excerpt: "Cómo ganar amplitud y luz sin tumbar un solo muro.",
+        category: "decoracion",
+        publishedOn: "2025-05-08",
+        palette: "clay",
       },
     ];
     for (const spec of posts) {
@@ -352,6 +394,11 @@ async function main() {
         title: spec.title,
         slug: spec.slug,
         excerpt: spec.excerpt,
+        category: spec.category,
+        featured: spec.featured ?? false,
+        author: "equipo editorial Galias",
+        readingMinutes: spec.readingMinutes,
+        publishedOn: spec.publishedOn,
         cover: cover.id,
         content: [
           { type: "heading", level: 2, children: [{ type: "text", text: spec.title }] },
@@ -370,9 +417,53 @@ async function main() {
     }
     log("Blog posts");
 
+    /* faqs — the accordion on /proyectos (general) and on the foreign-buyer
+       landing (exterior). Same content type, scoped by `audience`. */
+    const faqs = [
+      ["¿Tengo que viajar a Colombia para comprar?", "exterior"],
+      ["¿Cuáles son los métodos de pago disponibles?", "exterior"],
+      ["¿Qué documentos necesito para iniciar el proceso?", "exterior"],
+      ["¿Debo estar en Colombia para firmar la escritura?", "exterior"],
+      ["¿Con qué entidades puedo tramitar crédito hipotecario?", "exterior"],
+      ["¿Cuánto necesito para la cuota inicial?", "general"],
+      ["¿Puedo comprar con subsidio de vivienda?", "general"],
+      ["¿Cuánto tarda la entrega de un proyecto sobre planos?", "general"],
+      ["¿Qué incluye el apartamento en la entrega?", "general"],
+      ["¿Puedo separar el apartamento antes de aprobar el crédito?", "general"],
+      ["¿Puedo pagar la cuota inicial por cuotas?", "general"],
+    ];
+    for (let i = 0; i < faqs.length; i++) {
+      const [question, audience] = faqs[i];
+      await createAndPublish("api::faq.faq", {
+        question,
+        audience,
+        order: i,
+        answer: [
+          {
+            type: "paragraph",
+            children: [
+              {
+                type: "text",
+                text: "Un asesor te explica el detalle según tu caso. Escríbenos y resolvemos esta duda contigo sin costo ni compromiso.",
+              },
+            ],
+          },
+        ],
+      });
+    }
+    log(`FAQs (${faqs.length})`);
+
     /* singles */
     await app.documents("api::calculator-config.calculator-config").create({
-      data: { annualInterestRate: 12.5, maxTermYears: 20, maxFinancingPercent: 70 },
+      data: {
+        annualInterestRate: 12.5,
+        maxTermYears: 20,
+        maxFinancingPercent: 70,
+        leasingFinancingPercent: 80,
+        visFinancingPercent: 80,
+        maxIncomeRatioPercent: 40,
+        paymentIncomeRatioPercent: 30,
+      },
     });
 
     let rates = { copPerUsd: 4000, copPerEur: 4350, usdSource: "seed-fallback", eurSource: "seed-fallback", validFrom: new Date().toISOString() };

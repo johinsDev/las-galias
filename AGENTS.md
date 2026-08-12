@@ -6,9 +6,13 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@tailwindcss/vite`) + Partytown for third-party scripts. Deployed to Vercel with
   `@astrojs/vercel` (needed even though the site is static: it emits the CMS
   redirects as real 301s and enables Vercel Image Optimization). Near-zero JS: the
-  React islands (`src/islands/`, `client:visible`) are LeadForm, MortgageCalculator
-  and CurrencySwitcher. Animations with `motion` (vanilla API) + View Transitions.
+  React islands (`src/islands/`, `client:visible`) are LeadForm, the three
+  simulators, TypologySimulator, StickyQuote and CurrencySwitcher. Animations with `motion` (vanilla API) + View Transitions.
   Public URLs and site copy are Spanish (Colombian audience); code is English.
+  The three simulators on `/calculadoras` (cuota inicial, crédito hipotecario,
+  capacidad de pago) share `lib/simulators.ts` for the math and
+  `islands/SimulatorUI.tsx` for the skin; all their knobs live in
+  `calculator-config`.
 - `apps/cms` — **Strapi v5** (always Postgres, never SQLite). Self-hosted on AWS
   (Fargate + RDS + S3) via **SST v3** (`sst.config.ts` at the repo root). Content
   types and business rules live as code (schema JSONs + document-service

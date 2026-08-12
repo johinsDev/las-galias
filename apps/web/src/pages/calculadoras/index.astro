@@ -1,16 +1,51 @@
 ---
-import MortgageCalculator from "@/islands/MortgageCalculator";
+import AffordabilitySimulator from "@/islands/AffordabilitySimulator";
+import DownPaymentSimulator from "@/islands/DownPaymentSimulator";
+import MortgageSimulator from "@/islands/MortgageSimulator";
 import Base from "@/layouts/Base.astro";
 import { getCalculatorConfig, getProjects } from "@/lib/strapi";
 
 const [calculator, projects] = await Promise.all([getCalculatorConfig(), getProjects()]);
 
-// Seed the simulator with the cheapest project actually on sale, so the sliders
-// open on a realistic figure instead of an arbitrary one.
+// Seed the simulators with the cheapest project actually on sale, so they open
+// on a realistic figure instead of an arbitrary one.
 const prices = projects
   .filter((p) => p.stage === "sale" && p.priceFromCOP)
   .map((p) => Number(p.priceFromCOP));
-const startingPrice = prices.length > 0 ? Math.min(...prices) : 200_000_000;
+const startingPrice = prices.length > 0 ? Math.min(...prices) : 300_000_000;
+
+/**
+ * Every knob lives in `calculator-config`, but the page must still build when
+ * the CMS is unreachable — hence the industry defaults here.
+ */
+const annualInterestRate = calculator?.annualInterestRate ?? 13.95;
+const maxTermYears = calculator?.maxTermYears ?? 20;
+const maxFinancingPercent = calculator?.maxFinancingPercent ?? 70;
+const leasingFinancingPercent = calculator?.leasingFinancingPercent ?? 80;
+const visFinancingPercent = calculator?.visFinancingPercent ?? 80;
+const maxIncomeRatioPercent = calculator?.maxIncomeRatioPercent ?? 40;
+const paymentIncomeRatioPercent = calculator?.paymentIncomeRatioPercent ?? 30;
+
+const simulators = [
+  {
+    id: "cuota-inicial",
+    eyebrow: "Simulador · Cuota inicial",
+    title: "Simulador de Cuota Inicial",
+    body: "Calcula cuánto necesitas ahorrar para la cuota inicial de tu vivienda.",
+  },
+  {
+    id: "credito-hipotecario",
+    eyebrow: "Simulador · Crédito hipotecario",
+    title: "Simulador de Crédito Hipotecario",
+    body: "Calcula tu cuota mensual estimada y verifica tu capacidad de endeudamiento.",
+  },
+  {
+    id: "capacidad-de-pago",
+    eyebrow: "Simulador · Capacidad de pago",
+    title: "Simulador de Capacidad de Pago",
+    body: "Descubre cuál es la cuota máxima que puedes pagar cómodamente cada mes.",
+  },
+];
 
 // 2026 figures. VIS/VIP ceilings are set in UVT and change every year, so they
 // live here as copy an editor can correct rather than as computed values.
@@ -31,67 +66,88 @@ const subsidies = [
 ---
 
 <Base
-  title="Calculadoras — Las Galias"
-  description="Simula tu cuota mensual y revisa a qué subsidios de vivienda puedes acceder."
+  title="Calculadoras y simuladores — Las Galias"
+  description="Simula tu cuota inicial, tu crédito hipotecario y tu capacidad de pago antes de hablar con un asesor."
 >
   <section class="border-line border-b">
     <div class="container py-12 text-center md:py-16">
-      <p class="eyebrow text-brand" data-reveal>Herramientas</p>
+      <p class="eyebrow text-brand" data-reveal>Calculadoras / Simuladores</p>
       <h1 class="text-h1 text-ink mx-auto mt-3 max-w-2xl font-extrabold" data-reveal>
         Planea tu compra
       </h1>
       <p class="text-ink-muted mx-auto mt-4 max-w-xl" data-reveal>
-        Calcula tu cuota mensual y revisa a qué beneficios puedes acceder antes de hablar con un
-        asesor.
+        Tres herramientas para saber cuánto necesitas ahorrar, cuánto pagarías al mes y hasta dónde
+        te alcanza, antes de hablar con un asesor.
       </p>
-    </div>
-  </section>
-
-  <section class="container py-12 md:py-16" id="simulador">
-    <div class="grid gap-10 lg:grid-cols-[1fr_420px]">
-      <div data-reveal>
-        <p class="eyebrow">Simulador de crédito</p>
-        <h2 class="text-h3 text-ink mt-2 font-bold">¿Cuánto pagarías al mes?</h2>
-        <p class="text-ink-muted mt-3">
-          Mueve el valor del inmueble, la cuota inicial y el plazo para ver cómo cambia tu cuota
-          mensual estimada. La tasa de referencia la administra Las Galias desde el CMS y se
-          actualiza cuando cambian las condiciones del mercado.
-        </p>
-        <ul class="text-body-sm text-ink-muted mt-6 space-y-2">
-          <li>
-            · La cuota mensual se calcula con la tasa efectiva anual, como la cotizan los bancos.
-          </li>
-          <li>· No incluye seguros, avalúo ni gastos de escrituración.</li>
-          <li>· Es una estimación con fines informativos, no una oferta de crédito.</li>
-        </ul>
-        <a href="/proyectos" class="btn btn-primary mt-8">Ver proyectos disponibles</a>
-      </div>
-
-      <div data-reveal>
+      <div class="mt-8 flex flex-wrap justify-center gap-2" data-reveal>
         {
-          calculator?.annualInterestRate ? (
-            <MortgageCalculator
-              client:visible
-              priceFromCOP={startingPrice}
-              annualInterestRate={calculator.annualInterestRate}
-              maxTermYears={calculator.maxTermYears}
-              maxFinancingPercent={calculator.maxFinancingPercent}
-            />
-          ) : (
-            <div class="border-line rounded-2xl border bg-white p-6">
-              <h3 class="text-h4 text-ink font-semibold">Simulador no disponible</h3>
-              <p class="text-body-sm text-ink-muted mt-2">
-                Falta configurar la tasa de referencia en el CMS. Escríbenos y te hacemos la
-                simulación con un asesor.
-              </p>
-              <a href="/contacto" class="btn btn-primary mt-4">
-                Hablar con un asesor
-              </a>
-            </div>
-          )
+          simulators.map((simulator) => (
+            <a href={`#${simulator.id}`} class="chip hover:bg-surface transition-colors">
+              {simulator.title.replace("Simulador de ", "")}
+            </a>
+          ))
         }
       </div>
     </div>
+  </section>
+
+  {
+    simulators.map((simulator, index) => (
+      <section
+        id={simulator.id}
+        class:list={["border-line border-b", index % 2 === 1 && "bg-surface"]}
+      >
+        <div class="container py-12 md:py-16">
+          <div class="mx-auto max-w-4xl">
+            <div data-reveal>
+              <span class="chip bg-surface text-label uppercase">{simulator.eyebrow}</span>
+              <h2 class="text-h3 text-ink mt-3 font-bold">{simulator.title}</h2>
+              <p class="text-body-sm text-ink-muted mt-2">{simulator.body}</p>
+            </div>
+
+            <div class="mt-6" data-reveal>
+              {simulator.id === "cuota-inicial" && (
+                <DownPaymentSimulator
+                  client:visible
+                  defaultPriceCOP={startingPrice}
+                  maxFinancingPercent={maxFinancingPercent}
+                  leasingFinancingPercent={leasingFinancingPercent}
+                />
+              )}
+              {simulator.id === "credito-hipotecario" && (
+                <MortgageSimulator
+                  client:visible
+                  defaultPriceCOP={startingPrice}
+                  annualInterestRate={annualInterestRate}
+                  maxTermYears={maxTermYears}
+                  maxFinancingPercent={maxFinancingPercent}
+                  maxIncomeRatioPercent={maxIncomeRatioPercent}
+                />
+              )}
+              {simulator.id === "capacidad-de-pago" && (
+                <AffordabilitySimulator
+                  client:visible
+                  annualInterestRate={annualInterestRate}
+                  maxTermYears={maxTermYears}
+                  maxFinancingPercent={maxFinancingPercent}
+                  visFinancingPercent={visFinancingPercent}
+                  paymentIncomeRatioPercent={paymentIncomeRatioPercent}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="container py-10">
+    <p class="text-caption text-ink-muted mx-auto max-w-3xl text-center">
+      Los resultados son estimaciones con fines informativos y no constituyen una oferta de crédito.
+      No incluyen seguros, avalúo ni gastos de escrituración. La tasa de referencia ({
+        annualInterestRate
+      }% E.A.) la administra Las Galias y se actualiza cuando cambian las condiciones del mercado.
+    </p>
   </section>
 
   <section class="bg-surface border-line border-y" id="subsidio">

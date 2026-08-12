@@ -36,7 +36,12 @@ const gtmSnippet = GTM_ID
     <link rel="canonical" href={Astro.url.href} />
     <Font cssVariable="--font-figtree" preload />
     <ClientRouter />
-    {gtmSnippet && <script type="text/partytown" set:html={gtmSnippet} />}
+    {
+      /* `is:inline` explícito: Astro ya lo trata así por el atributo `type`
+        (Partytown lo necesita para sacar el script del hilo principal), y
+        decirlo aquí evita el aviso de `astro check` en cada corrida. */
+    }
+    {gtmSnippet && <script is:inline type="text/partytown" set:html={gtmSnippet} />}
   </head>
   <body class="flex min-h-screen flex-col">
     <Header />

@@ -1,6 +1,7 @@
 export { ForeignLeadSchema, LeadSchema, type ForeignLead, type Lead } from "./lead";
 export type {
   Amenity,
+  AmenityIconKey,
   CalculatorConfig,
   City,
   ConstructionStatus,
@@ -13,6 +14,7 @@ export type {
   Media,
   PointOfInterest,
   Post,
+  PostCategory,
   Project,
   Redirect,
   Seo,

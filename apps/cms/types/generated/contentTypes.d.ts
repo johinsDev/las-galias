@@ -411,6 +411,31 @@ export interface ApiAmenityAmenity extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     description: Schema.Attribute.Text;
     icon: Schema.Attribute.Media<"images">;
+    iconColor: Schema.Attribute.String;
+    iconKey: Schema.Attribute.Enumeration<
+      [
+        "piscina",
+        "gimnasio",
+        "coworking",
+        "salon-social",
+        "zona-infantil",
+        "zona-bbq",
+        "zona-verde",
+        "senderos",
+        "zona-mascotas",
+        "cancha-deportiva",
+        "sauna-turco",
+        "jacuzzi",
+        "cine",
+        "sala-juegos",
+        "lavanderia",
+        "porteria",
+        "parqueadero",
+        "ascensor",
+        "terraza",
+        "bicicletero",
+      ]
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::amenity.amenity"> &
       Schema.Attribute.Private;
@@ -437,6 +462,7 @@ export interface ApiCalculatorConfigCalculatorConfig extends Struct.SingleTypeSc
     annualInterestRate: Schema.Attribute.Decimal & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    leasingFinancingPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<80>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -444,10 +470,13 @@ export interface ApiCalculatorConfigCalculatorConfig extends Struct.SingleTypeSc
     > &
       Schema.Attribute.Private;
     maxFinancingPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<70>;
+    maxIncomeRatioPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<40>;
     maxTermYears: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
+    paymentIncomeRatioPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<30>;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    visFinancingPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<80>;
   };
 }
 
@@ -755,17 +784,22 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    category: Schema.Attribute.Enumeration<["financiacion", "guia-de-compra", "mercado"]>;
+    author: Schema.Attribute.String;
+    category: Schema.Attribute.Enumeration<
+      ["financiacion", "guia-de-compra", "mercado", "decoracion"]
+    >;
     content: Schema.Attribute.Blocks;
     cover: Schema.Attribute.Media<"images">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     excerpt: Schema.Attribute.Text;
+    featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::post.post"> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     publishedOn: Schema.Attribute.Date;
+    readingMinutes: Schema.Attribute.Integer;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;

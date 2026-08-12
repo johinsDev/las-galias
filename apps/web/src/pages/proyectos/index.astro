@@ -1,9 +1,11 @@
 ---
+import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
+import LeadForm from "@/islands/LeadForm";
 import Base from "@/layouts/Base.astro";
-import { getProjects } from "@/lib/strapi";
+import { getFaqs, getProjects } from "@/lib/strapi";
 
-const projects = await getProjects();
+const [projects, faqs] = await Promise.all([getProjects(), getFaqs("general")]);
 const cities = [
   ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
 ];
@@ -57,6 +59,69 @@ const cities = [
         </p>
       )
     }
+
+    {
+      projects.length > 0 && (
+        <p class="text-caption text-ink-faint mx-auto mt-8 max-w-2xl text-center">
+          Imágenes ilustrativas; planos y áreas sujetos a modificación por requerimientos técnicos
+          y/o de curaduría.
+        </p>
+      )
+    }
+  </section>
+
+  <!-- 03B Formulario refuerzo -->
+  <section class="bg-surface border-line border-y">
+    <div class="container grid items-center gap-10 py-16 lg:grid-cols-2">
+      <div data-reveal>
+        <h2 class="text-h2 text-ink font-bold">¿Listo para dar el primer paso?</h2>
+        <p class="text-ink-muted mt-4">
+          Déjanos tus datos y uno de nuestros asesores te contactará en menos de 24 horas para
+          resolver tus dudas sobre el proyecto que te interesa.
+        </p>
+        <ul class="text-body-sm text-ink-muted mt-6 space-y-2">
+          <li>✓ Sin costo · Sin compromiso</li>
+          <li>✓ Te ayudamos con crédito y subsidios</li>
+          <li>✓ Proceso 100% digital</li>
+        </ul>
+      </div>
+
+      <div class="border-line rounded-2xl border bg-white p-6 shadow-xs" data-reveal>
+        <p class="text-ink font-semibold">Habla con un asesor →</p>
+        <div class="mt-4">
+          <LeadForm client:visible source="proyectos" submitLabel="Déjanos tus datos" />
+        </div>
+        <p class="text-caption text-ink-faint mt-3 text-center">
+          🔒 Tus datos están protegidos · Sin spam
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Preguntas frecuentes -->
+  {
+    faqs.length > 0 && (
+      <section class="border-line border-b">
+        <div class="container py-16">
+          <p class="eyebrow text-center">FAQ</p>
+          <h2 class="text-h3 text-ink mt-2 text-center font-bold">Preguntas frecuentes</h2>
+          <div class="mt-8">
+            <FaqAccordion faqs={faqs} initial={5} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 05 CTA final -->
+  <section>
+    <div class="container py-16 text-center" data-reveal>
+      <h2 class="text-h3 text-ink font-bold">¿Listo para invertir en tu futuro?</h2>
+      <p class="text-ink-muted mt-3">
+        Un asesor te acompaña en todo el proceso, sin salir de donde estás.
+      </p>
+      <a href="/contacto" class="btn btn-primary mt-8">Déjanos tus datos</a>
+    </div>
   </section>
 
   <script>

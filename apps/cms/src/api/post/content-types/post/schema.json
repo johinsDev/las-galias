@@ -25,8 +25,21 @@
     },
     "category": {
       "type": "enumeration",
-      "enum": ["financiacion", "guia-de-compra", "mercado"],
-      "description": "Eyebrow label above the post title on the home blog cards"
+      "enum": ["financiacion", "guia-de-compra", "mercado", "decoracion"],
+      "description": "Eyebrow label above the post title, and the blog listing's filter"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pins the post to the big slot at the top of /blog. The most recent one wins"
+    },
+    "author": {
+      "type": "string",
+      "description": "Byline on the article page. Empty falls back to «equipo editorial Galias»"
+    },
+    "readingMinutes": {
+      "type": "integer",
+      "description": "«5 min de lectura». Empty is estimated from the content"
     },
     "publishedOn": {
       "type": "date",

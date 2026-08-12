@@ -3,6 +3,15 @@ import { Image } from "astro:assets";
 
 import Blocks from "@/components/Blocks.astro";
 import Base from "@/layouts/Base.astro";
+import {
+  authorOf,
+  categoryLabel,
+  formatPostDate,
+  readingMinutes,
+  relatedPosts,
+  sidebarCta,
+  sortPosts,
+} from "@/lib/blog";
 import { getPost, getPosts, mediaUrl } from "@/lib/strapi";
 
 export async function getStaticPaths() {
@@ -11,12 +20,15 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const post = await getPost(slug!);
+const [post, all] = await Promise.all([getPost(slug!), getPosts()]);
 
 if (!post) {
   return Astro.redirect("/blog");
 }
 
+const category = categoryLabel(post.category);
+const related = relatedPosts(post, sortPosts(all));
+const cta = sidebarCta(post.category);
 const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
 ---
 
@@ -25,23 +37,92 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
   description={post.seo?.metaDescription ?? post.excerpt ?? undefined}
   ogImage={mediaUrl(post.seo?.ogImage?.url ?? post.cover?.url)}
 >
-  <article class="container max-w-3xl py-12 md:py-16">
-    <p class="text-label text-ink font-semibold uppercase">Blog</p>
-    <h1 class="text-h1 text-ink mt-2 font-extrabold">{post.title}</h1>
-    {
-      post.cover?.url && (
-        <Image
-          src={mediaUrl(post.cover.url)}
-          alt={post.cover.alternativeText ?? post.title}
-          width={1200}
-          height={675}
-          loading="eager"
-          class="mt-8 rounded-xl"
-        />
-      )
-    }
-    <div class="mt-8">
-      <Blocks content={post.content} />
+  <!-- 01 Encabezado del artículo -->
+  <section class="container pt-8">
+    <nav aria-label="Ruta de navegación">
+      <ol class="text-caption text-ink-faint flex flex-wrap items-center gap-2">
+        <li><a href="/" class="hover:text-ink transition-colors">Home</a></li>
+        <li aria-hidden="true">›</li>
+        <li><a href="/blog" class="hover:text-ink transition-colors">Blog</a></li>
+        {
+          category && (
+            <>
+              <li aria-hidden="true">›</li>
+              <li class="text-ink font-medium">{category}</li>
+            </>
+          )
+        }
+      </ol>
+    </nav>
+
+    <div class="mt-6 max-w-3xl">
+      {category && <p class="eyebrow">{category}</p>}
+      <h1 class="text-h1 text-ink mt-2 font-extrabold">{post.title}</h1>
+      <p class="text-body-sm text-ink-muted mt-4">
+        Por {authorOf(post)}
+        {formatPostDate(post) && ` · ${formatPostDate(post)}`}
+        {` · ${readingMinutes(post)} min de lectura`}
+      </p>
     </div>
-  </article>
+  </section>
+
+  <!-- 02 Imagen principal -->
+  {
+    post.cover?.url && (
+      <section class="container mt-8">
+        <div class="bg-surface aspect-[16/9] overflow-hidden rounded-2xl">
+          <Image
+            src={mediaUrl(post.cover.url)}
+            alt={post.cover.alternativeText ?? post.title}
+            width={1280}
+            height={720}
+            loading="eager"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- 03 Contenido + sidebar -->
+  <section class="container py-12 md:py-16">
+    <div class="grid gap-10 lg:grid-cols-[1fr_20rem]">
+      <article class="max-w-3xl min-w-0">
+        <Blocks content={post.content} />
+      </article>
+
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        {
+          related.length > 0 && (
+            <div class="border-line rounded-2xl border bg-white p-5">
+              <p class="text-ink font-semibold">Artículos relacionados</p>
+              <ul class="mt-3 space-y-3">
+                {related.map((item) => (
+                  <li>
+                    <a
+                      href={`/blog/${item.slug}`}
+                      class="text-body-sm text-ink-muted hover:text-ink transition-colors"
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        <div class="bg-ink mt-4 rounded-2xl p-5 text-white">
+          <p class="font-semibold">{cta.title}</p>
+          <p class="text-body-sm mt-1 text-white/60">{cta.body}</p>
+          <a
+            href={cta.href}
+            class="text-body-sm text-ink mt-4 inline-flex rounded-full bg-white px-4 py-2.5 font-semibold transition-colors hover:bg-white/90"
+          >
+            {cta.label}
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
 </Base>

@@ -5,3 +5,8 @@ apps/cms/types/generated/
 
 # Spec de terceros descargado tal cual (fidelidad con el original de Sinco)
 docs/sinco/
+
+# Lo escribe Strapi al arrancar en desarrollo. Está en .gitignore, pero
+# `format:check` igual lo revisaba y tumbaba el gate de push cada vez que
+# alguien levantaba el CMS en local.
+apps/cms/.strapi-updater.json
