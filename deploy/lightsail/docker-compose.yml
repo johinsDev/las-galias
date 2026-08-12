@@ -54,6 +54,12 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       # Rebuild del sitio en Vercel al publicar
       VERCEL_DEPLOY_HOOK_URL: ${VERCEL_DEPLOY_HOOK_URL}
+      # Asistente de preguntas (IA). Vacío = el bot no puede responder, aunque
+      # esté encendido en el admin. Va por el AI Gateway de Vercel.
+      AI_GATEWAY_API_KEY: ${AI_GATEWAY_API_KEY:-}
+      # Orígenes que pueden llamar al CMS desde un navegador. Vacío = "*", que es
+      # lo que necesita hoy el sitio (vive en una URL *.vercel.app que cambia).
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
       # Providers (Sinco/manual)
       PROJECT_DATA_PROVIDER: ${PROJECT_DATA_PROVIDER:-manual}
       LEAD_PROVIDER: ${LEAD_PROVIDER:-manual}
