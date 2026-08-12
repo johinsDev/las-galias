@@ -75,6 +75,13 @@ export default $config({
     // failing to deploy — the assistant is optional, the CMS is not.
     const aiGatewayApiKey = new sst.Secret("AiGatewayApiKey", "");
 
+    // Origins allowed to call this CMS from a browser (lead form, assistant).
+    // EMPTY MEANS "*", which is what the site needs today: it is served from a
+    // *.vercel.app URL that changes per deploy, so hard-coding the final domain
+    // here would block the live site. Set it the day the real domain is wired:
+    //   bunx sst secret set CorsOrigins "https://lasgalias.com,https://www.lasgalias.com" --stage production
+    const corsOrigins = new sst.Secret("CorsOrigins", "");
+
     // Guardrails that Pulumi always evaluates, because the resolved value IS
     // what the Service consumes — a throw here fails the deploy instead of
     // publishing a broken stage.
@@ -149,8 +156,7 @@ export default $config({
         SINCO_LEAD_MEDIO_PUBLICITARIO: sincoLeadMedio.value,
         VERCEL_DEPLOY_HOOK_URL: deployHookUrl.value,
         AI_GATEWAY_API_KEY: aiGatewayApiKey.value,
-        // Locks CORS to the public site (see config/middlewares.ts).
-        CORS_ORIGINS: "https://lasgalias.com,https://www.lasgalias.com",
+        CORS_ORIGINS: corsOrigins.value,
         // Absolute URL Strapi builds its links with (admin, media, webhooks).
         PUBLIC_URL: cmsPublicUrl.value,
         // The lead retry cron and the daily rates cron run in this container.

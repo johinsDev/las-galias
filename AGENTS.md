@@ -49,6 +49,15 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@theme` + shadcn CSS variables). Cross-package scanning relies on the `@source`
   directives there — keep them correct or app utilities get purged.
 - Web deploy: Vercel builds `apps/web` from the repo root (`turbo run build --filter=web`).
+  It deploys on push to `main`; **the CMS does NOT** — that needs a manual
+  `sst deploy`, so schema changes are live on the site long before the CMS has them.
+- The demo snapshot (`src/fixtures/cms-snapshot.json`) is OPT-IN
+  (`USE_CMS_SNAPSHOT=true`). Without it, a build that cannot reach the CMS FAILS
+  instead of publishing invented prices. Any env var the build reads must also
+  be listed in `turbo.json`'s `build.env` or turbo strips it and the flag
+  silently does nothing.
+- `bun run purge-demo` (in `apps/cms`) deletes the seed's demo content by exact
+  slug. Dry-run by default; `--yes` to apply.
 - CMS deploy: `AWS_PROFILE=<profile> bunx sst deploy --stage <stage>` creates
   EVERYTHING (VPC, RDS, Fargate, S3, secrets) in that profile's AWS account.
   Secrets via `bunx sst secret set <Name> <value> --stage <stage>` (once per

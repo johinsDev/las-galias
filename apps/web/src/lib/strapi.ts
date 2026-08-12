@@ -18,19 +18,31 @@ const STRAPI_URL: string = import.meta.env.STRAPI_URL ?? "http://localhost:1337"
 const STRAPI_API_TOKEN: string | undefined = import.meta.env.STRAPI_API_TOKEN;
 
 /**
- * Snapshot fallback. While no CMS is deployed the build has nothing to render,
- * so it falls back to a recorded snapshot of a working CMS
- * (`src/fixtures/cms-snapshot.json`).
+ * Snapshot fallback — DEMO content: invented project names, invented prices,
+ * placeholder images (`src/fixtures/cms-snapshot.json`).
  *
- * WARNING: that snapshot is DEMO content — invented project names, invented
- * prices and placeholder images. It must not stay on once the real CMS is up.
- * Set `USE_CMS_SNAPSHOT=false` (or delete the fixture) to turn it off.
+ * It is OPT-IN, and deliberately so. It used to be the default, which meant a
+ * CMS that was merely unreachable produced a green build that published
+ * invented prices to a commercial site, with nothing failing to say so. Now a
+ * build either renders the real CMS or stops.
+ *
+ * Turn it on for local work without a CMS: `USE_CMS_SNAPSHOT=true bun run dev`.
  *
  * Re-record it with `SNAPSHOT_CMS=1 bun run build` pointed at a live CMS; the
  * recorder keys entries by the exact request the build makes, so it cannot
  * drift away from the populates above.
  */
-const USE_SNAPSHOT: boolean = import.meta.env.USE_CMS_SNAPSHOT !== "false";
+const USE_SNAPSHOT: boolean = import.meta.env.USE_CMS_SNAPSHOT === "true";
+
+/**
+ * A production build must never QUIETLY ship demo data. In dev the fallback is
+ * a convenience; in a build it is a defect, so it throws instead.
+ *
+ * Not when the snapshot was opted into: asking for demo data explicitly is a
+ * decision, and a fixture recorded before today's content types will always
+ * have gaps. The guard is for the accident, not for the choice.
+ */
+const FAIL_ON_DEMO: boolean = import.meta.env.PROD && !USE_SNAPSHOT;
 const RECORDING: boolean = import.meta.env.SNAPSHOT_CMS === "1";
 const SNAPSHOT_FILE = "src/fixtures/cms-snapshot.json";
 
@@ -54,12 +66,42 @@ function snapshotKey(path: string, query: Query): string {
   return search ? `${path}?${search}` : path;
 }
 
+/** Stops the build rather than let demo data reach a published page. */
+function refuseDemoData(path: string, reason: string): never {
+  throw new Error(
+    [
+      `[strapi] El CMS no respondió a "${path}" (${reason}) y el build se detuvo.`,
+      "",
+      "Publicar aquí habría subido el contenido DEMO del snapshot: proyectos y",
+      "precios inventados. Antes era lo que pasaba en silencio; ahora falla.",
+      "",
+      "Qué hacer:",
+      `  · Revisa que el CMS esté arriba y que STRAPI_URL apunte a él (${STRAPI_URL}).`,
+      "  · Si de verdad quieres compilar con datos de demo, dilo explícitamente:",
+      "    USE_CMS_SNAPSHOT=true bun run build",
+    ].join("\n"),
+  );
+}
+
 async function readSnapshot(key: string): Promise<unknown | undefined> {
   if (!USE_SNAPSHOT) return undefined;
   try {
     const snapshot = (await import("@/fixtures/cms-snapshot.json")).default as Snapshot;
     const hit = snapshot[key];
-    if (hit !== undefined) usingSnapshot = true;
+    if (hit !== undefined) {
+      // Opting in is allowed — it is how you work without a CMS — but a BUILD
+      // that does it is publishing invented prices, so it says so unmissably
+      // instead of hiding in a one-line warning nobody reads.
+      if (FAIL_ON_DEMO && !usingSnapshot) {
+        console.warn(
+          "\n" +
+            "!!!! ESTE BUILD ESTÁ USANDO CONTENIDO DEMO !!!!\n" +
+            "Proyectos y precios INVENTADOS. Lo pediste con USE_CMS_SNAPSHOT=true.\n" +
+            "Si esto es un despliegue real, cancélalo y arregla el CMS.\n",
+        );
+      }
+      usingSnapshot = true;
+    }
     return hit;
   } catch {
     // No fixture committed — nothing to fall back to.
@@ -84,7 +126,11 @@ async function strapiFetch<T>(path: string, query: Query = {}): Promise<T | null
     });
     if (!res.ok) {
       console.warn(`[strapi] ${path} responded ${res.status}`);
-      return ((await readSnapshot(key)) as T) ?? null;
+      const fallback = await readSnapshot(key);
+      if (fallback !== undefined) return fallback as T;
+      // A 404 is normal for a single type an editor has not filled in yet, so
+      // only a transport failure (below) is treated as "the CMS is missing".
+      return null;
     }
     const body = (await res.json()) as { data: T };
 
@@ -100,6 +146,9 @@ async function strapiFetch<T>(path: string, query: Query = {}): Promise<T | null
       console.warn(`[strapi] ${path} unavailable — usando snapshot DEMO`);
       return fallback as T;
     }
+    // The CMS could not be reached at all. In a build that is fatal: the page
+    // would publish empty or, with the snapshot on, invented content.
+    if (FAIL_ON_DEMO) refuseDemoData(path, String(err));
     console.warn(`[strapi] ${path} unavailable: ${String(err)}`);
     return null;
   }

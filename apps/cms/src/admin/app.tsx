@@ -1,3 +1,4 @@
+import DemoContentBanner from "./components/DemoContentBanner";
 import SyncFromSincoButton from "./components/SyncFromSincoButton";
 
 /**
@@ -25,6 +26,13 @@ export default {
     app.getPlugin("content-manager").injectComponent("editView", "right-links", {
       name: "sync-from-sinco",
       Component: SyncFromSincoButton,
+    });
+
+    // En la lista, donde un editor ve los proyectos y no puede ignorar que los
+    // que están ahí son inventados.
+    app.getPlugin("content-manager").injectComponent("listView", "actions", {
+      name: "demo-content-banner",
+      Component: DemoContentBanner,
     });
   },
 };
