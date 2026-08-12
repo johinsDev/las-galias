@@ -22,11 +22,27 @@ git -C "$REPO_DIR" pull --ff-only
 echo "▶ parando el CMS para liberar memoria…"
 docker compose --env-file .env stop cms
 
+# Si el build falla, `set -e` cortaba aquí y el CMS se quedaba APAGADO hasta que
+# alguien se diera cuenta. Con el deploy automatizado eso pasaría sin que nadie
+# mire la consola, así que la imagen anterior vuelve a levantarse antes de salir
+# con error: se pierde el cambio, no el panel.
+restore_on_failure() {
+	local code=$?
+	if [ "$code" -ne 0 ]; then
+		echo "✗ El despliegue falló (código $code). Levantando la imagen anterior…"
+		docker compose --env-file .env up -d || true
+	fi
+	exit "$code"
+}
+trap restore_on_failure EXIT
+
 echo "▶ build… (~12 min: compila el panel de admin)"
 docker compose --env-file .env build cms
 
 echo "▶ up…"
 docker compose --env-file .env up -d
+
+trap - EXIT
 
 echo "▶ limpiando imágenes viejas…"
 docker image prune -f >/dev/null 2>&1 || true

@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Para relanzar el despliegue a mano sin tener que hacer un commit vacío.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -34,3 +36,107 @@ jobs:
 
       - name: Dead code (knip)
         run: bun run knip
+
+  # Vercel despliega el sitio solo al hacer push; el CMS vive en Lightsail y
+  # hasta ahora había que entrar a la caja a mano. Cuatro semanas de cambios de
+  # esquema llegaron a estar en main sin estar en el CMS, con el sitio pidiendo
+  # campos que allí no existían. Esto cierra ese hueco.
+  #
+  # Solo corre cuando el CMS realmente cambió: cada despliegue deja el panel de
+  # admin caído ~12 min mientras compila (la caja tiene 2 GB y no puede compilar
+  # con Strapi en marcha), así que no se paga ese precio por un cambio de CSS.
+  changes:
+    name: ¿Cambió el CMS?
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    outputs:
+      cms: ${{ steps.detect.outputs.cms }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: detect
+        name: Comparar contra el commit anterior
+        run: |
+          # Ante la duda, desplegar. El fallo que estamos arreglando es que el
+          # CMS se quede viejo en silencio; un despliegue de más solo cuesta
+          # tiempo, uno de menos vuelve a dejar el sitio pidiendo campos que no
+          # existen.
+          if ! git rev-parse HEAD^ >/dev/null 2>&1; then
+            echo "Sin commit anterior con el que comparar: se despliega."
+            echo "cms=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          CHANGED=$(git diff --name-only HEAD^ HEAD)
+          echo "Archivos cambiados:"
+          echo "$CHANGED"
+
+          # packages/* entra porque el CMS los compila dentro de su imagen.
+          if echo "$CHANGED" | grep -qE '^(apps/cms/|deploy/lightsail/|packages/(providers|schemas)/|bun\.lock$)'; then
+            echo "cms=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "cms=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-cms:
+    name: Desplegar el CMS (Lightsail)
+    runs-on: ubuntu-latest
+    needs: [quality, changes]
+    # Nunca desde un PR, y solo si el CMS cambió. `workflow_dispatch` se salta
+    # la detección: si alguien lo lanza a mano es porque quiere desplegar.
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.cms == 'true')
+    # Compilar el admin son ~12 min; dos despliegues a la vez en una caja de
+    # 2 GB se pisan y se quedan sin memoria los dos.
+    concurrency:
+      group: deploy-cms-production
+      cancel-in-progress: false
+    timeout-minutes: 35
+    steps:
+      - name: Abrir la sesión SSH
+        env:
+          SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          SSH_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+        run: |
+          if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ]; then
+            echo "::error::Faltan los secretos LIGHTSAIL_SSH_KEY / LIGHTSAIL_HOST."
+            echo "Configúralos en Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          install -d -m 700 ~/.ssh
+          install -m 600 /dev/stdin ~/.ssh/id_ed25519 <<< "$SSH_KEY"
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Desplegar
+        env:
+          SSH_HOST: ${{ secrets.LIGHTSAIL_HOST }}
+          SSH_USER: ${{ secrets.LIGHTSAIL_USER || 'ubuntu' }}
+        run: |
+          ssh -o BatchMode=yes "$SSH_USER@$SSH_HOST" \
+            'cd /opt/las-galias/deploy/lightsail && ./scripts/deploy.sh'
+
+      - name: Comprobar que el CMS volvió
+        env:
+          CMS_URL: ${{ secrets.CMS_PUBLIC_URL }}
+        run: |
+          # El script deja la imagen anterior corriendo si el build falla, así
+          # que un 200 aquí no prueba que el cambio entró — pero un fallo sí
+          # prueba que el CMS quedó caído, que es lo que no puede pasar.
+          if [ -z "$CMS_URL" ]; then
+            echo "::warning::Sin CMS_PUBLIC_URL: no se pudo comprobar que el CMS respondiera."
+            exit 0
+          fi
+          for i in $(seq 1 30); do
+            CODE=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 "$CMS_URL/api/faqs" || echo 000)
+            if [ "$CODE" = "200" ]; then
+              echo "✅ El CMS responde (HTTP 200)."
+              exit 0
+            fi
+            echo "Intento $i/30 — HTTP $CODE. Esperando…"
+            sleep 10
+          done
+          echo "::error::El CMS no respondió tras el despliegue. Revísalo: puede estar caído."
+          exit 1

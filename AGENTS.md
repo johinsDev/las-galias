@@ -49,8 +49,11 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@theme` + shadcn CSS variables). Cross-package scanning relies on the `@source`
   directives there — keep them correct or app utilities get purged.
 - Web deploy: Vercel builds `apps/web` from the repo root (`turbo run build --filter=web`).
-  It deploys on push to `main`; **the CMS does NOT** — that needs a manual
-  `sst deploy`, so schema changes are live on the site long before the CMS has them.
+  It deploys on push to `main`. The CMS runs on **Lightsail** (docker compose,
+  `deploy/lightsail/`) — NOT on the Fargate stack in `sst.config.ts` — and is
+  deployed by `.github/workflows/ci.yml` on merge to `main`, but only when
+  `apps/cms`, `deploy/lightsail`, `packages/providers|schemas` or `bun.lock`
+  changed, because each deploy takes the admin down ~12 min.
 - The demo snapshot (`src/fixtures/cms-snapshot.json`) is OPT-IN
   (`USE_CMS_SNAPSHOT=true`). Without it, a build that cannot reach the CMS FAILS
   instead of publishing invented prices. Any env var the build reads must also

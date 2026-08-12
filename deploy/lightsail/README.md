@@ -89,14 +89,43 @@ aws s3 cp s3://<bucket>/db-backups/<archivo>.sql.gz - | gunzip | \
   docker compose --env-file .env exec -T postgres psql -U strapi lasgalias
 ```
 
+## Despliegue automático desde GitHub
+
+`.github/workflows/ci.yml` despliega el CMS al mergear a `main`, después de que
+pase el gate de calidad. Existe porque Vercel sí despliega solo y esto no:
+llegaron a acumularse cuatro semanas de cambios de esquema en `main` que nunca
+llegaron al CMS, con el sitio pidiendo campos que allí no existían.
+
+Solo corre si cambió `apps/cms/`, `deploy/lightsail/`, `packages/providers|schemas`
+o `bun.lock` — cada despliegue deja el panel caído ~12 min mientras compila, y no
+tiene sentido pagar eso por un cambio de CSS. Se puede lanzar a mano desde la
+pestaña **Actions** (`workflow_dispatch`) sin hacer un commit vacío.
+
+Hay que crear tres secretos en **Settings → Secrets and variables → Actions**:
+
+| Secreto             | Qué es                                                                |
+| ------------------- | --------------------------------------------------------------------- |
+| `LIGHTSAIL_HOST`    | IP estática o dominio de la instancia                                 |
+| `LIGHTSAIL_SSH_KEY` | Clave **privada** SSH con acceso a la instancia (contenido, no ruta)  |
+| `LIGHTSAIL_USER`    | Opcional; por defecto `ubuntu`                                        |
+| `CMS_PUBLIC_URL`    | Opcional; si está, el workflow verifica que el CMS volvió a responder |
+
+Conviene generar un par de claves dedicado para esto en vez de reusar el
+personal, y añadir la pública al `~/.ssh/authorized_keys` de la instancia:
+
+```bash
+ssh-keygen -t ed25519 -C "github-actions-deploy" -f ./lg-deploy -N ""
+# el contenido de ./lg-deploy va en LIGHTSAIL_SSH_KEY; ./lg-deploy.pub a la instancia
+```
+
 ## Operación diaria
 
-| Acción                           | Comando                                      |
-| -------------------------------- | -------------------------------------------- |
-| Actualizar el CMS (tras un push) | `./scripts/deploy.sh`                        |
-| Ver logs                         | `docker compose logs -f cms`                 |
-| Reiniciar                        | `docker compose --env-file .env restart cms` |
-| Backup manual                    | `./scripts/backup.sh`                        |
+| Acción                           | Comando                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| Actualizar el CMS (tras un push) | `./scripts/deploy.sh` (o dejar que lo haga la Action) |
+| Ver logs                         | `docker compose logs -f cms`                          |
+| Reiniciar                        | `docker compose --env-file .env restart cms`          |
+| Backup manual                    | `./scripts/backup.sh`                                 |
 
 ## Qué NO se pierde aunque muera la instancia
 
