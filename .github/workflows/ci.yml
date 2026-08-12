@@ -115,8 +115,11 @@ jobs:
           SSH_HOST: ${{ secrets.LIGHTSAIL_HOST }}
           SSH_USER: ${{ secrets.LIGHTSAIL_USER || 'ubuntu' }}
         run: |
+          # Con sudo a propósito: /opt/las-galias es de root (lo clonó
+          # bootstrap.sh) y el usuario `ubuntu` no está en el grupo docker, así
+          # que sin esto fallan el `git pull` y el `docker compose` del script.
           ssh -o BatchMode=yes "$SSH_USER@$SSH_HOST" \
-            'cd /opt/las-galias/deploy/lightsail && ./scripts/deploy.sh'
+            'sudo /opt/las-galias/deploy/lightsail/scripts/deploy.sh'
 
       - name: Comprobar que el CMS volvió
         env:
