@@ -109,7 +109,18 @@ async function readSnapshot(key: string): Promise<unknown | undefined> {
   }
 }
 
-async function strapiFetch<T>(path: string, query: Query = {}): Promise<T | null> {
+async function strapiFetch<T>(
+  path: string,
+  query: Query = {},
+  /**
+   * Ask anonymously. Strapi evaluates an API token's OWN permissions instead of
+   * the public role's, so a token scoped to content types gets 403 on a custom
+   * route that is public — and the caller then silently degrades. That is what
+   * hid the assistant on the live site: the endpoint answered 200 to a browser
+   * and 403 to the build.
+   */
+  anonymous = false,
+): Promise<T | null> {
   const key = snapshotKey(path, query);
   const url = new URL(`/api/${path}`, STRAPI_URL);
   for (const [k, value] of Object.entries(query)) {
@@ -120,7 +131,7 @@ async function strapiFetch<T>(path: string, query: Query = {}): Promise<T | null
     const res = await fetch(url, {
       headers: {
         accept: "application/json",
-        ...(STRAPI_API_TOKEN ? { authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
+        ...(STRAPI_API_TOKEN && !anonymous ? { authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
       },
       signal: AbortSignal.timeout(15_000),
     });
@@ -264,7 +275,7 @@ export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {
  * fields on purpose — the prompt and the spend caps are not public.
  */
 export async function getFaqBotConfig(): Promise<FaqBotPublicConfig> {
-  const data = await strapiFetch<FaqBotPublicConfig>("faq-bot/config");
+  const data = await strapiFetch<FaqBotPublicConfig>("faq-bot/config", {}, true);
   return data ?? { enabled: false, suggestedQuestions: [] };
 }
 
