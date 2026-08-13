@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 interface FaqBotProps {
   suggestedQuestions: string[];
@@ -7,7 +7,57 @@ interface FaqBotProps {
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 const MAX_CHARS = 400;
 
+/**
+ * The last answer survives leaving the page. The CTA under the answer is
+ * "Hablar con un asesor", which navigates away — and coming back with the
+ * browser's back button used to land on an empty box, as if nothing had been
+ * asked. sessionStorage (not localStorage) because it should last the visit,
+ * not reappear days later next to prices that may have changed.
+ */
+const STORAGE_KEY = "faq-bot:last";
+
 type Status = "idle" | "asking" | "answered" | "error";
+
+interface Saved {
+  question: string;
+  answer: string;
+}
+
+/** Paths the bot is told to mention; turned into real links when it does. */
+const SEGMENT = /(\*\*[^*]+\*\*|\/(?:proyectos|calculadoras|blog|contacto)[\w/-]*)/g;
+
+/**
+ * The prompt asks for plain text, and the model mostly obeys — but it still
+ * slips in `**negritas**` and writes project paths as text. Rather than fight
+ * it with more prompt, the leak is rendered: bold becomes bold, and a path
+ * becomes a link the visitor can actually follow.
+ */
+function render(text: string, streaming: boolean): ReactNode {
+  // A half-written `**` mid-stream would flash as literal asterisks, so an
+  // unclosed pair is hidden until its other half arrives.
+  const safe =
+    streaming && (text.match(/\*\*/g)?.length ?? 0) % 2 === 1
+      ? text.slice(0, text.lastIndexOf("**"))
+      : text;
+
+  return safe.split(SEGMENT).map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={i} className="text-ink font-semibold">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("/")) {
+      return (
+        <a key={i} href={part} className="text-brand underline underline-offset-2">
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
 
 /**
  * One question, one streamed answer. Deliberately not a chat: no history, no
@@ -22,6 +72,30 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
   const [status, setStatus] = useState<Status>("idle");
   // Lets a second question cancel the first instead of interleaving two streams.
   const abortRef = useRef<AbortController | null>(null);
+
+  // Restored after hydration, never during render: the page is static HTML and
+  // reading storage while rendering would make the server and client disagree.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as Saved;
+      if (!saved?.answer) return;
+      setQuestion(saved.question);
+      setAnswer(saved.answer);
+      setStatus("answered");
+    } catch {
+      // Storage blocked or corrupt — the widget just starts empty.
+    }
+  }, []);
+
+  function remember(saved: Saved): void {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+    } catch {
+      // Private mode / storage full: not remembering is fine, failing is not.
+    }
+  }
 
   async function ask(text: string) {
     const asked = text.trim();
@@ -49,6 +123,7 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
         const data = (await res.json()) as { answer?: string };
         setAnswer(data.answer ?? "");
         setStatus(res.ok ? "answered" : "error");
+        if (res.ok && data.answer) remember({ question: asked, answer: data.answer });
         return;
       }
 
@@ -57,6 +132,7 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
       const decoder = new TextDecoder();
       let buffer = "";
       let failed = false;
+      let full = "";
 
       // SSE frames are separated by a blank line and can be split across reads,
       // so the tail stays in the buffer until its terminator shows up.
@@ -75,14 +151,17 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
           const data = JSON.parse(raw) as string | { answer?: string };
 
           if (event === "delta" && typeof data === "string") {
+            full += data;
             setAnswer((prev) => prev + data);
           } else if (event === "error" && typeof data === "object") {
-            setAnswer(data.answer ?? "");
+            full = data.answer ?? "";
+            setAnswer(full);
             failed = true;
           }
         }
       }
       setStatus(failed ? "error" : "answered");
+      if (!failed && full) remember({ question: asked, answer: full });
     } catch (err) {
       // An aborted request is the visitor asking something else, not a failure.
       if (err instanceof DOMException && err.name === "AbortError") return;
@@ -92,6 +171,9 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
   }
 
   const busy = status === "asking";
+  // Chips stay after an answer so asking a second thing is one click, not a
+  // retype. They only hide while an answer is being written.
+  const chips = suggestedQuestions.filter((s) => s !== question);
 
   return (
     <div className="border-line mx-auto max-w-3xl rounded-2xl border bg-white p-5 sm:p-6">
@@ -128,9 +210,9 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
         </button>
       </form>
 
-      {status === "idle" && suggestedQuestions.length > 0 && (
+      {!busy && chips.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
-          {suggestedQuestions.map((suggestion) => (
+          {chips.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
@@ -146,7 +228,15 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
       {(busy || answer) && (
         <div className="bg-surface mt-4 rounded-xl p-4" aria-live="polite">
           {answer ? (
-            <p className="text-body-sm text-ink whitespace-pre-line">{answer}</p>
+            <p className="text-body-sm text-ink whitespace-pre-line">
+              {render(answer, busy)}
+              {busy && (
+                <span
+                  className="bg-ink ml-0.5 inline-block h-4 w-[2px] animate-pulse align-[-2px]"
+                  aria-hidden="true"
+                />
+              )}
+            </p>
           ) : (
             <p className="text-body-sm text-ink-muted">Buscando en nuestra información…</p>
           )}

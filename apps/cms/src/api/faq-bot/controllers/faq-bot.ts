@@ -12,7 +12,13 @@ import {
   QUESTION_UID,
   systemPrompt,
 } from "../../../utils/faq-bot-context";
-import { cachedAnswer, cacheKeyFor, rateLimit, spentToday } from "../../../utils/faq-bot-limits";
+import {
+  burstOk,
+  cachedAnswer,
+  cacheKeyFor,
+  rateLimit,
+  spentToday,
+} from "../../../utils/faq-bot-limits";
 
 /**
  * One question in, one streamed answer out. Deliberately NOT a chat: there is
@@ -92,6 +98,14 @@ export default {
     if (hit) {
       void log(strapi, { question: asked, answer: hit, cacheKey, wasCached: true });
       return ctx.send({ answer: hit, wasCached: true });
+    }
+
+    // Todo lo que sigue cuesta dinero. Un ataque distribuido pasa por encima del
+    // límite por IP cambiando de dirección, así que aquí hay un techo global por
+    // minuto además del tope del día.
+    if (!burstOk()) {
+      strapi.log.warn("[faq-bot] pico de preguntas por minuto; respondiendo el mensaje de reserva");
+      return ctx.send({ answer: fallback, wasCached: false, capped: true });
     }
 
     // The ceiling on a single day's bill. Cached answers never reach here.

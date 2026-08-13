@@ -46,7 +46,15 @@ export async function getConfig(strapi: Core.Strapi): Promise<FaqBotConfig> {
   const stored = (await strapi.documents(CONFIG_UID).findFirst({
     populate: { suggestedQuestions: true },
   })) as Partial<FaqBotConfig> | null;
-  const config = { ...DEFAULTS, ...(stored ?? {}) };
+  // Los nulos NO pisan a los defaults. Strapi devuelve null en cada campo que
+  // el editor no llenó, y un spread directo los propagaba: `ratePerIpPerHour` y
+  // `dailyQuestionCap` quedaban en null, con lo que `>= null` y `> 0` daban
+  // false y los DOS frenos de gasto se apagaban solos. Se comprobó lanzando 12
+  // preguntas seguidas contra producción sin recibir un solo 429.
+  const provided = Object.fromEntries(
+    Object.entries(stored ?? {}).filter(([, value]) => value !== null && value !== undefined),
+  );
+  const config = { ...DEFAULTS, ...provided } as FaqBotConfig;
 
   // Una base creada antes de pasar del AI Gateway a Anthropic directo guarda
   // IDs con otro formato ("anthropic/claude-haiku-4.5"), que el enum nuevo ya no
@@ -150,7 +158,7 @@ function blocksToText(content: unknown): string {
 export async function buildContext(strapi: Core.Strapi, config: FaqBotConfig): Promise<string> {
   if (cached) return cached.text;
 
-  const [faqs, projects] = await Promise.all([
+  const [faqs, projects, calculator] = await Promise.all([
     strapi.documents("api::faq.faq").findMany({
       filters: { audience: "general" },
       sort: "order:asc",
@@ -162,6 +170,7 @@ export async function buildContext(strapi: Core.Strapi, config: FaqBotConfig): P
       status: "published",
       limit: 100,
     }),
+    strapi.documents("api::calculator-config.calculator-config").findFirst({}),
   ]);
 
   const parts: string[] = [];
@@ -208,6 +217,36 @@ export async function buildContext(strapi: Core.Strapi, config: FaqBotConfig): P
     parts.push(
       `## Proyectos publicados hoy\n${lines.join("\n")}\n` +
         `Estos son TODOS los proyectos publicados. Si preguntan por una ciudad que no aparece, no tenemos proyectos ahí.`,
+    );
+  }
+
+  if (calculator) {
+    // La pregunta más frecuente es "¿cuánto necesito para la cuota inicial?" y
+    // el bot no tenía con qué responderla: remitía al asesor incluso cuando la
+    // respuesta ya vivía en la configuración del simulador.
+    const financiacion = Number(calculator.maxFinancingPercent);
+    const lines = [
+      Number.isFinite(financiacion) && financiacion > 0
+        ? `- Se financia hasta el ${financiacion}% del valor, así que la cuota inicial parte del ${100 - financiacion}%.`
+        : null,
+      calculator.annualInterestRate
+        ? `- Tasa de referencia actual: ${calculator.annualInterestRate}% efectivo anual. Cambia con el mercado y la confirma el banco.`
+        : null,
+      calculator.maxTermYears
+        ? `- Plazo máximo del crédito: ${calculator.maxTermYears} años.`
+        : null,
+      calculator.leasingFinancingPercent
+        ? `- Con leasing habitacional se financia hasta el ${Number(calculator.leasingFinancingPercent)}%, así que la inicial baja.`
+        : null,
+      calculator.maxIncomeRatioPercent
+        ? `- La cuota mensual no debería pasar del ${Number(calculator.maxIncomeRatioPercent)}% de los ingresos del hogar.`
+        : null,
+      "- La cuota inicial se paga por cuotas durante la construcción, no de una sola vez.",
+      "- En /calculadoras hay simuladores de cuota inicial, crédito hipotecario y capacidad de pago.",
+    ].filter(Boolean);
+    parts.push(
+      `## Condiciones de financiación\n${lines.join("\n")}\n` +
+        `Son cifras generales de referencia: el proyecto concreto puede tener otras y las confirma un asesor.`,
     );
   }
 

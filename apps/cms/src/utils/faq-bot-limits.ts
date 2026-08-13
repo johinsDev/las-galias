@@ -42,6 +42,30 @@ export function rateLimit(ip: string, perHour: number): boolean {
   return true;
 }
 
+/**
+ * A ceiling on paid answers per minute across EVERYONE, on top of the per-IP one.
+ *
+ * The per-IP limit assumes an abuser keeps the same IP, and a bot net does not:
+ * rotating addresses walks straight past it and only stops at the daily cap,
+ * having spent the whole day's budget in a couple of minutes. This spreads that
+ * budget out, so a flood degrades into the fallback message instead of burning
+ * the day before a human notices.
+ *
+ * Not editable from the admin on purpose: 30 real visitors asking in the same
+ * minute is already far beyond this site's traffic, so the only thing an editor
+ * could do with the knob is disable the protection.
+ */
+const BURST_PER_MINUTE = 30;
+let burst: number[] = [];
+
+export function burstOk(): boolean {
+  const now = Date.now();
+  burst = burst.filter((t) => now - t < 60_000);
+  if (burst.length >= BURST_PER_MINUTE) return false;
+  burst.push(now);
+  return true;
+}
+
 /** Model calls made today. Cached answers do not count — they cost nothing. */
 export async function spentToday(strapi: Core.Strapi): Promise<number> {
   const midnight = new Date();
