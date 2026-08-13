@@ -45,7 +45,7 @@ interface BotContext {
   status: number;
   body: unknown;
   set(headers: Record<string, string>): void;
-  send(payload: unknown): unknown;
+  send(payload: unknown, status?: number): unknown;
   badRequest(message: string): unknown;
 }
 
@@ -87,8 +87,12 @@ export default {
     const ip = ctx.request.ip ?? "unknown";
 
     if (!rateLimit(ip, config.ratePerIpPerHour)) {
-      ctx.status = 429;
-      return ctx.send({ answer: "Vas muy rápido. Espera un momento e inténtalo de nuevo." });
+      // El código va como SEGUNDO argumento de send(). Asignar `ctx.status`
+      // antes no sirve: send() lo reescribe a 200, y el freno salía respondiendo
+      // "vas muy rápido" con un 200 — o sea, invisible para cualquier cliente
+      // que mire el estado en vez del texto. Se vio lanzando 12 peticiones
+      // seguidas contra producción: doce 200 con el cuerpo del límite.
+      return ctx.send({ answer: "Vas muy rápido. Espera un momento e inténtalo de nuevo." }, 429);
     }
 
     // A repeat question is answered from the log at zero cost. This — not the
