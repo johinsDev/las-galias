@@ -19,6 +19,14 @@ services:
       retries: 10
 
   cms:
+    # La imagen la compila GitHub Actions y esta caja solo la descarga. Compilar
+    # aquí el panel de Strapi necesita ~2 GB y la instancia tiene 2 GB: tiraba de
+    # swap, el I/O wait subía al 96%, sshd dejaba de responder y el despliegue
+    # moría a mitad dejando el CMS abajo. Descargar son segundos.
+    #
+    # `build` se queda para poder compilar a mano en local si hiciera falta;
+    # `up -d` usa la imagen local si existe y si no la baja del registro.
+    image: ghcr.io/johinsdev/las-galias-cms:${CMS_IMAGE_TAG:-latest}
     build:
       # El Dockerfile necesita el monorepo completo → contexto = raíz del repo.
       context: ../..

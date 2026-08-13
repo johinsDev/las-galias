@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-# Despliega / actualiza el CMS: trae los últimos cambios y levanta el stack.
-# Correr dentro de la instancia:  cd /opt/las-galias/deploy/lightsail && ./scripts/deploy.sh
+# Despliega / actualiza el CMS: trae los últimos cambios, descarga la imagen ya
+# compilada y levanta el stack.
+# Correr dentro de la instancia:  cd /opt/las-galias/deploy/lightsail && sudo ./scripts/deploy.sh
+#
+# La imagen NO se compila aquí. El panel de admin de Strapi necesita ~2 GB para
+# compilarse y esta caja tiene 2 GB: tiraba de swap, el I/O wait llegaba al 96%,
+# sshd dejaba de responder y GitHub cortaba el despliegue a mitad — dejando el
+# contenedor parado y a nadie que lo volviera a levantar. Ahora la compila un
+# runner de GitHub (16 GB) y aquí solo se descarga, que son segundos.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -12,37 +19,20 @@ if [ ! -f "$COMPOSE_DIR/.env" ]; then
 	exit 1
 fi
 
+# Qué versión de la imagen levantar. La Action pasa el SHA del commit para que
+# lo desplegado sea exactamente lo que pasó el gate; a mano, `latest`.
+export CMS_IMAGE_TAG="${CMS_IMAGE_TAG:-latest}"
+
 echo "▶ git pull…"
 git -C "$REPO_DIR" pull --ff-only
 
-# El CMS se para ANTES de compilar, no después. La caja tiene 2 GB y Strapi en
-# marcha ocupa ~1.1 GB; compilando el admin al mismo tiempo no queda memoria y
-# BuildKit se muere con "frontend grpc server closed unexpectedly". Son ~12 min
-# de caída del panel, pero el sitio público es estático y no se entera.
-echo "▶ parando el CMS para liberar memoria…"
-docker compose --env-file .env stop cms
+echo "▶ descargando la imagen ($CMS_IMAGE_TAG)…"
+docker compose --env-file .env pull cms
 
-# Si el build falla, `set -e` cortaba aquí y el CMS se quedaba APAGADO hasta que
-# alguien se diera cuenta. Con el deploy automatizado eso pasaría sin que nadie
-# mire la consola, así que la imagen anterior vuelve a levantarse antes de salir
-# con error: se pierde el cambio, no el panel.
-restore_on_failure() {
-	local code=$?
-	if [ "$code" -ne 0 ]; then
-		echo "✗ El despliegue falló (código $code). Levantando la imagen anterior…"
-		docker compose --env-file .env up -d || true
-	fi
-	exit "$code"
-}
-trap restore_on_failure EXIT
-
-echo "▶ build… (~12 min: compila el panel de admin)"
-docker compose --env-file .env build cms
-
+# El CMS se reemplaza en caliente: `up -d` arranca el contenedor nuevo y retira
+# el viejo. Ya no hace falta pararlo antes, porque no se compila nada aquí.
 echo "▶ up…"
 docker compose --env-file .env up -d
-
-trap - EXIT
 
 echo "▶ limpiando imágenes viejas…"
 docker image prune -f >/dev/null 2>&1 || true

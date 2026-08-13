@@ -35,7 +35,7 @@ Uploads → S3          Backups (pg_dump) → S3
    cd /opt/las-galias/deploy/lightsail
    cp .env.example .env
    nano .env            # secrets (openssl rand -base64 32), dominio, creds S3, deploy hook
-   ./scripts/deploy.sh  # build + up; Caddy saca el certificado HTTPS solo
+   sudo ./scripts/deploy.sh  # descarga la imagen y levanta; Caddy saca el HTTPS solo
    ```
 
    Abre `https://cms.lasgalias.com/admin` y crea tu usuario admin.
@@ -96,9 +96,14 @@ pase el gate de calidad. Existe porque Vercel sí despliega solo y esto no:
 llegaron a acumularse cuatro semanas de cambios de esquema en `main` que nunca
 llegaron al CMS, con el sitio pidiendo campos que allí no existían.
 
+La imagen **la compila el runner de GitHub, no la instancia**: el panel de admin
+de Strapi necesita ~2 GB para compilarse y esta caja tiene 2 GB, así que paginaba
+hasta 96% de I/O wait, sshd dejaba de responder y el despliegue moría a mitad con
+el CMS parado. Ahora se publica en `ghcr.io/johinsdev/las-galias-cms` y aquí solo
+se descarga: segundos en vez de 20 minutos.
+
 Solo corre si cambió `apps/cms/`, `deploy/lightsail/`, `packages/providers|schemas`
-o `bun.lock` — cada despliegue deja el panel caído ~12 min mientras compila, y no
-tiene sentido pagar eso por un cambio de CSS. Se puede lanzar a mano desde la
+o `bun.lock` — no tiene sentido reemplazar el contenedor por un cambio de CSS. Se puede lanzar a mano desde la
 pestaña **Actions** (`workflow_dispatch`) sin hacer un commit vacío.
 
 Hay que crear tres secretos en **Settings → Secrets and variables → Actions**:
