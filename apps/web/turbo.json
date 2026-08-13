@@ -1,0 +1,18 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    // El sitio se compila a partir del contenido del CMS, que vive en otra
+    // máquina: turbo no puede verlo y por tanto no entra en la clave de caché.
+    // Con caché, una reconstrucción disparada por publicar en Strapi encontraba
+    // el mismo hash y replayaba el build anterior (">>> FULL TURBO"), así que el
+    // hook de despliegue no publicaba NADA. Se comprobó en los logs de Vercel:
+    // "web:build: cache hit" en la compilación lanzada por el hook.
+    //
+    // Recompilar siempre cuesta un par de minutos; el botón de publicar tiene
+    // que publicar.
+    "build": {
+      "cache": false
+    }
+  }
+}

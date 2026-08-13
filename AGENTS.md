@@ -49,6 +49,9 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@theme` + shadcn CSS variables). Cross-package scanning relies on the `@source`
   directives there — keep them correct or app utilities get purged.
 - Web deploy: Vercel builds `apps/web` from the repo root (`turbo run build --filter=web`).
+  Ese build NO se cachea (`apps/web/turbo.json`): depende del contenido del CMS,
+  que turbo no puede hashear, y con caché el rebuild que dispara el hook de
+  publicación replayaba el build anterior — el botón de publicar no publicaba.
   It deploys on push to `main`. The CMS runs on **Lightsail** (docker compose,
   `deploy/lightsail/`) — NOT on the Fargate stack in `sst.config.ts` — and is
   deployed by `.github/workflows/ci.yml` on merge to `main`, but only when
