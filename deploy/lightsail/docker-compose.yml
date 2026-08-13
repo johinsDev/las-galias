@@ -77,6 +77,17 @@ services:
       SINCO_ID_ORIGEN: ${SINCO_ID_ORIGEN:-}
       SINCO_ID_EMPRESA: ${SINCO_ID_EMPRESA:-}
       SINCO_ID_SUCURSAL: ${SINCO_ID_SUCURSAL:-1}
+    volumes:
+      # Sin esto, CADA despliegue borra todas las imágenes. El proveedor local de
+      # Strapi las escribe dentro del contenedor, y reemplazar el contenedor
+      # (que es lo que hace un despliegue) se lleva su sistema de archivos por
+      # delante. Pasó: los proyectos quedaron con las fotos rotas.
+      #
+      # Lo definitivo es S3 — el compose ya pasa UPLOADS_BUCKET y las credenciales
+      # y el CMS cambia de proveedor solo cuando esas variables tienen valor —,
+      # pero mientras esos buckets no existan, el volumen es lo que evita la
+      # pérdida.
+      - cms_uploads:/app/apps/cms/public/uploads
     expose:
       - "1337" # solo visible para Caddy, no al exterior
 
@@ -97,5 +108,6 @@ services:
 
 volumes:
   pgdata:
+  cms_uploads:
   caddy_data:
   caddy_config:
