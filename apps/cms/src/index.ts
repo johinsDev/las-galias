@@ -40,6 +40,17 @@ const PUBLIC_UIDS = new Set<string>([
 
 const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"]);
 
+/**
+ * Single types sin borrador: no se "publican", se guardan. El sitio hornea
+ * algunos de sus campos al compilar (si el asistente está encendido y sus
+ * preguntas sugeridas), así que guardarlos también tiene que reconstruir — si
+ * no, el editor da al interruptor, no pasa nada, y no hay forma de saber por qué.
+ */
+const DEPLOY_ON_UPDATE = new Set<string>([
+  "api::faq-bot-config.faq-bot-config",
+  "api::calculator-config.calculator-config",
+]);
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     /**
@@ -105,7 +116,11 @@ export default {
         if (documentId) schedulePushLeadToCrm(strapi, documentId);
       }
 
-      if (PUBLIC_UIDS.has(uid) && DEPLOY_ACTIONS.has(action)) {
+      const changesTheSite =
+        (PUBLIC_UIDS.has(uid) && DEPLOY_ACTIONS.has(action)) ||
+        (DEPLOY_ON_UPDATE.has(uid) && action === "update");
+
+      if (changesTheSite) {
         scheduleDeploy(strapi);
         // The assistant answers from a snapshot of this same content, so the
         // snapshot — and any cached answer built on it — dies with the change.
