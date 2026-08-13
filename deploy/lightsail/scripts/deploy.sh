@@ -13,6 +13,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 COMPOSE_DIR="$(pwd)"
 REPO_DIR="$(cd ../.. && pwd)"
+SELF="$REPO_DIR/deploy/lightsail/scripts/deploy.sh"
 
 if [ ! -f "$COMPOSE_DIR/.env" ]; then
 	echo "✗ Falta $COMPOSE_DIR/.env — copia .env.example y rellénalo primero."
@@ -23,8 +24,21 @@ fi
 # lo desplegado sea exactamente lo que pasó el gate; a mano, `latest`.
 export CMS_IMAGE_TAG="${CMS_IMAGE_TAG:-latest}"
 
-echo "▶ git pull…"
-git -C "$REPO_DIR" pull --ff-only
+# El `git pull` puede reescribir ESTE archivo mientras bash lo está leyendo.
+# Bash no carga el script entero de una vez: lo lee por trozos y sigue en el
+# byte donde iba, así que tras el pull continuaba ejecutando las líneas del
+# script VIEJO. Pasó de verdad: después de cambiar el despliegue a "descargar
+# en vez de compilar", la caja siguió compilando y se volvió a ahogar.
+#
+# Por eso el pull ocurre una sola vez y después el script se relanza a sí mismo:
+# lo que corre de aquí en adelante es siempre la versión recién descargada.
+if [ "${LG_DEPLOY_REEXEC:-}" != "1" ]; then
+	echo "▶ git pull…"
+	git -C "$REPO_DIR" pull --ff-only
+	export LG_DEPLOY_REEXEC=1
+	echo "▶ relanzando la versión actualizada del script…"
+	exec "$SELF" "$@"
+fi
 
 echo "▶ descargando la imagen ($CMS_IMAGE_TAG)…"
 docker compose --env-file .env pull cms

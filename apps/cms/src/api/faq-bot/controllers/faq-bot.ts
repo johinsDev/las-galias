@@ -159,7 +159,22 @@ export default {
           cacheReadTokens: usage?.inputTokenDetails?.cacheReadTokens ?? 0,
         });
       } catch (err) {
-        strapi.log.error(`[faq-bot] la respuesta falló: ${String(err)}`);
+        // El SDK envuelve el fallo real en AI_NoOutputGeneratedError, que no
+        // dice nada útil: "sin saldo en la cuenta", "llave inválida" y "modelo
+        // inexistente" se ven todos igual. La causa y el cuerpo de la respuesta
+        // son lo que de verdad permite arreglarlo sin adivinar.
+        const detail = [
+          String(err),
+          (err as { cause?: unknown })?.cause
+            ? `causa: ${String((err as { cause?: unknown }).cause)}`
+            : "",
+          typeof (err as { responseBody?: unknown })?.responseBody === "string"
+            ? `respuesta: ${((err as { responseBody?: string }).responseBody ?? "").slice(0, 300)}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" — ");
+        strapi.log.error(`[faq-bot] la respuesta falló: ${detail}`);
         // Mid-stream failure: the visitor already has half an answer, so send
         // the fallback as an error frame instead of leaving them hanging.
         stream.write(frame("error", { answer: fallback }));
