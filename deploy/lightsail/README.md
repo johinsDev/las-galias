@@ -26,8 +26,49 @@ Uploads → S3          Backups (pg_dump) → S3
 
 4. **DNS** → crea un registro **A** `cms.lasgalias.com` → la IP estática.
 
-5. **Credenciales S3** → crea un **IAM user restringido** (solo `s3:*` sobre el
-   bucket de uploads/backups, no admin) y su access key. Crea el bucket si no existe.
+   _Sin dominio todavía_: usa **sslip.io**, que resuelve la IP desde el propio
+   nombre. Con la IP `54.144.170.217`, pon `CMS_DOMAIN=54-144-170-217.sslip.io`
+   y Caddy le saca un certificado de Let's Encrypt real, sin tocar DNS. Es lo
+   que corre hoy en producción.
+
+5. **Bucket y credenciales S3** → crea el bucket y un **IAM user restringido**
+   (`PutObject`/`GetObject`/`DeleteObject` sobre `arn:...:bucket/*` y
+   `ListBucket` sobre `arn:...:bucket`, sin admin) con su access key.
+
+   El bucket necesita además una **bucket policy de lectura pública**: Strapi
+   sube sin ACL (`ACL: null` en `config/plugins.ts`, porque el bucket tiene
+   "Bucket owner enforced"), así que sin la policy las imágenes dan **403 en el
+   sitio** aunque el upload funcione.
+
+   Y como `.env.example` manda uploads **y** backups al mismo bucket, la policy
+   necesita un `Deny` sobre `db-backups/*` — si no, los `pg_dump`, que llevan
+   los leads dentro, quedan descargables por cualquiera:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "PublicReadUploads",
+         "Effect": "Allow",
+         "Principal": "*",
+         "Action": "s3:GetObject",
+         "Resource": "arn:aws:s3:::las-galias-uploads/*"
+       },
+       {
+         "Sid": "BackupsNeverPublic",
+         "Effect": "Deny",
+         "Principal": "*",
+         "Action": "s3:GetObject",
+         "Resource": "arn:aws:s3:::las-galias-uploads/db-backups/*",
+         "Condition": { "StringNotEquals": { "aws:PrincipalAccount": "017677777401" } }
+       }
+     ]
+   }
+   ```
+
+   Compruébalo desde fuera, sin credenciales: un upload debe dar 200 y un
+   objeto de `db-backups/` debe dar 403.
 
 6. **Configurar y desplegar** (dentro de la instancia):
 
@@ -41,11 +82,25 @@ Uploads → S3          Backups (pg_dump) → S3
    Abre `https://cms.lasgalias.com/admin` y crea tu usuario admin.
 
 7. **Cargar contenido** → desde tu máquina, con la instancia arriba:
+
    ```bash
    cd apps/cms
    bun run strapi transfer --to https://cms.lasgalias.com/admin --to-token <token> --force
    ```
+
    (genera el transfer token en el admin remoto → Settings → Transfer Tokens)
+
+   **`strapi transfer` NO copia las tablas de admin**: usuarios, API tokens y
+   transfer tokens se quedan atrás. Después de migrar hay que **emitir un
+   `STRAPI_API_TOKEN` nuevo** en el panel destino y actualizarlo en Vercel, o el
+   build responde 401 en todo. Copiar `API_TOKEN_SALT` no sirve: lo que falta no
+   es el hash, es el registro. Desde `d1e9531` eso rompe el build en vez de
+   publicar un sitio vacío, pero igual hay que emitirlo.
+
+   Para pasar de un CMS remoto a otro hacen falta dos saltos, porque `transfer`
+   solo admite un extremo remoto: `--from <viejo>` a la base local, y luego
+   `--to <nuevo>`. Ese rodeo es además lo que hace que los archivos se vuelvan a
+   subir por el provider del destino y acaben en S3.
 
 ## Backups — estrategia recomendada (activar las DOS)
 

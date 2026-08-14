@@ -1,23 +1,25 @@
 # Traspaso del proyecto a Las Galias
 
-Estado: **plan, sin ejecutar.** Última revisión de los hechos: 12 ago 2026.
+Estado: **el paso 5 está hecho** — el CMS, sus uploads y sus backups ya viven en
+la cuenta AWS de Las Galias desde el 14 ago 2026. El repositorio, Vercel y el
+dominio siguen pendientes. Última revisión de los hechos: 14 ago 2026.
 
-Hoy el proyecto entero depende de cuentas personales de Johan. Si esa persona
-cierra una cuenta, pierde acceso o simplemente sale del proyecto, el sitio se
-cae y nadie más puede desplegarlo. Este documento dice qué está a nombre de
+El proyecto todavía depende de cuentas personales de Johan para el sitio y el
+código. Si esa persona cierra una cuenta, pierde acceso o simplemente sale del
+proyecto, el sitio deja de desplegarse. Este documento dice qué está a nombre de
 quién, en qué orden moverlo, qué se rompe en cada paso y qué credenciales hay
 que revocar al final.
 
 ## Qué está a nombre de quién, hoy
 
-| Pieza                   | Dueño actual                                                                           | Riesgo si Johan sale                                         |
-| ----------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Repositorio             | `johinsDev/las-galias` — GitHub **personal**, y **público**                            | Nadie más puede administrarlo. Además cualquiera lo lee hoy. |
-| Sitio (Vercel)          | Equipo `johan-villamils-projects` — **personal**                                       | El sitio deja de desplegarse y puede caerse                  |
-| CMS (Lightsail)         | Su cuenta AWS. Instancia `44.208.234.104`, Strapi + Postgres + Caddy en docker compose | Se pierde el CMS, la base y los leads                        |
-| Uploads y backups (S3)  | Buckets en la misma cuenta AWS, con un IAM user restringido                            | Se pierden todas las imágenes                                |
-| Dominio `lasgalias.com` | Registrado, pero **aparcado** (`parkingcrew.net`). No apunta a nada                    | Desconocido — hay que averiguar en qué registrador está      |
-| Secretos del CMS        | Archivo `.env` **solo dentro de la instancia**, fuera de Git                           | Si muere la caja sin snapshot, se pierden                    |
+| Pieza                   | Dueño actual                                                                             | Riesgo si Johan sale                                         |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Repositorio             | `johinsDev/las-galias` — GitHub **personal**, y **público**                              | Nadie más puede administrarlo. Además cualquiera lo lee hoy. |
+| Sitio (Vercel)          | Equipo `johan-villamils-projects` — **personal**                                         | El sitio deja de desplegarse y puede caerse                  |
+| CMS (Lightsail)         | ✅ **Las Galias** — cuenta `017677777401`, instancia `las-galias-cms` (`54.144.170.217`) | Ninguno: ya no depende de él                                 |
+| Uploads y backups (S3)  | ✅ **Las Galias** — bucket `las-galias-uploads`, IAM user `las-galias-cms-s3`            | Ninguno                                                      |
+| Dominio `lasgalias.com` | Registrado, pero **aparcado** (`parkingcrew.net`). No apunta a nada                      | Desconocido — hay que averiguar en qué registrador está      |
+| Secretos del CMS        | Archivo `.env` **solo dentro de la instancia**, fuera de Git                             | Cubierto: hay snapshot diario del disco                      |
 
 Dos cosas que conviene decidir a conciencia y no por inercia:
 
@@ -71,20 +73,53 @@ variables de entorno (`STRAPI_URL`, `PUBLIC_STRAPI_URL`, `STRAPI_API_TOKEN`,
 `.env` de la instancia (`VERCEL_DEPLOY_HOOK_URL`). Hay que actualizarlo allí, o
 publicar en el CMS deja de reconstruir el sitio — en silencio, que es lo peor.
 
-### 5. Mover el CMS
+### 5. Mover el CMS — ✅ HECHO (14 ago 2026)
 
-Es el paso caro y hay dos caminos:
+Se tomó el camino de **recrear la instancia** en la cuenta de Las Galias
+(`017677777401`, us-east-1). Lo que quedó montado:
 
-- **Transferir la cuenta AWS entera** (si la instancia está en una cuenta que
-  solo se usa para esto). Nada cambia: misma IP, mismos buckets, mismo `.env`.
-  Es de lejos lo más limpio si es viable.
-- **Recrear la instancia** en la cuenta de ellos: `bootstrap.sh`, restaurar el
-  `pg_dump` más reciente desde S3, copiar los buckets, nuevo IAM user, nuevo
-  `.env`. **La IP estática cambia**, así que hay que rehacer DNS, `STRAPI_URL`
-  en Vercel y los secretos del despliegue automático.
+| Pieza       | Valor                                                              |
+| ----------- | ------------------------------------------------------------------ |
+| Instancia   | `las-galias-cms`, Ubuntu 22.04, bundle `small_3_0` (~12 USD/mes)   |
+| IP estática | `las-galias-cms-ip` → `54.144.170.217`                             |
+| URL del CMS | `https://54-144-170-217.sslip.io`                                  |
+| Llave SSH   | key pair `lg-cms-deploy` (privada en `~/.ssh/lg-cms-deploy`)       |
+| Bucket      | `las-galias-uploads` — uploads públicos, `db-backups/` privado     |
+| Backups     | `pg_dump` horario por cron + snapshot diario del disco (07:00 UTC) |
+| Retención   | lifecycle de 30 días sobre `db-backups/`                           |
+
+El contenido se movió con `strapi transfer` en dos saltos (viejo → Postgres
+local → nuevo), **no** restaurando el `pg_dump`. La razón: en la instancia vieja
+`UPLOADS_BUCKET` estaba vacío y los archivos vivían en disco. Pasando por
+`transfer`, el CMS nuevo los vuelve a subir por su provider y quedan en S3 con
+las URLs reescritas; con un restore de base habrían quedado apuntando a
+`/uploads/` en una máquina que ya no existe.
+
+La instancia vieja (`44.208.234.104`) y su IP se eliminaron el mismo día.
+
+**Tres cosas que costaron sangre y conviene no volver a aprender:**
+
+1. **`strapi transfer` no copia las tablas de admin.** Usuarios, API tokens y
+   transfer tokens se quedan atrás. Copiar `API_TOKEN_SALT` no basta: el
+   registro del token nunca llega, así que el `STRAPI_API_TOKEN` de Vercel
+   responde 401 contra el CMS nuevo. **Hay que emitir un token nuevo en el panel
+   destino y actualizarlo en Vercel.** Pasó en producción: el sitio se publicó
+   sin proyectos y sin blog, con el build en verde. De ahí salió el fix del
+   commit `d1e9531`, que ahora hace fallar el build ante un 401.
+2. **El bucket necesita una bucket policy de lectura pública.** Strapi sube sin
+   ACL (`ACL: null` en `config/plugins.ts`), así que sin la policy las imágenes
+   dan 403 en el sitio aunque el upload funcione.
+3. **Uploads y backups comparten bucket** (`.env.example` pone el mismo en
+   `UPLOADS_BUCKET` y `BACKUP_BUCKET`). Una policy pública a secas dejaría los
+   `pg_dump` —con los leads dentro— descargables por cualquiera. La policy lleva
+   un `Deny` sobre `db-backups/*` para todo principal fuera de la cuenta.
+
+### 5-bis. Si algún día hay que repetirlo
 
 Antes de tocar nada: **un `backup.sh` manual y un snapshot del disco**. Ahí
-viven los leads.
+viven los leads. Y si la cuenta AWS solo se usa para esto, **transferir la
+cuenta entera** sigue siendo más limpio que recrear: misma IP, mismos buckets,
+mismo `.env`, y nada de lo de arriba aplica.
 
 ### 6. Conectar el dominio
 
@@ -96,11 +131,15 @@ Con el dominio ya en manos de Las Galias:
   apuntando a `cms.lasgalias.com`, y quitar la protección de despliegue de Vercel
   para que el sitio sea público.
 
-### 7. Cerrar el despliegue automático del CMS
+### 7. Cerrar el despliegue automático del CMS — ✅ HECHO (14 ago 2026)
 
-Con la instancia ya en su sitio definitivo, generar la clave dedicada y los
-secretos (ver `deploy/lightsail/README.md`). **Hacerlo ahora y no antes**: si la
-instancia se recrea en el paso 5, la IP cambia y todo esto habría que rehacerlo.
+Los secretos de Actions ya apuntan a la instancia nueva: `LIGHTSAIL_HOST`
+(`54.144.170.217`), `LIGHTSAIL_SSH_KEY` (la privada de `lg-cms-deploy`) y
+`CMS_PUBLIC_URL` (`https://54-144-170-217.sslip.io`).
+
+Ojo con el orden: **estos secretos viven en el repo, así que el paso 3 los
+borra.** Si el repositorio se mueve a la organización, hay que volver a crearlos
+allí — no se transfieren.
 
 ### 8. Revocar los accesos personales
 
@@ -119,24 +158,24 @@ alguien que ya no está en el proyecto deja de ser un secreto.
 
 ## Qué se cae y cuándo
 
-| Paso             | Qué deja de funcionar                                                    | Cuánto            |
-| ---------------- | ------------------------------------------------------------------------ | ----------------- |
-| 3 · Repo         | El despliegue automático del CMS, hasta recrear los secretos             | Minutos           |
-| 4 · Vercel       | Publicar en el CMS deja de reconstruir el sitio hasta actualizar el hook | Hasta que se note |
-| 5 · CMS recreado | El panel de admin, mientras se restaura                                  | ~1 hora           |
-| 6 · DNS          | Propagación                                                              | Hasta 24 h        |
-| 8 · Rotación     | Nada, si se hace con la caja arriba                                      | —                 |
+| Paso         | Qué deja de funcionar                                                    | Cuánto            |
+| ------------ | ------------------------------------------------------------------------ | ----------------- |
+| 3 · Repo     | El despliegue automático del CMS, hasta recrear los secretos             | Minutos           |
+| 4 · Vercel   | Publicar en el CMS deja de reconstruir el sitio hasta actualizar el hook | Hasta que se note |
+| ~~5 · CMS~~  | Hecho. En la práctica: el sitio salió una vez sin proyectos, por el 401  | ~20 min           |
+| 6 · DNS      | Propagación                                                              | Hasta 24 h        |
+| 8 · Rotación | Nada, si se hace con la caja arriba                                      | —                 |
 
 ## Antes de empezar
 
 Esto es lo que hay que responder para poder ejecutar el plan:
 
 1. ¿En qué registrador está `lasgalias.com` y quién tiene la cuenta?
-2. ¿La cuenta AWS actual es exclusiva de este proyecto? Decide entre transferir
-   la cuenta o recrear la instancia.
+2. ~~¿La cuenta AWS actual es exclusiva de este proyecto?~~ Resuelto: se recreó
+   la instancia en la cuenta de Las Galias.
 3. ¿El repositorio sigue público al pasarlo a la organización?
 4. ¿Quién de Las Galias va a ser el dueño administrativo de las tres cuentas?
-5. ¿Hay una fecha objetivo? El paso 5 conviene hacerlo fuera de horario.
+5. ¿Hay una fecha objetivo?
 
 ## Lo que NO hay que hacer
 
