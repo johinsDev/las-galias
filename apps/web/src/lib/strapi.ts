@@ -66,17 +66,28 @@ function snapshotKey(path: string, query: Query): string {
   return search ? `${path}?${search}` : path;
 }
 
-/** Stops the build rather than let demo data reach a published page. */
+/**
+ * Marks the build-stopping error as ours. `strapiFetch` wraps everything in a
+ * try/catch, so without this the refusal thrown for a 401 is caught by its own
+ * handler and re-wrapped as a transport failure — printing the whole message
+ * nested inside itself.
+ */
+class CmsRefusedError extends Error {}
+
+/** Stops the build rather than let empty or demo content reach a published page. */
 function refuseDemoData(path: string, reason: string): never {
-  throw new Error(
+  throw new CmsRefusedError(
     [
-      `[strapi] El CMS no respondió a "${path}" (${reason}) y el build se detuvo.`,
+      `[strapi] El CMS no entregó "${path}" (${reason}) y el build se detuvo.`,
       "",
-      "Publicar aquí habría subido el contenido DEMO del snapshot: proyectos y",
-      "precios inventados. Antes era lo que pasaba en silencio; ahora falla.",
+      "Seguir habría publicado páginas VACÍAS —o, con el snapshot encendido,",
+      "proyectos y precios INVENTADOS—. Antes pasaba en silencio; ahora falla.",
       "",
       "Qué hacer:",
       `  · Revisa que el CMS esté arriba y que STRAPI_URL apunte a él (${STRAPI_URL}).`,
+      "  · Si es 401/403, STRAPI_API_TOKEN no sirve contra ESE CMS: los tokens no",
+      "    viajan entre instancias (`strapi transfer` no copia las tablas de admin),",
+      "    así que hay que crear uno nuevo en su panel y actualizar la variable.",
       "  · Si de verdad quieres compilar con datos de demo, dilo explícitamente:",
       "    USE_CMS_SNAPSHOT=true bun run build",
     ].join("\n"),
@@ -139,8 +150,19 @@ async function strapiFetch<T>(
       console.warn(`[strapi] ${path} responded ${res.status}`);
       const fallback = await readSnapshot(key);
       if (fallback !== undefined) return fallback as T;
-      // A 404 is normal for a single type an editor has not filled in yet, so
-      // only a transport failure (below) is treated as "the CMS is missing".
+      // A 404 is the ONE status that means "there is legitimately nothing here"
+      // — a single type an editor has not filled in yet. Every other status
+      // means the build asked for content and did not get it, which publishes
+      // an empty page just as surely as an unreachable CMS does. So the rule is
+      // inverted: 404 degrades, anything else stops the build.
+      //
+      // It already shipped once. After migrating the CMS to another host, the
+      // token from the old instance answered 401 to every call (`strapi
+      // transfer` does not copy the admin tables that hold it) and the site
+      // published with no projects and no blog, with the build green.
+      if (res.status !== 404 && FAIL_ON_DEMO) {
+        refuseDemoData(path, `HTTP ${res.status}`);
+      }
       return null;
     }
     const body = (await res.json()) as { data: T };
@@ -152,6 +174,7 @@ async function strapiFetch<T>(
     }
     return body.data;
   } catch (err) {
+    if (err instanceof CmsRefusedError) throw err;
     const fallback = await readSnapshot(key);
     if (fallback !== undefined) {
       console.warn(`[strapi] ${path} unavailable — usando snapshot DEMO`);
