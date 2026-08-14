@@ -111,42 +111,44 @@ disposable test environment and `--stage production` for the real one. Per
 stage is fully deleted by `sst remove --stage <name>`. Every live stage costs its own
 ~USD 40–45/month (ALB + NAT + RDS), so tear down what you're not using.
 
-## Ambiente de QA (vivo)
+## Ambiente vivo
 
-| Qué          | Dónde                                 | Notas                                                               |
-| ------------ | ------------------------------------- | ------------------------------------------------------------------- |
-| Sitio        | https://las-galias.vercel.app         | Producción en Vercel, contenido del CMS de QA                       |
-| CMS / admin  | https://44-208-234-104.sslip.io/admin | Strapi                                                              |
-| Host del CMS | AWS Lightsail `las-galias-qa`         | 2 GB, **~12 USD/mes**, cuenta 256435679520                          |
-| IP estática  | `44.208.234.104`                      | `sslip.io` la resuelve sola → HTTPS de Let's Encrypt sin DNS propio |
-| Sinco        | `pruebas4.sincoerp.com` (PRBINT)      | `LEAD_PROVIDER=sinco`, `PROJECT_DATA_PROVIDER=manual`               |
+| Qué          | Dónde                                    | Notas                                                               |
+| ------------ | ---------------------------------------- | ------------------------------------------------------------------- |
+| Sitio        | https://las-galias.vercel.app            | Vercel, equipo personal de Johan (pendiente de traspaso)            |
+| CMS / admin  | https://54-144-170-217.sslip.io/admin    | Strapi                                                              |
+| Host del CMS | AWS Lightsail `las-galias-cms`           | 2 GB, **~12 USD/mes**, en la cuenta AWS **de Las Galias**           |
+| IP estática  | `54.144.170.217`                         | `sslip.io` la resuelve sola → HTTPS de Let's Encrypt sin DNS propio |
+| Uploads      | S3 `las-galias-uploads`                  | Públicos por bucket policy; `db-backups/` NO                        |
+| Backups      | `pg_dump` horario a S3 + snapshot diario | Retención de 30 días por lifecycle                                  |
+| Sinco        | `pruebas4.sincoerp.com` (PRBINT)         | `LEAD_PROVIDER=sinco`, `PROJECT_DATA_PROVIDER=manual`               |
 
-Para entrar hay que bajar la llave por defecto de Lightsail. Ojo: la llave
-_temporal_ de `get-instance-access-details` **no sirve** aquí — la instancia
-solo confía en `LightsailDefaultKeyPair`:
+Para entrar, con la llave dedicada que se creó al montar la instancia (el key
+pair `lg-cms-deploy`; la privada está fuera del repo, en `~/.ssh/lg-cms-deploy`
+y en el secreto `LIGHTSAIL_SSH_KEY` de Actions):
 
 ```bash
-export AWS_PROFILE=lasgalias
-aws lightsail download-default-key-pair --region us-east-1 \
-  --query 'privateKeyBase64' --output text > /tmp/ls.pem && chmod 600 /tmp/ls.pem
-ssh -i /tmp/ls.pem ubuntu@44.208.234.104
+ssh -i ~/.ssh/lg-cms-deploy ubuntu@54.144.170.217
 ```
 
 Operación (ya dentro, en `/opt/las-galias/deploy/lightsail`):
 
 ```bash
-sudo ./scripts/deploy.sh                                   # actualizar tras un push (~12 min: compila el admin)
+sudo ./scripts/deploy.sh                                   # actualizar (segundos: la imagen la compila el CI)
 sudo docker compose --env-file .env logs -f cms            # logs
 sudo docker compose --env-file .env restart cms            # reiniciar
+sudo ./scripts/backup.sh                                   # backup manual
 ```
 
 Variables en Vercel (Production): `STRAPI_URL`, `PUBLIC_STRAPI_URL` (ambas el
 `https://` del CMS), `STRAPI_API_TOKEN` (solo lectura) y `USE_CMS_SNAPSHOT=false`.
+El token es **por instancia**: al migrar el CMS hay que emitir uno nuevo en su
+panel, porque `strapi transfer` no copia las tablas de admin.
 
-**Esto es QA, no producción.** Antes de considerarlo definitivo: mover el CMS a
-un dominio propio (`sslip.io` no sirve de cara al cliente), activar los backups
-del `deploy/lightsail/README.md`, y mover los uploads a S3 — hoy viven en el
-disco de la instancia.
+**Lo que falta para considerarlo definitivo**: un dominio propio (`sslip.io` no
+sirve de cara al cliente), y mover el repositorio y el proyecto de Vercel a
+cuentas de Las Galias. El plan completo, con lo ya ejecutado marcado, está en
+`docs/traspaso-a-las-galias.md`.
 
 ### Verificación de la integración con Sinco
 

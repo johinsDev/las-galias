@@ -1,7 +1,7 @@
 # Producción del CMS en AWS — planes de bajo costo (A / A+)
 
 Estado: **decidido y ejecutado.** Se eligió la **opción A** y corre desde el 14
-ago 2026 en la cuenta AWS de Las Galias (`017677777401`, us-east-1): instancia
+ago 2026 en la cuenta AWS de Las Galias (us-east-1): instancia
 `las-galias-cms`, bucket `las-galias-uploads`. El detalle de lo que quedó
 montado está en `traspaso-a-las-galias.md`, paso 5; el procedimiento, en
 `deploy/lightsail/README.md`. Lo de abajo se conserva como el razonamiento que

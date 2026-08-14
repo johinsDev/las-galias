@@ -12,14 +12,14 @@ que revocar al final.
 
 ## Qué está a nombre de quién, hoy
 
-| Pieza                   | Dueño actual                                                                             | Riesgo si Johan sale                                         |
-| ----------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Repositorio             | `johinsDev/las-galias` — GitHub **personal**, y **público**                              | Nadie más puede administrarlo. Además cualquiera lo lee hoy. |
-| Sitio (Vercel)          | Equipo `johan-villamils-projects` — **personal**                                         | El sitio deja de desplegarse y puede caerse                  |
-| CMS (Lightsail)         | ✅ **Las Galias** — cuenta `017677777401`, instancia `las-galias-cms` (`54.144.170.217`) | Ninguno: ya no depende de él                                 |
-| Uploads y backups (S3)  | ✅ **Las Galias** — bucket `las-galias-uploads`, IAM user `las-galias-cms-s3`            | Ninguno                                                      |
-| Dominio `lasgalias.com` | Registrado, pero **aparcado** (`parkingcrew.net`). No apunta a nada                      | Desconocido — hay que averiguar en qué registrador está      |
-| Secretos del CMS        | Archivo `.env` **solo dentro de la instancia**, fuera de Git                             | Cubierto: hay snapshot diario del disco                      |
+| Pieza                   | Dueño actual                                                                     | Riesgo si Johan sale                                         |
+| ----------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Repositorio             | `johinsDev/las-galias` — GitHub **personal**, y **público**                      | Nadie más puede administrarlo. Además cualquiera lo lee hoy. |
+| Sitio (Vercel)          | Equipo `johan-villamils-projects` — **personal**                                 | El sitio deja de desplegarse y puede caerse                  |
+| CMS (Lightsail)         | ✅ **Las Galias** — su cuenta AWS, instancia `las-galias-cms` (`54.144.170.217`) | Ninguno: ya no depende de él                                 |
+| Uploads y backups (S3)  | ✅ **Las Galias** — bucket `las-galias-uploads`, IAM user `las-galias-cms-s3`    | Ninguno                                                      |
+| Dominio `lasgalias.com` | Registrado, pero **aparcado** (`parkingcrew.net`). No apunta a nada              | Desconocido — hay que averiguar en qué registrador está      |
+| Secretos del CMS        | Archivo `.env` **solo dentro de la instancia**, fuera de Git                     | Cubierto: hay snapshot diario del disco                      |
 
 Dos cosas que conviene decidir a conciencia y no por inercia:
 
@@ -76,7 +76,7 @@ publicar en el CMS deja de reconstruir el sitio — en silencio, que es lo peor.
 ### 5. Mover el CMS — ✅ HECHO (14 ago 2026)
 
 Se tomó el camino de **recrear la instancia** en la cuenta de Las Galias
-(`017677777401`, us-east-1). Lo que quedó montado:
+(us-east-1). Lo que quedó montado:
 
 | Pieza       | Valor                                                              |
 | ----------- | ------------------------------------------------------------------ |

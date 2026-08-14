@@ -61,7 +61,7 @@ Uploads → S3          Backups (pg_dump) → S3
          "Principal": "*",
          "Action": "s3:GetObject",
          "Resource": "arn:aws:s3:::las-galias-uploads/db-backups/*",
-         "Condition": { "StringNotEquals": { "aws:PrincipalAccount": "017677777401" } }
+         "Condition": { "StringNotEquals": { "aws:PrincipalAccount": "<ID-DE-LA-CUENTA-AWS>" } }
        }
      ]
    }
