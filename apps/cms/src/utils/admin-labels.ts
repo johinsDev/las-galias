@@ -1,5 +1,7 @@
 import type { Core } from "@strapi/strapi";
 
+import { componentKey, contentTypeKey, type StoredConfig, updateStoredConfig } from "./admin-store";
+
 /**
  * Spanish labels for the admin, as code.
  *
@@ -16,6 +18,29 @@ type FieldLabels = Record<string, { label: string; description?: string }>;
 
 const CONTENT_TYPES: Record<string, FieldLabels> = {
   "api::project.project": {
+    // Cabeceras de sección: no son campos, son los títulos plegables del
+    // formulario. La descripción es lo que se lee bajo el título.
+    sectionLocation: {
+      label: "Ubicación",
+      description:
+        "Ciudad, zona y barrio son el rastro que se muestra; el mapa es lo que se pinta.",
+    },
+    sectionPricing: {
+      label: "Precio y Sinco",
+      description: "Lo que muestra el sitio y de dónde sale. Congelar impide que el ERP lo cambie.",
+    },
+    sectionContent: {
+      label: "Contenido y medios",
+      description: "Lo que se lee y se ve en la página del proyecto.",
+    },
+    sectionProduct: {
+      label: "Ficha del producto",
+      description: "Tipologías, zonas comunes, ficha técnica, financiación y sala de ventas.",
+    },
+    sectionRelated: {
+      label: "Relacionados y SEO",
+      description: "Qué se ofrece después de este proyecto y cómo se comparte la página.",
+    },
     name: { label: "Nombre" },
     slug: {
       label: "URL (slug)",
@@ -362,23 +387,8 @@ const COMPONENTS: Record<string, FieldLabels> = {
   "page.list-item": { text: { label: "Texto" } },
 };
 
-interface StoredConfig {
-  metadatas?: Record<string, { edit?: Record<string, unknown>; list?: Record<string, unknown> }>;
-  [key: string]: unknown;
-}
-
 /** Merges the labels into one stored configuration; returns true if it changed. */
-async function applyTo(strapi: Core.Strapi, key: string, labels: FieldLabels): Promise<boolean> {
-  const store = strapi.db.query("strapi::core-store");
-  const row = (await store.findOne({ where: { key } })) as { id: number; value: string } | null;
-  if (!row) return false;
-
-  let config: StoredConfig;
-  try {
-    config = JSON.parse(row.value) as StoredConfig;
-  } catch {
-    return false;
-  }
+function mergeLabels(config: StoredConfig, labels: FieldLabels): boolean {
   if (!config.metadatas) return false;
 
   let changed = false;
@@ -395,9 +405,6 @@ async function applyTo(strapi: Core.Strapi, key: string, labels: FieldLabels): P
       changed = true;
     }
   }
-
-  if (changed)
-    await store.update({ where: { id: row.id }, data: { value: JSON.stringify(config) } });
   return changed;
 }
 
@@ -409,12 +416,14 @@ export async function applySpanishAdminLabels(strapi: Core.Strapi): Promise<void
   try {
     let updated = 0;
     for (const [uid, labels] of Object.entries(CONTENT_TYPES)) {
-      const key = `plugin_content_manager_configuration_content_types::${uid}`;
-      if (await applyTo(strapi, key, labels)) updated += 1;
+      const key = contentTypeKey(uid);
+      if (await updateStoredConfig(strapi, key, (config) => mergeLabels(config, labels)))
+        updated += 1;
     }
     for (const [uid, labels] of Object.entries(COMPONENTS)) {
-      const key = `plugin_content_manager_configuration_components::${uid}`;
-      if (await applyTo(strapi, key, labels)) updated += 1;
+      const key = componentKey(uid);
+      if (await updateStoredConfig(strapi, key, (config) => mergeLabels(config, labels)))
+        updated += 1;
     }
     if (updated > 0) strapi.log.info(`Admin labels in Spanish applied to ${updated} type(s)`);
   } catch (err) {

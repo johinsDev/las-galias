@@ -941,6 +941,21 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     salesRoom: Schema.Attribute.Component<"project.sales-room", false>;
+    sectionContent: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionLocation: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionPricing: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionProduct: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionRelated: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     sincoProject: Schema.Attribute.Relation<"oneToOne", "api::sinco-project.sinco-project">;
     slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;

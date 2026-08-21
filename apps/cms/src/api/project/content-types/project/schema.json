@@ -162,6 +162,31 @@
       "type": "component",
       "component": "shared.seo",
       "repeatable": false
+    },
+    "sectionLocation": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "sectionPricing": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "sectionContent": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "sectionProduct": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "sectionRelated": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
     }
   }
 }

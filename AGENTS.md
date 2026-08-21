@@ -64,6 +64,29 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   silently does nothing.
 - `bun run purge-demo` (in `apps/cms`) deletes the seed's demo content by exact
   slug. Dry-run by default; `--yes` to apply.
+- The admin's Content Manager view is CODE, not database state: labels and help
+  text in `src/utils/admin-labels.ts`, field order/grouping, list columns and
+  read-only fields in `src/utils/admin-layouts.ts`, applied on every boot. So
+  "Configure the view" in the admin UI is a dead end — the next boot overwrites
+  it. Change the file instead. Rules Strapi enforces: components and `blocks`
+  only exist at full width (12 columns) and a row cannot add up to more than 12;
+  a field left out of the layout would disappear from the form, so the applier
+  appends it at the end and logs a warning instead. Two things the file cannot
+  decide: the list columns are only the DEFAULT — the admin remembers each
+  browser's own column choice in `STRAPI_LIST_VIEW_DISPLAYED_HEADERS:<uid>` and
+  that one wins; and a schema change needs a hard reload, because the admin
+  bundle is cached and a stale one renders "Unsupported field type".
+- Form SECTIONS are a fake, because Strapi 5 has none: `FormLayout` only starts a
+  new card for a dynamic zone, a non-repeatable component draws a grey box with
+  no description that never collapses, and the accordion belongs to repeatable
+  components. So a section is a field — the `global::section` custom field
+  (registered server-side in `src/index.ts`, admin-side in `src/admin/app.tsx`,
+  rendered by `SectionHeader.tsx`). It stores nothing and is declared `private`
+  in the schema so it never reaches the API. Its title and description are just
+  its label and help text in `admin-labels.ts`. Collapsing sets `display: none`
+  on the sibling rows below it and nothing else — the fields stay in the form and
+  still save; a field that fails validation forces its section open. Both halves
+  of the custom field must be registered or the boot fails.
 - CMS deploy: `AWS_PROFILE=<profile> bunx sst deploy --stage <stage>` creates
   EVERYTHING (VPC, RDS, Fargate, S3, secrets) in that profile's AWS account.
   Secrets via `bunx sst secret set <Name> <value> --stage <stage>` (once per

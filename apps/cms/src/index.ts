@@ -1,6 +1,7 @@
 import type { Core } from "@strapi/strapi";
 
 import { applySpanishAdminLabels } from "./utils/admin-labels";
+import { applyAdminLayouts } from "./utils/admin-layouts";
 import { scheduleDeploy } from "./utils/deploy-hook";
 import { ensureConfig, invalidateContext } from "./utils/faq-bot-context";
 import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
@@ -53,6 +54,22 @@ const DEPLOY_ON_UPDATE = new Set<string>([
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
+    /**
+     * The section headings of the edit form.
+     *
+     * Strapi has no sections, so one is faked with a field: `global::section`
+     * stores nothing, is declared `private` on every schema that uses it so it
+     * never reaches the API, and takes a full row the admin fills with a
+     * collapsible heading (src/admin/components/SectionHeader.tsx). Registering
+     * it here is what makes `customField: "global::section"` in a schema load
+     * instead of failing the boot.
+     */
+    strapi.customFields.register({
+      name: "section",
+      type: "string",
+      inputSize: { default: 12, isResizable: false },
+    });
+
     /**
      * "Sincronizar desde Sinco" for the Content Manager button.
      *
@@ -188,6 +205,11 @@ export default {
     // Field labels in Spanish. Idempotent and cheap: it only writes when a
     // label actually differs.
     await applySpanishAdminLabels(strapi);
+
+    // El orden de los formularios. Va después de las etiquetas porque las dos
+    // escriben la misma fila del store, y así la segunda lee lo que dejó la
+    // primera en vez de pisarla.
+    await applyAdminLayouts(strapi);
 
     // The Sinco picker must not come up empty on a fresh install; afterwards the
     // cron owns it. Not awaited — a slow ERP must not hold up the boot.
