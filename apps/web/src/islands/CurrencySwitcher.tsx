@@ -7,8 +7,10 @@ interface CurrencySwitcherProps {
   copPerEur: number;
   /** Date the rate is valid from, for the tooltip. */
   asOf?: string | null;
-  /** Who published it ("trm-datos.gov.co × frankfurter.app (ECB)"). */
+  /** Who published it ("trm-datos.gov.co × frankfurter.dev (ECB)"). */
   source?: string | null;
+  /** Rendered on the brand-red header: outline on red instead of a white pill. */
+  onDark?: boolean;
 }
 
 const CURRENCIES: Currency[] = ["COP", "USD", "EUR"];
@@ -76,6 +78,7 @@ export default function CurrencySwitcher({
   copPerEur,
   asOf,
   source,
+  onDark = false,
 }: CurrencySwitcherProps) {
   const [currency, setCurrency] = useState<Currency>("COP");
 
@@ -119,24 +122,35 @@ export default function CurrencySwitcher({
 
   return (
     <div
-      className="border-line inline-flex items-center gap-1 rounded-full border bg-white p-1"
+      className={`inline-flex items-center gap-1 rounded-full border p-1 ${
+        onDark ? "border-white/40" : "border-line bg-white"
+      }`}
       role="group"
       aria-label="Divisa de los precios"
       title={title}
     >
-      {CURRENCIES.map((c) => (
-        <button
-          key={c}
-          type="button"
-          onClick={() => switchTo(c)}
-          aria-pressed={currency === c}
-          className={`text-caption rounded-full px-2.5 py-1 font-semibold transition-colors ${
-            currency === c ? "bg-ink text-white" : "text-ink-muted hover:text-ink"
-          }`}
-        >
-          {c}
-        </button>
-      ))}
+      {CURRENCIES.map((c) => {
+        const active = currency === c;
+        return (
+          <button
+            key={c}
+            type="button"
+            onClick={() => switchTo(c)}
+            aria-pressed={active}
+            className={`text-caption rounded-full px-2.5 py-1 font-semibold transition-colors ${
+              onDark
+                ? active
+                  ? "text-brand bg-white"
+                  : "text-white/75 hover:text-white"
+                : active
+                  ? "bg-ink text-white"
+                  : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            {c}
+          </button>
+        );
+      })}
     </div>
   );
 }
