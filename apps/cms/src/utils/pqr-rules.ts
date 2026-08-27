@@ -113,6 +113,22 @@ async function notifyPqr(strapi: Core.Strapi, documentId: string): Promise<void>
     return;
   }
 
+  /**
+   * With no SMTP host the email plugin falls back to nodemailer's
+   * `jsonTransport`, which "sends" by returning the message as JSON. The call
+   * succeeds, so stamping `notifiedAt` here would tell whoever opens the admin
+   * that the customer-service inbox was told — when nothing left the box.
+   *
+   * An unanswered PQR has legal consequences, so the honest state is the one
+   * that looks broken: no stamp, and a warning saying why.
+   */
+  if (!process.env.SMTP_HOST) {
+    strapi.log.warn(
+      `SMTP_HOST is not set — the PQR notification for ${documentId} was rendered to the log, not delivered`,
+    );
+    return;
+  }
+
   const doc = (await strapi.documents(PQR_UID).findOne({ documentId })) as PqrDoc | null;
   if (!doc) return;
 
