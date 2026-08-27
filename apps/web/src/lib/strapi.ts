@@ -5,6 +5,7 @@ import type {
   FaqBotPublicConfig,
   ForeignBuyerPage,
   HomeBanner,
+  LegalDocument,
   Macroproject,
   Post,
   Project,
@@ -277,8 +278,34 @@ export async function getHomeBanners(): Promise<HomeBanner[]> {
   );
 }
 
+/**
+ * Every published legal document, ordered the way the chips show them.
+ *
+ * Memoised like the rates: /legales/[slug] renders one page per document and
+ * each of them needs the full list to draw the chip bar, so without this the
+ * CMS would be asked once per document for the same rows.
+ */
+let legalDocumentsPromise: Promise<LegalDocument[]> | null = null;
+
+export async function getLegalDocuments(): Promise<LegalDocument[]> {
+  legalDocumentsPromise ??= strapiFetch<LegalDocument[]>("legal-documents", {
+    sort: "order:asc",
+    "populate[seo][populate][ogImage]": "true",
+  }).then((docs) => docs ?? []);
+  return legalDocumentsPromise;
+}
+
+/**
+ * Memoised for the whole build. The currency selector lives in the layout now,
+ * so every page needs the rates; without this a 200-page build would ask the
+ * CMS for the same single type 200 times. Rates cannot change mid-build — a new
+ * rate arrives through a redeploy, not through a page.
+ */
+let exchangeRatePromise: Promise<ExchangeRate | null> | null = null;
+
 export async function getExchangeRate(): Promise<ExchangeRate | null> {
-  return strapiFetch<ExchangeRate>("exchange-rate");
+  exchangeRatePromise ??= strapiFetch<ExchangeRate>("exchange-rate");
+  return exchangeRatePromise;
 }
 
 export async function getCalculatorConfig(): Promise<CalculatorConfig | null> {

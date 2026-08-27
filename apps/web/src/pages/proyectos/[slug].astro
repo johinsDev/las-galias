@@ -6,13 +6,7 @@ import ProjectSidebar from "@/components/pdp/ProjectSidebar.astro";
 import RecommendedProjects from "@/components/pdp/RecommendedProjects.astro";
 import Base from "@/layouts/Base.astro";
 import type { QuoteTerms } from "@/lib/mortgage";
-import {
-  getCalculatorConfig,
-  getExchangeRate,
-  getProject,
-  getProjects,
-  mediaUrl,
-} from "@/lib/strapi";
+import { getCalculatorConfig, getProject, getProjects, mediaUrl } from "@/lib/strapi";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -20,11 +14,9 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const [project, rates, calculator] = await Promise.all([
-  getProject(slug!),
-  getExchangeRate(),
-  getCalculatorConfig(),
-]);
+// Rates are no longer fetched here: the currency selector moved to the header,
+// which reads them once per build for the whole site.
+const [project, calculator] = await Promise.all([getProject(slug!), getCalculatorConfig()]);
 
 if (!project) {
   return Astro.redirect("/proyectos");
@@ -50,7 +42,7 @@ const description = project.seo?.metaDescription ?? undefined;
 
 <Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
   <!-- 01 Encabezado -->
-  <ProjectHeader project={project} rates={rates} />
+  <ProjectHeader project={project} />
 
   <!-- 02 Galería -->
   <ProjectGallery project={project} />

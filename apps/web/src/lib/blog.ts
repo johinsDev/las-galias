@@ -102,13 +102,13 @@ const CTAS: Record<PostCategory, SidebarCta> = {
     title: "¿Aplicas a subsidio VIS?",
     body: "Verifica en 2 minutos si tu proyecto y tu perfil califican.",
     label: "Verificar ahora",
-    href: "/calculadoras#capacidad-de-pago",
+    href: "/simuladores/capacidad-de-pago",
   },
   "guia-de-compra": {
     title: "¿Listo para dar el primer paso?",
     body: "Agenda una cita sin costo con un asesor y resuelve tus dudas.",
     label: "Agendar cita",
-    href: "/contacto",
+    href: "/servicio-al-cliente",
   },
   mercado: {
     title: "Mira los proyectos disponibles",
@@ -128,7 +128,7 @@ const DEFAULT_CTA: SidebarCta = {
   title: "¿Hablamos?",
   body: "Un asesor te acompaña en todo el proceso, sin costo ni compromiso.",
   label: "Déjanos tus datos",
-  href: "/contacto",
+  href: "/servicio-al-cliente",
 };
 
 export function sidebarCta(category: PostCategory | null | undefined): SidebarCta {

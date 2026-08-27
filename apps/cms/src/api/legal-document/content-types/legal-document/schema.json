@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "legal_documents",
+  "info": {
+    "singularName": "legal-document",
+    "pluralName": "legal-documents",
+    "displayName": "Documento legal",
+    "description": "Términos, políticas y cartillas publicados en /legales. Los edita el equipo legal; publicar reconstruye el sitio"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "sectionIdentity": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "sectionContent": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "effectiveDate": {
+      "type": "date",
+      "required": true
+    },
+    "body": {
+      "type": "blocks",
+      "required": true
+    },
+    "sectionSeo": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

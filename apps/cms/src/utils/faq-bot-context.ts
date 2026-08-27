@@ -265,7 +265,7 @@ export async function buildContext(strapi: Core.Strapi, config: FaqBotConfig): P
         ? `- La cuota mensual no debería pasar del ${Number(calculator.maxIncomeRatioPercent)}% de los ingresos del hogar.`
         : null,
       "- La cuota inicial se paga por cuotas durante la construcción, no de una sola vez.",
-      "- En /calculadoras hay simuladores de cuota inicial, crédito hipotecario y capacidad de pago.",
+      "- En /simuladores hay simuladores de cuota inicial, crédito hipotecario y capacidad de pago (uno por página).",
     ].filter(Boolean);
     parts.push(
       `## Condiciones de financiación\n${lines.join("\n")}\n` +

@@ -1,0 +1,35 @@
+---
+/**
+ * The corporate logo.
+ *
+ * Two files rather than one tinted with `currentColor`: the real artwork is
+ * two-tone (dark wordmark + red rule) on light backgrounds and solid white on
+ * the red footer, so a single-colour version would lose the red rule. Both come
+ * from galias.com.co — the Figma file has exporting disabled.
+ *
+ * Rendered as <img> on purpose: each SVG carries its own `.st0`/`.st1` classes
+ * in an internal <style>, which would collide if both were inlined on one page.
+ */
+interface Props {
+  /** `dark` for light backgrounds (header), `light` for the red footer. */
+  variant?: "dark" | "light";
+  /** Rendered height in px. The artwork is 212.17×60, so width follows. */
+  height?: number;
+  class?: string;
+}
+
+const { variant = "dark", height = 30, class: className } = Astro.props;
+
+const ASPECT = 212.17 / 60;
+---
+
+<img
+  src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
+  alt="Las Galias Constructora"
+  width={Math.round(height * ASPECT)}
+  height={height}
+  class:list={["w-auto", className]}
+  style={`height:${height}px`}
+  loading="eager"
+  decoding="async"
+/>

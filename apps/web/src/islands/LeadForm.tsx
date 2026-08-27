@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Field, Form, setInput, useForm } from "@formisch/react";
 
-import { ForeignLeadSchema, LeadSchema } from "@lasgalias/schemas";
+import { DATA_POLICY_SLUG, ForeignLeadSchema, LeadSchema } from "@lasgalias/schemas";
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
 import { Textarea } from "@lasgalias/ui/components/textarea";
@@ -221,8 +221,16 @@ export default function LeadForm({
                 className="accent-ink mt-1"
               />
               <span>
-                Acepto la política de tratamiento de datos personales de Constructora Las Galias
-                (Ley 1581 de 2012).
+                Acepto la{" "}
+                <a
+                  href={`/legales/${DATA_POLICY_SLUG}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand underline"
+                >
+                  política de tratamiento de datos personales
+                </a>{" "}
+                de Constructora Las Galias (Ley 1581 de 2012).
               </span>
             </label>
             {field.errors && (

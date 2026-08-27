@@ -1,7 +1,13 @@
 ---
+import { extractHeadings, textOf } from "@/lib/blocks";
+
 /**
  * Minimal renderer for Strapi's "blocks" rich text (paragraphs, headings,
  * lists, quotes and images). Inline marks (bold/italic) are flattened to text.
+ *
+ * Level-2 headings carry an anchor id, computed with the same helper the legal
+ * pages use to build their side index — one function, so a heading and the
+ * index entry pointing at it can never disagree.
  */
 interface BlockChild {
   text?: string;
@@ -21,7 +27,7 @@ interface Props {
 }
 
 type Rendered =
-  | { kind: "h2"; text: string }
+  | { kind: "h2"; text: string; id: string }
   | { kind: "h3"; text: string }
   | { kind: "quote"; text: string }
   | { kind: "p"; text: string }
@@ -32,15 +38,18 @@ type Rendered =
 const { content } = Astro.props;
 const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
 
-function textOf(children: BlockChild[] | undefined): string {
-  if (!children) return "";
-  return children.map((c) => c.text ?? textOf(c.children)).join("");
-}
+// Ids come from the same pass the index uses, so duplicate headings are
+// disambiguated identically in both places.
+const headingIds = extractHeadings(content).map((h) => h.id);
+let headingCursor = 0;
 
 const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
   if (block.type === "heading") {
     const text = textOf(block.children);
-    return (block.level ?? 2) <= 2 ? [{ kind: "h2", text }] : [{ kind: "h3", text }];
+    if ((block.level ?? 2) <= 2) {
+      return [{ kind: "h2", text, id: headingIds[headingCursor++] ?? "" }];
+    }
+    return [{ kind: "h3", text }];
   }
   if (block.type === "quote") {
     return [{ kind: "quote", text: textOf(block.children) }];
@@ -61,7 +70,9 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
   {
     rendered.map((node) =>
       node.kind === "h2" ? (
-        <h2 class="text-h2 text-ink mt-8 font-bold">{node.text}</h2>
+        <h2 id={node.id || undefined} class="text-h2 text-ink mt-8 scroll-mt-24 font-bold">
+          {node.text}
+        </h2>
       ) : node.kind === "h3" ? (
         <h3 class="text-h3 text-ink mt-6 font-bold">{node.text}</h3>
       ) : node.kind === "quote" ? (

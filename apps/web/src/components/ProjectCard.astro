@@ -9,12 +9,9 @@ interface Props {
   project: Project;
   /** Dense listing grid: drops the logo, the delivery footer and the CTA. */
   compact?: boolean;
-  /** Price rendered in USD first, for the foreign-buyer landing. */
-  usdFirst?: boolean;
-  rates?: { copPerUsd: number; copPerEur: number } | null;
 }
 
-const { project, compact = false, usdFirst = false, rates = null } = Astro.props;
+const { project, compact = false } = Astro.props;
 const hero = project.heroDesktop ?? project.heroMobile;
 const isExpectation = project.stage === "expectation";
 
@@ -170,12 +167,11 @@ const whatsappHref = project.salesRoom?.whatsappUrl;
         !isExpectation && project.priceFromCOP ? (
           <>
             <p class="text-caption text-ink-muted mt-3">Precio desde</p>
+            {/* Always COP in the HTML. The header's currency selector rewrites
+                it from `data-price-cop`, which is what lets a card show USD or
+                EUR — a card baked in USD could not be switched back. */}
             <p class="text-ink text-lg font-bold">
-              <Price
-                copValue={project.priceFromCOP}
-                currency={usdFirst ? "USD" : "COP"}
-                rates={rates}
-              />
+              <Price copValue={project.priceFromCOP} />
             </p>
           </>
         ) : (

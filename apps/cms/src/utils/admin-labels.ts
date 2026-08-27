@@ -331,6 +331,62 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     content: { label: "Contenido" },
     seo: { label: "SEO" },
   },
+  "api::legal-document.legal-document": {
+    sectionIdentity: {
+      label: "Identificación",
+      description: "Cómo aparece el documento en la lista de /legales.",
+    },
+    title: { label: "Título" },
+    slug: {
+      label: "URL",
+      description: "Se publica en /legales/… Cambiarlo rompe los enlaces que ya circulan.",
+    },
+    order: { label: "Orden", description: "Menor primero. Define el orden de las pestañas." },
+    sectionContent: { label: "Contenido" },
+    effectiveDate: {
+      label: "Última actualización",
+      description: "La fecha que se muestra al inicio del documento.",
+    },
+    body: {
+      label: "Texto del documento",
+      description: "Los títulos de nivel 2 arman el índice lateral automáticamente.",
+    },
+    sectionSeo: { label: "SEO" },
+    seo: { label: "SEO" },
+  },
+  "api::pqr.pqr": {
+    sectionTicket: {
+      label: "Radicación",
+      description: "Lo asigna el sistema al recibir la solicitud.",
+    },
+    radicado: { label: "Radicado" },
+    type: { label: "Tipo de solicitud" },
+    status: { label: "Estado" },
+    responseDueAt: {
+      label: "Responder antes de",
+      description: "15 días hábiles desde la radicación (Ley 1755 de 2015). No descuenta festivos.",
+    },
+    sectionRequester: { label: "Solicitante" },
+    name: { label: "Nombre" },
+    email: { label: "Correo" },
+    phone: { label: "Teléfono" },
+    documentNumber: { label: "Documento de identidad" },
+    sectionRequest: { label: "Solicitud" },
+    subject: { label: "Asunto" },
+    message: { label: "Mensaje" },
+    project: { label: "Proyecto" },
+    tower: { label: "Torre o etapa" },
+    unit: { label: "Apartamento o casa" },
+    deliveredAt: { label: "Fecha de entrega" },
+    attachments: { label: "Adjuntos" },
+    acceptsDataPolicy: { label: "Aceptó la política de datos" },
+    sectionInternal: { label: "Gestión interna" },
+    notifiedAt: {
+      label: "Notificado el",
+      description: "Vacío significa que el correo de aviso no salió.",
+    },
+    internalNotes: { label: "Notas internas", description: "No se le muestran al solicitante." },
+  },
 };
 
 const COMPONENTS: Record<string, FieldLabels> = {

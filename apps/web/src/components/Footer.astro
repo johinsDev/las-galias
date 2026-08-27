@@ -1,5 +1,13 @@
 ---
+import Logo from "@/components/Logo.astro";
+import { LEGAL_DOCUMENTS } from "@lasgalias/schemas";
+
 const year = new Date().getFullYear();
+
+// Only the two documents people actually look for go in the footer; the other
+// four are one click away on /legales. Slugs come from the shared list so the
+// footer, the pages and the CMS seed cannot drift apart.
+const [terms, privacy] = LEGAL_DOCUMENTS;
 
 const columns = [
   {
@@ -7,47 +15,70 @@ const columns = [
     links: [
       { label: "Todos los proyectos", href: "/proyectos" },
       { label: "Macroproyectos", href: "/macroproyectos" },
-      { label: "Sobre planos", href: "/proyectos" },
+      { label: "Compra desde el exterior", href: "/compra-desde-el-exterior" },
     ],
   },
   {
     title: "Empresa",
     links: [
-      { label: "Nosotros", href: "/nosotros" },
+      { label: "Quienes somos", href: "/nosotros" },
       { label: "Blog", href: "/blog" },
-      { label: "Trabaja con nosotros", href: "/contacto" },
+      { label: "Calculadoras", href: "/simuladores" },
     ],
   },
   {
-    title: "Contacto",
+    title: "Atención",
     links: [
-      { label: "Servicio al cliente", href: "/contacto" },
-      { label: "Agenda tu cita", href: "/contacto" },
-      { label: "Compra desde el exterior", href: "/compra-desde-el-exterior" },
+      { label: "Servicio al cliente", href: "/servicio-al-cliente" },
+      { label: "Radicar un PQR", href: "/servicio-al-cliente" },
+      { label: "sala@lasgalias.com.co", href: "mailto:sala@lasgalias.com.co" },
+    ],
+  },
+  {
+    title: "Legales",
+    links: [
+      { label: terms.title, href: `/legales/${terms.slug}` },
+      { label: privacy.title, href: `/legales/${privacy.slug}` },
+      { label: "Todos los documentos", href: "/legales" },
     ],
   },
 ];
+
+const socials = [
+  { label: "Instagram", short: "ig", href: "https://www.instagram.com/lasgaliasc/" },
+  { label: "Facebook", short: "fb", href: "https://www.facebook.com/ConstructoralasGalias" },
+  {
+    label: "YouTube",
+    short: "yt",
+    href: "https://www.youtube.com/channel/UC4NnF-NhRKba5kIdzSS680A",
+  },
+  { label: "LinkedIn", short: "in", href: "https://www.linkedin.com/company/galias" },
+];
 ---
 
-<footer class="bg-ink-900 text-white">
-  <div class="container grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+{
+  /* Brand red band. Secondary text sits at white/80 and above: on #cc2c3d the
+    old white/55 fell under the 4.5:1 contrast ratio. */
+}
+<footer class="bg-brand text-white">
+  <div class="container grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
     <div>
-      <div class="flex items-center gap-2">
-        <span class="inline-block size-6 rounded-md bg-white"></span>
-        <span class="text-[1.05rem] font-extrabold tracking-tight">LAS GALIAS</span>
-      </div>
-      <p class="text-body-sm mt-3 max-w-xs text-white/55">
+      <Logo variant="light" height={26} />
+      <p class="text-body-sm mt-4 max-w-xs text-white/85">
         Construimos los lugares donde vive Colombia. +30 mil viviendas entregadas.
       </p>
       <div class="mt-5 flex gap-2">
         {
-          ["in", "ig", "fb", "yt"].map((s) => (
-            <span
-              class="flex size-9 items-center justify-center rounded-lg bg-white/10 text-xs font-semibold text-white/70"
-              aria-hidden="true"
+          socials.map((s) => (
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={s.label}
+              class="flex size-9 items-center justify-center rounded-lg bg-white/15 text-xs font-semibold text-white transition-colors hover:bg-white/25"
             >
-              {s}
-            </span>
+              <span aria-hidden="true">{s.short}</span>
+            </a>
           ))
         }
       </div>
@@ -55,13 +86,13 @@ const columns = [
     {
       columns.map((col) => (
         <nav aria-label={col.title}>
-          <p class="eyebrow text-white/40">{col.title}</p>
+          <p class="eyebrow text-white/75">{col.title}</p>
           <ul class="mt-4 space-y-2.5">
             {col.links.map((link) => (
               <li>
                 <a
                   href={link.href}
-                  class="text-body-sm text-white/70 transition-colors hover:text-white"
+                  class="text-body-sm text-white/85 transition-colors hover:text-white"
                 >
                   {link.label}
                 </a>
@@ -72,12 +103,12 @@ const columns = [
       ))
     }
   </div>
-  <div class="border-t border-white/10">
+  <div class="border-t border-white/25">
     <div class="container flex flex-col gap-2 py-6 md:flex-row md:items-center md:justify-between">
-      <p class="text-caption text-white/45">
+      <p class="text-caption text-white/80">
         © {year} Constructora Las Galias. Todos los derechos reservados.
       </p>
-      <p class="text-caption text-white/45">
+      <p class="text-caption text-white/80">
         Vigilado Superintendencia de Sociedades · NIT 900.000.000-0
       </p>
     </div>

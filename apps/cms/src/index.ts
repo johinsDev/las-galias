@@ -5,6 +5,7 @@ import { applyAdminLayouts } from "./utils/admin-layouts";
 import { scheduleDeploy } from "./utils/deploy-hook";
 import { ensureConfig, invalidateContext } from "./utils/faq-bot-context";
 import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
+import { PQR_UID, scheduleNotifyPqr, stampPqr } from "./utils/pqr-rules";
 import {
   createAutoRedirect,
   disableAutoRedirect,
@@ -37,6 +38,7 @@ const PUBLIC_UIDS = new Set<string>([
   "api::redirect.redirect",
   "api::faq.faq",
   "api::foreign-buyer-page.foreign-buyer-page",
+  "api::legal-document.legal-document",
 ]);
 
 const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"]);
@@ -50,6 +52,11 @@ const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"
 const DEPLOY_ON_UPDATE = new Set<string>([
   "api::faq-bot-config.faq-bot-config",
   "api::calculator-config.calculator-config",
+  // The daily cron writes here, and the site is static: without a redeploy the
+  // TRM refreshes in the CMS every morning and the published pages keep quoting
+  // whatever rate was current at the last build. USD and EUR prices were stale
+  // by however long it had been since someone published something else.
+  "api::exchange-rate.exchange-rate",
 ]);
 
 export default {
@@ -105,6 +112,13 @@ export default {
         guardSincoCatalog(action);
       }
 
+      // Before next(): the radicado has to exist on the row from the very first
+      // write. It is the receipt the citizen is shown, and a PQR that exists for
+      // even a moment without one is a PQR that cannot be quoted back.
+      if (uid === PQR_UID && action === "create") {
+        await stampPqr(strapi, params);
+      }
+
       if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {
           // NOTE: pulling from Sinco does NOT happen here on purpose — see
@@ -131,6 +145,13 @@ export default {
       if (uid === LEAD_UID && action === "create") {
         const documentId = (result as { documentId?: string } | undefined)?.documentId;
         if (documentId) schedulePushLeadToCrm(strapi, documentId);
+      }
+
+      // Same shape as the lead push, same reason: the person filing a complaint
+      // must never wait on an SMTP server to get their radicado back.
+      if (uid === PQR_UID && action === "create") {
+        const documentId = (result as { documentId?: string } | undefined)?.documentId;
+        if (documentId) scheduleNotifyPqr(strapi, documentId);
       }
 
       const changesTheSite =
@@ -170,6 +191,7 @@ export default {
       "api::home-banner.home-banner",
       "api::redirect.redirect",
       "api::faq.faq",
+      "api::legal-document.legal-document",
     ].flatMap((uid) => [`${uid}.find`, `${uid}.findOne`]);
     const singles = [
       "api::calculator-config.calculator-config.find",
@@ -180,6 +202,9 @@ export default {
       ...reads,
       ...singles,
       "api::lead.lead.create",
+      // Create only, never read: a PQR carries a name, an email and a
+      // complaint, so a public `find` would publish other people's grievances.
+      "api::pqr.pqr.create",
       // The assistant. Its config single type is deliberately NOT public — the
       // site reads the two fields it needs through faq-bot.publicConfig.
       "api::faq-bot.faq-bot.ask",

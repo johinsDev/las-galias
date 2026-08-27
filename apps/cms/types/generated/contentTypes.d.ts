@@ -796,6 +796,44 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiLegalDocumentLegalDocument extends Struct.CollectionTypeSchema {
+  collectionName: "legal_documents";
+  info: {
+    description: "T\u00E9rminos, pol\u00EDticas y cartillas publicados en /legales. Los edita el equipo legal; publicar reconstruye el sitio";
+    displayName: "Documento legal";
+    pluralName: "legal-documents";
+    singularName: "legal-document";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    body: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    effectiveDate: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::legal-document.legal-document"> &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    sectionContent: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionIdentity: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionSeo: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema {
   collectionName: "macroprojects";
   info: {
@@ -894,6 +932,65 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     seo: Schema.Attribute.Component<"shared.seo", false>;
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPqrPqr extends Struct.CollectionTypeSchema {
+  collectionName: "pqrs";
+  info: {
+    description: "Peticiones, quejas, reclamos, sugerencias y solicitudes de postventa radicadas desde /servicio-al-cliente. NO se env\u00EDan al CRM: un reclamo no es un lead comercial";
+    displayName: "PQR";
+    pluralName: "pqrs";
+    singularName: "pqr";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    acceptsDataPolicy: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    attachments: Schema.Attribute.Media<"images" | "files", true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    deliveredAt: Schema.Attribute.Date;
+    documentNumber: Schema.Attribute.String;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    internalNotes: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::pqr.pqr"> &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    notifiedAt: Schema.Attribute.DateTime;
+    phone: Schema.Attribute.String & Schema.Attribute.Required;
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
+    publishedAt: Schema.Attribute.DateTime;
+    radicado: Schema.Attribute.String & Schema.Attribute.Unique;
+    responseDueAt: Schema.Attribute.Date;
+    sectionInternal: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionRequest: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionRequester: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionTicket: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    status: Schema.Attribute.Enumeration<["recibido", "en-tramite", "resuelto", "cerrado"]> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"recibido">;
+    subject: Schema.Attribute.String & Schema.Attribute.Required;
+    tower: Schema.Attribute.String;
+    type: Schema.Attribute.Enumeration<
+      ["peticion", "queja", "reclamo", "sugerencia", "postventa"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"peticion">;
+    unit: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1497,9 +1594,11 @@ declare module "@strapi/strapi" {
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::job-run.job-run": ApiJobRunJobRun;
       "api::lead.lead": ApiLeadLead;
+      "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;
       "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
       "api::post.post": ApiPostPost;
+      "api::pqr.pqr": ApiPqrPqr;
       "api::project.project": ApiProjectProject;
       "api::redirect.redirect": ApiRedirectRedirect;
       "api::sinco-project.sinco-project": ApiSincoProjectSincoProject;

@@ -1,0 +1,106 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pqrs",
+  "info": {
+    "singularName": "pqr",
+    "pluralName": "pqrs",
+    "displayName": "PQR",
+    "description": "Peticiones, quejas, reclamos, sugerencias y solicitudes de postventa radicadas desde /servicio-al-cliente. NO se envían al CRM: un reclamo no es un lead comercial"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sectionTicket": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "radicado": {
+      "type": "string",
+      "unique": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["peticion", "queja", "reclamo", "sugerencia", "postventa"],
+      "default": "peticion",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["recibido", "en-tramite", "resuelto", "cerrado"],
+      "default": "recibido",
+      "required": true
+    },
+    "responseDueAt": {
+      "type": "date"
+    },
+    "sectionRequester": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "documentNumber": {
+      "type": "string"
+    },
+    "sectionRequest": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project"
+    },
+    "tower": {
+      "type": "string"
+    },
+    "unit": {
+      "type": "string"
+    },
+    "deliveredAt": {
+      "type": "date"
+    },
+    "attachments": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images", "files"]
+    },
+    "acceptsDataPolicy": {
+      "type": "boolean",
+      "required": true
+    },
+    "sectionInternal": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "notifiedAt": {
+      "type": "datetime"
+    },
+    "internalNotes": {
+      "type": "text"
+    }
+  }
+}

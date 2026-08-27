@@ -1,0 +1,119 @@
+---
+import SimulatorDisclaimer from "@/components/SimulatorDisclaimer.astro";
+import Base from "@/layouts/Base.astro";
+import { getSimulatorSettings, SIMULATORS } from "@/lib/simulator-pages";
+
+const settings = await getSimulatorSettings();
+
+// 2026 figures. VIS/VIP ceilings are set in UVT and change every year, so they
+// live here as copy an editor can correct rather than as computed values.
+const subsidies = [
+  {
+    name: "Mi Casa Ya",
+    body: "Subsidio del Gobierno Nacional a la cuota inicial y a la tasa de interés. Aplica sobre vivienda VIS de hasta 135 SMMLV y depende de tus ingresos y de que no seas propietario de vivienda en Colombia.",
+  },
+  {
+    name: "Cajas de compensación",
+    body: "Si estás afiliado a una caja (Compensar, Colsubsidio, Cafam…), puedes postularte a su subsidio de vivienda. Es compatible con el crédito hipotecario y se asigna por puntaje.",
+  },
+  {
+    name: "Cesantías y ahorro programado",
+    body: "Tus cesantías pueden usarse para la cuota inicial sin sanción, y el ahorro programado con un banco cuenta como respaldo al momento de solicitar el crédito.",
+  },
+];
+---
+
+<Base
+  title="Calculadoras y simuladores — Las Galias"
+  description="Simula tu cuota inicial, tu crédito hipotecario y tu capacidad de pago antes de hablar con un asesor."
+>
+  <section class="border-line border-b">
+    <div class="container py-12 text-center md:py-16">
+      <p class="eyebrow text-brand" data-reveal>Calculadoras / Simuladores</p>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-2xl font-extrabold" data-reveal>
+        Planea tu compra
+      </h1>
+      <p class="text-ink-muted mx-auto mt-4 max-w-xl" data-reveal>
+        Tres herramientas para saber cuánto necesitas ahorrar, cuánto pagarías al mes y hasta dónde
+        te alcanza, antes de hablar con un asesor.
+      </p>
+    </div>
+  </section>
+
+  <section class="container py-12 md:py-16">
+    <div class="grid gap-4 md:grid-cols-3">
+      {
+        SIMULATORS.map((simulator) => (
+          <a
+            href={`/simuladores/${simulator.slug}`}
+            class="border-line hover:border-brand group flex flex-col rounded-2xl border bg-white p-6 transition-colors"
+            data-reveal
+          >
+            <span class="chip bg-surface text-label w-fit uppercase">{simulator.eyebrow}</span>
+            <h2 class="text-h4 text-ink group-hover:text-brand mt-4 font-semibold transition-colors">
+              {simulator.title}
+            </h2>
+            <p class="text-body-sm text-ink-muted mt-2 grow">{simulator.body}</p>
+            <span class="text-body-sm text-brand mt-4 font-medium">Abrir simulador →</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <SimulatorDisclaimer annualInterestRate={settings.annualInterestRate} />
+
+  <section class="bg-surface border-line border-y" id="subsidio">
+    <div class="container py-12 md:py-16">
+      <div class="text-center" data-reveal>
+        <p class="eyebrow">Subsidios</p>
+        <h2 class="text-h3 text-ink mt-2 font-bold">¿Aplicas a subsidio VIS?</h2>
+        <p class="text-ink-muted mx-auto mt-3 max-w-2xl">
+          La vivienda de interés social tiene beneficios que pueden reducir de forma importante lo
+          que financias. Estos son los que más usan nuestros compradores.
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {
+          subsidies.map((subsidy) => (
+            <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+              <h3 class="text-h4 text-ink font-semibold">{subsidy.name}</h3>
+              <p class="text-body-sm text-ink-muted mt-2">{subsidy.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="text-caption text-ink-muted mx-auto mt-8 max-w-2xl text-center">
+        Los topes y requisitos los fija el Gobierno Nacional y cambian cada año. Confirma tu caso
+        con un asesor antes de tomar una decisión.
+      </p>
+
+      <div class="mt-8 text-center" data-reveal>
+        <a href="/servicio-al-cliente" class="btn btn-primary">Quiero que me asesoren</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  /**
+   * Old deep links pointed at anchors on the single /calculadoras page
+   * (#cuota-inicial, #credito-hipotecario, #capacidad-de-pago). The 301 lands
+   * them here with the fragment intact, but a fragment never reaches the
+   * server, so no HTTP redirect could have taken them to the right simulator.
+   * Forward them here instead. #subsidio still exists on this page and is left
+   * alone.
+   */
+  const SIMULATOR_HASHES = new Set(["cuota-inicial", "credito-hipotecario", "capacidad-de-pago"]);
+
+  function forwardLegacyAnchor() {
+    const target = location.hash.replace(/^#/, "");
+    if (!SIMULATOR_HASHES.has(target)) return;
+    location.replace(`/simuladores/${target}`);
+  }
+
+  forwardLegacyAnchor();
+  document.addEventListener("astro:page-load", forwardLegacyAnchor);
+</script>
