@@ -247,7 +247,7 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
                 Respuesta generada con IA a partir de nuestra información publicada. Confirma
                 precios y disponibilidad con un asesor.
               </p>
-              <a href="/contacto" className="btn btn-outline px-4 py-2.5 text-sm">
+              <a href="/servicio-al-cliente" className="btn btn-outline px-4 py-2.5 text-sm">
                 Hablar con un asesor
               </a>
             </div>

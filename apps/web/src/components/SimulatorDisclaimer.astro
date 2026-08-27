@@ -1,0 +1,15 @@
+---
+interface Props {
+  annualInterestRate: number;
+}
+const { annualInterestRate } = Astro.props;
+---
+
+<section class="container py-10">
+  <p class="text-caption text-ink-muted mx-auto max-w-3xl text-center">
+    Los resultados son estimaciones con fines informativos y no constituyen una oferta de crédito.
+    No incluyen seguros, avalúo ni gastos de escrituración. La tasa de referencia ({
+      annualInterestRate
+    }% E.A.) la administra Las Galias y se actualiza cuando cambian las condiciones del mercado.
+  </p>
+</section>

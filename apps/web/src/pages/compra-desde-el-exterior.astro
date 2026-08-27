@@ -5,12 +5,11 @@ import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import LeadForm from "@/islands/LeadForm";
 import Base from "@/layouts/Base.astro";
-import { getExchangeRate, getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
+import { getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
 
-const [page, projects, rates, faqs] = await Promise.all([
+const [page, projects, faqs] = await Promise.all([
   getForeignBuyerPage(),
   getProjects(),
-  getExchangeRate(),
   getFaqs("exterior"),
 ]);
 
@@ -143,7 +142,7 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
           <>
             <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-city-grid>
               {sellable.map((project) => (
-                <ProjectCard project={project} usdFirst rates={rates} />
+                <ProjectCard project={project} />
               ))}
             </div>
             <p class="text-caption text-ink-muted mx-auto mt-8 max-w-3xl text-center">

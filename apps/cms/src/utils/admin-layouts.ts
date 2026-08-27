@@ -158,14 +158,35 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["formBullets"],
     ["seo"],
   ],
+  "api::legal-document.legal-document": [
+    ["sectionIdentity"],
+    ["title:8", "order:4"],
+    ["slug"],
+    ["sectionContent"],
+    ["effectiveDate:4"],
+    ["body"],
+    ["sectionSeo"],
+    ["seo"],
+  ],
+  "api::pqr.pqr": [
+    ["sectionTicket"],
+    ["radicado:4", "type:4", "status:4"],
+    ["responseDueAt:4", "notifiedAt:4"],
+    ["sectionRequester"],
+    ["name:6", "documentNumber:6"],
+    ["email:6", "phone:6"],
+    ["sectionRequest"],
+    ["subject"],
+    ["message"],
+    ["project:6", "deliveredAt:6"],
+    ["tower:6", "unit:6"],
+    ["attachments"],
+    ["acceptsDataPolicy:6"],
+    ["sectionInternal"],
+    ["internalNotes"],
+  ],
 };
 
-/**
- * Columns of the list view.
- *
- * The default is "the first four attributes", which on a project means wasting
- * two columns on the slug and on a switch, and none on the price or the city.
- */
 const LIST_LAYOUTS: Record<string, string[]> = {
   "api::project.project": ["name", "city", "stage", "constructionStatus", "priceFromCOP"],
   "api::lead.lead": ["name", "phone", "project", "crmStatus", "createdAt"],
@@ -181,6 +202,8 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::redirect.redirect": ["from", "to", "enabled", "source"],
   "api::job-run.job-run": ["task", "status", "ranAt", "durationMs"],
   "api::faq-bot-question.faq-bot-question": ["question", "wasCached", "model", "askedAt"],
+  "api::legal-document.legal-document": ["title", "slug", "effectiveDate", "order"],
+  "api::pqr.pqr": ["radicado", "type", "subject", "status", "responseDueAt"],
 };
 
 /**
@@ -196,6 +219,10 @@ const READ_ONLY: Record<string, string[] | "*"> = {
   "api::sinco-project.sinco-project": "*",
   "api::job-run.job-run": "*",
   "api::faq-bot-question.faq-bot-question": "*",
+  // Assigned by the system when the form is submitted. Editing a radicado
+  // would break the receipt the citizen was given; `notifiedAt` is evidence
+  // that the alert went out, not a field to tick.
+  "api::pqr.pqr": ["radicado", "notifiedAt"],
 };
 
 /** Strapi refuses any size other than 12 for these, and drops the field if given one. */

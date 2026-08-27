@@ -1,5 +1,5 @@
 /**
- * Shared math for the three simulators on /calculadoras.
+ * Shared math for the three simulators under /simuladores.
  *
  * Colombian lenders quote an EFFECTIVE annual rate (E.A.), so the monthly rate
  * is its twelfth root — dividing by 12 would understate every instalment.

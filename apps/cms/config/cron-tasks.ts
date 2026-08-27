@@ -76,31 +76,33 @@ export default {
    */
   refreshExchangeRates: {
     async task({ strapi }: { strapi: Core.Strapi }) {
-      const provider = createRateProvider();
-      try {
-        const usd = await provider.getRate("USD");
-        const eur = await provider.getRate("EUR");
-        const data = {
-          copPerUsd: usd.rate,
-          copPerEur: eur.rate,
-          usdSource: usd.source,
-          eurSource: eur.source,
-          validFrom: usd.asOf,
-          fetchedAt: new Date().toISOString(),
-        };
+      await runTracked(
+        strapi,
+        "Tasas de cambio",
+        async () => {
+          const provider = createRateProvider();
+          const usd = await provider.getRate("USD");
+          const eur = await provider.getRate("EUR");
+          const data = {
+            copPerUsd: usd.rate,
+            copPerEur: eur.rate,
+            usdSource: usd.source,
+            eurSource: eur.source,
+            validFrom: usd.asOf,
+            fetchedAt: new Date().toISOString(),
+          };
 
-        const current = await strapi.documents(RATE_UID).findFirst();
-        if (current) {
-          await strapi.documents(RATE_UID).update({ documentId: current.documentId, data });
-        } else {
-          await strapi.documents(RATE_UID).create({ data });
-        }
-        strapi.log.info(
-          `Exchange rates refreshed: USD=${usd.rate.toFixed(2)} EUR=${eur.rate.toFixed(2)} (${usd.asOf})`,
-        );
-      } catch (err) {
-        strapi.log.error(`Exchange rate refresh failed: ${String(err)}`);
-      }
+          const current = await strapi.documents(RATE_UID).findFirst();
+          if (current) {
+            await strapi.documents(RATE_UID).update({ documentId: current.documentId, data });
+          } else {
+            await strapi.documents(RATE_UID).create({ data });
+          }
+          return { usd, eur };
+        },
+        ({ usd, eur }) =>
+          `USD=${usd.rate.toFixed(2)} (${usd.asOf}) · EUR=${eur.rate.toFixed(2)} (${eur.asOf})`,
+      );
     },
     options: {
       rule: "0 0 6 * * *",

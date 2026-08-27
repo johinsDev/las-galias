@@ -1,0 +1,187 @@
+---
+import type { LegalDocument } from "@lasgalias/schemas";
+
+import Blocks from "@/components/Blocks.astro";
+import Base from "@/layouts/Base.astro";
+import { extractHeadings } from "@/lib/blocks";
+import { formatCalendarDate } from "@/lib/dates";
+import { getLegalDocuments } from "@/lib/strapi";
+
+export async function getStaticPaths() {
+  const documents = await getLegalDocuments();
+  return documents.map((doc) => ({
+    params: { slug: doc.slug },
+    props: { doc, documents },
+  }));
+}
+
+type Props = { doc: LegalDocument; documents: LegalDocument[] };
+
+const { doc, documents } = Astro.props;
+const headings = extractHeadings(doc.body);
+
+const updated = formatCalendarDate(doc.effectiveDate);
+---
+
+<Base
+  title={doc.seo?.metaTitle ?? `${doc.title} — Las Galias`}
+  description={doc.seo?.metaDescription ?? `${doc.title} de Constructora Las Galias.`}
+>
+  <section class="border-line border-b">
+    <div class="container py-10 md:py-14">
+      <p class="eyebrow text-brand">Legales</p>
+      <h1 class="text-h1 text-ink mt-3 font-extrabold">{doc.title}</h1>
+
+      {
+        /* One chip per document. With six of them these wrap to a second row on
+          desktop, which the design accepts; a dropdown only earns its place if
+          the list grows again. */
+      }
+      <nav aria-label="Documentos legales" class="mt-7 flex flex-wrap gap-2">
+        {
+          documents.map((other) => (
+            <a
+              href={`/legales/${other.slug}`}
+              class:list={[
+                "chip transition-colors",
+                other.slug === doc.slug ? "bg-ink border-ink text-white" : "hover:bg-surface",
+              ]}
+              aria-current={other.slug === doc.slug ? "page" : undefined}
+            >
+              {other.title}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </section>
+
+  <div class="container py-10 md:py-14">
+    <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+      {
+        /* The index is navigation, not content: on a phone it collapses into a
+          plain <details> so the document itself is the first thing on screen. */
+      }
+      {
+        headings.length > 1 && (
+          <aside class="lg:sticky lg:top-24 lg:self-start">
+            <details id="legal-index-box" class="border-line rounded-2xl border" open>
+              <summary class="text-label text-ink-muted cursor-pointer px-5 py-4 uppercase lg:pointer-events-none">
+                Contenido
+              </summary>
+              <ul id="legal-index" class="space-y-1.5 px-5 pb-5">
+                {headings.map((heading) => (
+                  <li>
+                    <a
+                      href={`#${heading.id}`}
+                      data-index-link={heading.id}
+                      class="text-body-sm text-ink-muted hover:text-ink block transition-colors"
+                    >
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </aside>
+        )
+      }
+
+      <article class="max-w-3xl min-w-0">
+        <p class="text-caption text-ink-faint">Última actualización: {updated}</p>
+        <div class="mt-6">
+          <Blocks content={doc.body} />
+        </div>
+      </article>
+    </div>
+  </div>
+</Base>
+
+<style>
+  /* The <details> is only collapsible on phones; from lg it is always open. */
+  @media (min-width: 1024px) {
+    details > summary {
+      list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Scroll-spy for the side index: marks the clause currently on screen.
+   *
+   * Uses IntersectionObserver against the headings rather than scroll maths, so
+   * it costs nothing while idle. Re-bound on `astro:page-load` because
+   * <ClientRouter /> swaps the document without reloading the script.
+   */
+  let observer: IntersectionObserver | null = null;
+
+  const ACTIVE = ["text-ink", "font-semibold"];
+  const IDLE = ["text-ink-muted"];
+
+  /**
+   * The index ships open so it is usable without JavaScript and so search
+   * engines see the links. On a phone the design wants the document first, so
+   * collapse it here — below lg only, and only on first paint.
+   */
+  function collapseIndexOnMobile() {
+    const box = document.getElementById("legal-index-box");
+    if (box instanceof HTMLDetailsElement && window.matchMedia("(max-width: 1023px)").matches) {
+      box.open = false;
+    }
+  }
+
+  function setupScrollSpy() {
+    observer?.disconnect();
+    collapseIndexOnMobile();
+
+    const index = document.getElementById("legal-index");
+    if (!index) return;
+
+    const links = new Map<string, HTMLElement>();
+    index.querySelectorAll<HTMLElement>("[data-index-link]").forEach((link) => {
+      const id = link.dataset.indexLink;
+      if (id) links.set(id, link);
+    });
+    if (links.size === 0) return;
+
+    const headings = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const visible = new Set<string>();
+
+    const paint = () => {
+      // With several headings on screen the topmost one wins, which is what the
+      // reader perceives as "where I am".
+      const current = headings.find((h) => visible.has(h.id))?.id;
+      links.forEach((link, id) => {
+        const on = id === current;
+        if (on) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+        link.classList.remove(...ACTIVE, ...IDLE);
+        link.classList.add(...(on ? ACTIVE : IDLE));
+      });
+    };
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        paint();
+      },
+      // Only the band just under the sticky header counts as "current".
+      { rootMargin: "-96px 0px -70% 0px" },
+    );
+
+    headings.forEach((heading) => observer?.observe(heading));
+  }
+
+  setupScrollSpy();
+  document.addEventListener("astro:page-load", setupScrollSpy);
+</script>

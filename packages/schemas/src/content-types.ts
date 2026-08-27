@@ -282,3 +282,20 @@ export interface ExchangeRate {
   validFrom?: string | null;
   fetchedAt?: string | null;
 }
+
+/**
+ * A published legal document (terms, privacy policy, the sale cartillas).
+ * `body` is Strapi "blocks"; its level-2 headings become the side index on
+ * /legales/[slug].
+ */
+export interface LegalDocument {
+  documentId: string;
+  title: string;
+  slug: string;
+  order?: number;
+  /** Shown as "Última actualización" at the top of the document. */
+  effectiveDate: string;
+  body?: unknown;
+  seo?: Seo | null;
+  publishedAt?: string;
+}

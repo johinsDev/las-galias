@@ -1,0 +1,100 @@
+---
+import LeadForm from "@/islands/LeadForm";
+import PqrForm, { type PqrProjectOption } from "@/islands/PqrForm";
+import Base from "@/layouts/Base.astro";
+import { getProjects } from "@/lib/strapi";
+
+const projects = await getProjects();
+
+// Only what the select needs. The full Project objects would be serialised into
+// the island's props and shipped to the browser.
+const projectOptions: PqrProjectOption[] = projects.map((project) => ({
+  documentId: project.documentId,
+  name: project.name,
+}));
+
+const channels = [
+  {
+    title: "Sala de ventas",
+    body: "Para cotizaciones, disponibilidad y visitas a los proyectos.",
+    action: "sala@lasgalias.com.co",
+    href: "mailto:sala@lasgalias.com.co",
+  },
+  {
+    title: "Postventa",
+    body: "Garantías y arreglos sobre un inmueble ya entregado. Radícalo abajo con tu torre y apartamento a la mano.",
+    action: "Radicar postventa",
+    href: "#radicar",
+  },
+  {
+    title: "Peticiones, quejas y reclamos",
+    body: "Respondemos dentro de los 15 días hábiles que fija la Ley 1755 de 2015.",
+    action: "Radicar PQR",
+    href: "#radicar",
+  },
+];
+---
+
+<Base
+  title="Servicio al cliente — Las Galias"
+  description="Radica una petición, queja, reclamo, sugerencia o solicitud de postventa ante Constructora Las Galias, o habla con un asesor comercial."
+>
+  <section class="border-line border-b">
+    <div class="container py-12 md:py-16">
+      <p class="eyebrow text-brand" data-reveal>Servicio al cliente</p>
+      <h1 class="text-h1 text-ink mt-3 max-w-2xl font-extrabold" data-reveal>
+        Estamos para responderte
+      </h1>
+      <p class="text-ink-muted mt-4 max-w-xl" data-reveal>
+        Si ya eres cliente, radica tu solicitud y te damos un número de seguimiento. Si todavía
+        estás buscando vivienda, un asesor comercial te acompaña.
+      </p>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {
+          channels.map((channel) => (
+            <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+              <h2 class="text-h4 text-ink font-semibold">{channel.title}</h2>
+              <p class="text-body-sm text-ink-muted mt-2">{channel.body}</p>
+              <a href={channel.href} class="text-body-sm text-brand mt-4 inline-block font-medium">
+                {channel.action} →
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-surface border-line border-b" id="radicar">
+    <div class="container py-12 md:py-16">
+      <div class="mx-auto max-w-3xl">
+        <div data-reveal>
+          <p class="eyebrow">Radicación</p>
+          <h2 class="text-h3 text-ink mt-2 font-bold">Radica tu solicitud</h2>
+          <p class="text-body-sm text-ink-muted mt-3">
+            Un solo formulario para peticiones, quejas, reclamos, sugerencias y postventa. Al
+            enviarlo recibes un número de radicado para hacerle seguimiento.
+          </p>
+        </div>
+        <div class="border-line mt-8 rounded-2xl border bg-white p-6 md:p-8" data-reveal>
+          <PqrForm client:visible projects={projectOptions} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container grid gap-12 py-12 md:grid-cols-2 md:py-16">
+    <div data-reveal>
+      <p class="eyebrow">Asesoría comercial</p>
+      <h2 class="text-h3 text-ink mt-2 font-bold">¿Todavía estás buscando?</h2>
+      <p class="text-ink-muted mt-4 max-w-md">
+        Cuéntanos qué estás buscando y uno de nuestros asesores te contacta para acompañarte en todo
+        el proceso. Esto no es una PQR: es una conversación de ventas.
+      </p>
+    </div>
+    <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+      <LeadForm client:visible source="servicio-al-cliente" />
+    </div>
+  </section>
+</Base>

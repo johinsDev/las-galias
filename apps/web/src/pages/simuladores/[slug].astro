@@ -1,0 +1,114 @@
+---
+import SimulatorDisclaimer from "@/components/SimulatorDisclaimer.astro";
+import AffordabilitySimulator from "@/islands/AffordabilitySimulator";
+import DownPaymentSimulator from "@/islands/DownPaymentSimulator";
+import MortgageSimulator from "@/islands/MortgageSimulator";
+import Base from "@/layouts/Base.astro";
+import { getSimulatorSettings, SIMULATORS } from "@/lib/simulator-pages";
+
+export function getStaticPaths() {
+  return SIMULATORS.map((simulator) => ({
+    params: { slug: simulator.slug },
+    props: { simulator },
+  }));
+}
+
+type Props = { simulator: (typeof SIMULATORS)[number] };
+
+const { simulator } = Astro.props;
+const settings = await getSimulatorSettings();
+---
+
+<Base title={`${simulator.title} — Las Galias`} description={simulator.seoDescription}>
+  <section class="border-line border-b">
+    <div class="container py-10 md:py-14">
+      <nav aria-label="Migas" class="text-caption text-ink-muted">
+        <a href="/simuladores" class="hover:text-ink transition-colors">Calculadoras</a>
+        <span aria-hidden="true"> / </span>
+        <span class="text-ink">{simulator.short}</span>
+      </nav>
+
+      <div class="mt-5" data-reveal>
+        <span class="chip bg-surface text-label uppercase">{simulator.eyebrow}</span>
+        <h1 class="text-h1 text-ink mt-3 max-w-2xl font-extrabold">{simulator.title}</h1>
+        <p class="text-ink-muted mt-3 max-w-xl">{simulator.body}</p>
+      </div>
+
+      {
+        /* Sibling simulators stay one tap away: splitting the old single page
+          into four would otherwise have made switching a back-and-forward. */
+      }
+      <div class="mt-8 flex flex-wrap gap-2" data-reveal>
+        {
+          SIMULATORS.map((other) => (
+            <a
+              href={`/simuladores/${other.slug}`}
+              class:list={[
+                "chip transition-colors",
+                other.slug === simulator.slug ? "bg-ink border-ink text-white" : "hover:bg-surface",
+              ]}
+              aria-current={other.slug === simulator.slug ? "page" : undefined}
+            >
+              {other.short}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="container py-12 md:py-16">
+    <div class="mx-auto max-w-4xl" data-reveal>
+      {
+        simulator.slug === "cuota-inicial" && (
+          <DownPaymentSimulator
+            client:visible
+            defaultPriceCOP={settings.startingPrice}
+            maxFinancingPercent={settings.maxFinancingPercent}
+            leasingFinancingPercent={settings.leasingFinancingPercent}
+          />
+        )
+      }
+      {
+        simulator.slug === "credito-hipotecario" && (
+          <MortgageSimulator
+            client:visible
+            defaultPriceCOP={settings.startingPrice}
+            annualInterestRate={settings.annualInterestRate}
+            maxTermYears={settings.maxTermYears}
+            maxFinancingPercent={settings.maxFinancingPercent}
+            maxIncomeRatioPercent={settings.maxIncomeRatioPercent}
+          />
+        )
+      }
+      {
+        simulator.slug === "capacidad-de-pago" && (
+          <AffordabilitySimulator
+            client:visible
+            annualInterestRate={settings.annualInterestRate}
+            maxTermYears={settings.maxTermYears}
+            maxFinancingPercent={settings.maxFinancingPercent}
+            visFinancingPercent={settings.visFinancingPercent}
+            paymentIncomeRatioPercent={settings.paymentIncomeRatioPercent}
+          />
+        )
+      }
+    </div>
+  </section>
+
+  <SimulatorDisclaimer annualInterestRate={settings.annualInterestRate} />
+
+  <section class="bg-surface border-line border-t">
+    <div class="container py-12 text-center md:py-16">
+      <h2 class="text-h3 text-ink font-bold">¿Ya tienes una cifra?</h2>
+      <p class="text-ink-muted mx-auto mt-3 max-w-xl">
+        Un asesor puede confirmarla con las condiciones vigentes de los bancos y revisar si aplicas
+        a subsidio.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href="/servicio-al-cliente" class="btn btn-primary">Quiero que me asesoren</a>
+        <a href="/simuladores#subsidio" class="btn btn-outline">Ver subsidios</a>
+      </div>
+    </div>
+  </section>
+</Base>

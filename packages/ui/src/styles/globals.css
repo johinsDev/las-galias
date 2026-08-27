@@ -30,13 +30,14 @@
   --line-dark: #262a31; /* border on dark bands */
 
   /* brand red — CTAs, badges, step numbers and section eyebrows in the UI.
-     APPROXIMATED from the Figma screenshots; the Figma MCP seat ran out of
-     monthly calls before the variables could be read. Confirm against
-     get_variable_defs (or the design team) before launch. */
-  --brand: #e11d2e;
-  --brand-bright: #c2172a; /* hover / pressed */
+     Taken from the corporate logo itself (public/logo.svg, fill #cc2c3d), which
+     is the only authoritative source available: the Figma file has exporting
+     disabled and the MCP seat is out of calls. galias.com.co paints the same
+     red as #ce253a, close enough to be the same ink. */
+  --brand: #cc2c3d;
+  --brand-bright: #b12635; /* hover / pressed */
   --brand-foreground: #ffffff;
-  --brand-subtle: #fdf5f6; /* pale section background under red headings */
+  --brand-subtle: #fcf4f5; /* pale section background under red headings */
 
   /* shadcn semantic tokens, mapped onto the neutral ramp */
   --radius: 0.875rem;

@@ -9,12 +9,9 @@ interface Props {
   project: Project;
   /** Dense listing grid: drops the logo, the delivery footer and the CTA. */
   compact?: boolean;
-  /** Price rendered in USD first, for the foreign-buyer landing. */
-  usdFirst?: boolean;
-  rates?: { copPerUsd: number; copPerEur: number } | null;
 }
 
-const { project, compact = false, usdFirst = false, rates = null } = Astro.props;
+const { project, compact = false } = Astro.props;
 const hero = project.heroDesktop ?? project.heroMobile;
 const isExpectation = project.stage === "expectation";
 
@@ -27,10 +24,6 @@ const statusLabels: Record<string, string> = {
 const statusLabel = isExpectation
   ? "Muy pronto"
   : (project.constructionStatus && statusLabels[project.constructionStatus]) || null;
-
-// Delivery line in the card footer: "En construcción · 2027".
-const deliveryYear = project.specSheet?.deliveryYear;
-const deliveryLine = [statusLabel, deliveryYear].filter(Boolean).join(" · ");
 
 // Design trail: "Bogotá · Norte · San Antonio" — city, zone, neighborhood.
 // Falls back to the city's department while a project has no zone assigned, so
@@ -170,12 +163,11 @@ const whatsappHref = project.salesRoom?.whatsappUrl;
         !isExpectation && project.priceFromCOP ? (
           <>
             <p class="text-caption text-ink-muted mt-3">Precio desde</p>
+            {/* Always COP in the HTML. The header's currency selector rewrites
+                it from `data-price-cop`, which is what lets a card show USD or
+                EUR — a card baked in USD could not be switched back. */}
             <p class="text-ink text-lg font-bold">
-              <Price
-                copValue={project.priceFromCOP}
-                currency={usdFirst ? "USD" : "COP"}
-                rates={rates}
-              />
+              <Price copValue={project.priceFromCOP} />
             </p>
           </>
         ) : (
@@ -231,17 +223,19 @@ const whatsappHref = project.salesRoom?.whatsappUrl;
   </a>
 
   {
+    /* Full-width action, no delivery line beside it: comment #96 on the design
+       asks for the delivery date to come out of the card, and the approved card
+       puts the contact button across the whole footer. */
+  }
+  {
     !compact && (
-      <div class="border-line mt-auto flex items-center justify-between gap-3 border-t p-5 pt-4">
-        <span class="text-caption text-ink-muted">
-          {deliveryLine || (isExpectation ? "En expectativa" : "Disponible")}
-        </span>
+      <div class="mt-auto p-5 pt-0">
         {whatsappHref ? (
           <a
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            class="btn btn-primary px-4 py-2.5 text-sm"
+            class="btn btn-primary w-full py-2.5 text-sm"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2a10 10 0 0 0-8.7 15l-1.2 4.3 4.4-1.2A10 10 0 1 0 12 2Zm5.5 14c-.3.8-1.5 1.4-2.2 1.5-.6.1-1.3.1-2.1-.1a13 13 0 0 1-6.2-5.3c-.5-.8-.9-1.8-.9-2.7 0-.9.5-1.6.9-1.9.3-.2.7-.2 1-.2h.4c.3 0 .5.1.7.6l.9 2c.1.2 0 .5-.1.7l-.4.5c-.2.2-.3.4-.1.7a9 9 0 0 0 3.7 3.2c.3.1.5.1.7-.1l.7-.8c.2-.2.4-.2.6-.1l2 1c.3.1.4.3.4.5s0 .4-.1.5Z" />
@@ -249,7 +243,7 @@ const whatsappHref = project.salesRoom?.whatsappUrl;
             WhatsApp
           </a>
         ) : (
-          <a href={`/proyectos/${project.slug}`} class="btn btn-primary px-4 py-2.5 text-sm">
+          <a href={`/proyectos/${project.slug}`} class="btn btn-primary w-full py-2.5 text-sm">
             Ver proyecto
           </a>
         )}

@@ -1,16 +1,14 @@
 ---
-import type { ExchangeRate, Project } from "@lasgalias/schemas";
+import type { Project } from "@lasgalias/schemas";
 
 import Price from "@/components/Price.astro";
-import CurrencySwitcher from "@/islands/CurrencySwitcher";
 import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
-  rates: ExchangeRate | null;
 }
 
-const { project, rates } = Astro.props;
+const { project } = Astro.props;
 
 const isExpectation = project.stage === "expectation";
 
@@ -132,17 +130,6 @@ const stratum = project.specSheet?.stratum;
             )
           }
         </div>
-        {
-          rates?.copPerUsd && rates?.copPerEur && !isExpectation && (
-            <div class="mt-3 flex justify-end">
-              <CurrencySwitcher
-                client:visible
-                copPerUsd={rates.copPerUsd}
-                copPerEur={rates.copPerEur}
-              />
-            </div>
-          )
-        }
       </div>
     </div>
   </div>
