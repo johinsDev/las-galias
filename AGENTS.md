@@ -57,6 +57,15 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   deployed by `.github/workflows/ci.yml` on merge to `main`, but only when
   `apps/cms`, `deploy/lightsail`, `packages/providers|schemas` or `bun.lock`
   changed, because each deploy takes the admin down ~12 min.
+- Un merge que toca `apps/cms` Y añade populates nuevos ROMPE el build de
+  Vercel, y hay que redesplegar a mano cuando el CMS termine. Las dos cosas
+  arrancan a la vez con el push: Vercel compila contra el CMS que todavía no ha
+  desplegado los campos, Strapi responde 400 a un `populate` que no conoce y el
+  build se niega a publicar (que es lo que debe hacer). Pasó con los PR #6 y #7:
+  el sitio se quedó dos versiones atrás con el CI en verde, porque el fallo lo
+  reporta Vercel y no GitHub Actions. Al terminar un merge así, comprueba el
+  estado de Vercel en el commit —`gh api repos/.../commits/<sha>/status`— y
+  vuelve a lanzar producción.
 - The demo snapshot (`src/fixtures/cms-snapshot.json`) is OPT-IN
   (`USE_CMS_SNAPSHOT=true`). Without it, a build that cannot reach the CMS FAILS
   instead of publishing invented prices. Any env var the build reads must also
