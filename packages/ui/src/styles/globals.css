@@ -365,6 +365,15 @@
   }
 }
 
+/* Alto y radio de un campo de formulario, medidos en el Figma. Vive aquí y no
+   en cada componente porque el input, el combobox de país y la caja del
+   teléfono tienen que coincidir al pixel: si uno se desincroniza, la rejilla de
+   dos columnas queda con los campos a distinta altura. */
+@utility field-box {
+  height: 45px;
+  border-radius: 10px;
+}
+
 @layer base {
   *,
   ::after,

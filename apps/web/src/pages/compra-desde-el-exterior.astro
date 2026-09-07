@@ -182,8 +182,10 @@ import { Check } from "lucide-astro";
   </section>
 
   {/* 03B Formulario de refuerzo */}
-  <section id="datos" class="container py-16 md:py-20">
-    <div class="mx-auto grid max-w-[1000px] items-center gap-10 lg:grid-cols-2">
+  <section id="datos" class="border-t-[0.75px] border-[#eff1f3] bg-[#fdfbfc]">
+    <div
+      class="container grid max-w-[1180px] items-center gap-12 py-16 md:py-20 lg:grid-cols-[1fr_540px]"
+    >
       <div data-reveal>
         <h2 class="text-h2 text-ink font-bold">{formTitle}</h2>
         <p class="text-body-lg text-ink-muted mt-4">{formBody}</p>
@@ -203,7 +205,7 @@ import { Check } from "lucide-astro";
           }
         </ul>
       </div>
-      <div class="border-line shadow-card rounded-2xl border bg-white p-6" data-reveal>
+      <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
         <h3 class="text-ink font-semibold">Habla con un asesor →</h3>
         <div class="mt-4">
           <LeadForm

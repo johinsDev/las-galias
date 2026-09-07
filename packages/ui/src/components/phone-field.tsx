@@ -109,7 +109,7 @@ export function PhoneField({
   return (
     <div
       className={cn(
-        "border-input focus-within:border-ink flex h-13 w-full items-stretch rounded-xl border bg-white transition-colors",
+        "border-input focus-within:border-ink field-box flex w-full items-stretch border bg-white transition-colors",
         invalid && "border-destructive",
       )}
     >
@@ -124,7 +124,7 @@ export function PhoneField({
       >
         <Combobox.Trigger
           aria-label={`Indicativo del país, ${country.name} ${country.dial}`}
-          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-xl border-r px-3.5 transition-colors"
+          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors"
         >
           <span aria-hidden="true">{flagOf(country.code)}</span>
           <span className="tabular-nums">{country.dial}</span>
@@ -182,7 +182,7 @@ export function PhoneField({
         placeholder={placeholder ?? group("0".repeat(nationalMax(country)), country)}
         value={group(national, country)}
         onChange={(e) => emit(country, e.target.value.replace(/\D/g, ""))}
-        className="text-body-sm text-ink placeholder:text-ink-faint w-full min-w-0 bg-transparent px-3 outline-none"
+        className="text-body-sm text-ink placeholder:text-ink-faint w-full min-w-0 bg-transparent px-2.5 outline-none"
       />
     </div>
   );

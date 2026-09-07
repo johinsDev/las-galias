@@ -6,7 +6,6 @@ import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
 import { CountryCombobox } from "@lasgalias/ui/components/country-combobox";
 import { PhoneField } from "@lasgalias/ui/components/phone-field";
-import { Textarea } from "@lasgalias/ui/components/textarea";
 
 interface LeadFormProps {
   projectDocumentId?: string;
@@ -63,6 +62,11 @@ export default function LeadForm({
     initialInput: {
       projectDocumentId,
       source,
+      // Los dos consentimientos viajan en true sin casilla: el diseño deja el
+      // formulario en cuatro campos y el CRM los exige de todas formas. El aviso
+      // de la Ley 1581 queda bajo el botón, que es lo que sustituye a la casilla.
+      acceptsDataPolicy: true,
+      acceptsContact: true,
       ...(international ? { residenceCountry: "Colombia", phone: "+57" } : {}),
       ...readUtm(),
     },
@@ -116,9 +120,8 @@ export default function LeadForm({
       }}
       className="space-y-4"
     >
-      {/* Two columns for the short fields, in the design's reading order:
-          nombre / país, then whatsapp / correo. The message and the consents
-          stay full width below, because they need the room. */}
+      {/* Four fields, two per row, in the design's reading order:
+          nombre / país, then whatsapp / correo. */}
       <div className={international ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
         <Field of={form} path={["name"]}>
           {(field) => (
@@ -251,70 +254,22 @@ export default function LeadForm({
         </Field>
       </div>
 
-      <Field of={form} path={["message"]}>
-        {(field) => (
-          <div>
-            <label
-              className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
-              htmlFor="lead-message"
-            >
-              Mensaje (opcional)
-            </label>
-            <Textarea {...field.props} id="lead-message" value={field.input ?? ""} rows={3} />
-          </div>
-        )}
-      </Field>
-
-      <Field of={form} path={["acceptsDataPolicy"]}>
-        {(field) => (
-          <div>
-            <label className="text-body-sm text-ink-muted flex items-start gap-2">
-              <input
-                {...field.props}
-                type="checkbox"
-                checked={field.input === true}
-                className="accent-ink mt-1"
-              />
-              <span>
-                Acepto la{" "}
-                <a
-                  href={`/legales/${DATA_POLICY_SLUG}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand underline"
-                >
-                  política de tratamiento de datos personales
-                </a>{" "}
-                de Constructora Las Galias (Ley 1581 de 2012).
-              </span>
-            </label>
-            {field.errors && (
-              <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-            )}
-          </div>
-        )}
-      </Field>
-
-      <Field of={form} path={["acceptsContact"]}>
-        {(field) => (
-          <label className="text-body-sm text-ink-muted flex items-start gap-2">
-            <input
-              {...field.props}
-              type="checkbox"
-              checked={field.input === true}
-              className="accent-ink mt-1"
-            />
-            <span>
-              Autorizo que me contacten por WhatsApp, mensaje de texto, llamada y correo electrónico
-              con información de este y otros proyectos.
-            </span>
-          </label>
-        )}
-      </Field>
-
       <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
         {submitLabel ?? "Quiero más información"}
       </Button>
+
+      <p className="text-caption text-ink-muted text-center">
+        Al enviar aceptas la{" "}
+        <a
+          href={`/legales/${DATA_POLICY_SLUG}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          política de tratamiento de datos personales
+        </a>
+        .
+      </p>
 
       {status === "error" && (
         <p className="text-destructive text-body-sm text-center">

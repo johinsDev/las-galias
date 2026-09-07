@@ -97,7 +97,7 @@ export function CountryCombobox({
 
       <Combobox.InputGroup
         className={cn(
-          "border-input focus-within:border-ink flex h-13 w-full items-center rounded-xl border bg-white pr-1 transition-colors",
+          "border-input focus-within:border-ink field-box flex w-full items-center border bg-white pr-1 transition-colors",
           invalid && "border-destructive",
           className,
         )}
