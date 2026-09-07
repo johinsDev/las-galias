@@ -1,0 +1,37 @@
+{
+  "kind": "singleType",
+  "collectionName": "pqr_page",
+  "info": {
+    "singularName": "pqr-page",
+    "pluralName": "pqr-pages",
+    "displayName": "Página · PQR",
+    "description": "La portada de la página para radicar peticiones, quejas y reclamos. El formulario y las preguntas frecuentes no viven aquí: el primero es código y las segundas son su propia colección"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Foto de fondo de la portada. Se atenúa casi hasta el blanco para que el titular se lea encima"
+    },
+    "heroTitle": {
+      "type": "string",
+      "default": "¿Tienes una petición, queja o reclamo?"
+    },
+    "heroSubtitle": {
+      "type": "text"
+    },
+    "faqTitle": {
+      "type": "string",
+      "default": "Resolvemos tus dudas"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

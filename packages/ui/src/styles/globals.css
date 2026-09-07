@@ -202,8 +202,10 @@
   justify-content: center;
   gap: --spacing(2);
   border-radius: 9999px;
+  /* Un solo alto en todo el sitio: el mismo de un campo de formulario, para que
+     un botón que cierra una columna no la termine en un escalón. */
+  height: 50px;
   padding-inline: --spacing(6);
-  padding-block: --spacing(3);
   font-size: var(--text-body-sm);
   font-weight: 600;
   line-height: 1;
@@ -388,7 +390,7 @@
    teléfono tienen que coincidir al pixel: si uno se desincroniza, la rejilla de
    dos columnas queda con los campos a distinta altura. */
 @utility field-box {
-  height: 45px;
+  height: 50px;
   border-radius: 10px;
 }
 

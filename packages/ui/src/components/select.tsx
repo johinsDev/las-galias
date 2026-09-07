@@ -1,6 +1,7 @@
 "use client";
 
-import { Combobox } from "@base-ui/react/combobox";
+import { useRef, useState } from "react";
+
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 
 import { cn } from "@lasgalias/ui/lib/utils";
@@ -126,57 +127,19 @@ function Select({
 
   if (searchable) {
     return (
-      <Combobox.Root
+      <SearchableSelect
+        id={id}
+        name={name}
+        value={value}
+        onValueChange={onValueChange}
         items={items}
-        itemToStringLabel={(item: SelectItem) => item.label}
-        filter={(item: SelectItem, query: string) =>
-          !query || fold(item.label).includes(fold(query))
-        }
-        value={selected}
-        onValueChange={(item: SelectItem | null) => onValueChange?.(item?.value ?? "")}
-      >
-        {/* Lo que lee el formulario; el control es el combobox. */}
-        <input type="hidden" name={name} value={value ?? ""} />
-
-        <Combobox.Trigger id={id} aria-label={ariaLabel} className={triggerClass}>
-          {label}
-          <span className="text-ink-faint shrink-0">
-            <ChevronDown />
-          </span>
-        </Combobox.Trigger>
-
-        <Combobox.Portal>
-          <Combobox.Positioner sideOffset={6} className="z-50 outline-none">
-            <Combobox.Popup className={popupClass}>
-              <div className="border-line border-b px-3">
-                <Combobox.Input
-                  placeholder={searchPlaceholder}
-                  className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
-                />
-              </div>
-
-              <Combobox.Empty>
-                <p className="text-body-sm text-ink-muted px-3 py-6 text-center">{emptyMessage}</p>
-              </Combobox.Empty>
-
-              <Combobox.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
-                {(item: SelectItem) => (
-                  <Combobox.Item
-                    key={item.value}
-                    value={item}
-                    className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
-                  >
-                    <span className="min-w-0 truncate">{item.label}</span>
-                    <Combobox.ItemIndicator className="text-brand shrink-0">
-                      <Check />
-                    </Combobox.ItemIndicator>
-                  </Combobox.Item>
-                )}
-              </Combobox.List>
-            </Combobox.Popup>
-          </Combobox.Positioner>
-        </Combobox.Portal>
-      </Combobox.Root>
+        label={label}
+        triggerClass={triggerClass}
+        popupClass={popupClass}
+        ariaLabel={ariaLabel}
+        searchPlaceholder={searchPlaceholder}
+        emptyMessage={emptyMessage}
+      />
     );
   }
 
@@ -221,6 +184,115 @@ function Select({
                 </SelectPrimitive.Item>
               ))}
             </SelectPrimitive.List>
+          </SelectPrimitive.Popup>
+        </SelectPrimitive.Positioner>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
+  );
+}
+
+/**
+ * El desplegable con buscador.
+ *
+ * Construido sobre el MISMO Select de Base UI que la variante sin buscador, y
+ * no sobre su Combobox: con el buscador dentro del panel, el combobox no abría
+ * al hacer clic —con el teclado sí—, porque espera que su input exista para
+ * darle el foco. Aquí el panel es un Select normal y el filtrado lo hace este
+ * componente, que es la parte fácil.
+ *
+ * El input se traga sus propias teclas: si no, el Select las interpretaría como
+ * su búsqueda por letra inicial y saltaría de opción mientras se escribe.
+ */
+function SearchableSelect({
+  id,
+  name,
+  value,
+  onValueChange,
+  items,
+  label,
+  triggerClass,
+  popupClass,
+  ariaLabel,
+  searchPlaceholder,
+  emptyMessage,
+}: {
+  id?: string;
+  name?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  items: SelectItem[];
+  label: React.ReactNode;
+  triggerClass: string;
+  popupClass: string;
+  ariaLabel?: string;
+  searchPlaceholder: string;
+  emptyMessage: string;
+}) {
+  const [query, setQuery] = useState("");
+  const search = useRef<HTMLInputElement>(null);
+
+  const needle = fold(query.trim());
+  const filtered = needle ? items.filter((item) => fold(item.label).includes(needle)) : items;
+
+  return (
+    <SelectPrimitive.Root
+      items={filtered}
+      value={value ?? ""}
+      name={name}
+      onValueChange={(next: string | null) => onValueChange?.(next ?? "")}
+      onOpenChange={(open: boolean) => {
+        // Cada apertura empieza en limpio, y el foco va al buscador: es lo que
+        // la persona viene a usar.
+        setQuery("");
+        if (open) setTimeout(() => search.current?.focus(), 0);
+      }}
+    >
+      <SelectPrimitive.Trigger id={id} aria-label={ariaLabel} className={triggerClass}>
+        {label}
+        <SelectPrimitive.Icon className="text-ink-faint shrink-0">
+          <ChevronDown />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Positioner
+          sideOffset={6}
+          alignItemWithTrigger={false}
+          className="z-50 outline-none"
+        >
+          <SelectPrimitive.Popup className={popupClass}>
+            <div className="border-line border-b px-3">
+              <input
+                ref={search}
+                type="text"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onKeyDown={(event) => event.stopPropagation()}
+                placeholder={searchPlaceholder}
+                className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
+              />
+            </div>
+
+            {filtered.length === 0 ? (
+              <p className="text-body-sm text-ink-muted px-3 py-6 text-center">{emptyMessage}</p>
+            ) : (
+              <SelectPrimitive.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1">
+                {filtered.map((item) => (
+                  <SelectPrimitive.Item
+                    key={item.value}
+                    value={item.value}
+                    className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
+                  >
+                    <SelectPrimitive.ItemText className="min-w-0 truncate">
+                      {item.label}
+                    </SelectPrimitive.ItemText>
+                    <SelectPrimitive.ItemIndicator className="text-brand shrink-0">
+                      <Check />
+                    </SelectPrimitive.ItemIndicator>
+                  </SelectPrimitive.Item>
+                ))}
+              </SelectPrimitive.List>
+            )}
           </SelectPrimitive.Popup>
         </SelectPrimitive.Positioner>
       </SelectPrimitive.Portal>

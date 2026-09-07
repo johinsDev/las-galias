@@ -25,7 +25,7 @@
     },
     "category": {
       "type": "enumeration",
-      "enum": ["financiacion", "guia-de-compra", "mercado", "decoracion"],
+      "enum": ["financiacion", "guia-de-compra", "mercado", "decoracion", "inversion", "proyecto"],
       "description": "Eyebrow label above the post title, and the blog listing's filter"
     },
     "featured": {
@@ -36,6 +36,10 @@
     "author": {
       "type": "string",
       "description": "Byline on the article page. Empty falls back to «equipo editorial Galias»"
+    },
+    "authorRole": {
+      "type": "string",
+      "description": "Debajo de la firma, e.g. «Equipo editorial». Vacío no dibuja nada"
     },
     "readingMinutes": {
       "type": "integer",
@@ -52,6 +56,18 @@
     },
     "content": {
       "type": "blocks"
+    },
+    "highlights": {
+      "type": "component",
+      "component": "page.stat",
+      "repeatable": true,
+      "description": "La banda de cifras del artículo. Se dibuja bajo el cuerpo; el editor de texto enriquecido no puede alojarla dentro"
+    },
+    "tags": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true,
+      "description": "Las píldoras del pie del artículo. Son solo texto: no filtran ni tienen página propia"
     },
     "seo": {
       "type": "component",

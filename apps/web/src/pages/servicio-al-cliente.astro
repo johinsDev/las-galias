@@ -1,17 +1,6 @@
 ---
 import LeadForm from "@/islands/LeadForm";
-import PqrForm, { type PqrProjectOption } from "@/islands/PqrForm";
 import Base from "@/layouts/Base.astro";
-import { getProjects } from "@/lib/strapi";
-
-const projects = await getProjects();
-
-// Only what the select needs. The full Project objects would be serialised into
-// the island's props and shipped to the browser.
-const projectOptions: PqrProjectOption[] = projects.map((project) => ({
-  documentId: project.documentId,
-  name: project.name,
-}));
 
 const channels = [
   {
@@ -24,13 +13,13 @@ const channels = [
     title: "Postventa",
     body: "Garantías y arreglos sobre un inmueble ya entregado. Radícalo abajo con tu torre y apartamento a la mano.",
     action: "Radicar postventa",
-    href: "#radicar",
+    href: "/servicio-al-cliente/pqr",
   },
   {
     title: "Peticiones, quejas y reclamos",
     body: "Respondemos dentro de los 15 días hábiles que fija la Ley 1755 de 2015.",
     action: "Radicar PQR",
-    href: "#radicar",
+    href: "/servicio-al-cliente/pqr",
   },
 ];
 ---
@@ -68,18 +57,14 @@ const channels = [
 
   <section class="bg-surface border-line border-b" id="radicar">
     <div class="container py-12 md:py-16">
-      <div class="mx-auto max-w-3xl">
-        <div data-reveal>
-          <p class="eyebrow">Radicación</p>
-          <h2 class="text-h3 text-ink mt-2 font-bold">Radica tu solicitud</h2>
-          <p class="text-body-sm text-ink-muted mt-3">
-            Un solo formulario para peticiones, quejas, reclamos, sugerencias y postventa. Al
-            enviarlo recibes un número de radicado para hacerle seguimiento.
-          </p>
-        </div>
-        <div class="border-line mt-8 rounded-2xl border bg-white p-6 md:p-8" data-reveal>
-          <PqrForm client:visible projects={projectOptions} />
-        </div>
+      <div class="mx-auto max-w-3xl text-center" data-reveal>
+        <p class="eyebrow">Radicación</p>
+        <h2 class="text-h3 text-ink mt-2 font-bold">Radica tu solicitud</h2>
+        <p class="text-body-sm text-ink-muted mx-auto mt-3 max-w-xl">
+          Un solo formulario para peticiones, quejas, reclamos, sugerencias y postventa. Al enviarlo
+          recibes un número de radicado para hacerle seguimiento.
+        </p>
+        <a href="/servicio-al-cliente/pqr" class="btn btn-primary mt-6">Radicar PQR</a>
       </div>
     </div>
   </section>

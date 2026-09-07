@@ -12,6 +12,8 @@ export interface Media {
   width?: number | null;
   height?: number | null;
   mime?: string;
+  /** Strapi's own media caption — «Foto: Unsplash · © 2026». */
+  caption?: string | null;
 }
 
 export interface Seo {
@@ -178,7 +180,8 @@ export interface Project {
   seo?: Seo | null;
 }
 
-export type PostCategory = "financiacion" | "guia-de-compra" | "mercado" | "decoracion";
+export type PostCategory =
+  "financiacion" | "guia-de-compra" | "mercado" | "inversion" | "proyecto" | "decoracion";
 
 export interface Post {
   documentId: string;
@@ -186,6 +189,9 @@ export interface Post {
   slug: string;
   excerpt?: string | null;
   category?: PostCategory | null;
+  authorRole?: string | null;
+  highlights?: Stat[];
+  tags?: { text: string }[];
   /** Pins the post to the big slot at the top of /blog. */
   featured?: boolean;
   author?: string | null;
@@ -199,12 +205,16 @@ export interface Post {
   publishedAt?: string;
 }
 
+export type FaqTopic = "antes-de-comprar" | "durante-la-compra" | "posventa" | "tramites";
+
 export interface Faq {
   documentId: string;
   question: string;
   answer: unknown;
   audience: "general" | "exterior";
   order?: number | null;
+  /** Pestaña de «Resolvemos tus dudas»: antes-de-comprar, durante-la-compra, posventa, tramites. */
+  topic?: FaqTopic | null;
 }
 
 interface Step {
@@ -251,6 +261,7 @@ interface ToolCard {
   iconKey?: ToolIconKey | null;
 }
 
+/** Una cifra: el número grande y su etiqueta. La comparten el home y el blog. */
 interface Stat {
   value: string;
   label: string;
@@ -366,4 +377,13 @@ export interface LeadFormConfig {
   adviceEyebrow?: string | null;
   adviceTitle?: string | null;
   adviceBody?: string | null;
+}
+
+/** Single type de la página para radicar PQR. */
+export interface PqrPage {
+  heroImage?: Media | null;
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  faqTitle?: string | null;
+  seo?: Seo | null;
 }

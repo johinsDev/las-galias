@@ -10,6 +10,7 @@ import type {
   LegalDocument,
   Macroproject,
   Post,
+  PqrPage,
   Project,
 } from "@lasgalias/schemas";
 
@@ -262,6 +263,8 @@ export async function getPost(slug: string): Promise<Post | null> {
   const data = await strapiFetch<Post[]>("posts", {
     "filters[slug][$eq]": slug,
     "populate[cover]": "true",
+    "populate[highlights]": "true",
+    "populate[tags]": "true",
     "populate[seo][populate][ogImage]": "true",
   });
   return data?.[0] ?? null;
@@ -355,6 +358,13 @@ export async function getLeadFormConfig(): Promise<LeadFormConfig | null> {
     "populate[residenceCities]": "true",
   });
   return leadFormConfigPromise;
+}
+
+export async function getPqrPage(): Promise<PqrPage | null> {
+  return strapiFetch<PqrPage>("pqr-page", {
+    "populate[heroImage]": "true",
+    "populate[seo][populate][ogImage]": "true",
+  });
 }
 
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {

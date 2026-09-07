@@ -652,6 +652,9 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     question: Schema.Attribute.String & Schema.Attribute.Required;
+    topic: Schema.Attribute.Enumeration<
+      ["antes-de-comprar", "durante-la-compra", "posventa", "tramites"]
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -978,6 +981,34 @@ export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema
   };
 }
 
+export interface ApiNewsletterSubscriberNewsletterSubscriber extends Struct.CollectionTypeSchema {
+  collectionName: "newsletter_subscribers";
+  info: {
+    description: "Correos dejados en el bloque \u00ABNewsletter Galias\u00BB del blog. Solo se crean desde el sitio: nunca se leen en p\u00FAblico, porque un `find` abierto publicar\u00EDa la lista de correos";
+    displayName: "Suscriptor del bolet\u00EDn";
+    pluralName: "newsletter-subscribers";
+    singularName: "newsletter-subscriber";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required & Schema.Attribute.Unique;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::newsletter-subscriber.newsletter-subscriber"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPointOfInterestPointOfInterest extends Struct.CollectionTypeSchema {
   collectionName: "points_of_interest";
   info: {
@@ -1025,8 +1056,9 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     author: Schema.Attribute.String;
+    authorRole: Schema.Attribute.String;
     category: Schema.Attribute.Enumeration<
-      ["financiacion", "guia-de-compra", "mercado", "decoracion"]
+      ["financiacion", "guia-de-compra", "mercado", "decoracion", "inversion", "proyecto"]
     >;
     content: Schema.Attribute.Blocks;
     cover: Schema.Attribute.Media<"images">;
@@ -1034,6 +1066,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     excerpt: Schema.Attribute.Text;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    highlights: Schema.Attribute.Component<"page.stat", true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::post.post"> &
       Schema.Attribute.Private;
@@ -1042,7 +1075,37 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     readingMinutes: Schema.Attribute.Integer;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
+    tags: Schema.Attribute.Component<"page.list-item", true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPqrPagePqrPage extends Struct.SingleTypeSchema {
+  collectionName: "pqr_page";
+  info: {
+    description: "La portada de la p\u00E1gina para radicar peticiones, quejas y reclamos. El formulario y las preguntas frecuentes no viven aqu\u00ED: el primero es c\u00F3digo y las segundas son su propia colecci\u00F3n";
+    displayName: "P\u00E1gina \u00B7 PQR";
+    pluralName: "pqr-pages";
+    singularName: "pqr-page";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    faqTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Resolvemos tus dudas">;
+    heroImage: Schema.Attribute.Media<"images">;
+    heroSubtitle: Schema.Attribute.Text;
+    heroTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"\u00BFTienes una petici\u00F3n, queja o reclamo?">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::pqr-page.pqr-page"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1710,8 +1773,10 @@ declare module "@strapi/strapi" {
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;
+      "api::newsletter-subscriber.newsletter-subscriber": ApiNewsletterSubscriberNewsletterSubscriber;
       "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
       "api::post.post": ApiPostPost;
+      "api::pqr-page.pqr-page": ApiPqrPagePqrPage;
       "api::pqr.pqr": ApiPqrPqr;
       "api::project.project": ApiProjectProject;
       "api::redirect.redirect": ApiRedirectRedirect;

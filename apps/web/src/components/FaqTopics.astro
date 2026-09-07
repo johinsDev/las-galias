@@ -1,0 +1,206 @@
+---
+import { ChevronDown, HelpCircle } from "lucide-astro";
+import type { Faq, FaqTopic } from "@lasgalias/schemas";
+
+import Blocks from "@/components/Blocks.astro";
+
+interface Props {
+  faqs: Faq[];
+  title?: string;
+}
+
+const { faqs, title = "Resolvemos tus dudas" } = Astro.props;
+
+/** Orden y etiqueta de las pestañas. */
+const TOPICS: { value: FaqTopic; label: string }[] = [
+  { value: "antes-de-comprar", label: "Antes de comprar" },
+  { value: "durante-la-compra", label: "Durante la compra" },
+  { value: "posventa", label: "Posventa y garantías" },
+  { value: "tramites", label: "Trámites y documentos" },
+];
+
+// Solo se ofrecen las pestañas que tienen algo que enseñar. Las preguntas sin
+// tema caen en la primera, para que ninguna quede escondida por un campo vacío.
+const grouped = TOPICS.map((topic) => ({
+  ...topic,
+  items: faqs.filter(
+    (faq) => faq.topic === topic.value || (!faq.topic && topic.value === TOPICS[0]!.value),
+  ),
+})).filter((topic) => topic.items.length > 0);
+---
+
+{
+  grouped.length > 0 && (
+    <section class="container py-14 md:py-20" data-faq-topics>
+      <div class="mx-auto grid max-w-[1216px] gap-8 lg:grid-cols-[280px_1fr] lg:gap-14">
+        <div>
+          <h2 class="text-h3 text-ink font-bold">{title}</h2>
+
+          {/* La columna de pestañas es de escritorio: en el móvil el diseño
+              apila el acordeón entero y no la muestra. */}
+          {grouped.length > 1 && (
+            <div class="mt-6 hidden lg:block" role="tablist" aria-label="Temas">
+              {grouped.map((topic, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={i === 0 ? "true" : "false"}
+                  data-topic-tab={topic.value}
+                  class:list={[
+                    "text-body-sm block w-full rounded-r-lg border-l-2 px-4 py-3 text-left transition-all duration-200",
+                    i === 0
+                      ? "border-brand bg-brand-subtle text-brand font-bold"
+                      : "text-ink-muted hover:text-ink hover:bg-surface border-transparent",
+                  ]}
+                >
+                  {topic.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          {grouped.map((topic, index) => (
+            <div
+              class="space-y-3 transition-opacity duration-300"
+              data-topic-panel={topic.value}
+              hidden={index !== 0}
+            >
+              {topic.items.map((faq, i) => (
+                <div
+                  class:list={[
+                    "rounded-2xl border transition-colors duration-200",
+                    // La abierta se enmarca en rojo, como el Figma.
+                    index === 0 && i === 0 ? "border-brand" : "border-line",
+                  ]}
+                  data-faq-item
+                  data-open={index === 0 && i === 0 ? "true" : "false"}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={index === 0 && i === 0 ? "true" : "false"}
+                    class="text-body flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-bold transition-colors"
+                    data-faq-trigger
+                  >
+                    <span data-faq-question>{faq.question}</span>
+                    <ChevronDown
+                      size={18}
+                      stroke-width={2.2}
+                      aria-hidden="true"
+                      class="shrink-0 transition-transform duration-300"
+                      data-faq-chevron
+                    />
+                  </button>
+
+                  {/* De 0fr a 1fr: anima una altura que nadie conoce de antemano
+                      sin medirla con JS, y sobrevive a que el texto cambie. */}
+                  <div
+                    class="grid transition-[grid-template-rows,opacity] duration-300 ease-out"
+                    data-faq-panel
+                  >
+                    <div class="overflow-hidden">
+                      <div class="border-line text-body-sm text-ink-muted mx-5 border-t py-4">
+                        <Blocks content={faq.answer} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+
+          <div class="bg-surface text-body-sm text-ink-muted mt-6 flex items-center gap-2.5 rounded-2xl px-5 py-4">
+            <HelpCircle size={17} stroke-width={2} aria-hidden="true" class="text-ink-faint" />
+            ¿No encontraste respuesta?
+            <a href="#radicar" class="text-brand font-bold hover:underline">
+              Escríbenos directamente →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* La altura la anima el grid; el estado abierto solo cambia la fracción. */
+  [data-faq-panel] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+  [data-open="true"] [data-faq-panel] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  [data-open="true"] [data-faq-question] {
+    color: var(--brand);
+  }
+  [data-open="true"] [data-faq-chevron] {
+    transform: rotate(180deg);
+    color: var(--brand);
+  }
+</style>
+
+<script>
+  function setupFaqTopics() {
+    document.querySelectorAll<HTMLElement>("[data-faq-topics]").forEach((root) => {
+      if (root.dataset.bound) return;
+      root.dataset.bound = "1";
+
+      // Acordeón: una abierta a la vez, como el diseño.
+      root.querySelectorAll<HTMLElement>("[data-faq-trigger]").forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          const item = trigger.closest<HTMLElement>("[data-faq-item]");
+          if (!item) return;
+          const opening = item.dataset.open !== "true";
+          const panel = item.closest<HTMLElement>("[data-topic-panel]");
+          panel?.querySelectorAll<HTMLElement>("[data-faq-item]").forEach((other) => {
+            other.dataset.open = "false";
+            other.classList.remove("border-brand");
+            other.classList.add("border-line");
+            other.querySelector("[data-faq-trigger]")?.setAttribute("aria-expanded", "false");
+          });
+          if (!opening) return;
+          item.dataset.open = "true";
+          item.classList.add("border-brand");
+          item.classList.remove("border-line");
+          trigger.setAttribute("aria-expanded", "true");
+        });
+      });
+
+      // Pestañas de tema.
+      const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-topic-tab]")];
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.topicTab;
+          tabs.forEach((other) => {
+            const on = other === tab;
+            other.setAttribute("aria-selected", String(on));
+            other.classList.toggle("border-brand", on);
+            other.classList.toggle("bg-brand-subtle", on);
+            other.classList.toggle("text-brand", on);
+            other.classList.toggle("font-bold", on);
+            other.classList.toggle("border-transparent", !on);
+            other.classList.toggle("text-ink-muted", !on);
+          });
+          root.querySelectorAll<HTMLElement>("[data-topic-panel]").forEach((panel) => {
+            const on = panel.dataset.topicPanel === target;
+            if (!on) {
+              panel.hidden = true;
+              return;
+            }
+            // Se muestra opaco y se enciende en el siguiente fotograma: si se
+            // hiciera en el mismo, el navegador no tendría desde dónde animar.
+            panel.style.opacity = "0";
+            panel.hidden = false;
+            requestAnimationFrame(() => (panel.style.opacity = "1"));
+          });
+        });
+      });
+    });
+  }
+
+  setupFaqTopics();
+  document.addEventListener("astro:page-load", setupFaqTopics);
+</script>

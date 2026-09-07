@@ -1303,7 +1303,7 @@
       "brochure": null
     }
   ],
-  "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+  "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bhighlights%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Btags%5D=true": [
     {
       "id": 4,
       "documentId": "vp3qzjqj23qknyhqb4322jsc",
@@ -1374,7 +1374,7 @@
         "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
         "name": "post-asi-avanza-ciudad-verde-norte",
         "alternativeText": "Así avanza Ciudad Verde Norte",
-        "caption": null,
+        "caption": "Foto: Unsplash · © 2026",
         "focalPoint": null,
         "width": 1280,
         "height": 720,
@@ -1392,10 +1392,50 @@
         "publishedAt": "2026-07-15T01:47:10.561Z"
       },
       "seo": null,
-      "readingMinutes": 6
+      "readingMinutes": 6,
+      "authorRole": "Equipo editorial",
+      "highlights": [
+        {
+          "id": 1,
+          "value": "30 SMMLV",
+          "label": "Subsidio máximo VIS"
+        },
+        {
+          "id": 2,
+          "value": "150 SMMLV",
+          "label": "Precio máximo del inmueble"
+        },
+        {
+          "id": 3,
+          "value": "+3M",
+          "label": "Familias beneficiadas desde 2020"
+        }
+      ],
+      "tags": [
+        {
+          "id": 1,
+          "text": "Subsidio VIS"
+        },
+        {
+          "id": 2,
+          "text": "Mi Casa Ya"
+        },
+        {
+          "id": 3,
+          "text": "Vivienda nueva"
+        },
+        {
+          "id": 4,
+          "text": "Crédito hipotecario"
+        },
+        {
+          "id": 5,
+          "text": "Financiación"
+        }
+      ]
     }
   ],
-  "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+  "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bhighlights%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Btags%5D=true": [
     {
       "id": 2,
       "documentId": "x8wyyjtetxpfkja1asy0q2vg",
@@ -1466,7 +1506,7 @@
         "documentId": "x8k0yzpol1nqdufinq3kfurx",
         "name": "post-claves-comprar-vivienda-sobre-planos",
         "alternativeText": "5 claves para comprar vivienda sobre planos",
-        "caption": null,
+        "caption": "Foto: Unsplash · © 2026",
         "focalPoint": null,
         "width": 1280,
         "height": 720,
@@ -1484,7 +1524,47 @@
         "publishedAt": "2026-07-15T01:47:10.505Z"
       },
       "seo": null,
-      "readingMinutes": 9
+      "readingMinutes": 9,
+      "authorRole": "Equipo editorial",
+      "highlights": [
+        {
+          "id": 1,
+          "value": "30 SMMLV",
+          "label": "Subsidio máximo VIS"
+        },
+        {
+          "id": 2,
+          "value": "150 SMMLV",
+          "label": "Precio máximo del inmueble"
+        },
+        {
+          "id": 3,
+          "value": "+3M",
+          "label": "Familias beneficiadas desde 2020"
+        }
+      ],
+      "tags": [
+        {
+          "id": 1,
+          "text": "Subsidio VIS"
+        },
+        {
+          "id": 2,
+          "text": "Mi Casa Ya"
+        },
+        {
+          "id": 3,
+          "text": "Vivienda nueva"
+        },
+        {
+          "id": 4,
+          "text": "Crédito hipotecario"
+        },
+        {
+          "id": 5,
+          "text": "Financiación"
+        }
+      ]
     }
   ],
   "calculator-config": {
@@ -3583,5 +3663,151 @@
     "adviceEyebrow": "Asesoría personalizada",
     "adviceTitle": "Recibe una asesoría personalizada",
     "adviceBody": "Cuéntanos sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera."
-  }
+  },
+  "faqs?filters%5Baudience%5D%5B%24eq%5D=general&pagination%5BpageSize%5D=100&sort=order%3Aasc": [
+    {
+      "id": 101,
+      "question": "¿Cómo sé si aplico para crédito hipotecario?",
+      "topic": "antes-de-comprar",
+      "audience": "general",
+      "order": 1,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Para acceder a crédito hipotecario en Colombia necesitas ingresos demostrables (mínimo 2 SMMLV para VIS) y un historial crediticio positivo. Puedes precalificarte en cualquier banco o con nuestro simulador en línea. Nuestros asesores también te orientan sin costo."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "question": "¿Qué es el subsidio Mi Casa Ya y cómo lo solicito?",
+      "topic": "antes-de-comprar",
+      "audience": "general",
+      "order": 2,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Es el subsidio del Gobierno para vivienda VIS. Se solicita a través del banco que tramita tu crédito, una vez tienes el proyecto elegido y tu puntaje de Sisbén IV dentro del rango."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "question": "¿Puedo visitar el proyecto antes de comprar?",
+      "topic": "antes-de-comprar",
+      "audience": "general",
+      "order": 3,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Sí. Agenda una visita a la sala de ventas desde la ficha del proyecto, sin costo y sin compromiso."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "question": "¿En qué ciudades tienen proyectos?",
+      "topic": "antes-de-comprar",
+      "audience": "general",
+      "order": 4,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Hoy construimos en Bogotá, Cali, Manizales y Pereira. Puedes verlos todos en la sección de proyectos."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "question": "¿Cuándo firmo la promesa de compraventa?",
+      "topic": "durante-la-compra",
+      "audience": "general",
+      "order": 5,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Una vez apruebas la separación y el banco confirma tu preaprobación. Te acompañamos en cada paso y la firma puede ser digital."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "question": "¿Cómo pago la cuota inicial?",
+      "topic": "durante-la-compra",
+      "audience": "general",
+      "order": 6,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Por PSE o transferencia a la fiduciaria del proyecto, en las cuotas pactadas. Nunca a cuentas personales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "question": "¿Qué cubre la garantía de mi vivienda?",
+      "topic": "posventa",
+      "audience": "general",
+      "order": 7,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "La estabilidad de la obra por diez años y los acabados por un año, según la Ley 1480 de 2011. Radica tu solicitud aquí mismo con tu torre y apartamento a la mano."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "question": "¿Qué documentos necesito para la escrituración?",
+      "topic": "tramites",
+      "audience": "general",
+      "order": 8,
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Cédula, certificado de ingresos, la carta de aprobación del crédito y el paz y salvo de la fiduciaria. Te enviamos la lista completa cuando llega el momento."
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

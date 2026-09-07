@@ -147,6 +147,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     crmAttempts: { label: "Intentos de envío" },
     crmLastError: { label: "Último error" },
   },
+  "api::newsletter-subscriber.newsletter-subscriber": {
+    email: { label: "Correo" },
+    source: { label: "Origen", description: "El artículo desde el que se suscribió." },
+  },
   "api::zone.zone": {
     name: { label: "Nombre" },
     slug: { label: "URL (slug)" },
@@ -155,6 +159,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
   "api::faq.faq": {
     question: { label: "Pregunta" },
     answer: { label: "Respuesta" },
+    topic: {
+      label: "Tema",
+      description: "Pestaña en la página de PQR. Vacío la deja fuera de esas pestañas.",
+    },
     audience: {
       label: "Dónde se muestra",
       description: "«exterior» solo en la landing de compra desde el exterior.",
@@ -247,6 +255,16 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "% del ingreso disponible para la cuota",
       description: "Regla general con la que el simulador recomienda la cuota máxima.",
     },
+  },
+  "api::pqr-page.pqr-page": {
+    heroImage: {
+      label: "Foto de portada",
+      description: "Se atenúa para que el titular se lea encima.",
+    },
+    heroTitle: { label: "Titular" },
+    heroSubtitle: { label: "Bajada" },
+    faqTitle: { label: "Título de las preguntas" },
+    seo: { label: "SEO" },
   },
   "api::lead-form-config.lead-form-config": {
     sectionOptions: {
@@ -403,6 +421,12 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       description: "Lo sube al bloque grande de /blog. Si hay varios, gana el más reciente.",
     },
     author: { label: "Autor", description: "Vacío firma como «equipo editorial Galias»." },
+    authorRole: { label: "Cargo del autor", description: "e.g. «Equipo editorial»." },
+    highlights: {
+      label: "Cifras del artículo",
+      description: "Se dibujan bajo el cuerpo: el editor de texto no puede alojarlas dentro.",
+    },
+    tags: { label: "Etiquetas", description: "Píldoras al pie. Son texto: no filtran nada." },
     readingMinutes: {
       label: "Minutos de lectura",
       description: "Vacío se calcula solo a partir del contenido.",

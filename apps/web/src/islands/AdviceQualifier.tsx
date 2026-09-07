@@ -154,7 +154,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
       {error && <p className="text-destructive text-caption mt-2">{error}</p>}
 
       {/* Ancho automático y alineado a la izquierda, como el Figma. */}
-      <Button type="submit" size="lg" className="mt-5">
+      <Button type="submit" size="lg" className="mt-5 px-8">
         Enviar solicitud
       </Button>
     </form>

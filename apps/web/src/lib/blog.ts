@@ -5,6 +5,8 @@ export const POST_CATEGORIES: { value: PostCategory; label: string }[] = [
   { value: "financiacion", label: "Financiación" },
   { value: "guia-de-compra", label: "Guía de compra" },
   { value: "mercado", label: "Mercado" },
+  { value: "inversion", label: "Inversión" },
+  { value: "proyecto", label: "Proyecto" },
   { value: "decoracion", label: "Decoración" },
 ];
 
@@ -113,6 +115,18 @@ const CTAS: Record<PostCategory, SidebarCta> = {
   mercado: {
     title: "Mira los proyectos disponibles",
     body: "Vivienda nueva en Bogotá, Cali, Manizales y Pereira.",
+    label: "Ver proyectos",
+    href: "/proyectos",
+  },
+  inversion: {
+    title: "Invierte desde donde estés",
+    body: "Proceso 100% digital para comprar en Colombia viviendo fuera.",
+    label: "Ver cómo funciona",
+    href: "/compra-desde-el-exterior",
+  },
+  proyecto: {
+    title: "Conoce el proyecto por dentro",
+    body: "Planos, zonas comunes y avance de obra, en cada ficha.",
     label: "Ver proyectos",
     href: "/proyectos",
   },

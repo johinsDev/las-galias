@@ -1,0 +1,80 @@
+---
+import { Image } from "astro:assets";
+import { ChevronLeft } from "lucide-astro";
+
+import FaqTopics from "@/components/FaqTopics.astro";
+import PqrGate from "@/islands/PqrGate";
+import type { PqrProjectOption } from "@/islands/PqrForm";
+import Base from "@/layouts/Base.astro";
+import { getFaqs, getPqrPage, getProjects, mediaUrl } from "@/lib/strapi";
+
+const [page, projects, faqs] = await Promise.all([getPqrPage(), getProjects(), getFaqs("general")]);
+
+// Solo lo que el select necesita: los Project completos se serializarían en las
+// props de la isla y viajarían al navegador enteros.
+const projectOptions: PqrProjectOption[] = projects.map((project) => ({
+  documentId: project.documentId,
+  name: project.name,
+}));
+
+// Como en el resto de páginas, cada texto cae en las palabras del diseño para
+// que la página se vea bien antes de que nadie rellene el single type.
+const heroTitle = page?.heroTitle ?? "¿Tienes una petición, queja o reclamo?";
+const heroSubtitle =
+  page?.heroSubtitle ??
+  "Radica tu PQR y nuestro equipo te dará respuesta dentro de los 15 días hábiles siguientes, conforme a la normatividad vigente de protección al consumidor.";
+const faqTitle = page?.faqTitle ?? "Resolvemos tus dudas";
+
+const title = page?.seo?.metaTitle ?? "Radica tu PQR — Las Galias";
+const description = page?.seo?.metaDescription ?? heroSubtitle;
+---
+
+<Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
+  {/* 01 Portada */}
+  <section class="relative isolate overflow-hidden">
+    {
+      page?.heroImage?.url && (
+        <>
+          <Image
+            src={mediaUrl(page.heroImage.url)}
+            alt=""
+            width={1920}
+            height={700}
+            loading="eager"
+            class="absolute inset-0 -z-10 h-full w-full object-cover"
+          />
+          {/* La foto queda casi lavada: es ambiente, y el titular tiene que
+              leerse encima sin depender de qué se fotografió ese día. */}
+          <div class="absolute inset-0 -z-10 bg-white/88" aria-hidden="true" />
+        </>
+      )
+    }
+
+    <div class="container py-10 md:py-14">
+      <a
+        href="/servicio-al-cliente"
+        class="text-brand text-body-sm inline-flex items-center gap-1.5 font-bold hover:underline"
+      >
+        <ChevronLeft size={17} stroke-width={2.4} aria-hidden="true" />
+        Volver a Servicio al cliente
+      </a>
+
+      <div class="mx-auto mt-10 max-w-[680px] pb-6 text-center md:mt-16 md:pb-16">
+        <h1 class="text-h1 text-ink font-extrabold" data-reveal>{heroTitle}</h1>
+        <p class="text-body text-ink-muted mx-auto mt-4 max-w-[560px]" data-reveal>
+          {heroSubtitle}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* 02 Radicar */}
+  <section class="container -mt-6 pb-4 md:-mt-10" id="radicar">
+    <div class="mx-auto max-w-[760px]">
+      <PqrGate client:visible projects={projectOptions} />
+    </div>
+  </section>
+
+  {/* 03 Resolvemos tus dudas */}
+  <FaqTopics faqs={faqs} title={faqTitle} />
+</Base>

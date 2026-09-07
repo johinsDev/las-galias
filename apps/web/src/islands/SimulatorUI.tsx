@@ -8,12 +8,17 @@ import { formatMoney } from "@/lib/currency";
  * one place is what stops the three from drifting apart visually.
  */
 
+// Los mismos campos que el resto de formularios del sitio: 50px de alto, 10px
+// de radio y el filete claro. Antes eran más bajos y con otro borde, y los tres
+// simuladores se leían como una pieza de otra época.
 const FIELD =
-  "border-line-strong text-body-sm text-ink h-11 w-full rounded-lg border bg-white px-3 outline-none transition-colors focus:border-ink";
+  "border-input field-box text-body text-ink w-full border bg-white px-3.5 outline-none transition-colors focus:border-ink";
+
+const LABEL = "text-label text-ink-muted mb-1.5 block font-bold uppercase";
 
 function Label({ htmlFor, children }: { htmlFor: string; children: ReactNode }) {
   return (
-    <label className="eyebrow block" htmlFor={htmlFor}>
+    <label className={LABEL} htmlFor={htmlFor}>
       {children}
     </label>
   );
@@ -135,12 +140,8 @@ export function ToggleField({
 }) {
   return (
     <div>
-      <p className="eyebrow">{label}</p>
-      <div
-        className="border-line-strong mt-1.5 inline-flex rounded-lg border bg-white p-1"
-        role="group"
-        aria-label={label}
-      >
+      <p className={LABEL}>{label}</p>
+      <div className="seg-group" role="group" aria-label={label}>
         {options.map((option) => {
           const active = option.value === value;
           return (
@@ -149,9 +150,7 @@ export function ToggleField({
               type="button"
               aria-pressed={active}
               onClick={() => onChange(option.value)}
-              className={`text-body-sm rounded-md px-4 py-1.5 font-medium transition-colors ${
-                active ? "bg-ink text-white" : "text-ink-muted hover:text-ink"
-              }`}
+              className="seg px-4"
             >
               {option.label}
             </button>

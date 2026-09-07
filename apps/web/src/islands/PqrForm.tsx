@@ -19,6 +19,12 @@ export interface PqrProjectOption {
 
 interface PqrFormProps {
   projects: PqrProjectOption[];
+  /**
+   * Lo que ya respondió la persona en la puerta de la página de PQR: su cédula
+   * y el negocio elegido. Con esto llega, esos dos campos no se vuelven a pedir.
+   */
+  documentNumber?: string;
+  lockedProjectId?: string;
 }
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
@@ -50,13 +56,17 @@ const FIELD_ERROR = "text-destructive text-caption mt-1";
  * a complaint is not a sales lead, and filing it as one would put the person
  * into a commercial pipeline they never asked for.
  */
-export default function PqrForm({ projects }: PqrFormProps) {
+export default function PqrForm({ projects, documentNumber, lockedProjectId }: PqrFormProps) {
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [radicado, setRadicado] = useState<string | null>(null);
 
   const form = useForm({
     schema: PqrSchema,
-    initialInput: { type: "peticion" as PqrType },
+    initialInput: {
+      type: "peticion" as PqrType,
+      ...(documentNumber ? { documentNumber } : {}),
+      ...(lockedProjectId ? { projectDocumentId: lockedProjectId } : {}),
+    },
   });
 
   if (status === "ok") {
