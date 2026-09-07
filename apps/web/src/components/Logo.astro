@@ -11,8 +11,13 @@
  * in an internal <style>, which would collide if both were inlined on one page.
  */
 interface Props {
-  /** `dark` for light backgrounds (header), `light` for the red footer. */
-  variant?: "dark" | "light";
+  /**
+   * `dark` for light backgrounds, `light` for the red bands, `brand` for the
+   * wordmark in brand red — the open mobile menu turns the bar white, where
+   * the white artwork would disappear and the two-tone one reads as a
+   * different logo.
+   */
+  variant?: "dark" | "light" | "brand";
   /** Rendered height in px. The artwork is 212.17×60, so width follows. */
   height?: number;
   class?: string;
@@ -23,13 +28,29 @@ const { variant = "dark", height = 30, class: className } = Astro.props;
 const ASPECT = 212.17 / 60;
 ---
 
-<img
-  src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
-  alt="Las Galias Constructora"
-  width={Math.round(height * ASPECT)}
-  height={height}
-  class:list={["w-auto", className]}
-  style={`height:${height}px`}
-  loading="eager"
-  decoding="async"
-/>
+{
+  /* Recoloured with a mask rather than a third file: the white artwork is a
+     single tone, so its alpha is exactly the wordmark's shape. A filter could
+     not hit an arbitrary brand colour, and an <img> cannot be tinted at all. */
+}
+{
+  variant === "brand" ? (
+    <span
+      role="img"
+      aria-label="Las Galias Constructora"
+      class:list={["block", className]}
+      style={`height:${height}px;width:${Math.round(height * ASPECT)}px;background-color:var(--brand);-webkit-mask:url(/logo-white.svg) no-repeat center/contain;mask:url(/logo-white.svg) no-repeat center/contain`}
+    />
+  ) : (
+    <img
+      src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
+      alt="Las Galias Constructora"
+      width={Math.round(height * ASPECT)}
+      height={height}
+      class:list={["w-auto", className]}
+      style={`height:${height}px`}
+      loading="eager"
+      decoding="async"
+    />
+  )
+}

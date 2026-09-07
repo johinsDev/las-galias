@@ -44,12 +44,20 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
   /* `relative` so the mobile sheet can hang off the bar and overlay the page
    instead of pushing the hero down when it opens. */
 }
-<header class="bg-brand sticky top-0 z-50 text-white">
+<header
+  class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
+  data-nav-open="false"
+>
   <div class="container-bleed flex h-[72px] items-center justify-between gap-6">
     {/* Logo and nav travel together on the left; only the actions go right. */}
     <div class="flex items-center gap-10">
-      <a href="/" class="flex items-center" aria-label="Las Galias Constructora — inicio">
-        <Logo variant="light" height={30} />
+      <a href="/" class="flex items-center gap-2.5" aria-label="Las Galias Constructora — inicio">
+        <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
+        {
+          /* On a white bar the white artwork would vanish, so the open menu
+            shows the same wordmark in brand red. */
+        }
+        <Logo variant="brand" height={30} class="hidden group-data-[nav-open=true]/header:block" />
       </a>
 
       <nav aria-label="principal" class="hidden xl:block">
@@ -100,7 +108,7 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
       </a>
       <a
         href="/servicio-al-cliente"
-        class="text-brand inline-flex rounded-full bg-white px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 sm:px-5"
+        class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
       >
         Zona clientes
       </a>
@@ -110,7 +118,7 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
       <button
         type="button"
         id="nav-toggle"
-        class="group/toggle text-brand inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors hover:bg-white/90 xl:hidden"
+        class="group/toggle text-brand group-data-[nav-open=true]/header:border-line group-data-[nav-open=true]/header:text-ink inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors group-data-[nav-open=true]/header:border hover:bg-white/90 xl:hidden"
         aria-label="Abrir menú"
         aria-expanded="false"
         aria-controls="mobile-nav"
@@ -194,6 +202,15 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
   </nav>
 </header>
 
+<style>
+  /* Menu open: the bar turns white, so everything on it has to flip with it. */
+  header[data-nav-open="true"] {
+    background-color: #fff;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+</style>
+
 <script>
   // Re-bound on every View Transitions navigation: Base.astro mounts
   // <ClientRouter />, so a listener attached only on first load would be lost
@@ -203,7 +220,9 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
     const panel = document.getElementById("mobile-nav");
     if (!toggle || !panel) return;
 
+    const header = toggle.closest("header");
     panel.dataset.open = "false";
+    header?.setAttribute("data-nav-open", "false");
     toggle.setAttribute("aria-expanded", "false");
 
     // `astro:page-load` fires on the first load too — without this the click
@@ -214,6 +233,7 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
     toggle.addEventListener("click", () => {
       const open = panel.dataset.open !== "true";
       panel.dataset.open = String(open);
+      header?.setAttribute("data-nav-open", String(open));
       toggle.setAttribute("aria-expanded", String(open));
       toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
     });

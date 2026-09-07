@@ -72,7 +72,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
               <div class="banner-slide shrink-0 snap-center" data-banner-index={index}>
                 {/* The scale lives on this inner box so the snap box keeps its
                     untransformed size and the centring maths stays exact. */}
-                <div class="banner-scale bg-brand-bright relative aspect-[1424/780] overflow-hidden rounded-[48px]">
+                <div class="banner-scale bg-brand-bright relative aspect-[348/242] overflow-hidden rounded-3xl md:aspect-[1424/780] md:rounded-[48px]">
                   {banner.link ? (
                     <a href={banner.link} class="block h-full w-full">
                       {inner}
@@ -137,7 +137,8 @@ const slides = Array.from({ length: loops }, () => banners).flat();
      1424 x 780 with a 48px radius is what the inspector reports for the slide
      in the 1776-wide design frame. */
   .banner {
-    --banner-slide: calc(100vw - 2.5rem);
+    /* 348 of a 390-wide mobile frame, per the inspector. */
+    --banner-slide: 89vw;
     /* How far the slide hangs past the red, plus room for the dots. */
     --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
   }
@@ -149,7 +150,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
          the neighbours scaling toward the centre they now show their whole
          margin, and the full 176px read as too much of them — this trims the
          peek to about 140 without losing it. */
-      --banner-slide: min(84vw, 1436px);
+      --banner-slide: min(89vw, 1600px);
     }
   }
 
@@ -175,14 +176,24 @@ const slides = Array.from({ length: loops }, () => banners).flat();
     will-change: transform;
   }
 
-  /* About 70% of the 44px button sits outside the slide, the way the design
-     hangs it over the red. */
+  /* Tucked inside the slide on a phone — there is no room beside it — and
+     hanging ~70% over the edge from md up, the way the design draws it. */
   .banner-arrow-prev {
-    left: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    left: calc((100% - var(--banner-slide)) / 2 + 0.5rem);
   }
 
   .banner-arrow-next {
-    right: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    right: calc((100% - var(--banner-slide)) / 2 + 0.5rem);
+  }
+
+  @media (width >= 48rem) {
+    .banner-arrow-prev {
+      left: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    }
+
+    .banner-arrow-next {
+      right: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
