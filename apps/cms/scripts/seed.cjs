@@ -286,7 +286,13 @@ async function main() {
         macroproject: spec.macroproject,
         location: spec.location,
         salesRoom: isSale
-          ? { schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.", phone: "300 000 0000" }
+          ? {
+              schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+              phone: "300 000 0000",
+              // Without this the card's CTA falls back to "Ver proyecto" and the
+              // approved WhatsApp button never shows up in a demo build.
+              whatsappUrl: "https://wa.me/573000000000",
+            }
           : undefined,
         amenities: isSale ? amenities.slice(0, 4).map((a) => a.documentId) : [],
         unitTypes,

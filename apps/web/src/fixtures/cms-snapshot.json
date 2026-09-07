@@ -63,8 +63,8 @@
       "createdAt": "2026-07-15T01:47:10.567Z",
       "updatedAt": "2026-07-15T01:47:10.567Z",
       "publishedAt": "2026-07-15T01:47:10.573Z",
-      "category": null,
-      "publishedOn": null,
+      "category": "mercado",
+      "publishedOn": "2026-05-28",
       "cover": {
         "id": 31,
         "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
@@ -86,7 +86,8 @@
         "createdAt": "2026-07-15T01:47:10.561Z",
         "updatedAt": "2026-07-15T01:47:10.561Z",
         "publishedAt": "2026-07-15T01:47:10.561Z"
-      }
+      },
+      "readingMinutes": 6
     },
     {
       "id": 2,
@@ -151,8 +152,8 @@
       "createdAt": "2026-07-15T01:47:10.510Z",
       "updatedAt": "2026-07-15T01:47:10.510Z",
       "publishedAt": "2026-07-15T01:47:10.518Z",
-      "category": null,
-      "publishedOn": null,
+      "category": "guia-de-compra",
+      "publishedOn": "2026-06-04",
       "cover": {
         "id": 30,
         "documentId": "x8k0yzpol1nqdufinq3kfurx",
@@ -174,7 +175,8 @@
         "createdAt": "2026-07-15T01:47:10.505Z",
         "updatedAt": "2026-07-15T01:47:10.505Z",
         "publishedAt": "2026-07-15T01:47:10.505Z"
-      }
+      },
+      "readingMinutes": 9
     }
   ],
   "macroprojects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5Bgallery%5D=true&populate%5Blocation%5D=true&populate%5BpointsOfInterest%5D=true": [
@@ -507,7 +509,12 @@
       ],
       "logo": null,
       "specSheet": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 900,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -702,7 +709,12 @@
       ],
       "logo": null,
       "specSheet": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 901,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -897,7 +909,12 @@
       ],
       "logo": null,
       "specSheet": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 902,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -1092,7 +1109,12 @@
       ],
       "logo": null,
       "specSheet": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 903,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "zone": {
         "id": 2,
         "documentId": "zonedemocnorte0000000000",
@@ -1335,8 +1357,8 @@
       "createdAt": "2026-07-15T01:47:10.567Z",
       "updatedAt": "2026-07-15T01:47:10.567Z",
       "publishedAt": "2026-07-15T01:47:10.573Z",
-      "category": null,
-      "publishedOn": null,
+      "category": "mercado",
+      "publishedOn": "2026-05-28",
       "cover": {
         "id": 31,
         "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
@@ -1359,7 +1381,8 @@
         "updatedAt": "2026-07-15T01:47:10.561Z",
         "publishedAt": "2026-07-15T01:47:10.561Z"
       },
-      "seo": null
+      "seo": null,
+      "readingMinutes": 6
     }
   ],
   "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
@@ -1426,8 +1449,8 @@
       "createdAt": "2026-07-15T01:47:10.510Z",
       "updatedAt": "2026-07-15T01:47:10.510Z",
       "publishedAt": "2026-07-15T01:47:10.518Z",
-      "category": null,
-      "publishedOn": null,
+      "category": "guia-de-compra",
+      "publishedOn": "2026-06-04",
       "cover": {
         "id": 30,
         "documentId": "x8k0yzpol1nqdufinq3kfurx",
@@ -1450,7 +1473,8 @@
         "updatedAt": "2026-07-15T01:47:10.505Z",
         "publishedAt": "2026-07-15T01:47:10.505Z"
       },
-      "seo": null
+      "seo": null,
+      "readingMinutes": 9
     }
   ],
   "calculator-config": {
@@ -1759,7 +1783,12 @@
       "logo": null,
       "specSheet": null,
       "financing": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 904,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "constructionProgress": [],
       "seo": {
         "id": 14,
@@ -2055,7 +2084,12 @@
       "logo": null,
       "specSheet": null,
       "financing": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 905,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "constructionProgress": [],
       "seo": {
         "id": 4,
@@ -2380,7 +2414,12 @@
       "logo": null,
       "specSheet": null,
       "financing": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 906,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "constructionProgress": [],
       "seo": {
         "id": 12,
@@ -2631,7 +2670,12 @@
       "logo": null,
       "specSheet": null,
       "financing": null,
-      "salesRoom": null,
+      "salesRoom": {
+        "id": 907,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000"
+      },
       "constructionProgress": [],
       "seo": {
         "id": 13,
@@ -2999,7 +3043,8 @@
         "createdAt": "2026-07-15T01:47:10.337Z",
         "updatedAt": "2026-07-15T01:47:10.337Z",
         "publishedAt": "2026-07-15T01:47:10.337Z"
-      }
+      },
+      "ctaLabel": "Ver proyecto"
     },
     {
       "id": 4,
@@ -3054,7 +3099,106 @@
         "createdAt": "2026-07-15T01:47:10.451Z",
         "updatedAt": "2026-07-15T01:47:10.451Z",
         "publishedAt": "2026-07-15T01:47:10.451Z"
-      }
+      },
+      "ctaLabel": "Ver proyecto"
     }
-  ]
+  ],
+  "home-page?populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Bstats%5D=true&populate%5Bsteps%5D%5Bpopulate%5D%5Bimage%5D=true&populate%5Btools%5D=true": {
+    "id": 1,
+    "documentId": "demohomepage000000000000",
+    "heroEyebrow": "Vivienda nueva · Colombia",
+    "heroTitle": "Tu hogar en la ciudad que amas",
+    "heroSubtitle": "Encuentra vivienda nueva en las mejores ciudades de Colombia.\nCuota inicial desde el 20%.",
+    "searchPlaceholder": "Busca por ciudad, zona o proyecto…",
+    "stepsEyebrow": "Paso a paso",
+    "stepsTitle": "Comprar es muy fácil",
+    "steps": [
+      {
+        "id": 1,
+        "title": "Elige tu proyecto",
+        "body": "Filtra por ciudad, precio y área. Agenda visita virtual o presencial sin costo.",
+        "image": {
+          "id": 0,
+          "url": "/uploads/balcones_de_provenza_gallery_1_6c25c50f9c.svg",
+          "alternativeText": "Elige tu proyecto",
+          "width": 1600,
+          "height": 1000,
+          "mime": "image/svg+xml"
+        }
+      },
+      {
+        "id": 2,
+        "title": "Aparta y financia",
+        "body": "Aparta con cuota inicial desde el 20%. Te asesoramos en crédito y subsidios VIS.",
+        "image": {
+          "id": 0,
+          "url": "/uploads/mirador_del_parque_gallery_2_ee11ae7d79.svg",
+          "alternativeText": "Aparta y financia",
+          "width": 1600,
+          "height": 1000,
+          "mime": "image/svg+xml"
+        }
+      },
+      {
+        "id": 3,
+        "title": "Recibe tu hogar",
+        "body": "Entrega con estándares de alta calidad y acompañamiento postventa incluido.",
+        "image": {
+          "id": 0,
+          "url": "/uploads/portal_del_poblado_gallery_3_93cf83d4ef.svg",
+          "alternativeText": "Recibe tu hogar",
+          "width": 1600,
+          "height": 1000,
+          "mime": "image/svg+xml"
+        }
+      }
+    ],
+    "toolsEyebrow": "Herramientas",
+    "toolsTitle": "Planea tu compra",
+    "tools": [
+      {
+        "id": 1,
+        "title": "Simulador de crédito",
+        "body": "Calcula tu cuota mensual según precio, cuota inicial y plazo.",
+        "href": "/simuladores/credito-hipotecario",
+        "iconKey": "credit-card"
+      },
+      {
+        "id": 2,
+        "title": "¿Aplica subsidio VIS?",
+        "body": "Verifica si accedes a subsidio Mi Casa Ya y cuánto te descuentan.",
+        "href": "/simuladores/capacidad-de-pago",
+        "iconKey": "subsidy"
+      }
+    ],
+    "stats": [
+      {
+        "id": 1,
+        "value": "+30.000",
+        "label": "Viviendas entregadas"
+      },
+      {
+        "id": 2,
+        "value": "+30",
+        "label": "Proyectos activos"
+      },
+      {
+        "id": 3,
+        "value": "#1",
+        "label": "En ventas VIS · Colombia"
+      },
+      {
+        "id": 4,
+        "value": "30 años",
+        "label": "De trayectoria"
+      }
+    ],
+    "blogEyebrow": "Blog",
+    "blogTitle": "Aprende sobre vivienda",
+    "ctaTitle": "Agenda tu cita sin costo",
+    "ctaBody": "Un asesor te acompañará por todos los proyectos y opciones de financiación.",
+    "ctaLabel": "Agenda tu cita",
+    "ctaHref": "/servicio-al-cliente",
+    "seo": null
+  }
 }

@@ -131,9 +131,7 @@ const stats = page?.stats?.length
       </form>
     </div>
 
-    <div class="pb-14">
-      <BannerCarousel banners={banners} />
-    </div>
+    <BannerCarousel banners={banners} />
   </section>
 
   {/* Proyectos */}
@@ -203,18 +201,20 @@ const stats = page?.stats?.length
   }
 
   {/* Cierre */}
-  <section class="container py-16 text-center md:py-20" data-reveal>
-    <h2 class="text-h2 text-ink mx-auto max-w-2xl font-bold">
-      {page?.ctaTitle ?? "Agenda tu cita sin costo"}
-    </h2>
-    <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">
-      {
-        page?.ctaBody ??
-          "Un asesor te acompañará por todos los proyectos y opciones de financiación."
-      }
-    </p>
-    <a href={page?.ctaHref ?? "/servicio-al-cliente"} class="btn btn-primary mt-8">
-      {page?.ctaLabel ?? "Agenda tu cita"}
-    </a>
+  <section class="bg-brand-subtle">
+    <div class="container py-16 text-center md:py-20" data-reveal>
+      <h2 class="text-h2 text-ink mx-auto max-w-2xl font-bold">
+        {page?.ctaTitle ?? "Agenda tu cita sin costo"}
+      </h2>
+      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">
+        {
+          page?.ctaBody ??
+            "Un asesor te acompañará por todos los proyectos y opciones de financiación."
+        }
+      </p>
+      <a href={page?.ctaHref ?? "/servicio-al-cliente"} class="btn btn-primary mt-8">
+        {page?.ctaLabel ?? "Agenda tu cita"}
+      </a>
+    </div>
   </section>
 </Base>

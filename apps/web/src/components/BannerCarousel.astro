@@ -5,14 +5,14 @@ import type { HomeBanner } from "@lasgalias/schemas";
 import { mediaUrl } from "@/lib/strapi";
 
 /**
- * The campaign slider that sits on the hero's red band. The approved design
- * shows one slide centred with its neighbours peeking, so this is a
- * scroll-snap rail rather than a transform slider: the peek, the drag on touch
- * and the keyboard scroll all come free, and the whole thing degrades to a
- * horizontally scrollable strip with no JS at all.
+ * The campaign slider that straddles the hero's red band. The approved design
+ * lets the slide hang past the bottom of the red onto the white below, with the
+ * dots sitting on the white — so this draws its own white shelf rather than
+ * relying on where the section happens to end.
  *
- * See the <style> block for why the slide width is a length and the padding is
- * derived from it.
+ * It is a scroll-snap rail rather than a transform slider: the peek, the drag
+ * on touch and the keyboard scroll all come free, and with no JS at all it
+ * degrades to a horizontally scrollable strip.
  */
 interface Props {
   banners: HomeBanner[];
@@ -23,104 +23,171 @@ const { banners } = Astro.props;
 
 {
   banners.length > 0 && (
-    <div class="relative" data-banner-carousel data-reveal>
-      <div
-        class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] gap-6 overflow-x-auto scroll-smooth [&::-webkit-scrollbar]:hidden"
-        data-banner-rail
-      >
-        {banners.map((banner, index) => {
-          const image = banner.desktopImage;
-          const inner = (
-            <>
-              <Image
-                src={mediaUrl(image.url)}
-                alt={image.alternativeText ?? banner.title ?? ""}
-                width={1000}
-                height={640}
-                loading={index === 0 ? "eager" : "lazy"}
-                class="h-full w-full object-cover"
-              />
-              {banner.ctaLabel && (
-                <span class="btn btn-primary absolute bottom-6 left-1/2 -translate-x-1/2 text-sm tracking-wide uppercase">
-                  {banner.ctaLabel}
-                </span>
-              )}
-            </>
-          );
-          return (
-            <div class="banner-slide shrink-0 snap-center">
-              <div class="bg-brand-bright relative aspect-[985/545] overflow-hidden rounded-3xl">
-                {banner.link ? (
-                  <a href={banner.link} class="block h-full w-full">
-                    {inner}
-                  </a>
-                ) : (
-                  inner
+    <div class="banner relative" data-banner-carousel data-reveal>
+      {/* The white the slide hangs onto. Behind everything, hence z-0. */}
+      <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />
+
+      <div class="relative z-10">
+        <div
+          class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto scroll-smooth [&::-webkit-scrollbar]:hidden"
+          data-banner-rail
+        >
+          {banners.map((banner, index) => {
+            const image = banner.desktopImage;
+            const inner = (
+              <>
+                <Image
+                  src={mediaUrl(image.url)}
+                  alt={image.alternativeText ?? banner.title ?? ""}
+                  width={1000}
+                  height={640}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  class="h-full w-full object-cover"
+                />
+                {banner.ctaLabel && (
+                  <span class="btn btn-primary banner-cta absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-3.5 text-sm font-bold tracking-wide uppercase">
+                    {banner.ctaLabel}
+                  </span>
                 )}
+              </>
+            );
+            return (
+              <div class="banner-slide shrink-0 snap-center">
+                <div class="bg-brand-bright relative aspect-[985/545] overflow-hidden rounded-3xl">
+                  {banner.link ? (
+                    <a href={banner.link} class="group/cta block h-full w-full">
+                      {inner}
+                    </a>
+                  ) : (
+                    inner
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {banners.length > 1 && (
+          <>
+            {/* Centred on the slide's own edges, as the design places them —
+                not out at the viewport edges. */}
+            <button
+              type="button"
+              data-banner-prev
+              aria-label="Banner anterior"
+              class="banner-arrow banner-arrow-prev text-ink absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 md:inline-flex"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-banner-next
+              aria-label="Banner siguiente"
+              class="banner-arrow banner-arrow-next text-ink absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-transform duration-200 hover:scale-110 active:scale-95 md:inline-flex"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
 
       {banners.length > 1 && (
-        <>
-          <button
-            type="button"
-            data-banner-prev
-            aria-label="Banner anterior"
-            class="text-ink absolute top-1/2 left-4 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-sm transition-colors hover:bg-white md:inline-flex"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            data-banner-next
-            aria-label="Banner siguiente"
-            class="text-ink absolute top-1/2 right-4 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-sm transition-colors hover:bg-white md:inline-flex"
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </button>
-
-          <div class="mt-5 flex justify-center gap-2" data-banner-dots>
-            {banners.map((_, index) => (
-              <button
-                type="button"
-                data-banner-dot={index}
-                aria-label={`Ir al banner ${index + 1}`}
-                class="h-1.5 rounded-full bg-white/45 transition-all"
-              />
-            ))}
-          </div>
-        </>
+        <div class="relative z-10 flex justify-center gap-2 pt-5" data-banner-dots>
+          {banners.map((_, index) => (
+            <button
+              type="button"
+              data-banner-dot={index}
+              aria-label={`Ir al banner ${index + 1}`}
+              class="h-1.5 rounded-full transition-all duration-300"
+            />
+          ))}
+        </div>
       )}
     </div>
   )
 }
+
+<style>
+  /* The slide is a LENGTH and the padding is derived from it, on purpose.
+     Sizing the slide as a percentage resolves it against the rail's content
+     box, which the padding has already shrunk: the slides came out too narrow,
+     the rail could not scroll far enough to centre the last one, and
+     scroll-snap sprang it back to the first. Deriving the padding instead makes
+     the last slide's centre land exactly on the maximum scroll offset.
+
+     985 x 545 is the slide in the 1776-wide design frame; the cap stops it
+     growing without limit on a very large monitor. */
+  .banner {
+    --banner-slide: min(86vw, 985px);
+    /* How far the slide hangs past the red, plus room for the dots. */
+    --banner-shelf: calc(var(--banner-slide) * 0.045 + 2.75rem);
+  }
+
+  @media (width >= 48rem) {
+    .banner {
+      --banner-slide: min(55.5vw, 985px);
+    }
+  }
+
+  .banner-rail {
+    padding-inline: calc((100% - var(--banner-slide)) / 2);
+    gap: 1.5rem;
+  }
+
+  .banner-slide {
+    width: var(--banner-slide);
+  }
+
+  .banner-shelf {
+    height: var(--banner-shelf);
+  }
+
+  /* Half the button (2.75rem / 2) outside the slide's edge, so it straddles it. */
+  .banner-arrow-prev {
+    left: calc((100% - var(--banner-slide)) / 2 - 1.375rem);
+  }
+
+  .banner-arrow-next {
+    right: calc((100% - var(--banner-slide)) / 2 - 1.375rem);
+  }
+
+  /* The CTA grows a touch when the slide is hovered — the design's "scale". */
+  .banner-cta {
+    transition:
+      transform 0.25s ease,
+      background-color 0.2s ease;
+  }
+
+  .group\/cta:hover .banner-cta {
+    transform: translateX(-50%) scale(1.06);
+  }
+</style>
 
 <script>
   /**
@@ -135,14 +202,13 @@ const { banners } = Astro.props;
       const slides = [...rail.children] as HTMLElement[];
       const dots = [...root.querySelectorAll<HTMLElement>("[data-banner-dot]")];
 
-      // The active dot is a pill, the rest are 6px circles — that is the whole
-      // difference in the design, so it is painted rather than class-toggled
-      // through Tailwind variants that would need to exist at build time.
+      // Active dot is a red bar, the rest are grey circles — painted rather
+      // than class-toggled so the variants need not exist at build time.
       const paint = (index: number) => {
         dots.forEach((dot, i) => {
           const on = i === index;
-          dot.style.width = on ? "18px" : "6px";
-          dot.style.backgroundColor = on ? "#fff" : "rgba(255,255,255,0.45)";
+          dot.style.width = on ? "22px" : "6px";
+          dot.style.backgroundColor = on ? "var(--brand)" : "#d7d7dc";
         });
       };
 
@@ -196,29 +262,3 @@ const { banners } = Astro.props;
   setupBannerCarousels();
   document.addEventListener("astro:page-load", setupBannerCarousels);
 </script>
-
-<style>
-  /* The slide is a LENGTH and the padding is derived from it, on purpose.
-     Sizing the slide as a percentage resolves it against the rail's content
-     box, which the padding has already shrunk: the slides came out too narrow,
-     the rail could not scroll far enough to centre the last one, and
-     scroll-snap sprang it back to the first. Deriving the padding instead makes
-     the last slide's centre land exactly on the maximum scroll offset.
-
-     985px is the slide width in the 1776-wide design frame; the cap stops it
-     growing without limit on a very large monitor. */
-  .banner-rail {
-    --banner-slide: min(86vw, 985px);
-    padding-inline: calc((100% - var(--banner-slide)) / 2);
-  }
-
-  @media (width >= 48rem) {
-    .banner-rail {
-      --banner-slide: min(55.5vw, 985px);
-    }
-  }
-
-  .banner-slide {
-    width: var(--banner-slide);
-  }
-</style>

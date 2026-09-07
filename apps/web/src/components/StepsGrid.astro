@@ -35,8 +35,10 @@ const { steps } = Astro.props;
             />
           </div>
         )}
-        <p class="text-brand mt-5 text-sm font-bold">{index + 1}</p>
-        <h3 class="text-ink mt-1 font-semibold">{step.title}</h3>
+        <span class="bg-brand-tint text-brand mt-5 inline-flex h-8 min-w-9 items-center justify-center rounded-lg px-2 text-sm font-bold">
+          {index + 1}
+        </span>
+        <h3 class="text-ink mt-4 font-semibold">{step.title}</h3>
         <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
       </div>
     ))

@@ -37,7 +37,8 @@
   --brand: #ce253a;
   --brand-bright: #b21e30; /* hover / pressed */
   --brand-foreground: #ffffff;
-  --brand-subtle: #fdf1f2; /* pale pink bands: steps, stats, final CTA */
+  --brand-subtle: #fdf9fa; /* pale bands: steps, stats, final CTA — from the design */
+  --brand-tint: #fdeef1; /* one step pinker: number pills and icon squares */
 
   /* shadcn semantic tokens, mapped onto the neutral ramp */
   --radius: 0.875rem;
@@ -79,6 +80,7 @@
   --color-brand-bright: var(--brand-bright);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-subtle: var(--brand-subtle);
+  --color-brand-tint: var(--brand-tint);
 
   /* shadcn semantic utilities */
   --color-background: var(--background);
@@ -145,7 +147,7 @@
   --text-caption--line-height: 1.4;
 
   /* fonts */
-  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Centered page container (max ~1200px) with responsive gutters */
