@@ -101,7 +101,9 @@ import { Check } from "lucide-astro";
         trustBadges.length > 0 && (
           <div class="mt-6 flex flex-wrap justify-center gap-2" data-reveal>
             {trustBadges.map((badge) => (
-              <span class="badge border-line-strong text-ink-muted border bg-white">{badge}</span>
+              <span class="text-brand text-label inline-flex h-8 items-center rounded-full border border-[#f16577] bg-[#ce253a]/[0.02] px-3 font-bold uppercase">
+                {badge}
+              </span>
             ))}
           </div>
         )
@@ -109,15 +111,17 @@ import { Check } from "lucide-astro";
     </div>
     {
       page?.heroImage?.url && (
-        <div class="bg-surface aspect-[21/9] w-full overflow-hidden">
-          <Image
-            src={mediaUrl(page.heroImage.url)}
-            alt={page.heroImage.alternativeText ?? ""}
-            width={1600}
-            height={686}
-            loading="eager"
-            class="h-full w-full object-cover"
-          />
+        <div class="container-bleed">
+          <div class="bg-surface aspect-[1712/652] w-full overflow-hidden rounded-[56px]">
+            <Image
+              src={mediaUrl(page.heroImage.url)}
+              alt={page.heroImage.alternativeText ?? ""}
+              width={1712}
+              height={652}
+              loading="eager"
+              class="h-full w-full object-cover"
+            />
+          </div>
         </div>
       )
     }

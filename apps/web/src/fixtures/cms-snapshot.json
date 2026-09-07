@@ -3256,5 +3256,38 @@
     "ctaLabel": "Agenda tu cita",
     "ctaHref": "/servicio-al-cliente",
     "seo": null
+  },
+  "foreign-buyer-page?populate%5BheroImage%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Bsteps%5D=true": {
+    "id": 1,
+    "documentId": "demoforeignpage000000001",
+    "eyebrow": "Colombianos en el exterior",
+    "heroTitle": "Tu próxima inversión en Colombia, desde donde estés",
+    "heroSubtitle": "Asesoría personalizada, pagos 100% digitales y acompañamiento en cada paso, sin importar en qué país vivas hoy.",
+    "heroImage": {
+      "id": 0,
+      "url": "/uploads/portal_del_poblado_gallery_1_868c0d9922.svg",
+      "alternativeText": "Interior de un apartamento Las Galias",
+      "width": 1712,
+      "height": 652,
+      "mime": "image/svg+xml"
+    },
+    "heroCtaLabel": "Déjanos tus datos",
+    "trustBadges": [
+      {
+        "id": 1,
+        "text": "Broker autorizado"
+      },
+      {
+        "id": 2,
+        "text": "Pagos por PSE"
+      }
+    ],
+    "stepsTitle": "Conoce el paso a paso",
+    "steps": [],
+    "priceDisclaimer": null,
+    "formTitle": null,
+    "formBody": null,
+    "formBullets": [],
+    "seo": null
   }
 }
