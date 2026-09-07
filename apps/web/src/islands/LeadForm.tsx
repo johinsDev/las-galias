@@ -287,6 +287,9 @@ export default function LeadForm({
                     name={field.props.name}
                     chevron={chevronSide}
                     value={(field.input as string | undefined) ?? ""}
+                    searchable
+                    searchPlaceholder="Busca un proyecto…"
+                    emptyMessage="No encontramos ese proyecto."
                     items={projects.map((item) => ({
                       value: item.documentId,
                       label: item.name,
@@ -322,6 +325,9 @@ export default function LeadForm({
               path="residenceCity"
               label="Ciudad de residencia"
               placeholder="Selecciona la ciudad"
+              searchable
+              searchPlaceholder="Busca tu ciudad…"
+              emptyMessage="No encontramos esa ciudad."
               items={options(qualification.residenceCities)}
             />
             <QualificationSelect
@@ -454,6 +460,9 @@ function QualificationSelect({
   labelClass,
   chevron,
   uid,
+  searchable = false,
+  searchPlaceholder,
+  emptyMessage,
 }: {
   // El store que devuelve `useForm`, tomado de donde ya está tipado.
   form: ComponentProps<typeof Field>["of"];
@@ -464,6 +473,10 @@ function QualificationSelect({
   labelClass: string;
   chevron: "left" | "right";
   uid: string;
+  /** Solo las listas largas lo necesitan; con tres opciones estorba. */
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
 }) {
   // An empty list means the editor has not filled that option list in yet.
   // Drawing a select with nothing but a placeholder is worse than not drawing it.
@@ -480,6 +493,9 @@ function QualificationSelect({
             id={`${uid}-${path}`}
             name={field.props.name}
             chevron={chevron}
+            searchable={searchable}
+            searchPlaceholder={searchPlaceholder}
+            emptyMessage={emptyMessage}
             value={(field.input as string | undefined) ?? ""}
             placeholder={placeholder}
             items={items.map((item) => ({ value: item, label: item }))}

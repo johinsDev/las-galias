@@ -45,6 +45,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
       key: "residenceCity" as const,
       label: "Ciudad de residencia",
       placeholder: "Selecciona la ciudad",
+      searchable: true,
       items: options(config.residenceCities),
     },
     {
@@ -89,6 +90,9 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
             <Select
               id={`advice-${field.key}`}
               chevron="left"
+              searchable={field.searchable ?? false}
+              searchPlaceholder="Busca tu ciudad…"
+              emptyMessage="No encontramos esa ciudad."
               placeholder={field.placeholder}
               value={(values[field.key] as string | undefined) ?? ""}
               items={field.items.map((item) => ({ value: item, label: item }))}

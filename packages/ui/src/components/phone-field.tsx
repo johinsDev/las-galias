@@ -102,6 +102,9 @@ export function PhoneField({
           value: item.code,
           label: `${flagOf(item.code)}  ${item.name} ${item.dial}`,
         }))}
+        searchable
+        searchPlaceholder="Busca tu país…"
+        emptyMessage="No encontramos ese país."
         popupClassName="w-72"
         triggerClassName="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors outline-none"
         trigger={
