@@ -27,8 +27,10 @@ const label = categoryLabel(post.category);
   class="group card-lift border-line hover:shadow-card-lg flex flex-col overflow-hidden rounded-2xl border bg-white"
   data-reveal
 >
-  <a href={`/blog/${post.slug}`} class="flex flex-1 flex-col">
-    <div class="bg-surface aspect-[16/10] overflow-hidden">
+  <a href={`/blog/${post.slug}`} class="flex flex-1 gap-4 p-3 sm:flex-col sm:gap-0 sm:p-0">
+    <div
+      class="bg-surface size-20 shrink-0 overflow-hidden rounded-xl sm:aspect-[16/10] sm:size-auto sm:rounded-none"
+    >
       {
         post.cover?.url && (
           <Image
@@ -41,7 +43,7 @@ const label = categoryLabel(post.category);
         )
       }
     </div>
-    <div class="flex flex-1 flex-col p-5">
+    <div class="flex min-w-0 flex-1 flex-col sm:p-5">
       {
         label && (
           <span class="eyebrow bg-brand-tint text-brand inline-flex self-start rounded-md px-2.5 py-1.5">
@@ -50,8 +52,12 @@ const label = categoryLabel(post.category);
         )
       }
       <h3 class="text-ink mt-2 leading-snug font-semibold">{post.title}</h3>
-      {post.excerpt && <p class="text-body-sm text-ink-muted mt-2 line-clamp-2">{post.excerpt}</p>}
-      <p class="text-caption text-ink-faint mt-auto pt-4">{meta}</p>
+      {
+        post.excerpt && (
+          <p class="text-body-sm text-ink-muted mt-2 line-clamp-2 max-sm:hidden">{post.excerpt}</p>
+        )
+      }
+      <p class="text-caption text-ink-faint mt-auto pt-2 sm:pt-4">{meta}</p>
     </div>
   </a>
 </article>

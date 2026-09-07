@@ -143,7 +143,7 @@ import { Search } from "lucide-astro";
   }
 
   {/* Comprar es muy fácil */}
-  <section class="bg-brand-subtle">
+  <section>
     <div class="container py-16 md:py-20">
       <SectionHeading
         eyebrow={page?.stepsEyebrow ?? "Paso a paso"}
@@ -194,13 +194,17 @@ import { Search } from "lucide-astro";
       <h2 class="text-h2 text-ink mx-auto max-w-2xl font-bold">
         {page?.ctaTitle ?? "Agenda tu cita sin costo"}
       </h2>
-      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">
+      {/* The mobile design goes straight from the title to the button. */}
+      <p class="text-body-lg text-ink-muted mx-auto mt-3 hidden max-w-xl sm:block">
         {
           page?.ctaBody ??
             "Un asesor te acompañará por todos los proyectos y opciones de financiación."
         }
       </p>
-      <a href={page?.ctaHref ?? "/servicio-al-cliente"} class="btn btn-primary mt-8">
+      <a
+        href={page?.ctaHref ?? "/servicio-al-cliente"}
+        class="btn btn-primary mt-6 w-full sm:mt-8 sm:w-auto"
+      >
         {page?.ctaLabel ?? "Agenda tu cita"}
       </a>
     </div>

@@ -94,7 +94,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
               type="button"
               data-banner-prev
               aria-label="Banner anterior"
-              class="banner-arrow banner-arrow-prev text-ink bg-brand-tint absolute top-1/2 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white md:inline-flex"
+              class="banner-arrow banner-arrow-prev text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
             >
               <MoveLeft size={22} stroke-width={1.5} aria-hidden="true" />
             </button>
@@ -102,7 +102,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
               type="button"
               data-banner-next
               aria-label="Banner siguiente"
-              class="banner-arrow banner-arrow-next text-ink bg-brand-tint absolute top-1/2 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white md:inline-flex"
+              class="banner-arrow banner-arrow-next text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
             >
               <MoveRight size={22} stroke-width={1.5} aria-hidden="true" />
             </button>
@@ -174,14 +174,14 @@ const slides = Array.from({ length: loops }, () => banners).flat();
     will-change: transform;
   }
 
-  /* About 70% of the button sits outside the slide, the way the design
+  /* About 70% of the 44px button sits outside the slide, the way the design
      hangs it over the red. */
   .banner-arrow-prev {
-    left: calc((100% - var(--banner-slide)) / 2 - 2.1rem);
+    left: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
   }
 
   .banner-arrow-next {
-    right: calc((100% - var(--banner-slide)) / 2 - 2.1rem);
+    right: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -236,7 +236,13 @@ const slides = Array.from({ length: loops }, () => banners).flat();
         slides.forEach((slide) => {
           const box = slide.firstElementChild as HTMLElement | null;
           if (!box) return;
-          const away = Math.min(1, Math.abs(centreOf(slide) - centre) / slide.offsetWidth);
+          const delta = centreOf(slide) - centre;
+          const away = Math.min(1, Math.abs(delta) / slide.offsetWidth);
+          // Shrink toward the middle of the rail: with the default centre
+          // origin a neighbour pulls away from the centre slide as it scales
+          // and its peek all but disappears.
+          box.style.transformOrigin =
+            delta < -1 ? "right center" : delta > 1 ? "left center" : "center";
           box.style.transform = `scale(${(1 - 0.18 * away).toFixed(4)})`;
         });
       };
@@ -262,10 +268,25 @@ const slides = Array.from({ length: loops }, () => banners).flat();
         const index = currentIndex();
         if (index >= count && index < count * 2) return;
         const target = (index % count) + count;
+        const boxes = slides
+          .map((slide) => slide.firstElementChild as HTMLElement | null)
+          .filter((box): box is HTMLElement => box !== null);
+
+        // Without this the jump animates the scale all over again, so finishing
+        // a lap looked like the slides re-zoomed for no reason.
+        boxes.forEach((box) => (box.style.transition = "none"));
+
         const behavior = rail.style.scrollBehavior;
         rail.style.scrollBehavior = "auto";
         rail.scrollLeft = offsetFor(target);
         rail.style.scrollBehavior = behavior;
+        paintScale();
+
+        // Restore synchronously after a forced reflow, NOT in a rAF: a
+        // backgrounded tab never runs the callback, and the easing would stay
+        // switched off for the rest of the session.
+        void rail.offsetWidth;
+        boxes.forEach((box) => (box.style.transition = ""));
       };
 
       const goTo = (index: number) => {
