@@ -1,8 +1,10 @@
 ---
 import { Image } from "astro:assets";
-import { CalendarDays, Clock, Share2, User } from "lucide-astro";
+import { CalendarDays, Clock, User } from "lucide-astro";
 
 import Blocks from "@/components/Blocks.astro";
+import { ShareMenu } from "@lasgalias/ui/components/share-menu";
+
 import NewsletterForm from "@/islands/NewsletterForm";
 import Base from "@/layouts/Base.astro";
 import {
@@ -114,10 +116,7 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
             {readingMinutes(post)} min de lectura
           </span>
 
-          <button type="button" class="btn btn-outline gap-2 px-5 py-2.5 text-sm" data-share>
-            <Share2 size={16} stroke-width={2} aria-hidden="true" />
-            <span data-share-label>Compartir</span>
-          </button>
+          <ShareMenu client:idle title={post.title} />
         </div>
       </header>
 
@@ -291,34 +290,3 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
     font-weight: 700;
   }
 </style>
-
-<script>
-  // Native share sheet, falling back to copying the URL. Re-bound per navigation
-  // because Base.astro mounts <ClientRouter />.
-  function setupArticleShare() {
-    document.querySelectorAll<HTMLButtonElement>("[data-share]").forEach((button) => {
-      if (button.dataset.bound) return;
-      button.dataset.bound = "1";
-
-      button.addEventListener("click", async () => {
-        const share = { title: document.title, url: location.href };
-        if (navigator.share) {
-          try {
-            await navigator.share(share);
-          } catch {
-            // El usuario cerró la hoja: no hay nada que contar.
-          }
-          return;
-        }
-        await navigator.clipboard?.writeText(location.href);
-        const label = button.querySelector("[data-share-label]");
-        if (!label) return;
-        label.textContent = "Enlace copiado";
-        setTimeout(() => (label.textContent = "Compartir"), 2000);
-      });
-    });
-  }
-
-  setupArticleShare();
-  document.addEventListener("astro:page-load", setupArticleShare);
-</script>

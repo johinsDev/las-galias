@@ -1,6 +1,8 @@
 ---
-import { House, MapPin, Share2 } from "lucide-astro";
+import { House, MapPin } from "lucide-astro";
 import type { Project } from "@lasgalias/schemas";
+
+import { ShareMenu } from "@lasgalias/ui/components/share-menu";
 
 import Price from "@/components/Price.astro";
 import PriceSwitcher from "@/components/PriceSwitcher.astro";
@@ -121,10 +123,7 @@ const showPrice = !isExpectation && Boolean(project.priceFromCOP);
       </div>
 
       <div class="flex flex-wrap gap-3">
-        <button type="button" class="btn btn-outline gap-2 px-5 py-2.5 text-sm" data-share>
-          <Share2 size={16} stroke-width={2} aria-hidden="true" />
-          <span data-share-label>Compartir</span>
-        </button>
+        <ShareMenu client:idle title={project.name} />
         {
           project.financing?.clientPortalUrl && (
             <a
@@ -142,39 +141,3 @@ const showPrice = !isExpectation && Boolean(project.priceFromCOP);
     </div>
   </div>
 </section>
-
-<script>
-  // Native share sheet, falling back to copying the URL. Re-bound per navigation
-  // because Base.astro mounts <ClientRouter />.
-  function setupShare() {
-    document.querySelectorAll<HTMLButtonElement>("[data-share]").forEach((button) => {
-      // `astro:page-load` also fires on first load; without the guard the share
-      // sheet would be opened twice per click.
-      if (button.dataset.bound) return;
-      button.dataset.bound = "1";
-
-      button.addEventListener("click", async () => {
-        const share = { title: document.title, url: location.href };
-        if (navigator.share) {
-          try {
-            await navigator.share(share);
-            return;
-          } catch {
-            // User dismissed the sheet — nothing to report.
-            return;
-          }
-        }
-        await navigator.clipboard?.writeText(location.href);
-        // Only the label changes: replacing the button's text would take the
-        // icon with it.
-        const label = button.querySelector("[data-share-label]");
-        if (!label) return;
-        label.textContent = "Enlace copiado";
-        setTimeout(() => (label.textContent = "Compartir"), 2000);
-      });
-    });
-  }
-
-  setupShare();
-  document.addEventListener("astro:page-load", setupShare);
-</script>

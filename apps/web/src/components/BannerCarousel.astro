@@ -179,8 +179,16 @@ const slides = Array.from({ length: loops }, () => banners).flat();
       #000 calc((100% + var(--banner-slide)) / 2),
       transparent 100%
     );
-    -webkit-mask-image: var(--banner-fade);
-    mask-image: var(--banner-fade);
+  }
+
+  /* La difuminación de los bordes solo a partir de 1440px. Por debajo de eso el
+     vecino cabe entero en pantalla y el degradado se le comía media tarjeta;
+     el fundido está para las pantallas donde el vecino se sale del encuadre. */
+  @media (width >= 90rem) {
+    .banner-rail {
+      -webkit-mask-image: var(--banner-fade);
+      mask-image: var(--banner-fade);
+    }
   }
 
   .banner-slide {
