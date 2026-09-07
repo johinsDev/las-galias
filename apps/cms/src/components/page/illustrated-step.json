@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_page_illustrated_steps",
+  "info": {
+    "displayName": "Paso con foto",
+    "description": "Paso de un «cómo funciona» que sí lleva imagen. El número es la posición, no un campo. Se diferencia de «Step» en la foto: el home la muestra y la página de exterior no"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

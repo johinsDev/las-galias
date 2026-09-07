@@ -1,32 +1,36 @@
 ---
 import Logo from "@/components/Logo.astro";
-import CurrencySwitcher from "@/islands/CurrencySwitcher";
-import { getExchangeRate } from "@/lib/strapi";
+import { SIMULATORS } from "@/lib/simulator-pages";
 
-// The seven items the brief fixes, in order. "Macroproyectos" is deliberately
-// not here: the section still exists and is indexed, but it is reached from
-// /proyectos and from the footer so the desktop nav stays readable.
-const links = [
-  { href: "/proyectos", label: "Proyectos de vivienda" },
-  { href: "/nosotros", label: "Quienes somos" },
+/**
+ * The six items of the approved menu, in order. Two of them open a panel; the
+ * currency selector that used to sit on the right is gone — design comment #114
+ * moved it next to the price, which is where ProjectCard renders it now.
+ */
+const links: { href: string; label: string; children?: { href: string; label: string }[] }[] = [
+  {
+    href: "/proyectos",
+    label: "Proyectos",
+    children: [
+      { href: "/proyectos", label: "Todos los proyectos" },
+      { href: "/macroproyectos", label: "Macroproyectos" },
+    ],
+  },
+  {
+    href: "/simuladores",
+    label: "Calculadoras",
+    children: [
+      { href: "/simuladores", label: "Todas las calculadoras" },
+      ...SIMULATORS.map((s) => ({ href: `/simuladores/${s.slug}`, label: s.short })),
+    ],
+  },
+  { href: "/nosotros", label: "Nosotros" },
   { href: "/blog", label: "Blog" },
-  { href: "/simuladores", label: "Calculadoras" },
   { href: "/servicio-al-cliente", label: "Servicio al cliente" },
   { href: "/compra-desde-el-exterior", label: "Compra desde el exterior" },
 ];
 
 const current = Astro.url.pathname;
-
-/**
- * The currency selector lives here, not on the project page, so the listings,
- * the home and every card convert too — it rewrites every `[data-price-cop]`
- * node in the document, so no page has to know it exists.
- *
- * Hidden outright when the CMS has no rates: a selector that cannot convert is
- * worse than no selector. `getExchangeRate` is memoised per build.
- */
-const rates = await getExchangeRate();
-const canConvert = Boolean(rates?.copPerUsd && rates?.copPerEur);
 
 /**
  * Segment-boundary match. A plain `startsWith` marked /proyectos as active on
@@ -35,37 +39,67 @@ const canConvert = Boolean(rates?.copPerUsd && rates?.copPerEur);
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
 ---
 
-<header class="bg-brand sticky top-0 z-50 border-b border-white/15 text-white">
-  <div class="container flex h-16 items-center justify-between gap-6">
+<header class="bg-brand sticky top-0 z-50 text-white">
+  <div class="container flex h-[72px] items-center justify-between gap-6">
     <a href="/" class="flex items-center" aria-label="Las Galias Constructora — inicio">
-      <Logo variant="light" height={28} />
+      <Logo variant="light" height={30} />
     </a>
 
     <nav aria-label="principal" class="hidden xl:block">
-      <ul class="flex items-center gap-4">
+      <ul class="flex items-center gap-6">
         {
           links.map((link) => (
-            <li>
+            <li class="group/nav relative">
               <a
                 href={link.href}
                 class:list={[
-                  "text-body-sm font-medium whitespace-nowrap transition-colors",
-                  isActive(link.href) ? "text-white" : "text-white/75 hover:text-white",
+                  "text-body-sm flex items-center gap-1 py-6 font-medium whitespace-nowrap transition-colors",
+                  isActive(link.href) ? "text-white" : "text-white/85 hover:text-white",
                 ]}
                 aria-current={isActive(link.href) ? "page" : undefined}
               >
                 {link.label}
+                {link.children && (
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                )}
               </a>
+
+              {/* Hover/focus panel, CSS only — a menu that needs JavaScript to
+                  open is a menu that is missing while the island hydrates. */}
+              {link.children && (
+                <div class="shadow-card-lg border-line invisible absolute top-full left-0 min-w-56 rounded-xl border bg-white p-2 opacity-0 transition-opacity group-focus-within/nav:visible group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:opacity-100">
+                  {link.children.map((child) => (
+                    <a
+                      href={child.href}
+                      class="text-body-sm text-ink hover:bg-surface block rounded-lg px-3 py-2 font-medium transition-colors"
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              )}
             </li>
           ))
         }
       </ul>
     </nav>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-3">
       <a
         href="/proyectos"
-        class="hidden size-9 items-center justify-center text-white/75 transition-colors hover:text-white xl:inline-flex"
+        class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
         aria-label="Buscar proyectos"
       >
         <svg
@@ -74,7 +108,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="2.2"
           stroke-linecap="round"
           aria-hidden="true"
         >
@@ -82,31 +116,19 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
           <path d="m20 20-3.5-3.5"></path>
         </svg>
       </a>
-      {
-        canConvert && rates && (
-          <CurrencySwitcher
-            client:load
-            onDark
-            copPerUsd={rates.copPerUsd}
-            copPerEur={rates.copPerEur}
-            asOf={rates.validFrom}
-            source={rates.eurSource ?? rates.usdSource}
-          />
-        )
-      }
       <a
         href="/servicio-al-cliente"
-        class="text-brand hidden rounded-full bg-white px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 sm:inline-flex"
+        class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 sm:inline-flex"
       >
         Zona clientes
       </a>
 
-      <!-- Mobile menu toggle. The nav is hidden below lg, so without this the
+      <!-- Mobile menu toggle. The nav is hidden below xl, so without this the
            whole navigation is unreachable on a phone. -->
       <button
         type="button"
         id="nav-toggle"
-        class="inline-flex size-10 items-center justify-center rounded-lg border border-white/40 text-white transition-colors hover:bg-white/15 xl:hidden"
+        class="text-brand inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors hover:bg-white/90 xl:hidden"
         aria-label="Abrir menú"
         aria-expanded="false"
         aria-controls="mobile-nav"
@@ -127,37 +149,75 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
     </div>
   </div>
 
+  {
+    /* Mobile sheet. White, not red: the design switches ground colour once the
+      menu takes over the screen, so the rows read as a list and not as chrome. */
+  }
   <nav
     id="mobile-nav"
     aria-label="principal móvil"
-    class="bg-brand hidden border-t border-white/20 xl:hidden"
+    class="border-line text-ink hidden max-h-[calc(100dvh-72px)] overflow-y-auto border-t bg-white xl:hidden"
   >
-    <ul class="container flex flex-col py-2">
-      {
-        links.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class:list={[
-                "text-body-sm block py-3 font-medium transition-colors",
-                isActive(link.href) ? "text-white" : "text-white/75 hover:text-white",
-              ]}
-              aria-current={isActive(link.href) ? "page" : undefined}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-      <li class="py-3">
-        <a
-          href="/servicio-al-cliente"
-          class="text-brand block w-full rounded-full bg-white py-3 text-center text-sm font-semibold"
+    <div class="container py-5">
+      <form
+        action="/proyectos"
+        method="get"
+        class="border-line-strong flex items-center gap-2 rounded-full border px-4 py-3"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          class="text-ink-faint shrink-0"
+          aria-hidden="true"
         >
-          Zona clientes
-        </a>
-      </li>
-    </ul>
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
+        <input
+          type="text"
+          name="q"
+          placeholder="Busca por ciudad o proyecto…"
+          class="text-body-sm placeholder:text-ink-faint w-full min-w-0 bg-transparent outline-none"
+        />
+      </form>
+
+      <ul class="mt-2">
+        {
+          links.map((link) => (
+            <li class="border-line border-b last:border-b-0">
+              <a
+                href={link.href}
+                class="flex items-center justify-between py-4 font-medium"
+                aria-current={isActive(link.href) ? "page" : undefined}
+              >
+                {link.label}
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-ink-faint"
+                  aria-hidden="true"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a href="/servicio-al-cliente" class="btn btn-primary mt-5 w-full py-3.5">Zona clientes</a>
+    </div>
   </nav>
 </header>
 

@@ -1,0 +1,34 @@
+---
+/**
+ * The indicators band. The design paints it as a pale pink card floating on
+ * white, not as the full-bleed dark strip the first build shipped.
+ */
+interface Props {
+  stats: { value: string; label: string }[];
+}
+
+const { stats } = Astro.props;
+---
+
+{
+  stats.length > 0 && (
+    <section class="container py-6 md:py-10">
+      <div
+        class="bg-brand-subtle grid grid-cols-2 gap-8 rounded-3xl px-6 py-12 text-center lg:grid-cols-4"
+        data-reveal
+      >
+        {stats.map((stat) => (
+          <div>
+            <p
+              class="text-ink font-extrabold tracking-tight"
+              style="font-size:clamp(2rem,3.5vw,3.5rem);line-height:1.05"
+            >
+              {stat.value}
+            </p>
+            <p class="text-body-sm text-ink-muted mt-1">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}

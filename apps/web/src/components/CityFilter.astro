@@ -1,0 +1,82 @@
+---
+import type { City } from "@lasgalias/schemas";
+
+/**
+ * The city pills above a project grid. Lived twice — once in the home, once in
+ * /proyectos — with two slightly different implementations; the redesign gave
+ * them the same look, so they became one component.
+ *
+ * Filtering is client-side because every project is already in the HTML: the
+ * site is static, so a server round trip would only fetch a page it already
+ * has. `?ciudad=<slug>` preselects one, which is what makes the footer's city
+ * links land somewhere useful.
+ */
+interface Props {
+  cities: City[];
+  /** Selector of the grid holding the `[data-city]` cards. */
+  target: string;
+}
+
+const { cities, target } = Astro.props;
+---
+
+{
+  cities.length > 1 && (
+    <div
+      class="mt-8 flex flex-wrap justify-center gap-2"
+      data-city-filter
+      data-city-target={target}
+      data-reveal
+    >
+      <button type="button" class="pill pill-on" data-filter="">
+        Todos
+      </button>
+      {cities.map((city) => (
+        <button type="button" class="pill pill-off" data-filter={city.slug}>
+          {city.name}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+<script>
+  function paint(bar: HTMLElement, slug: string) {
+    bar.querySelectorAll<HTMLElement>("[data-filter]").forEach((button) => {
+      const active = (button.dataset.filter ?? "") === slug;
+      button.classList.toggle("pill-on", active);
+      button.classList.toggle("pill-off", !active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+    const target = bar.dataset.cityTarget;
+    if (!target) return;
+    document.querySelectorAll<HTMLElement>(`${target} [data-city]`).forEach((card) => {
+      card.hidden = Boolean(slug) && card.dataset.city !== slug;
+    });
+  }
+
+  function setupCityFilter() {
+    document.querySelectorAll<HTMLElement>("[data-city-filter]").forEach((bar) => {
+      // A city that has no pill would hide every card and leave the grid empty
+      // with "Todos" still lit, so an unknown value falls back to no filter.
+      const wanted = new URLSearchParams(location.search).get("ciudad") ?? "";
+      const known = [...bar.querySelectorAll<HTMLElement>("[data-filter]")].some(
+        (b) => b.dataset.filter === wanted,
+      );
+      paint(bar, known ? wanted : "");
+
+      // `astro:page-load` also fires on first load — guard against double binding.
+      if (bar.dataset.bound) return;
+      bar.dataset.bound = "1";
+
+      bar.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLElement>("[data-filter]");
+        if (button) paint(bar, button.dataset.filter ?? "");
+      });
+    });
+  }
+
+  setupCityFilter();
+  document.addEventListener("astro:page-load", setupCityFilter);
+</script>

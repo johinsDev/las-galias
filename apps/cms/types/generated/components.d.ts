@@ -1,5 +1,18 @@
 import type { Schema, Struct } from "@strapi/strapi";
 
+export interface PageIllustratedStep extends Struct.ComponentSchema {
+  collectionName: "components_page_illustrated_steps";
+  info: {
+    description: "Paso de un \u00ABc\u00F3mo funciona\u00BB que s\u00ED lleva imagen. El n\u00FAmero es la posici\u00F3n, no un campo. Se diferencia de \u00ABStep\u00BB en la foto: el home la muestra y la p\u00E1gina de exterior no";
+    displayName: "Paso con foto";
+  };
+  attributes: {
+    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<"images">;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface PageListItem extends Struct.ComponentSchema {
   collectionName: "components_page_list_items";
   info: {
@@ -11,6 +24,18 @@ export interface PageListItem extends Struct.ComponentSchema {
   };
 }
 
+export interface PageStat extends Struct.ComponentSchema {
+  collectionName: "components_page_stats";
+  info: {
+    description: "Una cifra de la banda de indicadores: el n\u00FAmero grande y su etiqueta";
+    displayName: "Cifra";
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface PageStep extends Struct.ComponentSchema {
   collectionName: "components_page_steps";
   info: {
@@ -19,6 +44,21 @@ export interface PageStep extends Struct.ComponentSchema {
   };
   attributes: {
     body: Schema.Attribute.Text & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface PageToolCard extends Struct.ComponentSchema {
+  collectionName: "components_page_tool_cards";
+  info: {
+    description: "Atajo a un simulador desde el home. El icono es una clave, no un archivo, para que no dependa de que alguien suba un SVG con el trazo correcto";
+    displayName: "Tarjeta de herramienta";
+  };
+  attributes: {
+    body: Schema.Attribute.Text;
+    href: Schema.Attribute.String & Schema.Attribute.Required;
+    iconKey: Schema.Attribute.Enumeration<["credit-card", "subsidy", "calculator", "wallet"]> &
+      Schema.Attribute.DefaultTo<"credit-card">;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -135,8 +175,11 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module "@strapi/strapi" {
   export namespace Public {
     export interface ComponentSchemas {
+      "page.illustrated-step": PageIllustratedStep;
       "page.list-item": PageListItem;
+      "page.stat": PageStat;
       "page.step": PageStep;
+      "page.tool-card": PageToolCard;
       "project.construction-progress": ProjectConstructionProgress;
       "project.financing": ProjectFinancing;
       "project.sales-room": ProjectSalesRoom;

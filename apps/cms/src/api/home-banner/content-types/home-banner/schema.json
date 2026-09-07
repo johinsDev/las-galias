@@ -29,6 +29,11 @@
     "link": {
       "type": "string"
     },
+    "ctaLabel": {
+      "type": "string",
+      "default": "Ver proyecto",
+      "description": "Texto del botón sobre la imagen. Vacío = no se pinta botón"
+    },
     "order": {
       "type": "integer",
       "default": 0

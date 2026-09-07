@@ -1,20 +1,23 @@
 ---
 import { Image } from "astro:assets";
 
+import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
 import LeadForm from "@/islands/LeadForm";
 import Base from "@/layouts/Base.astro";
-import { getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
+import { getExchangeRate, getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
 
-const [page, projects, faqs] = await Promise.all([
+const [page, projects, faqs, exchangeRate] = await Promise.all([
   getForeignBuyerPage(),
   getProjects(),
   getFaqs("exterior"),
+  getExchangeRate(),
 ]);
 
 // The page must build even before an editor fills the single type in, so every
-// piece of copy has a fallback taken from the wireframe.
+// piece of copy has a fallback taken from the design.
 const eyebrow = page?.eyebrow ?? "Colombianos en el exterior";
 const heroTitle = page?.heroTitle ?? "Tu próxima inversión en Colombia, desde donde estés";
 const heroSubtitle =
@@ -38,6 +41,12 @@ const steps = page?.steps?.length
         title: "Realiza el pago de separación",
         body: "Pagas por PSE o, si tienes un apoderado en Colombia, a través de nuestros bancos aliados. Todo el proceso puede hacerse 100% en línea.",
       },
+      {
+        title: "Gestión de crédito de vivienda",
+        body: "Te acompañamos en la gestión de tu crédito de vivienda.",
+      },
+      { title: "Firma digital segura", body: "Realiza la firma digital de tus documentos." },
+      { title: "Pago de cuota inicial", body: "Realiza el pago de tu cuota inicial." },
     ];
 const priceDisclaimer =
   page?.priceDisclaimer ??
@@ -59,23 +68,37 @@ const cities = [...new Map(sellable.map((p) => [p.city?.slug, p.city])).entries(
   .filter(([slug]) => slug)
   .map(([, city]) => city!);
 
+/**
+ * The per-card currency selector only renders when both rates are in: a control
+ * offering USD and EUR that cannot convert either is worse than pesos alone.
+ */
+const rates =
+  exchangeRate?.copPerUsd && exchangeRate?.copPerEur
+    ? { copPerUsd: exchangeRate.copPerUsd, copPerEur: exchangeRate.copPerEur }
+    : null;
+
 const title = page?.seo?.metaTitle ?? "Compra desde el exterior — Las Galias";
 const description = page?.seo?.metaDescription ?? heroSubtitle;
 ---
 
 <Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
-  <!-- 01 Hero -->
-  <section class="border-line border-b">
+  {
+    /* 01 Hero — white, unlike the home's red band: this page opens on the
+      argument, and the photograph below it carries the colour. */
+  }
+  <section>
     <div class="container py-16 text-center md:py-20">
-      <p class="eyebrow">{eyebrow}</p>
-      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold">{heroTitle}</h1>
-      <p class="text-ink-muted mx-auto mt-4 max-w-2xl">{heroSubtitle}</p>
-      <a href="#datos" class="btn btn-primary mt-8">{heroCtaLabel}</a>
+      <p class="eyebrow text-brand" data-reveal>{eyebrow}</p>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold" data-reveal>
+        {heroTitle}
+      </h1>
+      <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-2xl" data-reveal>{heroSubtitle}</p>
+      <a href="#datos" class="btn btn-primary mt-8" data-reveal>{heroCtaLabel}</a>
       {
         trustBadges.length > 0 && (
-          <div class="mt-5 flex flex-wrap justify-center gap-2">
+          <div class="mt-6 flex flex-wrap justify-center gap-2" data-reveal>
             {trustBadges.map((badge) => (
-              <span class="badge badge-dark">{badge}</span>
+              <span class="badge border-line-strong text-ink-muted border bg-white">{badge}</span>
             ))}
           </div>
         )
@@ -97,58 +120,42 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
     }
   </section>
 
-  <!-- 02 Paso a paso -->
-  <section class="bg-surface border-line border-b">
-    <div class="container py-16">
-      <p class="eyebrow text-center">Cómo funciona</p>
-      <h2 class="text-h3 text-ink mt-2 text-center font-bold">{stepsTitle}</h2>
-      <ol class="mt-10 grid gap-8 md:grid-cols-3">
-        {
-          steps.map((step, i) => (
-            <li data-reveal>
-              <span class="text-brand text-lg font-bold">{i + 1}</span>
-              <h3 class="text-h4 text-ink mt-2 font-semibold">{step.title}</h3>
-              <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
+  {/* 02 Paso a paso — six steps in a 3×2 grid, each numbered by position. */}
+  <section class="container py-16 md:py-20">
+    <SectionHeading eyebrow="Cómo funciona" title={stepsTitle} />
+    <ol class="mx-auto mt-10 grid max-w-5xl gap-x-10 gap-y-10 md:grid-cols-3">
+      {
+        steps.map((step, i) => (
+          <li data-reveal>
+            <span class="bg-brand-subtle text-brand flex size-11 items-center justify-center rounded-xl text-lg font-bold">
+              {i + 1}
+            </span>
+            <h3 class="text-ink mt-4 font-semibold">{step.title}</h3>
+            <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 
-  <!-- 03 Proyectos destacados, en USD -->
-  <section class="border-line border-b">
-    <div class="container py-16">
-      <p class="eyebrow text-center">¡Invierte ahora!</p>
-      <h2 class="text-h3 text-ink mt-2 text-center font-bold">Proyectos disponibles para ti</h2>
-
-      {
-        cities.length > 1 && (
-          <div class="mt-6 flex flex-wrap justify-center gap-2" data-city-filter>
-            <button type="button" class="chip bg-ink border-ink text-white" data-city-all>
-              Todos
-            </button>
-            {cities.map((city) => (
-              <button type="button" class="chip" data-city-option={city.slug}>
-                {city.name}
-              </button>
-            ))}
-          </div>
-        )
-      }
+  {/* 03 Proyectos, con selector de moneda en cada card */}
+  <section class="bg-brand-subtle">
+    <div class="container py-16 md:py-20">
+      <SectionHeading eyebrow="¡Invierte ahora!" title="Proyectos disponibles para ti" />
+      <CityFilter cities={cities} target="#exterior-grid" />
 
       {
         sellable.length > 0 ? (
           <>
-            <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-city-grid>
+            <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" id="exterior-grid">
               {sellable.map((project) => (
-                <ProjectCard project={project} />
+                <ProjectCard project={project} rates={rates} cta="asesor" />
               ))}
             </div>
             <p class="text-caption text-ink-muted mx-auto mt-8 max-w-3xl text-center">
               {priceDisclaimer}
             </p>
-            <div class="mt-6 text-center">
+            <div class="mt-6 text-center" data-reveal>
               <a href="/proyectos" class="btn btn-outline">
                 Ver todos los proyectos
               </a>
@@ -163,27 +170,38 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
     </div>
   </section>
 
-  <!-- 03B Formulario de refuerzo -->
-  <section class="bg-surface border-line border-b" id="datos">
-    <div class="container grid items-center gap-10 py-16 lg:grid-cols-2">
-      <div>
-        <h2 class="text-h3 text-ink font-bold">{formTitle}</h2>
-        <p class="text-ink-muted mt-3">{formBody}</p>
-        <ul class="mt-6 space-y-2">
+  {/* 03B Formulario de refuerzo */}
+  <section id="datos" class="container py-16 md:py-20">
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <div data-reveal>
+        <h2 class="text-h2 text-ink font-bold">{formTitle}</h2>
+        <p class="text-body-lg text-ink-muted mt-4">{formBody}</p>
+        <ul class="mt-6 space-y-3">
           {
             formBullets.map((bullet) => (
-              <li class="text-body-sm text-ink flex items-center gap-2">
-                <span class="text-brand" aria-hidden="true">
-                  ✓
-                </span>
+              <li class="text-body-sm text-ink flex items-center gap-2.5">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-brand shrink-0"
+                  aria-hidden="true"
+                >
+                  <path d="m20 6-11 11-5-5" />
+                </svg>
                 {bullet}
               </li>
             ))
           }
         </ul>
       </div>
-      <div class="border-line rounded-2xl border bg-white p-6 shadow-xs">
-        <h3 class="text-h4 text-ink font-semibold">Habla con un asesor →</h3>
+      <div class="border-line shadow-card rounded-2xl border bg-white p-6" data-reveal>
+        <h3 class="text-ink font-semibold">Habla con un asesor →</h3>
         <div class="mt-4">
           <LeadForm
             client:visible
@@ -199,61 +217,26 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
     </div>
   </section>
 
-  <!-- 04 Preguntas frecuentes -->
+  {/* 04 Preguntas frecuentes — el asistente va dentro de FaqAccordion */}
   {
     faqs.length > 0 && (
-      <section class="border-line border-b">
-        <div class="container py-16">
-          <p class="eyebrow text-center">FAQ</p>
-          <h2 class="text-h3 text-ink mt-2 text-center font-bold">Preguntas frecuentes</h2>
-          <div class="mt-8">
-            <FaqAccordion faqs={faqs} initial={5} />
-          </div>
+      <section class="border-line container border-t py-16 md:py-20">
+        <SectionHeading eyebrow="FAQ" title="Preguntas frecuentes" />
+        <div class="mt-10">
+          <FaqAccordion faqs={faqs} initial={5} />
         </div>
       </section>
     )
   }
 
-  <!-- 05 CTA final -->
-  <section>
-    <div class="container py-16 text-center">
-      <p class="eyebrow">CTA final</p>
-      <h2 class="text-h3 text-ink mt-2 font-bold">¿Listo para invertir en tu futuro?</h2>
-      <p class="text-ink-muted mt-3">
+  {/* 05 CTA final */}
+  <section class="bg-brand-subtle">
+    <div class="container py-16 text-center md:py-20" data-reveal>
+      <h2 class="text-h2 text-ink font-bold">¿Listo para invertir en tu futuro?</h2>
+      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">
         Un asesor te acompaña en todo el proceso, sin salir de donde estás.
       </p>
       <a href="#datos" class="btn btn-primary mt-8">Déjanos tus datos</a>
     </div>
   </section>
 </Base>
-
-<script>
-  // City filter for the USD project grid. Plain DOM on purpose: the grid is
-  // static HTML, so an island here would ship React to filter a list.
-  function setupCityFilter() {
-    const bar = document.querySelector<HTMLElement>("[data-city-filter]");
-    const grid = document.querySelector<HTMLElement>("[data-city-grid]");
-    if (!bar || !grid) return;
-
-    // `astro:page-load` also fires on first load — guard against double binding.
-    if (bar.dataset.bound) return;
-    bar.dataset.bound = "1";
-
-    const active = "bg-ink border-ink text-white";
-    bar.addEventListener("click", (event) => {
-      const button = (event.target as HTMLElement).closest("button");
-      if (!button) return;
-
-      bar.querySelectorAll("button").forEach((b) => b.classList.remove(...active.split(" ")));
-      button.classList.add(...active.split(" "));
-
-      const city = button.getAttribute("data-city-option");
-      grid.querySelectorAll<HTMLElement>("[data-city]").forEach((card) => {
-        card.hidden = city !== null && card.dataset.city !== city;
-      });
-    });
-  }
-
-  setupCityFilter();
-  document.addEventListener("astro:page-load", setupCityFilter);
-</script>

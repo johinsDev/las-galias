@@ -1,0 +1,21 @@
+---
+/**
+ * Eyebrow + title pair that opens five of the home's sections and three of the
+ * foreign-buyer page's. In the approved design the eyebrow is always brand red
+ * and centred; the `eyebrow` utility's default grey is the listing pages' one.
+ */
+interface Props {
+  eyebrow?: string | null;
+  title: string;
+  /** Left-aligned variant, used where a section header shares its row with a link. */
+  align?: "center" | "left";
+  class?: string;
+}
+
+const { eyebrow, title, align = "center", class: className } = Astro.props;
+---
+
+<div class:list={[align === "center" && "text-center", className]} data-reveal>
+  {eyebrow && <p class="eyebrow text-brand">{eyebrow}</p>}
+  <h2 class="text-h2 text-ink mt-2 font-bold">{title}</h2>
+</div>

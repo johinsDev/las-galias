@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_page_tool_cards",
+  "info": {
+    "displayName": "Tarjeta de herramienta",
+    "description": "Atajo a un simulador desde el home. El icono es una clave, no un archivo, para que no dependa de que alguien suba un SVG con el trazo correcto"
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text"
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    },
+    "iconKey": {
+      "type": "enumeration",
+      "enum": ["credit-card", "subsidy", "calculator", "wallet"],
+      "default": "credit-card"
+    }
+  }
+}

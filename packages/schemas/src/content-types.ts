@@ -232,12 +232,59 @@ export interface ForeignBuyerPage {
   seo?: Seo | null;
 }
 
+/** A step that carries its own photo. The home shows one; the foreign-buyer
+    page uses the plain `Step`, which has no image. */
+interface IllustratedStep {
+  title: string;
+  body: string;
+  image?: Media | null;
+}
+
+export type ToolIconKey = "credit-card" | "subsidy" | "calculator" | "wallet";
+
+interface ToolCard {
+  title: string;
+  body?: string | null;
+  href: string;
+  iconKey?: ToolIconKey | null;
+}
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+/** Single type behind `/`. Only the copy: the cards, banners and posts that
+    surround it come from their own collections. */
+export interface HomePage {
+  heroEyebrow?: string | null;
+  heroTitle: string;
+  heroSubtitle?: string | null;
+  searchPlaceholder?: string | null;
+  stepsEyebrow?: string | null;
+  stepsTitle?: string | null;
+  steps?: IllustratedStep[];
+  toolsEyebrow?: string | null;
+  toolsTitle?: string | null;
+  tools?: ToolCard[];
+  stats?: Stat[];
+  blogEyebrow?: string | null;
+  blogTitle?: string | null;
+  ctaTitle?: string | null;
+  ctaBody?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  seo?: Seo | null;
+}
+
 export interface HomeBanner {
   documentId: string;
   title?: string | null;
   desktopImage: Media;
   mobileImage: Media;
   link?: string | null;
+  /** Label of the button painted over the image. Empty renders no button. */
+  ctaLabel?: string | null;
   order?: number | null;
   active?: boolean;
 }
