@@ -145,10 +145,11 @@ const slides = Array.from({ length: loops }, () => banners).flat();
   @media (width >= 48rem) {
     .banner {
       /* The slide is the CONTAINER's width — Figma measures it 1424 wide in a
-         1776 frame. 80vw hits 1421 at exactly that width, and the 176px it
-         leaves on each side is the very margin the inspector reports — so the
-         neighbours always peek, at the proportion the design draws. */
-      --banner-slide: min(80vw, 1436px);
+         1776 frame, which 80vw matches exactly. It sits at 84vw instead: with
+         the neighbours scaling toward the centre they now show their whole
+         margin, and the full 176px read as too much of them — this trims the
+         peek to about 140 without losing it. */
+      --banner-slide: min(84vw, 1436px);
     }
   }
 
