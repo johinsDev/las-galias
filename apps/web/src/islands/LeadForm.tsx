@@ -58,7 +58,14 @@ export default function LeadForm({
 
   const form = useForm({
     schema: international ? ForeignLeadSchema : LeadSchema,
-    initialInput: { projectDocumentId, source, ...readUtm() },
+    // Colombia by default in both country fields: most people filling this in
+    // are Colombian, so it is the answer that needs the fewest keystrokes.
+    initialInput: {
+      projectDocumentId,
+      source,
+      ...(international ? { residenceCountry: "Colombia", phone: "+57" } : {}),
+      ...readUtm(),
+    },
   });
 
   if (status === "ok") {

@@ -3,7 +3,14 @@
 import { Combobox } from "@base-ui/react/combobox";
 import { useMemo } from "react";
 
-import { COMMON_COUNT, COUNTRIES, flagOf, type Country } from "@lasgalias/ui/lib/countries";
+import {
+  COMMON_COUNT,
+  COUNTRIES,
+  flagOf,
+  groupsFor,
+  nationalMax,
+  type Country,
+} from "@lasgalias/ui/lib/countries";
 import { cn } from "@lasgalias/ui/lib/utils";
 
 const icon = {
@@ -26,10 +33,24 @@ function ChevronsUpDown() {
   );
 }
 
-/** Digits in groups of three, which reads as a phone number in every locale
-    we sell to without pretending to know each one's national format. */
-function group(digits: string): string {
-  return digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+/**
+ * Groups the national number the way its own country writes it — Colombia's ten
+ * digits read 300 123 4567, not 300 123 456 7. Where the length is unknown it
+ * falls back to threes, which is legible everywhere.
+ */
+function group(digits: string, country: Country): string {
+  const pattern = groupsFor(country.nsn ?? digits.length);
+  if (pattern.length === 0) return digits.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+
+  const parts: string[] = [];
+  let rest = digits;
+  for (const size of pattern) {
+    if (!rest) break;
+    parts.push(rest.slice(0, size));
+    rest = rest.slice(size);
+  }
+  if (rest) parts.push(rest);
+  return parts.join(" ");
 }
 
 /** Splits an E.164 string back into the country it belongs to and the rest. */
@@ -68,11 +89,12 @@ export function PhoneField({
   value = "",
   onValueChange,
   invalid = false,
-  placeholder = "300 123 4567",
+  placeholder,
 }: PhoneFieldProps) {
   const { country, national } = useMemo(() => split(value), [value]);
 
-  const emit = (dial: string, digits: string) => onValueChange?.(`${dial}${digits}`);
+  const emit = (next: Country, digits: string) =>
+    onValueChange?.(`${next.dial}${digits.slice(0, nationalMax(next))}`);
 
   const filter = (item: Country, query: string) => {
     if (!query) return true;
@@ -87,7 +109,7 @@ export function PhoneField({
   return (
     <div
       className={cn(
-        "border-input focus-within:border-ink flex h-11 w-full items-stretch rounded-lg border bg-white transition-colors",
+        "border-input focus-within:border-ink flex h-13 w-full items-stretch rounded-xl border bg-white transition-colors",
         invalid && "border-destructive",
       )}
     >
@@ -98,11 +120,11 @@ export function PhoneField({
         itemToStringLabel={(item: Country) => `${item.name} ${item.dial}`}
         filter={filter}
         value={country}
-        onValueChange={(next: Country | null) => emit((next ?? country).dial, national)}
+        onValueChange={(next: Country | null) => emit(next ?? country, national)}
       >
         <Combobox.Trigger
           aria-label={`Indicativo del país, ${country.name} ${country.dial}`}
-          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-lg border-r px-3 transition-colors"
+          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-xl border-r px-3.5 transition-colors"
         >
           <span aria-hidden="true">{flagOf(country.code)}</span>
           <span className="tabular-nums">{country.dial}</span>
@@ -155,9 +177,11 @@ export function PhoneField({
         type="tel"
         inputMode="tel"
         autoComplete="tel-national"
-        placeholder={placeholder}
-        value={group(national)}
-        onChange={(e) => emit(country.dial, e.target.value.replace(/\D/g, ""))}
+        // Zeros grouped the way that country writes them, so the field shows
+        // the shape it expects instead of one market's example number.
+        placeholder={placeholder ?? group("0".repeat(nationalMax(country)), country)}
+        value={group(national, country)}
+        onChange={(e) => emit(country, e.target.value.replace(/\D/g, ""))}
         className="text-body-sm text-ink placeholder:text-ink-faint w-full min-w-0 bg-transparent px-3 outline-none"
       />
     </div>
