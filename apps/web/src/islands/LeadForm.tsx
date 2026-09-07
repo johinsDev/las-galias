@@ -366,9 +366,9 @@ export default function LeadForm({
                     onClick={() =>
                       setInput(form, { path: ["firstHome"], input: field.input !== true })
                     }
-                    className="bg-surface-2 aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors"
+                    className="bg-surface-2 aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-out"
                   >
-                    <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 in-aria-checked:translate-x-5" />
+                    <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ease-out in-aria-checked:translate-x-5" />
                   </button>
                   <span className="text-body-sm text-ink-muted">Sí</span>
                 </span>
@@ -385,7 +385,7 @@ export default function LeadForm({
                     name={`${uid}-${field.props.name}`}
                     type="checkbox"
                     checked={field.input === true}
-                    className="accent-brand mt-0.5 size-4 shrink-0"
+                    className="check mt-0.5 size-4 shrink-0"
                   />
                   <span>
                     Acepto los{" "}

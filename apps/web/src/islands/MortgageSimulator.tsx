@@ -85,7 +85,8 @@ export default function MortgageSimulator({
             suffix="% E.A."
             min={1}
             max={40}
-            step={0.05}
+            // Dos decimales: las tasas se publican como 12,45 % E.A.
+            decimals={2}
             onChange={setRatePct}
           />
           <MoneyField

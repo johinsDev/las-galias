@@ -63,7 +63,13 @@ const showPrice = !isExpectation && Boolean(project.priceFromCOP);
     >
       <a href="/" class="hover:text-ink">Home</a>
       <span aria-hidden="true">›</span>
-      <a href="/proyectos" class="hover:text-ink">{project.city?.name}</a>
+      {
+        /* Con la ciudad puesta: el filtro de /proyectos ya lee `?ciudad=`, así que
+          la migaja lleva a los proyectos de esa ciudad y no a la lista entera. */
+      }
+      <a href={`/proyectos?ciudad=${project.city?.slug ?? ""}`} class="hover:text-ink">
+        {project.city?.name}
+      </a>
       <span aria-hidden="true">›</span>
       <span class="text-ink font-medium">{project.name}</span>
     </nav>

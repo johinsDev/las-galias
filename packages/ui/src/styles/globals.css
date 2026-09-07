@@ -345,6 +345,11 @@
 
 @utility seg {
   border-radius: 9999px;
+  /* El fondo entra y sale en vez de aparecer de golpe. `background-color` y no
+     `all`: animar `all` arrastraría el `border-radius` y el tipo de letra. */
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
   padding-inline: --spacing(3);
   padding-block: --spacing(1.5);
   font-size: 0.8125rem;
@@ -373,6 +378,23 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* Casilla de verificación con transición: `accent-color` la pinta con el rojo
+   de marca, pero el salto de vacía a marcada es instantáneo, así que la escala
+   al pulsar es lo que le da cuerpo. */
+@utility check {
+  accent-color: var(--brand);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  &:active {
+    transform: scale(0.9);
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--brand), transparent 75%);
   }
 }
 

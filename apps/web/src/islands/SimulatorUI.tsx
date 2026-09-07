@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+
+import { Select } from "@lasgalias/ui/components/select";
 
 import { formatMoney } from "@/lib/currency";
 
@@ -51,6 +53,30 @@ export function MoneyField({
   );
 }
 
+/**
+ * Un número con el formato del país mientras se escribe: miles con punto y
+ * decimales con coma, «12,5» y no «12.5».
+ *
+ * Era un `<input type="number">`, que trae dos problemas: pinta sus flechitas
+ * encima del sufijo —«meses» quedaba tapado por ellas— y en español obliga a
+ * escribir el punto decimal, que no es el separador que usa nadie aquí.
+ */
+function formatNumber(value: number, decimals: number): string {
+  return value.toLocaleString("es-CO", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  });
+}
+
+/** «1.234,5» → 1234.5, aceptando coma o punto como decimal. */
+function parseNumber(text: string, decimals: number): number {
+  const cleaned = text.replace(/[^\d,.]/g, "").replace(/\.(?=\d{3}\b)/g, "");
+  const normalised = cleaned.replace(",", ".");
+  const parsed = Number(normalised);
+  if (!Number.isFinite(parsed)) return 0;
+  return decimals === 0 ? Math.trunc(parsed) : parsed;
+}
+
 export function NumberField({
   id,
   label,
@@ -58,7 +84,7 @@ export function NumberField({
   suffix,
   min,
   max,
-  step = 1,
+  decimals = 0,
   onChange,
 }: {
   id: string;
@@ -67,22 +93,32 @@ export function NumberField({
   suffix?: string;
   min: number;
   max: number;
-  step?: number;
+  /** Decimales que admite: el plazo ninguno, la tasa uno. */
+  decimals?: number;
   onChange: (value: number) => void;
 }) {
+  // Mientras el campo tiene el foco se respeta lo que la persona escribe; al
+  // salir se vuelve a formatear. Si no, borrar el último dígito reescribiría el
+  // valor y el cursor saltaría al final en cada tecla.
+  const [draft, setDraft] = useState<string | null>(null);
+
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
       <div className="relative mt-1.5">
         <input
           id={id}
-          type="number"
+          type="text"
+          inputMode="decimal"
           className={FIELD}
-          value={value}
-          min={min}
-          max={max}
-          step={step}
-          onChange={(e) => onChange(Number(e.target.value))}
+          value={draft ?? formatNumber(value, decimals)}
+          onFocus={(e) => setDraft(e.target.value)}
+          onBlur={() => setDraft(null)}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            const next = parseNumber(e.target.value, decimals);
+            onChange(Math.min(max, Math.max(min, next)));
+          }}
         />
         {suffix && (
           <span className="text-body-sm text-ink-faint pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -110,18 +146,11 @@ export function SelectField({
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
-      <select
-        id={id}
-        className={`${FIELD} mt-1.5`}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="mt-1.5">
+        {/* El del sistema de diseño y no el nativo: en macOS el nativo abre el
+            menú gris del sistema en mitad de un formulario blanco. */}
+        <Select id={id} value={value} items={options} onValueChange={onChange} />
+      </div>
     </div>
   );
 }

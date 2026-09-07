@@ -333,7 +333,7 @@ export default function PqrForm({ projects, documentNumber, lockedProjectId }: P
                 name={`pqr-${field.props.name}`}
                 type="checkbox"
                 checked={field.input === true}
-                className="accent-ink mt-1"
+                className="check mt-1 size-4"
               />
               <span>
                 Acepto la{" "}

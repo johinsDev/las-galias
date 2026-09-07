@@ -66,7 +66,6 @@ export default function DownPaymentSimulator({
             suffix="%"
             min={5}
             max={90}
-            step={1}
             onChange={setDownPct}
           />
           <SelectField
