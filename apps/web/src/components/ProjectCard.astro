@@ -343,12 +343,13 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
   }
 
   /**
-   * Repaints every tagged price and every selector on the page at once. All
-   * four cards in the design read the same currency, so one click moves them
-   * together rather than leaving the grid quoting three different units.
+   * Repaints ONE card: its price and its own three buttons. The selector is
+   * per card on purpose — someone comparing a Bogotá flat in euros against a
+   * Medellín one in dollars is a real thing to want, and moving the whole grid
+   * from a control that sits inside a single card is surprising.
    */
-  function applyCurrency(next: Currency) {
-    const group = document.querySelector<HTMLElement>("[data-price-currency]");
+  function paintCard(card: HTMLElement, next: Currency) {
+    const group = card.querySelector<HTMLElement>("[data-price-currency]");
     if (!group) return;
     const rates = {
       copPerUsd: Number(group.dataset.copPerUsd),
@@ -356,12 +357,12 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
     };
     if (!Number.isFinite(rates.copPerUsd) || !Number.isFinite(rates.copPerEur)) return;
 
-    document.querySelectorAll<HTMLElement>("[data-price-cop]").forEach((el) => {
+    card.querySelectorAll<HTMLElement>("[data-price-cop]").forEach((el) => {
       const cop = Number(el.dataset.priceCop);
       if (!Number.isFinite(cop)) return;
       el.textContent = formatMoney(convertFromCOP(cop, next, rates), next);
     });
-    document.querySelectorAll<HTMLElement>("[data-currency]").forEach((button) => {
+    group.querySelectorAll<HTMLElement>("[data-currency]").forEach((button) => {
       button.setAttribute("aria-pressed", String(button.dataset.currency === next));
     });
   }
@@ -370,9 +371,14 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
     const groups = [...document.querySelectorAll<HTMLElement>("[data-price-currency]")];
     if (groups.length === 0) return;
 
-    applyCurrency(readStored() ?? detectCurrency());
+    // The page still OPENS coherent — every card starts on the remembered or
+    // guessed currency. Only a click narrows to one card.
+    const initial = readStored() ?? detectCurrency();
 
     groups.forEach((group) => {
+      const card = group.closest<HTMLElement>("article") ?? group;
+      paintCard(card, initial);
+
       if (group.dataset.bound) return;
       group.dataset.bound = "1";
       group.addEventListener("click", (event) => {
@@ -380,11 +386,13 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
         const next = button?.dataset.currency as Currency | undefined;
         if (!next) return;
         try {
+          // Remembered so the next page opens the same way, even though the
+          // click itself only moves this card.
           sessionStorage.setItem(STORAGE_KEY, next);
         } catch {
           // Storage refused: the switch still works for this page view.
         }
-        applyCurrency(next);
+        paintCard(card, next);
       });
     });
   }
