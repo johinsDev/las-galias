@@ -190,7 +190,7 @@
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink-faint);
 }
 

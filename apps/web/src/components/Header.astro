@@ -37,6 +37,7 @@ const current = Astro.url.pathname;
  * /proyectos-algo, and would light up every link if "/" were ever in the list.
  */
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
+import { ChevronDown, ChevronRight, Menu, Search } from "lucide-astro";
 ---
 
 <header class="bg-brand sticky top-0 z-50 text-white">
@@ -61,21 +62,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
                   aria-current={isActive(link.href) ? "page" : undefined}
                 >
                   {link.label}
-                  {link.children && (
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  )}
+                  {link.children && <ChevronDown size={14} stroke-width={2} aria-hidden="true" />}
                 </a>
 
                 {/* Hover/focus panel, CSS only — a menu that needs JavaScript to
@@ -105,19 +92,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
         class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
         aria-label="Buscar proyectos"
       >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="m20 20-3.5-3.5"></path>
-        </svg>
+        <Search size={18} stroke-width={2.2} aria-hidden="true" />
       </a>
       <a
         href="/servicio-al-cliente"
@@ -136,18 +111,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
         aria-expanded="false"
         aria-controls="mobile-nav"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <path d="M4 7h16M4 12h16M4 17h16"></path>
-        </svg>
+        <Menu size={20} stroke-width={2} aria-hidden="true" />
       </button>
     </div>
   </div>
@@ -176,20 +140,7 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
           method="get"
           class="border-line-strong flex items-center gap-2 rounded-full border px-4 py-3"
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            class="text-ink-faint shrink-0"
-            aria-hidden="true"
-          >
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="m20 20-3.5-3.5"></path>
-          </svg>
+          <Search size={18} stroke-width={2.2} aria-hidden="true" />
           <input
             type="text"
             name="q"
@@ -208,20 +159,12 @@ const isActive = (href: string) => current === href || current.startsWith(`${hre
                   aria-current={isActive(link.href) ? "page" : undefined}
                 >
                   {link.label}
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="text-ink-faint"
+                  <ChevronRight
+                    size={18}
+                    stroke-width={2}
                     aria-hidden="true"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
+                    class="text-ink-faint"
+                  />
                 </a>
               </li>
             ))
