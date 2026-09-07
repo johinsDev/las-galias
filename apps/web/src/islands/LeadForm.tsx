@@ -5,6 +5,7 @@ import { DATA_POLICY_SLUG, ForeignLeadSchema, LeadSchema } from "@lasgalias/sche
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
 import { CountryCombobox } from "@lasgalias/ui/components/country-combobox";
+import { PhoneField } from "@lasgalias/ui/components/phone-field";
 import { Textarea } from "@lasgalias/ui/components/textarea";
 
 interface LeadFormProps {
@@ -108,93 +109,25 @@ export default function LeadForm({
       }}
       className="space-y-4"
     >
-      <Field of={form} path={["name"]}>
-        {(field) => (
-          <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-name">
-              Nombre completo
-            </label>
-            <Input {...field.props} id="lead-name" value={field.input ?? ""} autoComplete="name" />
-            {field.errors && (
-              <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-            )}
-          </div>
-        )}
-      </Field>
-
-      <Field of={form} path={["email"]}>
-        {(field) => (
-          <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-email">
-              Correo electrónico
-            </label>
-            <Input
-              {...field.props}
-              id="lead-email"
-              type="email"
-              value={field.input ?? ""}
-              autoComplete="email"
-            />
-            {field.errors && (
-              <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-            )}
-          </div>
-        )}
-      </Field>
-
-      <Field of={form} path={["phone"]}>
-        {(field) => (
-          <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-phone">
-              {international ? "WhatsApp / Celular" : "Celular"}
-            </label>
-            <Input
-              {...field.props}
-              id="lead-phone"
-              type="tel"
-              inputMode="tel"
-              value={field.input ?? ""}
-              autoComplete="tel"
-              placeholder={international ? "+1 / +34 / +57…" : "300 123 4567"}
-              // International numbers must NOT be reformatted: formatCoPhone
-              // truncates to 10 digits, which mangles most country codes.
-              onChange={
-                international
-                  ? undefined
-                  : (e) =>
-                      setInput(form, {
-                        path: ["phone"],
-                        input: formatCoPhone(e.currentTarget.value),
-                      })
-              }
-            />
-            {field.errors && (
-              <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-            )}
-          </div>
-        )}
-      </Field>
-
-      {international && (
-        <Field of={form} path={["residenceCountry"]}>
+      {/* Two columns for the short fields, in the design's reading order:
+          nombre / país, then whatsapp / correo. The message and the consents
+          stay full width below, because they need the room. */}
+      <div className={international ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
+        <Field of={form} path={["name"]}>
           {(field) => (
             <div>
               <label
-                className="text-body-sm text-ink mb-1 block font-medium"
-                htmlFor="lead-country"
+                className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+                htmlFor="lead-name"
               >
-                País de residencia
+                Nombre completo
               </label>
-              <CountryCombobox
-                id="lead-country"
-                name={field.props.name}
+              <Input
+                {...field.props}
+                id="lead-name"
                 value={field.input ?? ""}
-                // The combobox hands back a plain value, not a change event,
-                // so the form is told directly rather than through field.props.
-                onValueChange={(country) =>
-                  setInput(form, { path: ["residenceCountry"], input: country })
-                }
-                invalid={Boolean(field.errors)}
+                autoComplete="name"
+                placeholder="Tu nombre"
               />
               {field.errors && (
                 <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
@@ -202,12 +135,122 @@ export default function LeadForm({
             </div>
           )}
         </Field>
-      )}
+
+        {international && (
+          <Field of={form} path={["residenceCountry"]}>
+            {(field) => (
+              <div>
+                <label
+                  className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+                  htmlFor="lead-country"
+                >
+                  País de residencia
+                </label>
+                <CountryCombobox
+                  id="lead-country"
+                  name={field.props.name}
+                  value={field.input ?? ""}
+                  // The combobox hands back a plain value, not a change event, so
+                  // the form is told directly rather than through field.props.
+                  onValueChange={(country: string) =>
+                    setInput(form, { path: ["residenceCountry"], input: country })
+                  }
+                  invalid={Boolean(field.errors)}
+                />
+                {field.errors && (
+                  <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+                )}
+              </div>
+            )}
+          </Field>
+        )}
+
+        <Field of={form} path={["phone"]}>
+          {(field) =>
+            international ? (
+              <div>
+                <label
+                  className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+                  htmlFor="lead-phone"
+                >
+                  WhatsApp
+                </label>
+                <PhoneField
+                  id="lead-phone"
+                  name={field.props.name}
+                  value={field.input ?? ""}
+                  onValueChange={(phone: string) =>
+                    setInput(form, { path: ["phone"], input: phone })
+                  }
+                  invalid={Boolean(field.errors)}
+                />
+                {field.errors && (
+                  <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label
+                  className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+                  htmlFor="lead-phone"
+                >
+                  WhatsApp / Celular
+                </label>
+                <Input
+                  {...field.props}
+                  id="lead-phone"
+                  type="tel"
+                  inputMode="tel"
+                  value={field.input ?? ""}
+                  autoComplete="tel"
+                  placeholder="300 123 4567"
+                  onChange={(e) =>
+                    setInput(form, {
+                      path: ["phone"],
+                      input: formatCoPhone(e.currentTarget.value),
+                    })
+                  }
+                />
+                {field.errors && (
+                  <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+                )}
+              </div>
+            )
+          }
+        </Field>
+
+        <Field of={form} path={["email"]}>
+          {(field) => (
+            <div>
+              <label
+                className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+                htmlFor="lead-email"
+              >
+                Correo electrónico
+              </label>
+              <Input
+                {...field.props}
+                id="lead-email"
+                type="email"
+                value={field.input ?? ""}
+                autoComplete="email"
+                placeholder="correo@email.com"
+              />
+              {field.errors && (
+                <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+              )}
+            </div>
+          )}
+        </Field>
+      </div>
 
       <Field of={form} path={["message"]}>
         {(field) => (
           <div>
-            <label className="text-body-sm text-ink mb-1 block font-medium" htmlFor="lead-message">
+            <label
+              className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+              htmlFor="lead-message"
+            >
               Mensaje (opcional)
             </label>
             <Textarea {...field.props} id="lead-message" value={field.input ?? ""} rows={3} />

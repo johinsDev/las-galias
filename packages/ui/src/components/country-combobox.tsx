@@ -1,7 +1,7 @@
 "use client";
 
 import { Combobox } from "@base-ui/react/combobox";
-import { COMMON_COUNT, COUNTRIES, type Country } from "@lasgalias/ui/lib/countries";
+import { COMMON_COUNT, COUNTRIES, flagOf, type Country } from "@lasgalias/ui/lib/countries";
 import { cn } from "@lasgalias/ui/lib/utils";
 
 /* Inline rather than an icon package: nothing else in this design system pulls
@@ -124,11 +124,13 @@ export function CountryCombobox({
       <Combobox.Portal>
         <Combobox.Positioner sideOffset={6} className="z-50 outline-none">
           <Combobox.Popup className="border-line shadow-card-lg w-[var(--anchor-width)] max-w-[var(--available-width)] overflow-hidden rounded-xl border bg-white">
-            <Combobox.Empty className="text-body-sm text-ink-muted px-3 py-6 text-center">
-              No encontramos ese país.
+            <Combobox.Empty>
+              <p className="text-body-sm text-ink-muted px-3 py-6 text-center">
+                No encontramos ese país.
+              </p>
             </Combobox.Empty>
 
-            <Combobox.List className="max-h-[min(16rem,var(--available-height))] overflow-y-auto p-1">
+            <Combobox.List className="max-h-[min(16rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
               {(country: Country) => (
                 <Combobox.Item
                   key={country.code}
@@ -142,7 +144,10 @@ export function CountryCombobox({
                       "border-line mb-1 border-b pb-2.5",
                   )}
                 >
-                  {country.name}
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span aria-hidden="true">{flagOf(country.code)}</span>
+                    <span className="truncate">{country.name}</span>
+                  </span>
                   <Combobox.ItemIndicator className="text-brand shrink-0">
                     <Check />
                   </Combobox.ItemIndicator>
