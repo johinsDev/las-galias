@@ -4,6 +4,7 @@ import { Field, Form, setInput, useForm } from "@formisch/react";
 import { DATA_POLICY_SLUG, ForeignLeadSchema, LeadSchema } from "@lasgalias/schemas";
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
+import { CountryCombobox } from "@lasgalias/ui/components/country-combobox";
 import { Textarea } from "@lasgalias/ui/components/textarea";
 
 interface LeadFormProps {
@@ -184,12 +185,16 @@ export default function LeadForm({
               >
                 País de residencia
               </label>
-              <Input
-                {...field.props}
+              <CountryCombobox
                 id="lead-country"
+                name={field.props.name}
                 value={field.input ?? ""}
-                autoComplete="country-name"
-                placeholder="EE.UU., España, Canadá…"
+                // The combobox hands back a plain value, not a change event,
+                // so the form is told directly rather than through field.props.
+                onValueChange={(country) =>
+                  setInput(form, { path: ["residenceCountry"], input: country })
+                }
+                invalid={Boolean(field.errors)}
               />
               {field.errors && (
                 <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
