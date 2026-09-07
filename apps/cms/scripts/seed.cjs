@@ -523,24 +523,29 @@ async function main() {
 
     /* faqs — the accordion on /proyectos (general) and on the foreign-buyer
        landing (exterior). Same content type, scoped by `audience`. */
+    // El tercer valor es el tema: agrupa las preguntas en las pestañas de la
+    // página de PQR. Las de exterior no lo llevan, que ahí no hay pestañas.
     const faqs = [
       ["¿Tengo que viajar a Colombia para comprar?", "exterior"],
       ["¿Cuáles son los métodos de pago disponibles?", "exterior"],
       ["¿Qué documentos necesito para iniciar el proceso?", "exterior"],
       ["¿Debo estar en Colombia para firmar la escritura?", "exterior"],
       ["¿Con qué entidades puedo tramitar crédito hipotecario?", "exterior"],
-      ["¿Cuánto necesito para la cuota inicial?", "general"],
-      ["¿Puedo comprar con subsidio de vivienda?", "general"],
-      ["¿Cuánto tarda la entrega de un proyecto sobre planos?", "general"],
-      ["¿Qué incluye el apartamento en la entrega?", "general"],
-      ["¿Puedo separar el apartamento antes de aprobar el crédito?", "general"],
-      ["¿Puedo pagar la cuota inicial por cuotas?", "general"],
+      ["¿Cuánto necesito para la cuota inicial?", "general", "antes-de-comprar"],
+      ["¿Puedo comprar con subsidio de vivienda?", "general", "antes-de-comprar"],
+      ["¿Cuánto tarda la entrega de un proyecto sobre planos?", "general", "antes-de-comprar"],
+      ["¿Qué incluye el apartamento en la entrega?", "general", "posventa"],
+      ["¿Puedo separar el apartamento antes de aprobar el crédito?", "general", "durante-la-compra"],
+      ["¿Puedo pagar la cuota inicial por cuotas?", "general", "durante-la-compra"],
+      ["¿Qué documentos necesito para escriturar?", "general", "tramites"],
+      ["¿Qué cubre la garantía de mi vivienda?", "general", "posventa"],
     ];
     for (let i = 0; i < faqs.length; i++) {
-      const [question, audience] = faqs[i];
+      const [question, audience, topic] = faqs[i];
       await createAndPublish("api::faq.faq", {
         question,
         audience,
+        ...(topic ? { topic } : {}),
         order: i,
         answer: [
           {

@@ -652,6 +652,9 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     question: Schema.Attribute.String & Schema.Attribute.Required;
+    topic: Schema.Attribute.Enumeration<
+      ["antes-de-comprar", "durante-la-compra", "posventa", "tramites"]
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1074,6 +1077,35 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
     tags: Schema.Attribute.Component<"page.list-item", true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPqrPagePqrPage extends Struct.SingleTypeSchema {
+  collectionName: "pqr_page";
+  info: {
+    description: "La portada de la p\u00E1gina para radicar peticiones, quejas y reclamos. El formulario y las preguntas frecuentes no viven aqu\u00ED: el primero es c\u00F3digo y las segundas son su propia colecci\u00F3n";
+    displayName: "P\u00E1gina \u00B7 PQR";
+    pluralName: "pqr-pages";
+    singularName: "pqr-page";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    faqTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Resolvemos tus dudas">;
+    heroImage: Schema.Attribute.Media<"images">;
+    heroSubtitle: Schema.Attribute.Text;
+    heroTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"\u00BFTienes una petici\u00F3n, queja o reclamo?">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::pqr-page.pqr-page"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1744,6 +1776,7 @@ declare module "@strapi/strapi" {
       "api::newsletter-subscriber.newsletter-subscriber": ApiNewsletterSubscriberNewsletterSubscriber;
       "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
       "api::post.post": ApiPostPost;
+      "api::pqr-page.pqr-page": ApiPqrPagePqrPage;
       "api::pqr.pqr": ApiPqrPqr;
       "api::project.project": ApiProjectProject;
       "api::redirect.redirect": ApiRedirectRedirect;

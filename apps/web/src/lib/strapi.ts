@@ -10,6 +10,7 @@ import type {
   LegalDocument,
   Macroproject,
   Post,
+  PqrPage,
   Project,
 } from "@lasgalias/schemas";
 
@@ -357,6 +358,13 @@ export async function getLeadFormConfig(): Promise<LeadFormConfig | null> {
     "populate[residenceCities]": "true",
   });
   return leadFormConfigPromise;
+}
+
+export async function getPqrPage(): Promise<PqrPage | null> {
+  return strapiFetch<PqrPage>("pqr-page", {
+    "populate[heroImage]": "true",
+    "populate[seo][populate][ogImage]": "true",
+  });
 }
 
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {

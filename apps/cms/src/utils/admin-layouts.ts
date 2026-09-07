@@ -116,7 +116,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["icon", "description"],
     ["projects:12"],
   ],
-  "api::faq.faq": [["question:12"], ["audience", "order"], ["answer"]],
+  "api::faq.faq": [["question:12"], ["audience", "topic", "order"], ["answer"]],
   "api::home-banner.home-banner": [
     ["title", "link"],
     ["ctaLabel:6", "active:3", "order:3"],
@@ -148,6 +148,13 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["annualInterestRate", "maxTermYears", "maxFinancingPercent"],
     ["leasingFinancingPercent", "visFinancingPercent"],
     ["maxIncomeRatioPercent", "paymentIncomeRatioPercent"],
+  ],
+  "api::pqr-page.pqr-page": [
+    ["heroTitle:12"],
+    ["heroSubtitle:12"],
+    ["heroImage:12"],
+    ["faqTitle:12"],
+    ["seo"],
   ],
   "api::lead-form-config.lead-form-config": [
     ["sectionOptions"],

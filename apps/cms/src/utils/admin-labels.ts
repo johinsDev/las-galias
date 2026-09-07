@@ -159,6 +159,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
   "api::faq.faq": {
     question: { label: "Pregunta" },
     answer: { label: "Respuesta" },
+    topic: {
+      label: "Tema",
+      description: "Pestaña en la página de PQR. Vacío la deja fuera de esas pestañas.",
+    },
     audience: {
       label: "Dónde se muestra",
       description: "«exterior» solo en la landing de compra desde el exterior.",
@@ -251,6 +255,16 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "% del ingreso disponible para la cuota",
       description: "Regla general con la que el simulador recomienda la cuota máxima.",
     },
+  },
+  "api::pqr-page.pqr-page": {
+    heroImage: {
+      label: "Foto de portada",
+      description: "Se atenúa para que el titular se lea encima.",
+    },
+    heroTitle: { label: "Titular" },
+    heroSubtitle: { label: "Bajada" },
+    faqTitle: { label: "Título de las preguntas" },
+    seo: { label: "SEO" },
   },
   "api::lead-form-config.lead-form-config": {
     sectionOptions: {

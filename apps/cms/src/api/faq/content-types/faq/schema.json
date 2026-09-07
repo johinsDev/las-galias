@@ -25,6 +25,11 @@
       "default": "general",
       "required": true
     },
+    "topic": {
+      "type": "enumeration",
+      "enum": ["antes-de-comprar", "durante-la-compra", "posventa", "tramites"],
+      "description": "Pestaña de «Resolvemos tus dudas» en la página de PQR. Vacío deja la pregunta fuera de esas pestañas"
+    },
     "order": {
       "type": "integer",
       "default": 0

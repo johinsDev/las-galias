@@ -205,12 +205,16 @@ export interface Post {
   publishedAt?: string;
 }
 
+export type FaqTopic = "antes-de-comprar" | "durante-la-compra" | "posventa" | "tramites";
+
 export interface Faq {
   documentId: string;
   question: string;
   answer: unknown;
   audience: "general" | "exterior";
   order?: number | null;
+  /** Pestaña de «Resolvemos tus dudas»: antes-de-comprar, durante-la-compra, posventa, tramites. */
+  topic?: FaqTopic | null;
 }
 
 interface Step {
@@ -373,4 +377,13 @@ export interface LeadFormConfig {
   adviceEyebrow?: string | null;
   adviceTitle?: string | null;
   adviceBody?: string | null;
+}
+
+/** Single type de la página para radicar PQR. */
+export interface PqrPage {
+  heroImage?: Media | null;
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  faqTitle?: string | null;
+  seo?: Seo | null;
 }
