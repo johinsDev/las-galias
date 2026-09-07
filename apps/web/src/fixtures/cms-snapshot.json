@@ -1500,7 +1500,116 @@
     "updatedAt": "2026-07-15T11:05:39.657Z",
     "publishedAt": "2026-07-15T11:05:39.650Z"
   },
-  "faqs?filters%5Baudience%5D%5B%24eq%5D=exterior&pagination%5BpageSize%5D=100&sort=order%3Aasc": [],
+  "faqs?filters%5Baudience%5D%5B%24eq%5D=exterior&pagination%5BpageSize%5D=100&sort=order%3Aasc": [
+    {
+      "id": 1,
+      "documentId": "demofaqext00000000000000",
+      "question": "¿Tengo que viajar a Colombia para comprar?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "No. Todo el proceso puede hacerse en línea: la separación, la firma digital y la gestión del crédito. Solo la escritura requiere tu firma, y puedes otorgar poder a un apoderado en Colombia."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 0
+    },
+    {
+      "id": 2,
+      "documentId": "demofaqext00000000000001",
+      "question": "¿Cuáles son los métodos de pago disponibles?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Puedes pagar por PSE desde una cuenta colombiana o, si tienes un apoderado, a través de nuestros bancos aliados. Te acompañamos en cada paso."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 1
+    },
+    {
+      "id": 3,
+      "documentId": "demofaqext00000000000002",
+      "question": "¿Qué documentos necesito para iniciar el proceso?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Documento de identidad, certificación de ingresos en el exterior y, si aplicas a crédito, los soportes que pida la entidad financiera."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 2
+    },
+    {
+      "id": 4,
+      "documentId": "demofaqext00000000000003",
+      "question": "¿Debo estar en Colombia para firmar la escritura?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "No es indispensable. Puedes otorgar un poder ante el consulado colombiano de tu ciudad para que un apoderado firme por ti."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 3
+    },
+    {
+      "id": 5,
+      "documentId": "demofaqext00000000000004",
+      "question": "¿Con qué entidades puedo tramitar crédito hipotecario?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Trabajamos con varias entidades que financian a colombianos en el exterior. Un asesor te indica cuáles se ajustan a tu perfil."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 4
+    },
+    {
+      "id": 6,
+      "documentId": "demofaqext00000000000005",
+      "question": "¿Cuánto tiempo toma todo el proceso?",
+      "answer": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Desde la separación hasta la entrega depende del estado de obra del proyecto. Un asesor te da la fecha estimada de tu proyecto."
+            }
+          ]
+        }
+      ],
+      "audience": "exterior",
+      "order": 5
+    }
+  ],
   "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 6,
@@ -3289,5 +3398,13 @@
     "formBody": null,
     "formBullets": [],
     "seo": null
+  },
+  "faq-bot/config": {
+    "enabled": true,
+    "suggestedQuestions": [
+      "¿Cuánto necesito para la cuota inicial?",
+      "¿Qué proyectos tienen disponibles?",
+      "¿Puedo comprar con subsidio?"
+    ]
   }
 }
