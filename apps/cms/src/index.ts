@@ -212,6 +212,8 @@ export default {
       // Create only, never read: a PQR carries a name, an email and a
       // complaint, so a public `find` would publish other people's grievances.
       "api::pqr.pqr.create",
+      // Igual con el boletín: un `find` abierto publicaría la lista de correos.
+      "api::newsletter-subscriber.newsletter-subscriber.create",
       // The assistant. Its config single type is deliberately NOT public — the
       // site reads the two fields it needs through faq-bot.publicConfig.
       "api::faq-bot.faq-bot.ask",

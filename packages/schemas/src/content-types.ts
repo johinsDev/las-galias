@@ -12,6 +12,8 @@ export interface Media {
   width?: number | null;
   height?: number | null;
   mime?: string;
+  /** Strapi's own media caption — «Foto: Unsplash · © 2026». */
+  caption?: string | null;
 }
 
 export interface Seo {
@@ -187,6 +189,9 @@ export interface Post {
   slug: string;
   excerpt?: string | null;
   category?: PostCategory | null;
+  authorRole?: string | null;
+  highlights?: Stat[];
+  tags?: { text: string }[];
   /** Pins the post to the big slot at the top of /blog. */
   featured?: boolean;
   author?: string | null;
@@ -252,6 +257,7 @@ interface ToolCard {
   iconKey?: ToolIconKey | null;
 }
 
+/** Una cifra: el número grande y su etiqueta. La comparten el home y el blog. */
 interface Stat {
   value: string;
   label: string;

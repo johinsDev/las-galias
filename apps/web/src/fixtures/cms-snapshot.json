@@ -1303,7 +1303,7 @@
       "brochure": null
     }
   ],
-  "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+  "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bhighlights%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Btags%5D=true": [
     {
       "id": 4,
       "documentId": "vp3qzjqj23qknyhqb4322jsc",
@@ -1374,7 +1374,7 @@
         "documentId": "wnvfnaviv5kf3a1v1xhdtjet",
         "name": "post-asi-avanza-ciudad-verde-norte",
         "alternativeText": "Así avanza Ciudad Verde Norte",
-        "caption": null,
+        "caption": "Foto: Unsplash · © 2026",
         "focalPoint": null,
         "width": 1280,
         "height": 720,
@@ -1392,10 +1392,50 @@
         "publishedAt": "2026-07-15T01:47:10.561Z"
       },
       "seo": null,
-      "readingMinutes": 6
+      "readingMinutes": 6,
+      "authorRole": "Equipo editorial",
+      "highlights": [
+        {
+          "id": 1,
+          "value": "30 SMMLV",
+          "label": "Subsidio máximo VIS"
+        },
+        {
+          "id": 2,
+          "value": "150 SMMLV",
+          "label": "Precio máximo del inmueble"
+        },
+        {
+          "id": 3,
+          "value": "+3M",
+          "label": "Familias beneficiadas desde 2020"
+        }
+      ],
+      "tags": [
+        {
+          "id": 1,
+          "text": "Subsidio VIS"
+        },
+        {
+          "id": 2,
+          "text": "Mi Casa Ya"
+        },
+        {
+          "id": 3,
+          "text": "Vivienda nueva"
+        },
+        {
+          "id": 4,
+          "text": "Crédito hipotecario"
+        },
+        {
+          "id": 5,
+          "text": "Financiación"
+        }
+      ]
     }
   ],
-  "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
+  "posts?filters%5Bslug%5D%5B%24eq%5D=claves-comprar-vivienda-sobre-planos&populate%5Bcover%5D=true&populate%5Bhighlights%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Btags%5D=true": [
     {
       "id": 2,
       "documentId": "x8wyyjtetxpfkja1asy0q2vg",
@@ -1466,7 +1506,7 @@
         "documentId": "x8k0yzpol1nqdufinq3kfurx",
         "name": "post-claves-comprar-vivienda-sobre-planos",
         "alternativeText": "5 claves para comprar vivienda sobre planos",
-        "caption": null,
+        "caption": "Foto: Unsplash · © 2026",
         "focalPoint": null,
         "width": 1280,
         "height": 720,
@@ -1484,7 +1524,47 @@
         "publishedAt": "2026-07-15T01:47:10.505Z"
       },
       "seo": null,
-      "readingMinutes": 9
+      "readingMinutes": 9,
+      "authorRole": "Equipo editorial",
+      "highlights": [
+        {
+          "id": 1,
+          "value": "30 SMMLV",
+          "label": "Subsidio máximo VIS"
+        },
+        {
+          "id": 2,
+          "value": "150 SMMLV",
+          "label": "Precio máximo del inmueble"
+        },
+        {
+          "id": 3,
+          "value": "+3M",
+          "label": "Familias beneficiadas desde 2020"
+        }
+      ],
+      "tags": [
+        {
+          "id": 1,
+          "text": "Subsidio VIS"
+        },
+        {
+          "id": 2,
+          "text": "Mi Casa Ya"
+        },
+        {
+          "id": 3,
+          "text": "Vivienda nueva"
+        },
+        {
+          "id": 4,
+          "text": "Crédito hipotecario"
+        },
+        {
+          "id": 5,
+          "text": "Financiación"
+        }
+      ]
     }
   ],
   "calculator-config": {

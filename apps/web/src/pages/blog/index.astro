@@ -39,7 +39,7 @@ const featuredMeta = featured
 >
   {/* 01 Encabezado */}
   <section class="border-line border-b">
-    <div class="container py-12 md:py-16">
+    <div class="container mx-auto max-w-[1216px] py-12 md:py-16">
       <p class="eyebrow text-brand" data-reveal>Blog</p>
       <h1 class="text-h1 text-ink mt-3 font-extrabold" data-reveal>
         Aprende sobre vivienda nueva en Colombia
@@ -74,7 +74,7 @@ const featuredMeta = featured
     featured && (
       <section class="container pt-8 md:pt-12">
         <article
-          class="border-line hover:shadow-card-lg group grid overflow-hidden rounded-3xl border bg-white transition-shadow md:grid-cols-[47%_1fr]"
+          class="border-line hover:shadow-card-lg group mx-auto grid max-w-[1216px] overflow-hidden rounded-[20px] border bg-white transition-shadow md:min-h-[474px] md:grid-cols-[47%_1fr]"
           data-reveal
         >
           <div class="bg-surface aspect-[16/10] overflow-hidden md:aspect-auto md:h-full">
@@ -129,7 +129,7 @@ const featuredMeta = featured
   }
 
   {/* 03 Más artículos */}
-  <section class="container py-12 md:py-16">
+  <section class="container mx-auto max-w-[1216px] py-12 md:py-16">
     <div class="flex items-baseline justify-between gap-4">
       <h2 class="text-h4 text-ink font-bold">Más artículos</h2>
       {/* El recuento sigue al filtro, así que lo repinta el script. */}

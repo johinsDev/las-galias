@@ -60,6 +60,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["recommended"],
     ["seo"],
   ],
+  "api::newsletter-subscriber.newsletter-subscriber": [["email", "source"]],
   "api::lead.lead": [
     ["name", "email"],
     ["phone", "residenceCountry"],
@@ -86,10 +87,13 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
   "api::post.post": [
     ["title", "slug"],
     ["category", "featured"],
-    ["author", "readingMinutes", "publishedOn"],
+    ["author", "authorRole"],
+    ["readingMinutes", "publishedOn"],
     ["excerpt:12"],
     ["cover:12"],
     ["content"],
+    ["highlights"],
+    ["tags"],
     ["seo"],
   ],
   "api::macroproject.macroproject": [

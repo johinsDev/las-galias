@@ -978,6 +978,34 @@ export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema
   };
 }
 
+export interface ApiNewsletterSubscriberNewsletterSubscriber extends Struct.CollectionTypeSchema {
+  collectionName: "newsletter_subscribers";
+  info: {
+    description: "Correos dejados en el bloque \u00ABNewsletter Galias\u00BB del blog. Solo se crean desde el sitio: nunca se leen en p\u00FAblico, porque un `find` abierto publicar\u00EDa la lista de correos";
+    displayName: "Suscriptor del bolet\u00EDn";
+    pluralName: "newsletter-subscribers";
+    singularName: "newsletter-subscriber";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required & Schema.Attribute.Unique;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::newsletter-subscriber.newsletter-subscriber"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPointOfInterestPointOfInterest extends Struct.CollectionTypeSchema {
   collectionName: "points_of_interest";
   info: {
@@ -1025,6 +1053,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     author: Schema.Attribute.String;
+    authorRole: Schema.Attribute.String;
     category: Schema.Attribute.Enumeration<
       ["financiacion", "guia-de-compra", "mercado", "decoracion", "inversion", "proyecto"]
     >;
@@ -1034,6 +1063,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     excerpt: Schema.Attribute.Text;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    highlights: Schema.Attribute.Component<"page.stat", true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::post.post"> &
       Schema.Attribute.Private;
@@ -1042,6 +1072,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     readingMinutes: Schema.Attribute.Integer;
     seo: Schema.Attribute.Component<"shared.seo", false>;
     slug: Schema.Attribute.UID<"title"> & Schema.Attribute.Required;
+    tags: Schema.Attribute.Component<"page.list-item", true>;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
@@ -1710,6 +1741,7 @@ declare module "@strapi/strapi" {
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;
+      "api::newsletter-subscriber.newsletter-subscriber": ApiNewsletterSubscriberNewsletterSubscriber;
       "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
       "api::post.post": ApiPostPost;
       "api::pqr.pqr": ApiPqrPqr;

@@ -147,6 +147,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     crmAttempts: { label: "Intentos de envío" },
     crmLastError: { label: "Último error" },
   },
+  "api::newsletter-subscriber.newsletter-subscriber": {
+    email: { label: "Correo" },
+    source: { label: "Origen", description: "El artículo desde el que se suscribió." },
+  },
   "api::zone.zone": {
     name: { label: "Nombre" },
     slug: { label: "URL (slug)" },
@@ -403,6 +407,12 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       description: "Lo sube al bloque grande de /blog. Si hay varios, gana el más reciente.",
     },
     author: { label: "Autor", description: "Vacío firma como «equipo editorial Galias»." },
+    authorRole: { label: "Cargo del autor", description: "e.g. «Equipo editorial»." },
+    highlights: {
+      label: "Cifras del artículo",
+      description: "Se dibujan bajo el cuerpo: el editor de texto no puede alojarlas dentro.",
+    },
+    tags: { label: "Etiquetas", description: "Píldoras al pie. Son texto: no filtran nada." },
     readingMinutes: {
       label: "Minutos de lectura",
       description: "Vacío se calcula solo a partir del contenido.",

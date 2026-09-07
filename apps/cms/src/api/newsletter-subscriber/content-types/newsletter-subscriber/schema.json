@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "newsletter_subscribers",
+  "info": {
+    "singularName": "newsletter-subscriber",
+    "pluralName": "newsletter-subscribers",
+    "displayName": "Suscriptor del boletín",
+    "description": "Correos dejados en el bloque «Newsletter Galias» del blog. Solo se crean desde el sitio: nunca se leen en público, porque un `find` abierto publicaría la lista de correos"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "source": {
+      "type": "string",
+      "description": "Dónde se suscribió, e.g. «blog:mi-casa-ya-2026»"
+    }
+  }
+}
