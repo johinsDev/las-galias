@@ -47,10 +47,10 @@ const grouped = TOPICS.map((topic) => ({
                   aria-selected={i === 0 ? "true" : "false"}
                   data-topic-tab={topic.value}
                   class:list={[
-                    "text-body-sm block w-full rounded-lg border-l-2 px-4 py-3 text-left transition-colors",
+                    "text-body-sm block w-full rounded-r-lg border-l-2 px-4 py-3 text-left transition-all duration-200",
                     i === 0
                       ? "border-brand bg-brand-subtle text-brand font-bold"
-                      : "text-ink-muted hover:text-ink border-transparent",
+                      : "text-ink-muted hover:text-ink hover:bg-surface border-transparent",
                   ]}
                 >
                   {topic.label}
@@ -62,7 +62,11 @@ const grouped = TOPICS.map((topic) => ({
 
         <div>
           {grouped.map((topic, index) => (
-            <div class="space-y-3" data-topic-panel={topic.value} hidden={index !== 0}>
+            <div
+              class="space-y-3 transition-opacity duration-300"
+              data-topic-panel={topic.value}
+              hidden={index !== 0}
+            >
               {topic.items.map((faq, i) => (
                 <div
                   class:list={[
@@ -92,7 +96,7 @@ const grouped = TOPICS.map((topic) => ({
                   {/* De 0fr a 1fr: anima una altura que nadie conoce de antemano
                       sin medirla con JS, y sobrevive a que el texto cambie. */}
                   <div
-                    class="grid transition-[grid-template-rows] duration-300 ease-out"
+                    class="grid transition-[grid-template-rows,opacity] duration-300 ease-out"
                     data-faq-panel
                   >
                     <div class="overflow-hidden">
@@ -123,9 +127,11 @@ const grouped = TOPICS.map((topic) => ({
   /* La altura la anima el grid; el estado abierto solo cambia la fracción. */
   [data-faq-panel] {
     grid-template-rows: 0fr;
+    opacity: 0;
   }
   [data-open="true"] [data-faq-panel] {
     grid-template-rows: 1fr;
+    opacity: 1;
   }
   [data-open="true"] [data-faq-question] {
     color: var(--brand);
@@ -179,7 +185,16 @@ const grouped = TOPICS.map((topic) => ({
             other.classList.toggle("text-ink-muted", !on);
           });
           root.querySelectorAll<HTMLElement>("[data-topic-panel]").forEach((panel) => {
-            panel.hidden = panel.dataset.topicPanel !== target;
+            const on = panel.dataset.topicPanel === target;
+            if (!on) {
+              panel.hidden = true;
+              return;
+            }
+            // Se muestra opaco y se enciende en el siguiente fotograma: si se
+            // hiciera en el mismo, el navegador no tendría desde dónde animar.
+            panel.style.opacity = "0";
+            panel.hidden = false;
+            requestAnimationFrame(() => (panel.style.opacity = "1"));
           });
         });
       });
