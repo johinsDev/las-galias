@@ -195,14 +195,16 @@ const slides = Array.from({ length: loops }, () => banners).flat();
     will-change: transform;
   }
 
-  /* Tucked inside the slide on a phone — there is no room beside it — and
-     hanging ~70% over the edge from md up, the way the design draws it. */
+  /* On a phone the buttons straddle the slide edge — about a third of them
+     outside, which is all the gutter there is — so they stop landing on top of
+     the headline. From md up they hang ~70% over the edge, as the design draws
+     them. */
   .banner-arrow-prev {
-    left: calc((100% - var(--banner-slide)) / 2 + 0.5rem);
+    left: calc((100% - var(--banner-slide)) / 2 - 1rem);
   }
 
   .banner-arrow-next {
-    right: calc((100% - var(--banner-slide)) / 2 + 0.5rem);
+    right: calc((100% - var(--banner-slide)) / 2 - 1rem);
   }
 
   @media (width >= 48rem) {
