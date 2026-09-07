@@ -12,6 +12,12 @@ import { getFaqBotConfig } from "@/lib/strapi";
  *
  * `initial` renders the rest collapsed behind "Ver más preguntas" instead of
  * paginating, so every question still ships in the HTML for search engines.
+ *
+ * Not a <details>: the browser hides a closed one with `display: none`, and a
+ * box that is not laid out cannot animate its height. A button plus a
+ * grid-template-rows 0fr→1fr panel eases open to whatever the answer measures,
+ * with no max-height to keep in sync — and the answer stays in the layout, so
+ * it is still there to be indexed.
  */
 interface Props {
   faqs: Faq[];
@@ -38,21 +44,34 @@ const bot = await getFaqBotConfig();
   <div class="space-y-3">
     {
       faqs.map((faq, i) => (
-        <details
-          class="border-line group rounded-2xl border bg-white px-5 py-4"
-          data-faq-item
-          hidden={i >= initial}
-        >
-          <summary class="text-body-sm text-ink flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+        <div class="border-line rounded-2xl border bg-white" data-faq-item hidden={i >= initial}>
+          <button
+            type="button"
+            class="text-body-sm text-ink flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left font-medium"
+            aria-expanded="false"
+            aria-controls={`faq-answer-${i}`}
+            data-faq-toggle
+          >
             {faq.question}
-            <span class="text-ink-muted shrink-0 text-lg leading-none transition-transform group-open:rotate-45">
+            {/* A plus turned 45° is the × the design shows when open. */}
+            <span
+              class="text-ink-muted shrink-0 text-lg leading-none transition-transform duration-300 ease-out"
+              data-faq-icon
+            >
               +
             </span>
-          </summary>
-          <div class="text-body-sm text-ink-muted mt-3">
-            <Blocks content={faq.answer} />
+          </button>
+          <div
+            id={`faq-answer-${i}`}
+            data-faq-panel
+            data-open="false"
+            class="overflow-hidden transition-[max-height] duration-300 ease-out"
+          >
+            <div class="text-body-sm text-ink-muted px-5 pb-4">
+              <Blocks content={faq.answer} />
+            </div>
           </div>
-        </details>
+        </div>
       ))
     }
   </div>
@@ -68,18 +87,62 @@ const bot = await getFaqBotConfig();
   }
 </div>
 
+<style>
+  /* Collapsed before the script runs, so the answers are hidden even with JS
+     off. `max-height` and not a grid row: interpolating 0fr → a height never
+     settled here and the panel stayed shut. */
+  [data-faq-panel] {
+    max-height: 0;
+  }
+</style>
+
 <script>
   function setupFaq() {
     document.querySelectorAll<HTMLElement>("[data-faq]").forEach((root) => {
-      const button = root.querySelector<HTMLButtonElement>("[data-faq-more]");
-      if (!button || button.dataset.bound) return;
-      button.dataset.bound = "1";
+      root.querySelectorAll<HTMLElement>("[data-faq-toggle]").forEach((toggle) => {
+        if (toggle.dataset.bound) return;
+        toggle.dataset.bound = "1";
 
-      button.addEventListener("click", () => {
+        toggle.addEventListener("click", () => {
+          const panel = toggle.nextElementSibling as HTMLElement | null;
+          if (!panel) return;
+          const open = panel.dataset.open !== "true";
+          panel.dataset.open = String(open);
+          toggle.setAttribute("aria-expanded", String(open));
+
+          // Measure, animate to that height, then release the cap so the answer
+          // still fits if the text reflows on resize or once a webfont lands.
+          if (open) {
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            const release = () => {
+              if (panel.dataset.open === "true") panel.style.maxHeight = "none";
+            };
+            panel.addEventListener("transitionend", release, { once: true });
+            // A background tab never advances the transition, so `transitionend`
+            // never fires there and the cap would stay pinned at the height it
+            // had when it was opened. The timer releases it either way.
+            setTimeout(release, 400);
+          } else {
+            // From `none` there is nothing to animate away from, so pin the
+            // current height for a frame first.
+            panel.style.maxHeight = `${panel.scrollHeight}px`;
+            void panel.offsetHeight;
+            panel.style.maxHeight = "0px";
+          }
+          const icon = toggle.querySelector<HTMLElement>("[data-faq-icon]");
+          if (icon) icon.style.transform = open ? "rotate(45deg)" : "";
+        });
+      });
+
+      const more = root.querySelector<HTMLButtonElement>("[data-faq-more]");
+      if (!more || more.dataset.bound) return;
+      more.dataset.bound = "1";
+
+      more.addEventListener("click", () => {
         root
           .querySelectorAll<HTMLElement>("[data-faq-item][hidden]")
           .forEach((item) => (item.hidden = false));
-        button.parentElement?.remove();
+        more.parentElement?.remove();
       });
     });
   }
