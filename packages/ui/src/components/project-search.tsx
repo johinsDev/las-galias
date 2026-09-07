@@ -166,7 +166,16 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
         <Dialog.Popup className="fixed top-[10vh] left-1/2 z-50 flex max-h-[80vh] w-[min(94vw,44rem)] -translate-x-1/2 flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-white shadow-[0_28px_80px_rgba(0,0,0,0.22)]">
           <Dialog.Title className="sr-only">Buscar proyectos</Dialog.Title>
 
-          <Combobox.Root items={results} onValueChange={() => setOpen(false)}>
+          <Combobox.Root
+            items={results}
+            onValueChange={(project: SearchableProject | null) => {
+              setOpen(false);
+              // Navegación explícita: Base UI se queda con el clic del enlace
+              // para cerrar el panel, así que el href por sí solo no bastaba —
+              // y con el teclado nunca hubo enlace que seguir.
+              if (project) window.location.assign(`/proyectos/${project.slug}`);
+            }}
+          >
             <div className="flex items-center gap-2 p-3">
               <div className="border-line focus-within:border-ink flex h-12 min-w-0 flex-1 items-center gap-3 rounded-xl border px-3.5 transition-colors">
                 <Magnifier className="text-ink-faint shrink-0" />
