@@ -128,25 +128,27 @@ import { Check } from "lucide-astro";
   </section>
 
   {/* 02 Paso a paso — six steps in a 3×2 grid, each numbered by position. */}
-  <section class="container py-16 md:py-20">
-    <SectionHeading eyebrow="Cómo funciona" title={stepsTitle} />
-    <ol class="mx-auto mt-10 grid max-w-[1120px] gap-x-10 gap-y-10 md:grid-cols-3">
-      {
-        steps.map((step, i) => (
-          <li data-reveal>
-            <span class="bg-brand-tint text-brand flex size-11 items-center justify-center rounded-xl text-lg font-bold">
-              {i + 1}
-            </span>
-            <h3 class="text-ink mt-4 font-semibold">{step.title}</h3>
-            <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
-          </li>
-        ))
-      }
-    </ol>
+  <section class="border-t-[0.75px] border-[#eff1f3]">
+    <div class="container py-16 md:py-20">
+      <SectionHeading eyebrow="Cómo funciona" title={stepsTitle} />
+      <ol class="mx-auto mt-10 grid max-w-[1120px] gap-x-10 gap-y-10 md:grid-cols-3">
+        {
+          steps.map((step, i) => (
+            <li data-reveal>
+              <span class="text-brand flex size-12 items-center justify-center rounded-full bg-[#fdf9fa] text-lg font-bold">
+                {i + 1}
+              </span>
+              <h3 class="text-ink mt-4 font-semibold">{step.title}</h3>
+              <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </section>
 
   {/* 03 Proyectos, con selector de moneda en cada card */}
-  <section class="bg-brand-subtle">
+  <section>
     <div class="container py-16 md:py-20">
       <SectionHeading eyebrow="¡Invierte ahora!" title="Proyectos disponibles para ti" />
       <CityFilter cities={cities} target="#exterior-grid" />
