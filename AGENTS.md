@@ -7,7 +7,7 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@astrojs/vercel` (needed even though the site is static: it emits the CMS
   redirects as real 301s and enables Vercel Image Optimization). Near-zero JS: the
   React islands (`src/islands/`, `client:visible`) are LeadForm, the three
-  simulators, TypologySimulator, StickyQuote and FaqBot. Animations with `motion` (vanilla API) + View Transitions.
+  simulators, TypologySimulator and FaqBot. Animations with `motion` (vanilla API) + View Transitions.
   Public URLs and site copy are Spanish (Colombian audience); code is English.
   The three simulators on `/simuladores` (cuota inicial, crédito hipotecario,
   capacidad de pago) share `lib/simulators.ts` for the math and
@@ -106,6 +106,10 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - Publishing/unpublishing public content triggers (debounced) the Vercel Deploy
   Hook → static site rebuild.
 - Only the Super Admin touches `redirect`, `calculator-config` and `exchange-rate`.
+- `lead-form-config` holds the qualification dropdowns (ingresos, ciudad,
+  cesantías, ahorros) shared by the PDP sidebar form and the "Recibe una asesoría
+  personalizada" band, plus that band's copy. An empty list hides its select
+  rather than drawing an empty one.
 - Base prices are COP; USD/EUR come from the daily cron rates (TRM datos.gov.co +
   ECB cross-rate) stored in `exchange-rate`.
 - **Sinco owns only price and areas.** Name, description, gallery,

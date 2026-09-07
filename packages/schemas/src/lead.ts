@@ -12,11 +12,22 @@ export const LeadSchema = v.object({
     v.string(),
     v.trim(),
     // The field is displayed grouped ("300 123 4567"); strip whitespace before
-    // validating and sending so Strapi stores a clean "3001234567".
-    v.transform((s) => s.replace(/\s+/g, "")),
+    // validating and sending so Strapi stores a clean number.
+    v.transform((s) => s.replace(/[\s()-]/g, "")),
+    /**
+     * Colombia keeps its strict rule — a mobile is ten digits starting in 3,
+     * a landline seven or eight — and anything with another calling code is
+     * validated as plain E.164.
+     *
+     * The form now always carries a dial-code picker, so a Colombian number
+     * arrives as "+573001234567" rather than the bare "3001234567" it used to
+     * send. The CRM normalises by prepending 57 to what looks Colombian; what
+     * it does with an already-prefixed number is unverified — see
+     * docs/sinco/discovery-pruebas.md before pointing this at production.
+     */
     v.regex(
-      /^(\+57)?[3][0-9]{9}$|^(\+57)?[1-8][0-9]{6,7}$/,
-      "Ingresa un teléfono colombiano válido",
+      /^\+57[3][0-9]{9}$|^\+57[1-8][0-9]{6,7}$|^(?:\+57)?[3][0-9]{9}$|^\+(?!57)[1-9]\d{7,14}$/,
+      "Ingresa un teléfono válido con su indicativo",
     ),
   ),
   message: v.optional(v.pipe(v.string(), v.maxLength(1000))),
@@ -29,6 +40,18 @@ export const LeadSchema = v.object({
    * One checkbox in the UI, the three channels it enables here.
    */
   acceptsContact: v.optional(v.boolean(), false),
+  /**
+   * Qualification block from the PDP design. All optional: an advisor prefers a
+   * lead with a phone and nothing else over no lead at all, so none of these may
+   * ever block a submission. The values are the option labels the editor wrote
+   * in `lead-form-config`, stored verbatim — Sinco's
+   * `POST /SalaVentas/Externo/Visitas` has no field for any of them today.
+   */
+  incomeRange: v.optional(v.string()),
+  residenceCity: v.optional(v.string()),
+  severance: v.optional(v.string()),
+  savingsRange: v.optional(v.string()),
+  firstHome: v.optional(v.boolean()),
   // Campaign attribution read from the landing URL; never typed by the user.
   utmSource: v.optional(v.string()),
   utmMedium: v.optional(v.string()),

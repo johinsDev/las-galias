@@ -1,0 +1,31 @@
+---
+import type { LeadFormConfig } from "@lasgalias/schemas";
+
+import AdviceQualifier from "@/islands/AdviceQualifier";
+
+interface Props {
+  config: LeadFormConfig;
+}
+
+const { config } = Astro.props;
+
+const eyebrow = config.adviceEyebrow ?? "Asesoría personalizada";
+const title = config.adviceTitle ?? "Recibe una asesoría personalizada";
+const body =
+  config.adviceBody ??
+  "Cuéntanos un poco sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera.";
+---
+
+<section class="bg-brand-subtle border-line border-t">
+  <div class="container grid items-center gap-10 py-16 md:py-20 lg:grid-cols-[1fr_1.15fr]">
+    <div data-reveal>
+      <p class="eyebrow text-brand">{eyebrow}</p>
+      <h2 class="text-h3 text-ink mt-3 font-bold">{title}</h2>
+      <p class="text-body-sm text-ink-muted mt-3 max-w-md">{body}</p>
+    </div>
+
+    <div data-reveal>
+      <AdviceQualifier client:visible config={config} />
+    </div>
+  </div>
+</section>

@@ -1,37 +1,16 @@
 "use client";
 
-import { Combobox } from "@base-ui/react/combobox";
 import { useMemo } from "react";
 
 import {
-  COMMON_COUNT,
   COUNTRIES,
   flagOf,
   groupsFor,
   nationalMax,
   type Country,
 } from "@lasgalias/ui/lib/countries";
+import { Select } from "@lasgalias/ui/components/select";
 import { cn } from "@lasgalias/ui/lib/utils";
-
-const icon = {
-  width: 15,
-  height: 15,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-} as const;
-
-function ChevronsUpDown() {
-  return (
-    <svg {...icon} width={14} height={14} aria-hidden="true">
-      <path d="m7 15 5 5 5-5" />
-      <path d="m7 9 5-5 5 5" />
-    </svg>
-  );
-}
 
 /**
  * Groups the national number the way its own country writes it — Colombia's ten
@@ -96,16 +75,6 @@ export function PhoneField({
   const emit = (next: Country, digits: string) =>
     onValueChange?.(`${next.dial}${digits.slice(0, nationalMax(next))}`);
 
-  const filter = (item: Country, query: string) => {
-    if (!query) return true;
-    const fold = (s: string) =>
-      s
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase();
-    return fold(item.name).includes(fold(query)) || item.dial.includes(query.replace(/\s/g, ""));
-  };
-
   return (
     <div
       className={cn(
@@ -115,62 +84,36 @@ export function PhoneField({
     >
       <input type="hidden" name={name} value={value} />
 
-      <Combobox.Root
-        items={COUNTRIES}
-        itemToStringLabel={(item: Country) => `${item.name} ${item.dial}`}
-        filter={filter}
-        value={country}
-        onValueChange={(next: Country | null) => emit(next ?? country, national)}
-      >
-        <Combobox.Trigger
-          aria-label={`Indicativo del país, ${country.name} ${country.dial}`}
-          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors"
-        >
-          <span aria-hidden="true">{flagOf(country.code)}</span>
-          <span className="tabular-nums">{country.dial}</span>
-          <span className="text-ink-faint">
-            <ChevronsUpDown />
-          </span>
-        </Combobox.Trigger>
-
-        <Combobox.Portal>
-          <Combobox.Positioner sideOffset={6} align="start" className="z-50 outline-none">
-            <Combobox.Popup className="border-line shadow-card-lg w-72 max-w-[var(--available-width)] overflow-hidden rounded-xl border bg-white">
-              <div className="border-line border-b px-3">
-                <Combobox.Input
-                  placeholder="Busca tu país…"
-                  className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
-                />
-              </div>
-
-              <Combobox.Empty>
-                <p className="text-body-sm text-ink-muted px-3 py-6 text-center">
-                  No encontramos ese país.
-                </p>
-              </Combobox.Empty>
-
-              <Combobox.List className="max-h-[min(16rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
-                {(item: Country) => (
-                  <Combobox.Item
-                    key={item.code}
-                    value={item}
-                    className={cn(
-                      "text-body-sm text-ink flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none",
-                      "data-highlighted:bg-surface data-selected:font-semibold",
-                      COUNTRIES.indexOf(item) === COMMON_COUNT - 1 &&
-                        "border-line mb-1 border-b pb-2.5",
-                    )}
-                  >
-                    <span aria-hidden="true">{flagOf(item.code)}</span>
-                    <span className="min-w-0 flex-1 truncate">{item.name}</span>
-                    <span className="text-ink-faint shrink-0 tabular-nums">{item.dial}</span>
-                  </Combobox.Item>
-                )}
-              </Combobox.List>
-            </Combobox.Popup>
-          </Combobox.Positioner>
-        </Combobox.Portal>
-      </Combobox.Root>
+      {/*
+        El indicativo usa el mismo desplegable del sistema de diseño que el
+        resto del formulario, con un disparador propio: la bandera y el prefijo,
+        que es lo único que cabe en esa caja. El buscador no hace falta —el país
+        se elige arriba, en su campo con buscador— y el panel propio evita que en
+        mitad del formulario se abra el menú gris del sistema operativo.
+      */}
+      <Select
+        aria-label="Indicativo del país"
+        value={country.code}
+        onValueChange={(code: string) => {
+          const next = COUNTRIES.find((c) => c.code === code);
+          if (next) emit(next, national);
+        }}
+        items={COUNTRIES.map((item) => ({
+          value: item.code,
+          label: `${flagOf(item.code)}  ${item.name} ${item.dial}`,
+        }))}
+        searchable
+        searchPlaceholder="Busca tu país…"
+        emptyMessage="No encontramos ese país."
+        popupClassName="w-72"
+        triggerClassName="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors outline-none"
+        trigger={
+          <>
+            <span aria-hidden="true">{flagOf(country.code)}</span>
+            <span className="tabular-nums">{country.dial}</span>
+          </>
+        }
+      />
 
       <input
         id={id}

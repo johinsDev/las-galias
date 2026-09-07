@@ -391,7 +391,8 @@
         "createdAt": "2026-08-06T00:41:30.615Z",
         "updatedAt": "2026-08-06T00:41:30.615Z",
         "publishedAt": "2026-08-06T00:41:30.615Z"
-      }
+      },
+      "brochure": null
     },
     {
       "id": 14,
@@ -513,7 +514,8 @@
         "id": 900,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
       "zone": {
         "id": 1,
@@ -591,7 +593,8 @@
           "updatedAt": "2026-07-15T01:47:09.740Z",
           "publishedAt": "2026-07-15T01:47:09.740Z"
         }
-      ]
+      ],
+      "brochure": null
     },
     {
       "id": 4,
@@ -713,7 +716,8 @@
         "id": 901,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
       "zone": {
         "id": 1,
@@ -791,7 +795,8 @@
           "updatedAt": "2026-07-15T01:47:09.333Z",
           "publishedAt": "2026-07-15T01:47:09.333Z"
         }
-      ]
+      ],
+      "brochure": null
     },
     {
       "id": 12,
@@ -913,7 +918,8 @@
         "id": 902,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
       "zone": {
         "id": 1,
@@ -991,7 +997,8 @@
           "updatedAt": "2026-07-15T01:47:10.112Z",
           "publishedAt": "2026-07-15T01:47:10.112Z"
         }
-      ]
+      ],
+      "brochure": null
     },
     {
       "id": 13,
@@ -1113,7 +1120,8 @@
         "id": 903,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
       "zone": {
         "id": 2,
@@ -1191,7 +1199,8 @@
           "updatedAt": "2026-07-15T01:47:09.052Z",
           "publishedAt": "2026-07-15T01:47:09.052Z"
         }
-      ]
+      ],
+      "brochure": null
     },
     {
       "id": 10,
@@ -1290,7 +1299,8 @@
         "createdAt": "2026-08-06T00:41:30.615Z",
         "updatedAt": "2026-08-06T00:41:30.615Z",
         "publishedAt": "2026-08-06T00:41:30.615Z"
-      }
+      },
+      "brochure": null
     }
   ],
   "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": [
@@ -1610,7 +1620,7 @@
       "order": 5
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 6,
       "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
@@ -1721,10 +1731,11 @@
         "metaTitle": "Altos de la Sabana — Las Galias",
         "metaDescription": "Muy pronto: un nuevo concepto de vivienda campestre urbana al norte de Bogotá.",
         "ogImage": null
-      }
+      },
+      "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 14,
       "documentId": "m7yi0bt025kvwmyuwyj451aj",
@@ -1878,7 +1889,11 @@
         "updatedAt": "2026-07-15T01:47:09.598Z",
         "publishedAt": "2026-07-15T01:47:09.598Z"
       },
-      "location": null,
+      "location": {
+        "lat": 6.205,
+        "lng": -75.57,
+        "address": "Carrera 43A N° 5 – 15, Medellín"
+      },
       "macroproject": null,
       "zone": {
         "id": 1,
@@ -1896,9 +1911,23 @@
         "id": 904,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
-      "constructionProgress": [],
+      "constructionProgress": [
+        {
+          "id": 1,
+          "label": "Mayo 2025",
+          "date": "2025-05-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        },
+        {
+          "id": 2,
+          "label": "Febrero 2025",
+          "date": "2025-02-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        }
+      ],
       "seo": {
         "id": 14,
         "metaTitle": "Balcones de Provenza — Las Galias",
@@ -1946,7 +1975,8 @@
           "createdAt": "2026-07-15T01:47:08.586Z",
           "updatedAt": "2026-07-15T01:47:08.586Z",
           "publishedAt": "2026-07-15T01:47:08.586Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "piscina"
         },
         {
           "id": 2,
@@ -1956,7 +1986,8 @@
           "createdAt": "2026-07-15T01:47:08.588Z",
           "updatedAt": "2026-07-15T01:47:08.588Z",
           "publishedAt": "2026-07-15T01:47:08.588Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "gimnasio"
         },
         {
           "id": 3,
@@ -1966,7 +1997,8 @@
           "createdAt": "2026-07-15T01:47:08.590Z",
           "updatedAt": "2026-07-15T01:47:08.590Z",
           "publishedAt": "2026-07-15T01:47:08.590Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-bbq"
         },
         {
           "id": 4,
@@ -1976,7 +2008,8 @@
           "createdAt": "2026-07-15T01:47:08.592Z",
           "updatedAt": "2026-07-15T01:47:08.592Z",
           "publishedAt": "2026-07-15T01:47:08.591Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-infantil"
         }
       ],
       "recommended": [
@@ -2022,10 +2055,11 @@
             "publishedAt": "2026-07-15T01:47:08.583Z"
           }
         }
-      ]
+      ],
+      "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 4,
       "documentId": "xgq1gkv616o17gctywpqgpas",
@@ -2179,7 +2213,11 @@
         "updatedAt": "2026-07-15T01:47:09.192Z",
         "publishedAt": "2026-07-15T01:47:09.192Z"
       },
-      "location": null,
+      "location": {
+        "lat": 4.715,
+        "lng": -74.084,
+        "address": "Carrera 104 N° 152 – 30, Bogotá"
+      },
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -2197,9 +2235,23 @@
         "id": 905,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
-      "constructionProgress": [],
+      "constructionProgress": [
+        {
+          "id": 1,
+          "label": "Mayo 2025",
+          "date": "2025-05-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        },
+        {
+          "id": 2,
+          "label": "Febrero 2025",
+          "date": "2025-02-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        }
+      ],
       "seo": {
         "id": 4,
         "metaTitle": "Mirador del Parque — Las Galias",
@@ -2247,7 +2299,8 @@
           "createdAt": "2026-07-15T01:47:08.586Z",
           "updatedAt": "2026-07-15T01:47:08.586Z",
           "publishedAt": "2026-07-15T01:47:08.586Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "piscina"
         },
         {
           "id": 2,
@@ -2257,7 +2310,8 @@
           "createdAt": "2026-07-15T01:47:08.588Z",
           "updatedAt": "2026-07-15T01:47:08.588Z",
           "publishedAt": "2026-07-15T01:47:08.588Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "gimnasio"
         },
         {
           "id": 3,
@@ -2267,7 +2321,8 @@
           "createdAt": "2026-07-15T01:47:08.590Z",
           "updatedAt": "2026-07-15T01:47:08.590Z",
           "publishedAt": "2026-07-15T01:47:08.590Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-bbq"
         },
         {
           "id": 4,
@@ -2277,7 +2332,8 @@
           "createdAt": "2026-07-15T01:47:08.592Z",
           "updatedAt": "2026-07-15T01:47:08.592Z",
           "publishedAt": "2026-07-15T01:47:08.591Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-infantil"
         }
       ],
       "macroproject": {
@@ -2351,10 +2407,11 @@
             "publishedAt": "2026-07-15T01:47:08.836Z"
           }
         ]
-      }
+      },
+      "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 12,
       "documentId": "t667t7mp8ez7ciokzf7q2blu",
@@ -2508,7 +2565,11 @@
         "updatedAt": "2026-07-15T01:47:09.982Z",
         "publishedAt": "2026-07-15T01:47:09.982Z"
       },
-      "location": null,
+      "location": {
+        "lat": 6.209,
+        "lng": -75.568,
+        "address": "Carrera 35 N° 8 – 24, Medellín"
+      },
       "macroproject": null,
       "zone": {
         "id": 1,
@@ -2527,9 +2588,23 @@
         "id": 906,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
-      "constructionProgress": [],
+      "constructionProgress": [
+        {
+          "id": 1,
+          "label": "Mayo 2025",
+          "date": "2025-05-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        },
+        {
+          "id": 2,
+          "label": "Febrero 2025",
+          "date": "2025-02-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        }
+      ],
       "seo": {
         "id": 12,
         "metaTitle": "Portal del Poblado — Las Galias",
@@ -2577,7 +2652,8 @@
           "createdAt": "2026-07-15T01:47:08.586Z",
           "updatedAt": "2026-07-15T01:47:08.586Z",
           "publishedAt": "2026-07-15T01:47:08.586Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "piscina"
         },
         {
           "id": 2,
@@ -2587,7 +2663,8 @@
           "createdAt": "2026-07-15T01:47:08.588Z",
           "updatedAt": "2026-07-15T01:47:08.588Z",
           "publishedAt": "2026-07-15T01:47:08.588Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "gimnasio"
         },
         {
           "id": 3,
@@ -2597,7 +2674,8 @@
           "createdAt": "2026-07-15T01:47:08.590Z",
           "updatedAt": "2026-07-15T01:47:08.590Z",
           "publishedAt": "2026-07-15T01:47:08.590Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-bbq"
         },
         {
           "id": 4,
@@ -2607,12 +2685,14 @@
           "createdAt": "2026-07-15T01:47:08.592Z",
           "updatedAt": "2026-07-15T01:47:08.592Z",
           "publishedAt": "2026-07-15T01:47:08.591Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-infantil"
         }
-      ]
+      ],
+      "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 13,
       "documentId": "fyms43ocvurmb4hr9a2i0yjk",
@@ -2766,7 +2846,11 @@
         "updatedAt": "2026-07-15T01:47:08.925Z",
         "publishedAt": "2026-07-15T01:47:08.925Z"
       },
-      "location": null,
+      "location": {
+        "lat": 6.209,
+        "lng": -75.568,
+        "address": "Carrera 35 N° 8 – 24, Medellín"
+      },
       "zone": {
         "id": 2,
         "documentId": "zonedemocnorte0000000000",
@@ -2783,9 +2867,23 @@
         "id": 907,
         "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
         "phone": "300 000 0000",
-        "whatsappUrl": "https://wa.me/573000000000"
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
       },
-      "constructionProgress": [],
+      "constructionProgress": [
+        {
+          "id": 1,
+          "label": "Mayo 2025",
+          "date": "2025-05-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        },
+        {
+          "id": 2,
+          "label": "Febrero 2025",
+          "date": "2025-02-01",
+          "video": "https://www.youtube.com/embed/aqz-KE-bpKQ"
+        }
+      ],
       "seo": {
         "id": 13,
         "metaTitle": "Reserva de los Alisos — Las Galias",
@@ -2833,7 +2931,8 @@
           "createdAt": "2026-07-15T01:47:08.586Z",
           "updatedAt": "2026-07-15T01:47:08.586Z",
           "publishedAt": "2026-07-15T01:47:08.586Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "piscina"
         },
         {
           "id": 2,
@@ -2843,7 +2942,8 @@
           "createdAt": "2026-07-15T01:47:08.588Z",
           "updatedAt": "2026-07-15T01:47:08.588Z",
           "publishedAt": "2026-07-15T01:47:08.588Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "gimnasio"
         },
         {
           "id": 3,
@@ -2853,7 +2953,8 @@
           "createdAt": "2026-07-15T01:47:08.590Z",
           "updatedAt": "2026-07-15T01:47:08.590Z",
           "publishedAt": "2026-07-15T01:47:08.590Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-bbq"
         },
         {
           "id": 4,
@@ -2863,7 +2964,8 @@
           "createdAt": "2026-07-15T01:47:08.592Z",
           "updatedAt": "2026-07-15T01:47:08.592Z",
           "publishedAt": "2026-07-15T01:47:08.591Z",
-          "icon": null
+          "icon": null,
+          "iconKey": "zona-infantil"
         }
       ],
       "macroproject": {
@@ -2981,10 +3083,11 @@
             "publishedAt": "2026-07-15T01:47:08.575Z"
           }
         }
-      ]
+      ],
+      "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 10,
       "documentId": "u6f2h266w0ybzpg06rioc28t",
@@ -3095,7 +3198,8 @@
         "metaTitle": "Sendero del Río — Las Galias",
         "metaDescription": "Muy pronto: vive frente al río con el skyline de Medellín de fondo.",
         "ogImage": null
-      }
+      },
+      "brochure": null
     }
   ],
   "home-banners?filters%5Bactive%5D%5B%24eq%5D=true&populate%5BdesktopImage%5D=true&populate%5BmobileImage%5D=true&sort=order%3Aasc": [
@@ -3406,5 +3510,78 @@
       "¿Qué proyectos tienen disponibles?",
       "¿Puedo comprar con subsidio?"
     ]
+  },
+  "lead-form-config?populate%5BincomeRanges%5D=true&populate%5BresidenceCities%5D=true&populate%5BsavingsRanges%5D=true&populate%5BseveranceOptions%5D=true": {
+    "incomeRanges": [
+      {
+        "text": "Menos de $2.000.000"
+      },
+      {
+        "text": "$2.000.000 – $4.000.000"
+      },
+      {
+        "text": "$4.000.000 – $8.000.000"
+      },
+      {
+        "text": "Más de $8.000.000"
+      }
+    ],
+    "savingsRanges": [
+      {
+        "text": "Menos de $10.000.000"
+      },
+      {
+        "text": "$10.000.000 – $30.000.000"
+      },
+      {
+        "text": "$30.000.000 – $60.000.000"
+      },
+      {
+        "text": "Más de $60.000.000"
+      }
+    ],
+    "severanceOptions": [
+      {
+        "text": "Sí"
+      },
+      {
+        "text": "No"
+      },
+      {
+        "text": "No estoy seguro"
+      }
+    ],
+    "residenceCities": [
+      {
+        "text": "Bogotá"
+      },
+      {
+        "text": "Cali"
+      },
+      {
+        "text": "Manizales"
+      },
+      {
+        "text": "Pereira"
+      },
+      {
+        "text": "Medellín"
+      },
+      {
+        "text": "Barranquilla"
+      },
+      {
+        "text": "Bucaramanga"
+      },
+      {
+        "text": "Otra ciudad"
+      },
+      {
+        "text": "Vivo fuera de Colombia"
+      }
+    ],
+    "adviceEyebrow": "Asesoría personalizada",
+    "adviceTitle": "Recibe una asesoría personalizada",
+    "adviceBody": "Cuéntanos sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera."
   }
 }

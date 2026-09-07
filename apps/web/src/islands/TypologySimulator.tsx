@@ -19,18 +19,30 @@ export interface TypologyOption {
 interface TypologySimulatorProps {
   typologies: TypologyOption[];
   terms: QuoteTerms;
+  trusteeName?: string | null;
+  trustNumber?: string | null;
+  clientPortalUrl?: string | null;
 }
 
 /**
- * "Planos por tipología + simulador": picking Tipo A/B/C swaps the floor plan
- * and recalculates the whole breakdown for that unit's price.
+ * "Planos por tipología": picking Tipo A/B/C swaps the floor plan and
+ * recalculates the whole breakdown for that unit's price.
  *
- * It also broadcasts the selection on `document` so the sticky sidebar reflects
- * the same typology. A custom event rather than shared React state because the
- * two live in different Astro islands — separate React roots that cannot share
- * a provider.
+ * The breakdown used to be drawn twice — here and again in a sidebar card — the
+ * duplication design comment #115 flagged. It now lives only here, beside the
+ * plan it belongs to, and the sidebar keeps the form.
+ *
+ * It broadcasts the selection on `document` so the mobile price bar tracks the
+ * same typology. A custom event rather than shared React state because the two
+ * live in different Astro islands — separate roots that cannot share a provider.
  */
-export default function TypologySimulator({ typologies, terms }: TypologySimulatorProps) {
+export default function TypologySimulator({
+  typologies,
+  terms,
+  trusteeName,
+  trustNumber,
+  clientPortalUrl,
+}: TypologySimulatorProps) {
   const [selected, setSelected] = useState(0);
 
   const current = typologies[selected];
@@ -52,7 +64,11 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
   return (
     <div>
       {typologies.length > 1 && (
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Tipologías">
+        <div
+          className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0"
+          role="tablist"
+          aria-label="Tipologías"
+        >
           {typologies.map((typology, i) => (
             <button
               key={typology.name}
@@ -60,59 +76,77 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
               role="tab"
               aria-selected={i === selected}
               onClick={() => setSelected(i)}
-              className={`chip transition-colors ${
-                i === selected ? "!bg-ink !border-ink !text-white" : "hover:bg-surface"
-              }`}
+              className={`pill shrink-0 ${i === selected ? "pill-on" : "pill-off"}`}
             >
               {typology.name}
-              {typology.builtAreaM2 ? ` · ${typology.builtAreaM2} m²` : ""}
+              {/* The area only fits beside the name on a wide screen; the phone
+                  design shows "Tipo A" on its own. */}
+              {typology.builtAreaM2 != null && (
+                <span className="hidden md:inline">
+                  &nbsp;· {typology.builtAreaM2.toFixed(2)} m²
+                </span>
+              )}
             </button>
           ))}
         </div>
       )}
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_1fr]">
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <div>
-          <div className="border-line bg-surface flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border">
+          <div className="border-line bg-surface flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border border-dashed">
             {current.floorPlanUrl ? (
               <img
                 src={current.floorPlanUrl}
                 alt={`Plano ${current.name}`}
+                loading="lazy"
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className="text-caption text-ink-faint">Plano no disponible</span>
+              <span className="text-body-sm text-ink-faint px-4 text-center">
+                Plano {current.name}
+                {current.builtAreaM2 != null ? ` · ${current.builtAreaM2.toFixed(2)} m²` : ""}
+              </span>
             )}
           </div>
           {(current.builtAreaM2 != null || current.privateAreaM2 != null) && (
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              {current.builtAreaM2 != null && (
-                <div className="border-line rounded-xl border p-3">
-                  <p className="eyebrow">Área construida</p>
-                  <p className="text-ink mt-1 font-bold">{current.builtAreaM2} m²</p>
-                </div>
-              )}
-              {current.privateAreaM2 != null && (
-                <div className="border-line rounded-xl border p-3">
-                  <p className="eyebrow">Área privada</p>
-                  <p className="text-ink mt-1 font-bold">{current.privateAreaM2} m²</p>
-                </div>
-              )}
-            </div>
+            <>
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                {current.builtAreaM2 != null && (
+                  <Stat
+                    label="Á. construida desde*"
+                    value={`${current.builtAreaM2.toFixed(2)} m²`}
+                  />
+                )}
+                {current.privateAreaM2 != null && (
+                  <Stat
+                    label="Área privada desde*"
+                    value={`${current.privateAreaM2.toFixed(2)} m²`}
+                  />
+                )}
+              </div>
+              <p className="text-caption text-ink-faint mt-3">
+                *Puede variar en apartamentos atípicos según la unidad.
+              </p>
+            </>
           )}
         </div>
 
         <div className="bg-surface rounded-2xl p-5">
-          <p className="text-body-sm text-ink font-semibold">Simulador · {current.name}</p>
+          <p className="text-label text-ink-muted font-bold uppercase">
+            Simulador · {current.name}
+          </p>
 
           <div className="mt-4 rounded-xl bg-white p-4">
-            <p className="eyebrow">Precio</p>
-            <p className="text-h4 text-ink font-extrabold">{formatMoney(quote.price, "COP")}</p>
+            <p className="text-label text-ink-muted font-bold uppercase">Precio</p>
+            <p className="text-ink mt-1 text-2xl font-extrabold">
+              {formatMoney(quote.price, "COP")}
+            </p>
           </div>
 
-          <dl className="mt-4 space-y-2">
+          {/* Hairlines between the rows, as the phone design draws them. */}
+          <dl className="mt-4">
             <Row
-              label={`CI ${terms.downPaymentPct}%`}
+              label={`CI ${terms.downPaymentPct}% en ${terms.builderInstallmentMonths}m`}
               value={formatMoney(quote.downPayment, "COP")}
             />
             <Row
@@ -125,9 +159,9 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
             />
           </dl>
 
-          <div className="bg-ink mt-4 rounded-xl p-4 text-white">
-            <p className="eyebrow !text-white/60">Cuota hipotecaria est.</p>
-            <p className="text-h4 font-extrabold">
+          <div className="bg-ink mt-4 rounded-xl p-5 text-white">
+            <p className="text-label font-bold text-white/60 uppercase">Cuota hipotecaria est.</p>
+            <p className="mt-1 text-2xl font-extrabold">
               {formatMoney(quote.monthlyPayment, "COP")}
               <span className="text-body-sm font-medium">/mes</span>
             </p>
@@ -136,7 +170,46 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
             </p>
           </div>
 
-          <p className="text-caption text-ink-muted mt-3">
+          {(trusteeName || trustNumber) && (
+            <div className="mt-4 rounded-xl bg-white p-4">
+              <p className="text-label text-ink-muted font-bold uppercase">Fiduciaria</p>
+              {trusteeName && <p className="text-body-sm text-ink mt-1 font-bold">{trusteeName}</p>}
+              {trustNumber && (
+                <p className="text-caption text-ink-muted">Fideicomiso N° {trustNumber}</p>
+              )}
+            </div>
+          )}
+
+          {clientPortalUrl && (
+            <a
+              href={clientPortalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand text-body-sm mt-4 inline-flex items-center gap-2 font-medium hover:underline"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="2" y="4" width="14" height="16" rx="2" />
+                <path d="M20 9v10a2 2 0 0 1-2 2" />
+              </svg>
+              Portal de pagos · Zona clientes →
+            </a>
+          )}
+
+          <a href="#lead" className="btn btn-primary mt-5 w-full">
+            Quiero más información
+          </a>
+
+          <p className="text-caption text-ink-faint mt-3 text-center">
             Valores estimados; no constituyen una oferta comercial.
           </p>
         </div>
@@ -145,11 +218,20 @@ export default function TypologySimulator({ typologies, terms }: TypologySimulat
   );
 }
 
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-surface rounded-xl p-4">
+      <p className="text-label text-ink-muted font-bold uppercase">{label}</p>
+      <p className="text-ink mt-1 font-bold">{value}</p>
+    </div>
+  );
+}
+
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4">
-      <dt className="text-caption text-ink-muted">{label}</dt>
-      <dd className="text-body-sm text-ink font-medium">{value}</dd>
+    <div className="border-line flex items-baseline justify-between gap-4 border-b py-3 last:border-b-0">
+      <dt className="text-body-sm text-ink-muted">{label}</dt>
+      <dd className="text-body-sm text-ink font-bold">{value}</dd>
     </div>
   );
 }

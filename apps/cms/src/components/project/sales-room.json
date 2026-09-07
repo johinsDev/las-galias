@@ -12,6 +12,10 @@
     "phone": {
       "type": "string"
     },
+    "email": {
+      "type": "email",
+      "description": "Correo de la sala de ventas, e.g. 'sala@lasgalias.com.co'"
+    },
     "whatsappUrl": {
       "type": "string"
     }

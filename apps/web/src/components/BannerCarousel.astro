@@ -46,7 +46,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
 
       <div class="relative z-10">
         <div
-          class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
+          class="no-scrollbar banner-rail flex snap-x snap-mandatory overflow-x-auto"
           data-banner-rail
         >
           {slides.map((banner, index) => {
@@ -111,14 +111,19 @@ const slides = Array.from({ length: loops }, () => banners).flat();
       </div>
 
       {banners.length > 1 && (
-        <div class="relative z-10 flex justify-center gap-2 pt-5" data-banner-dots>
+        <div class="relative z-10 flex justify-center gap-1 pt-4" data-banner-dots>
           {banners.map((_, index) => (
+            /* La barrita es de 6px, pero el botón mide 24px de alto: por debajo
+               de eso Lighthouse lo marca como objetivo táctil insuficiente y,
+               sobre todo, cuesta acertarle con el pulgar. */
             <button
               type="button"
               data-banner-dot={index}
               aria-label={`Ir al banner ${index + 1}`}
-              class="h-1.5 rounded-full transition-all duration-300"
-            />
+              class="flex h-6 items-center px-1"
+            >
+              <span class="h-1.5 rounded-full transition-all duration-300" data-banner-bar />
+            </button>
           ))}
         </div>
       )}
@@ -286,8 +291,10 @@ const slides = Array.from({ length: loops }, () => banners).flat();
         const active = currentIndex() % count;
         dots.forEach((dot, i) => {
           const on = i === active;
-          dot.style.width = on ? "22px" : "6px";
-          dot.style.backgroundColor = on ? "var(--brand)" : "#d7d7dc";
+          const bar = dot.querySelector<HTMLElement>("[data-banner-bar]");
+          if (!bar) return;
+          bar.style.width = on ? "22px" : "6px";
+          bar.style.backgroundColor = on ? "var(--brand)" : "#d7d7dc";
         });
       };
 

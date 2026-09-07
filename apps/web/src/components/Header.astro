@@ -1,5 +1,7 @@
 ---
 import Logo from "@/components/Logo.astro";
+import { ProjectSearch } from "@lasgalias/ui/components/project-search";
+import { getProjects } from "@/lib/strapi";
 import { SIMULATORS } from "@/lib/simulator-pages";
 
 /**
@@ -38,13 +40,27 @@ const current = Astro.url.pathname;
  */
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
 import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
+
+// El catálogo para la paleta de búsqueda. `getProjects` está memoizado, así que
+// esto no repite la consulta una vez por página.
+const searchableProjects = (await getProjects()).map((project) => ({
+  slug: project.slug,
+  name: project.name,
+  city: project.city?.name,
+  location: [project.city?.name, project.zone?.name, project.neighborhood]
+    .filter(Boolean)
+    .join(" · "),
+}));
 ---
+
+<ProjectSearch client:idle projects={searchableProjects} />
 
 {
   /* `relative` so the mobile sheet can hang off the bar and overlay the page
    instead of pushing the hero down when it opens. */
 }
 <header
+  transition:animate="none"
   class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
   data-nav-open="false"
 >
@@ -69,7 +85,7 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
                   href={link.href}
                   class:list={[
                     "text-body-sm flex items-center gap-1 py-6 font-medium whitespace-nowrap transition-colors",
-                    isActive(link.href) ? "text-white" : "text-white/85 hover:text-white",
+                    isActive(link.href) ? "text-white" : "text-white/95 hover:text-white",
                   ]}
                   aria-current={isActive(link.href) ? "page" : undefined}
                 >
@@ -210,6 +226,24 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
     border-bottom: 1px solid var(--line);
   }
 </style>
+
+<script>
+  // Los botones del encabezado son marcado suelto; la paleta es una isla. Se
+  // hablan por un evento en `document`, igual que el simulador y la barra de
+  // precio del móvil.
+  function setupSearchTriggers() {
+    document.querySelectorAll<HTMLElement>("[data-open-search]").forEach((button) => {
+      if (button.dataset.bound) return;
+      button.dataset.bound = "1";
+      button.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("lg:open-search"));
+      });
+    });
+  }
+
+  setupSearchTriggers();
+  document.addEventListener("astro:page-load", setupSearchTriggers);
+</script>
 
 <script>
   // Re-bound on every View Transitions navigation: Base.astro mounts

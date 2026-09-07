@@ -47,6 +47,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["heroDesktop", "heroMobile"],
     ["logo", "gallery"],
     ["video", "tour360Url"],
+    ["brochure"],
     // La ficha del producto.
     ["sectionProduct"],
     ["unitTypes"],
@@ -63,6 +64,10 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["name", "email"],
     ["phone", "residenceCountry"],
     ["project", "source"],
+    // La calificación que dejó el formulario, junta: es lo que mira el asesor
+    // antes de llamar.
+    ["incomeRange", "savingsRange", "severance"],
+    ["residenceCity", "firstHome"],
     ["message:12"],
     // Los permisos juntos: se leen como un bloque cuando alguien reclama.
     ["acceptsDataPolicy", "acceptsWhatsApp", "acceptsCall"],
@@ -139,6 +144,16 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["annualInterestRate", "maxTermYears", "maxFinancingPercent"],
     ["leasingFinancingPercent", "visFinancingPercent"],
     ["maxIncomeRatioPercent", "paymentIncomeRatioPercent"],
+  ],
+  "api::lead-form-config.lead-form-config": [
+    ["sectionOptions"],
+    ["incomeRanges"],
+    ["savingsRanges"],
+    ["severanceOptions"],
+    ["residenceCities"],
+    ["sectionAdvice"],
+    ["adviceEyebrow", "adviceTitle"],
+    ["adviceBody:12"],
   ],
   "api::exchange-rate.exchange-rate": [
     ["copPerUsd", "copPerEur"],

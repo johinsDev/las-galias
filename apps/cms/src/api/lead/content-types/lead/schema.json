@@ -27,6 +27,26 @@
       "type": "string",
       "description": "Country of residence, from the foreign-buyer landing. Stored even though POST /SalaVentas/Externo/Visitas has no country field today"
     },
+    "incomeRange": {
+      "type": "string",
+      "description": "Rango de ingresos declarado, tal cual la opción elegida en lead-form-config"
+    },
+    "residenceCity": {
+      "type": "string",
+      "description": "Ciudad de residencia declarada"
+    },
+    "severance": {
+      "type": "string",
+      "description": "Respuesta a «¿Tienes cesantías?»"
+    },
+    "savingsRange": {
+      "type": "string",
+      "description": "Rango de ahorros disponibles"
+    },
+    "firstHome": {
+      "type": "boolean",
+      "description": "«¿Es tu primera vivienda?». Sin responder queda vacío, que no es lo mismo que un no"
+    },
     "message": {
       "type": "text"
     },

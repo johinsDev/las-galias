@@ -2,11 +2,22 @@
 import ProjectContent from "@/components/pdp/ProjectContent.astro";
 import ProjectGallery from "@/components/pdp/ProjectGallery.astro";
 import ProjectHeader from "@/components/pdp/ProjectHeader.astro";
+import AdviceBand from "@/components/pdp/AdviceBand.astro";
+import MobilePriceBar from "@/components/pdp/MobilePriceBar.astro";
 import ProjectSidebar from "@/components/pdp/ProjectSidebar.astro";
 import RecommendedProjects from "@/components/pdp/RecommendedProjects.astro";
 import Base from "@/layouts/Base.astro";
+import type { LeadFormConfig } from "@lasgalias/schemas";
+
 import type { QuoteTerms } from "@/lib/mortgage";
-import { getCalculatorConfig, getProject, getProjects, mediaUrl } from "@/lib/strapi";
+import {
+  getCalculatorConfig,
+  getExchangeRate,
+  getLeadFormConfig,
+  getProject,
+  getProjects,
+  mediaUrl,
+} from "@/lib/strapi";
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -14,9 +25,61 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-// Rates are no longer fetched here: the currency selector moved to the header,
-// which reads them once per build for the whole site.
-const [project, calculator] = await Promise.all([getProject(slug!), getCalculatorConfig()]);
+const [project, calculator, exchangeRate, leadForm, allProjects] = await Promise.all([
+  getProject(slug!),
+  getCalculatorConfig(),
+  getExchangeRate(),
+  getLeadFormConfig(),
+  getProjects(),
+]);
+
+/**
+ * Las opciones de los desplegables, con los valores del diseño de reserva.
+ *
+ * Mismo criterio que el home y la página de exterior: la ficha tiene que
+ * renderizarse antes de que nadie rellene el single type. Sin esto, un CMS
+ * recién desplegado deja el formulario sin los campos de calificación y la
+ * banda de asesoría sin dibujar, y no hay nada que lo explique.
+ */
+const leadFormConfig: LeadFormConfig = {
+  ...leadForm,
+  incomeRanges: leadForm?.incomeRanges?.length
+    ? leadForm.incomeRanges
+    : [
+        "Menos de $2.000.000",
+        "$2.000.000 – $4.000.000",
+        "$4.000.000 – $8.000.000",
+        "Más de $8.000.000",
+      ].map((text) => ({ text })),
+  savingsRanges: leadForm?.savingsRanges?.length
+    ? leadForm.savingsRanges
+    : [
+        "Menos de $10.000.000",
+        "$10.000.000 – $30.000.000",
+        "$30.000.000 – $60.000.000",
+        "Más de $60.000.000",
+      ].map((text) => ({ text })),
+  severanceOptions: leadForm?.severanceOptions?.length
+    ? leadForm.severanceOptions
+    : ["Sí", "No", "No estoy seguro"].map((text) => ({ text })),
+  residenceCities: leadForm?.residenceCities?.length
+    ? leadForm.residenceCities
+    : [
+        "Bogotá",
+        "Cali",
+        "Manizales",
+        "Pereira",
+        "Medellín",
+        "Barranquilla",
+        "Bucaramanga",
+        "Otra ciudad",
+        "Vivo fuera de Colombia",
+      ].map((text) => ({ text })),
+};
+
+// Catálogo para el desplegable "Proyecto de interés": arranca en esta ficha,
+// pero se puede cambiar sin salir de ella.
+const projectOptions = allProjects.map((p) => ({ documentId: p.documentId, name: p.name }));
 
 if (!project) {
   return Astro.redirect("/proyectos");
@@ -36,25 +99,47 @@ const terms: QuoteTerms = {
   builderInstallmentMonths: financing?.builderInstallmentMonths ?? 36,
 };
 
+/**
+ * The COP/USD/EUR control beside the price only renders when both rates are in:
+ * a selector offering currencies it cannot convert is worse than pesos alone.
+ */
+const rates =
+  exchangeRate?.copPerUsd && exchangeRate?.copPerEur
+    ? { copPerUsd: exchangeRate.copPerUsd, copPerEur: exchangeRate.copPerEur }
+    : null;
+
 const title = project.seo?.metaTitle ?? `${project.name} — Las Galias`;
 const description = project.seo?.metaDescription ?? undefined;
 ---
 
 <Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
   <!-- 01 Encabezado -->
-  <ProjectHeader project={project} />
+  <ProjectHeader project={project} rates={rates} />
 
   <!-- 02 Galería -->
   <ProjectGallery project={project} />
 
-  <!-- 03 Contenido + simulador -->
-  <section class="container py-10">
-    <div class="grid gap-10 lg:grid-cols-[1fr_360px]">
+  <!-- 03 Contenido + formulario -->
+  <section class="container pb-14">
+    <div class="grid gap-10 lg:grid-cols-[1fr_400px]">
       <ProjectContent project={project} terms={terms} />
-      <ProjectSidebar project={project} terms={terms} />
+      <ProjectSidebar project={project} leadForm={leadFormConfig} projects={projectOptions} />
     </div>
   </section>
 
   <!-- 04 Proyectos similares -->
   <RecommendedProjects project={project} />
+
+  <!-- 05 Asesoría personalizada -->
+  <AdviceBand config={leadFormConfig} />
+
+  {
+    /* La barra de precio del móvil va al final del documento: es `fixed`, y
+       dejarla dentro de una sección con `transform` la anclaría a esa sección. */
+  }
+  {
+    project.stage !== "expectation" && project.priceFromCOP && (
+      <MobilePriceBar priceCOP={Number(project.priceFromCOP)} />
+    )
+  }
 </Base>

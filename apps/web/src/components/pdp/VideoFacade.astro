@@ -1,0 +1,82 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  src: string;
+  title: string;
+  /** Still shown until the visitor presses play. */
+  poster?: string | null;
+}
+
+const { src, title, poster } = Astro.props;
+---
+
+{
+  /* A facade, not an iframe: an embedded YouTube/Vimeo player costs upwards of a
+     megabyte and runs its own scripts, and on this page the video sits well
+     below the fold where most visits never reach it. Nothing third-party is
+     requested until someone actually presses play — which is also exactly what
+     the design draws, a still with a play button over it. */
+}
+<div
+  class="bg-surface relative aspect-video overflow-hidden rounded-3xl md:rounded-[28px]"
+  data-video
+  data-video-src={src}
+  data-video-title={title}
+>
+  {
+    poster && (
+      <Image
+        src={poster}
+        alt=""
+        width={1200}
+        height={675}
+        loading="lazy"
+        class="h-full w-full object-cover"
+      />
+    )
+  }
+  <button
+    type="button"
+    class="absolute inset-0 flex items-center justify-center"
+    aria-label={`Reproducir ${title}`}
+    data-video-play
+  >
+    <span
+      class="shadow-card-lg flex size-16 items-center justify-center rounded-full bg-white transition-transform hover:scale-105"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path
+          d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z"
+        ></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  function setupVideoFacades() {
+    document.querySelectorAll<HTMLElement>("[data-video]").forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>("[data-video-play]");
+      if (!button || button.dataset.bound) return;
+      button.dataset.bound = "1";
+
+      button.addEventListener("click", () => {
+        const src = root.dataset.videoSrc;
+        if (!src) return;
+        const frame = document.createElement("iframe");
+        // `autoplay=1` because the visitor already pressed play once; making
+        // them press it again inside the embed is the classic facade bug.
+        frame.src = src + (src.includes("?") ? "&" : "?") + "autoplay=1";
+        frame.title = root.dataset.videoTitle ?? "";
+        frame.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+        frame.allowFullscreen = true;
+        frame.className = "h-full w-full border-0";
+        root.replaceChildren(frame);
+      });
+    });
+  }
+
+  setupVideoFacades();
+  document.addEventListener("astro:page-load", setupVideoFacades);
+</script>

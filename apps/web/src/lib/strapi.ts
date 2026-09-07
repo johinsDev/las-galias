@@ -6,6 +6,7 @@ import type {
   ForeignBuyerPage,
   HomeBanner,
   HomePage,
+  LeadFormConfig,
   LegalDocument,
   Macroproject,
   Post,
@@ -206,14 +207,20 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[gallery]": "true",
 };
 
+/**
+ * Memoizado: el encabezado pide el catálogo en todas las páginas para la paleta
+ * de búsqueda, y sin esto el build repetiría la misma consulta una vez por
+ * página construida.
+ */
+let projectsPromise: Promise<Project[]> | null = null;
+
 export async function getProjects(): Promise<Project[]> {
-  return (
-    (await strapiFetch<Project[]>("projects", {
-      ...PROJECT_CARD_POPULATE,
-      "pagination[pageSize]": "100",
-      sort: "name:asc",
-    })) ?? []
-  );
+  projectsPromise ??= strapiFetch<Project[]>("projects", {
+    ...PROJECT_CARD_POPULATE,
+    "pagination[pageSize]": "100",
+    sort: "name:asc",
+  }).then((projects) => projects ?? []);
+  return projectsPromise;
 }
 
 export async function getProject(slug: string): Promise<Project | null> {
@@ -236,6 +243,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[financing]": "true",
     "populate[salesRoom]": "true",
     "populate[constructionProgress]": "true",
+    "populate[brochure]": "true",
   });
   return data?.[0] ?? null;
 }
@@ -330,6 +338,23 @@ export async function getHomePage(): Promise<HomePage | null> {
     "populate[seo][populate][ogImage]": "true",
   });
   return homePagePromise;
+}
+
+/**
+ * Las opciones de los desplegables de calificación. Memoizado porque lo pide
+ * cada ficha de proyecto y hay una por proyecto: sin esto el build repetiría la
+ * misma consulta tantas veces como proyectos publicados haya.
+ */
+let leadFormConfigPromise: Promise<LeadFormConfig | null> | null = null;
+
+export async function getLeadFormConfig(): Promise<LeadFormConfig | null> {
+  leadFormConfigPromise ??= strapiFetch<LeadFormConfig>("lead-form-config", {
+    "populate[incomeRanges]": "true",
+    "populate[savingsRanges]": "true",
+    "populate[severanceOptions]": "true",
+    "populate[residenceCities]": "true",
+  });
+  return leadFormConfigPromise;
 }
 
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {

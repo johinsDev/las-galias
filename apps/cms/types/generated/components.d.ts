@@ -100,6 +100,7 @@ export interface ProjectSalesRoom extends Struct.ComponentSchema {
     displayName: "Sales room";
   };
   attributes: {
+    email: Schema.Attribute.Email;
     phone: Schema.Attribute.String;
     schedule: Schema.Attribute.String;
     whatsappUrl: Schema.Attribute.String;

@@ -138,6 +138,12 @@
       "type": "string",
       "description": "360° virtual tour, shown as its own tab in the PDP gallery"
     },
+    "brochure": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["files", "images"],
+      "description": "Brochure descargable (PDF). Sale como pestaña propia en la galería de la ficha"
+    },
     "constructionProgress": {
       "type": "component",
       "component": "project.construction-progress",

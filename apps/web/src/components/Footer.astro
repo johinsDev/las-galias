@@ -26,11 +26,11 @@ const cities = [
   /* Brand red band. Secondary text sits at white/85 and above: on #ce253a the
     old white/55 fell under the 4.5:1 contrast ratio. */
 }
-<footer class="bg-brand text-white">
+<footer transition:animate="none" class="bg-brand text-white">
   <div class="container-bleed grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
     <div>
       <Logo variant="light" height={28} />
-      <p class="text-body-sm mt-5 max-w-xs text-white/85">
+      <p class="text-body-sm mt-5 max-w-xs text-white/95">
         Constructora colombiana con más de 30 años de experiencia entregando vivienda de calidad.
       </p>
       <div class="mt-6 flex gap-3">
@@ -94,7 +94,7 @@ const cities = [
             <li>
               <a
                 href={`/proyectos?ciudad=${city.slug}`}
-                class="text-body-sm text-white/85 transition-colors hover:text-white"
+                class="text-body-sm text-white transition-all hover:underline"
               >
                 {city.name}
               </a>
@@ -102,10 +102,7 @@ const cities = [
           ))
         }
         <li>
-          <a
-            href="/proyectos"
-            class="text-body-sm text-white/85 transition-colors hover:text-white"
-          >
+          <a href="/proyectos" class="text-body-sm text-white transition-all hover:underline">
             Ver todos
           </a>
         </li>
@@ -116,19 +113,17 @@ const cities = [
       <p class="eyebrow text-white">Empresa</p>
       <ul class="mt-5 space-y-3">
         <li>
-          <a href="/nosotros" class="text-body-sm text-white/85 transition-colors hover:text-white">
+          <a href="/nosotros" class="text-body-sm text-white transition-all hover:underline">
             Nosotros
           </a>
         </li>
         <li>
-          <a href="/blog" class="text-body-sm text-white/85 transition-colors hover:text-white">
-            Blog
-          </a>
+          <a href="/blog" class="text-body-sm text-white transition-all hover:underline"> Blog </a>
         </li>
         <li>
           <a
             href="/servicio-al-cliente"
-            class="text-body-sm text-white/85 transition-colors hover:text-white"
+            class="text-body-sm text-white transition-all hover:underline"
           >
             Servicio al cliente
           </a>
@@ -146,12 +141,12 @@ const cities = [
         <li>
           <a
             href="mailto:sala@lasgalias.com.co"
-            class="text-body-sm text-white/85 transition-colors hover:text-white"
+            class="text-body-sm text-white transition-all hover:underline"
           >
             sala@lasgalias.com.co
           </a>
         </li>
-        <li class="text-body-sm text-white/85">Bogotá, Colombia</li>
+        <li class="text-body-sm text-white/95">Bogotá, Colombia</li>
       </ul>
     </div>
   </div>
@@ -160,10 +155,10 @@ const cities = [
     <div
       class="container-bleed flex flex-col gap-2 py-6 md:flex-row md:items-center md:justify-between"
     >
-      <p class="text-caption text-white/85">
+      <p class="text-caption text-white/95">
         © {year} Constructora Las Galias. Todos los derechos reservados.
       </p>
-      <p class="text-caption text-white/85">
+      <p class="text-caption text-white/95">
         <a href={`/legales/${terms.slug}`} class="hover:text-white hover:underline">{terms.title}</a
         > · <a href={`/legales/${privacy.slug}`} class="hover:text-white hover:underline"
           >{privacy.title}</a

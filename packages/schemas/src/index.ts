@@ -14,6 +14,7 @@ export type {
   Geo,
   HomeBanner,
   HomePage,
+  LeadFormConfig,
   LegalDocument,
   Macroproject,
   Media,

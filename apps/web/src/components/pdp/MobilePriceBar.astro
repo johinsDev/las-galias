@@ -1,0 +1,58 @@
+---
+import Price from "@/components/Price.astro";
+
+interface Props {
+  priceCOP: number;
+}
+
+const { priceCOP } = Astro.props;
+---
+
+{
+  /* Phone-only bar pinned to the bottom, as the design draws it. Plain markup
+     rather than an island: it is a price and a link. The label follows whatever
+     typology the simulator has selected, so the bar never quotes a different
+     number than the panel above it. */
+}
+{/* Un hueco del alto de la barra: si no, tapa el final del pie de página. */}
+<div class="h-[4.5rem] lg:hidden"></div>
+<div
+  class="border-line fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 backdrop-blur lg:hidden"
+  data-price-bar
+>
+  <div class="container flex items-center justify-between gap-4 py-3">
+    <div class="min-w-0">
+      <p class="text-caption text-ink-muted" data-price-bar-label>Precio desde</p>
+      <p class="text-ink truncate font-bold"><Price copValue={priceCOP} /></p>
+    </div>
+    <a href="#lead" class="btn btn-primary shrink-0 px-6 py-3 text-sm">Simular / Info</a>
+  </div>
+</div>
+
+<script>
+  import { TYPOLOGY_EVENT, type TypologyChangeDetail } from "@/lib/mortgage";
+  import { formatMoney } from "@/lib/currency";
+
+  function setupPriceBar() {
+    const bar = document.querySelector<HTMLElement>("[data-price-bar]");
+    if (!bar || bar.dataset.bound) return;
+    bar.dataset.bound = "1";
+
+    const label = bar.querySelector<HTMLElement>("[data-price-bar-label]");
+    const amount = bar.querySelector<HTMLElement>("[data-price-cop]");
+
+    document.addEventListener(TYPOLOGY_EVENT, (event) => {
+      const detail = (event as CustomEvent<TypologyChangeDetail>).detail;
+      if (!detail || !Number.isFinite(detail.price) || !amount) return;
+      // The currency switcher rewrites this node from `data-price-cop`, so the
+      // dataset has to move with the text or a later switch would convert the
+      // price of whichever typology was selected first.
+      amount.dataset.priceCop = String(detail.price);
+      amount.textContent = formatMoney(detail.price, "COP");
+      if (label) label.textContent = `Precio · ${detail.name}`;
+    });
+  }
+
+  setupPriceBar();
+  document.addEventListener("astro:page-load", setupPriceBar);
+</script>

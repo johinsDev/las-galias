@@ -289,11 +289,28 @@ async function main() {
           ? {
               schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
               phone: "300 000 0000",
+              email: "sala@lasgalias.com.co",
               // Without this the card's CTA falls back to "Ver proyecto" and the
               // approved WhatsApp button never shows up in a demo build.
               whatsappUrl: "https://wa.me/573000000000",
             }
           : undefined,
+        // Dos meses de avance para que la ficha de demo tenga también ese bloque:
+        // sin ninguno, la sección no se dibuja y parece que falta.
+        constructionProgress: isSale
+          ? [
+              {
+                label: "Mayo 2025",
+                date: "2025-05-01",
+                video: "https://www.youtube.com/embed/aqz-KE-bpKQ",
+              },
+              {
+                label: "Febrero 2025",
+                date: "2025-02-01",
+                video: "https://www.youtube.com/embed/aqz-KE-bpKQ",
+              },
+            ]
+          : [],
         amenities: isSale ? amenities.slice(0, 4).map((a) => a.documentId) : [],
         unitTypes,
         gallery,
@@ -558,6 +575,43 @@ async function main() {
       },
     });
     log("Asistente de preguntas (IA): configurado y apagado");
+
+    // Las opciones de los desplegables de calificación. Sin ellas los selects no
+    // se dibujan, así que el formulario de la ficha saldría a medias.
+    const listOf = (...values) => values.map((text) => ({ text }));
+    await app.documents("api::lead-form-config.lead-form-config").create({
+      data: {
+        incomeRanges: listOf(
+          "Menos de $2.000.000",
+          "$2.000.000 – $4.000.000",
+          "$4.000.000 – $8.000.000",
+          "Más de $8.000.000",
+        ),
+        savingsRanges: listOf(
+          "Menos de $10.000.000",
+          "$10.000.000 – $30.000.000",
+          "$30.000.000 – $60.000.000",
+          "Más de $60.000.000",
+        ),
+        severanceOptions: listOf("Sí", "No", "No estoy seguro"),
+        residenceCities: listOf(
+          "Bogotá",
+          "Cali",
+          "Manizales",
+          "Pereira",
+          "Medellín",
+          "Barranquilla",
+          "Bucaramanga",
+          "Otra ciudad",
+          "Vivo fuera de Colombia",
+        ),
+        adviceEyebrow: "Asesoría personalizada",
+        adviceTitle: "Recibe una asesoría personalizada",
+        adviceBody:
+          "Cuéntanos sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera.",
+      },
+    });
+    log("Opciones de los formularios: creadas");
 
     await app.documents("api::calculator-config.calculator-config").create({
       data: {
