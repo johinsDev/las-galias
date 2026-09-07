@@ -1026,7 +1026,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   attributes: {
     author: Schema.Attribute.String;
     category: Schema.Attribute.Enumeration<
-      ["financiacion", "guia-de-compra", "mercado", "decoracion"]
+      ["financiacion", "guia-de-compra", "mercado", "decoracion", "inversion", "proyecto"]
     >;
     content: Schema.Attribute.Blocks;
     cover: Schema.Attribute.Media<"images">;

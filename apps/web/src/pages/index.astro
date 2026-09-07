@@ -100,23 +100,23 @@ import { Search } from "lucide-astro";
       >
         {heroSubtitle}
       </p>
-      <form
-        action="/proyectos"
-        method="get"
-        class="mx-auto mt-8 flex max-w-xl items-center gap-2 rounded-full bg-white p-2 pl-5"
+      {
+        /* Un botón con pinta de campo: al pulsarlo se abre la misma ventana de
+          búsqueda que la lupa del encabezado. Antes era un formulario que
+          enviaba a /proyectos, así que «buscar» terminaba en el listado. */
+      }
+      <button
+        type="button"
+        data-open-search
+        class="mx-auto mt-8 flex w-full max-w-xl items-center gap-2 rounded-full bg-white p-2 pl-5 text-left"
         data-reveal
       >
         <Search size={18} stroke-width={2} aria-hidden="true" class="text-ink-faint shrink-0" />
-        <label class="sr-only" for="home-search">Buscar proyectos</label>
-        <input
-          id="home-search"
-          type="text"
-          name="q"
-          placeholder={searchPlaceholder}
-          class="text-body text-ink placeholder:text-ink-faint h-11 w-full min-w-0 bg-transparent outline-none"
-        />
-        <button type="submit" class="btn btn-primary shrink-0 py-3">Buscar</button>
-      </form>
+        <span class="text-body text-ink-faint h-11 min-w-0 flex-1 truncate leading-[2.75rem]">
+          {searchPlaceholder}
+        </span>
+        <span class="btn btn-primary shrink-0 py-3">Buscar</span>
+      </button>
     </div>
 
     <BannerCarousel banners={banners} />

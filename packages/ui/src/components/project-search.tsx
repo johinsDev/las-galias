@@ -177,8 +177,10 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
             }}
           >
             <div className="flex items-center gap-2 p-3">
-              <div className="border-line focus-within:border-ink flex h-12 min-w-0 flex-1 items-center gap-3 rounded-xl border px-3.5 transition-colors">
-                <Magnifier className="text-ink-faint shrink-0" />
+              <div className="border-line focus-within:border-brand flex h-13 min-w-0 flex-1 items-center gap-3 rounded-xl border pr-3.5 pl-2 transition-colors">
+                <span className="bg-brand-tint text-brand flex size-9 shrink-0 items-center justify-center rounded-full">
+                  <Magnifier />
+                </span>
                 <Combobox.Input
                   autoFocus
                   value={query}
@@ -199,15 +201,15 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
               </div>
               <Dialog.Close
                 aria-label="Cerrar búsqueda"
-                className="border-line text-ink-muted hover:text-ink flex size-12 shrink-0 items-center justify-center rounded-xl border transition-colors"
+                className="bg-surface text-ink-muted hover:bg-brand-tint hover:text-brand flex size-13 shrink-0 items-center justify-center rounded-xl transition-colors"
               >
                 <Cross size={18} />
               </Dialog.Close>
             </div>
 
             {/* Barra de contexto: qué se está buscando y cuántos hay. */}
-            <div className="border-line text-caption text-ink-muted flex items-center justify-between gap-3 border-y px-4 py-2">
-              <span className="text-ink font-bold tracking-wide uppercase">Proyectos</span>
+            <div className="border-line bg-brand-subtle text-caption text-ink-muted flex items-center justify-between gap-3 border-y px-4 py-2.5">
+              <span className="eyebrow text-brand">Proyectos</span>
               <span className="truncate">
                 {query.trim()
                   ? `${results.length} resultado${results.length === 1 ? "" : "s"} para «${query.trim()}»`
@@ -226,7 +228,10 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
                     key={project.slug}
                     value={project}
                     className={cn(
-                      "border-line data-highlighted:bg-brand-subtle flex cursor-pointer items-center justify-between gap-4 border-b px-4 py-3 outline-none last:border-b-0",
+                      "border-line data-highlighted:bg-brand-subtle relative flex cursor-pointer items-center justify-between gap-4 border-b px-4 py-3 outline-none last:border-b-0",
+                      // El filo rojo va en un pseudo y no en un borde: un borde
+                      // de verdad movería el texto dos píxeles al resaltar.
+                      "before:bg-brand before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:opacity-0 data-highlighted:before:opacity-100",
                     )}
                     render={<a href={`/proyectos/${project.slug}`} />}
                   >
@@ -240,12 +245,10 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
                     </span>
                     <span className="flex shrink-0 items-center gap-3">
                       {project.city && (
-                        <span className="text-caption text-ink-muted hidden sm:block">
-                          {project.city}
-                        </span>
+                        <span className="chip hidden sm:inline-flex">{project.city}</span>
                       )}
                       <span
-                        className="text-ink-faint opacity-0 in-data-highlighted:opacity-100"
+                        className="text-brand opacity-0 in-data-highlighted:opacity-100"
                         aria-hidden="true"
                       >
                         ↵
@@ -256,7 +259,7 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
               </Combobox.List>
             )}
 
-            <div className="border-line text-caption text-ink-muted flex items-center gap-4 border-t px-4 py-2.5">
+            <div className="border-line bg-brand-subtle text-caption text-ink-muted flex items-center gap-4 border-t px-4 py-2.5">
               <span className="flex items-center gap-1.5">
                 <Key>↑</Key>
                 <Key>↓</Key>

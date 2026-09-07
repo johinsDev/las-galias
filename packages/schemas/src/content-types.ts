@@ -178,7 +178,8 @@ export interface Project {
   seo?: Seo | null;
 }
 
-export type PostCategory = "financiacion" | "guia-de-compra" | "mercado" | "decoracion";
+export type PostCategory =
+  "financiacion" | "guia-de-compra" | "mercado" | "inversion" | "proyecto" | "decoracion";
 
 export interface Post {
   documentId: string;

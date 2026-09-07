@@ -1,12 +1,16 @@
 ---
 import { Image } from "astro:assets";
+import { ArrowRight, User } from "lucide-astro";
 
+import PostCard from "@/components/PostCard.astro";
 import Base from "@/layouts/Base.astro";
 import {
+  authorOf,
   categoryLabel,
   featuredPost,
   formatPostDate,
   POST_CATEGORIES,
+  readingMinutes,
   sortPosts,
 } from "@/lib/blog";
 import { getPosts, mediaUrl } from "@/lib/strapi";
@@ -21,36 +25,41 @@ const filters = POST_CATEGORIES.filter((category) => used.has(category.value));
 
 /** How many cards show before "Cargar más artículos". */
 const PAGE_SIZE = 6;
+
+const featuredMeta = featured
+  ? [formatPostDate(featured), `${readingMinutes(featured)} min lectura`]
+      .filter(Boolean)
+      .join(" · ")
+  : null;
 ---
 
 <Base
   title="Blog — Las Galias"
-  description="Consejos, guías y tendencias sobre vivienda, financiación y decoración."
+  description="Guías, análisis de mercado y consejos para que tomes la mejor decisión."
 >
-  <!-- 01 Encabezado -->
+  {/* 01 Encabezado */}
   <section class="border-line border-b">
     <div class="container py-12 md:py-16">
-      <h1 class="text-h1 text-ink font-extrabold" data-reveal>Blog</h1>
-      <p class="text-body-lg text-ink-muted mt-3 max-w-xl" data-reveal>
-        Consejos, guías y tendencias sobre vivienda, financiación y decoración.
+      <p class="eyebrow text-brand" data-reveal>Blog</p>
+      <h1 class="text-h1 text-ink mt-3 font-extrabold" data-reveal>
+        Aprende sobre vivienda nueva en Colombia
+      </h1>
+      <p class="text-body-lg text-ink-muted mt-3 max-w-2xl" data-reveal>
+        Guías, análisis de mercado y consejos para que tomes la mejor decisión.
       </p>
 
       {
         filters.length > 1 && (
-          <div class="mt-8 flex flex-wrap gap-2" id="post-filter" data-reveal>
-            <button
-              type="button"
-              data-filter=""
-              class="bg-ink text-body-sm rounded-full px-4 py-2 font-medium text-white"
-            >
+          <div
+            class="no-scrollbar -mx-4 mt-8 flex gap-2.5 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0"
+            id="post-filter"
+            data-reveal
+          >
+            <button type="button" data-filter="" class="pill pill-on shrink-0">
               Todos
             </button>
             {filters.map((category) => (
-              <button
-                type="button"
-                data-filter={category.value}
-                class="border-line-strong text-ink-muted hover:text-ink text-body-sm rounded-full border px-4 py-2 font-medium transition-colors"
-              >
+              <button type="button" data-filter={category.value} class="pill pill-off shrink-0">
                 {category.label}
               </button>
             ))}
@@ -60,81 +69,86 @@ const PAGE_SIZE = 6;
     </div>
   </section>
 
-  <!-- 02 Artículo destacado -->
+  {/* 02 Artículo destacado — foto a la izquierda, la ficha del artículo a la derecha */}
   {
     featured && (
-      <section class="border-line border-b">
-        <div class="container py-10 md:py-14">
-          <p class="eyebrow">Artículo destacado</p>
-          <a
-            href={`/blog/${featured.slug}`}
-            class="group mt-4 grid items-center gap-8 md:grid-cols-2"
-            data-reveal
-          >
-            <div class="bg-surface aspect-[4/3] overflow-hidden rounded-2xl">
-              {featured.cover?.url && (
-                <Image
-                  src={mediaUrl(featured.cover.url)}
-                  alt={featured.cover.alternativeText ?? featured.title}
-                  width={800}
-                  height={600}
-                  loading="eager"
-                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              )}
-            </div>
-            <div>
-              {categoryLabel(featured.category) && (
-                <p class="eyebrow">{categoryLabel(featured.category)}</p>
-              )}
-              <h2 class="text-h2 text-ink mt-2 font-bold group-hover:underline">
+      <section class="container pt-8 md:pt-12">
+        <article
+          class="border-line hover:shadow-card-lg group grid overflow-hidden rounded-3xl border bg-white transition-shadow md:grid-cols-[47%_1fr]"
+          data-reveal
+        >
+          <div class="bg-surface aspect-[16/10] overflow-hidden md:aspect-auto md:h-full">
+            {featured.cover?.url && (
+              <Image
+                src={mediaUrl(featured.cover.url)}
+                alt={featured.cover.alternativeText ?? featured.title}
+                width={960}
+                height={720}
+                loading="eager"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+            )}
+          </div>
+
+          <div class="flex flex-col justify-center p-6 md:p-10">
+            {categoryLabel(featured.category) && (
+              <span class="eyebrow bg-brand-tint text-brand inline-flex self-start rounded-md px-2.5 py-1.5">
+                {categoryLabel(featured.category)}
+              </span>
+            )}
+            <h2 class="text-h3 text-ink mt-4 font-bold">
+              <a href={`/blog/${featured.slug}`} class="hover:underline">
                 {featured.title}
-              </h2>
-              {featured.excerpt && (
-                <p class="text-body text-ink-muted mt-3 line-clamp-3">{featured.excerpt}</p>
-              )}
-              <p class="text-caption text-ink-faint mt-4">{formatPostDate(featured)}</p>
+              </a>
+            </h2>
+            {featured.excerpt && <p class="text-body text-ink-muted mt-4">{featured.excerpt}</p>}
+
+            <div class="mt-6 flex items-center gap-3">
+              <span class="bg-brand-tint text-brand flex size-10 shrink-0 items-center justify-center rounded-full">
+                <User size={18} stroke-width={2} aria-hidden="true" />
+              </span>
+              <span class="min-w-0">
+                <span class="text-body-sm text-ink block font-bold">{authorOf(featured)}</span>
+                {featuredMeta && (
+                  <span class="text-caption text-ink-muted block">{featuredMeta}</span>
+                )}
+              </span>
             </div>
-          </a>
-        </div>
+
+            <a
+              href={`/blog/${featured.slug}`}
+              class="btn btn-primary mt-7 w-full gap-2 self-start sm:w-auto"
+            >
+              Leer artículo
+              <ArrowRight size={17} stroke-width={2.2} aria-hidden="true" />
+            </a>
+          </div>
+        </article>
       </section>
     )
   }
 
-  <!-- 03 Todos los artículos -->
-  <section class="container py-10 md:py-14">
-    <p class="eyebrow">Todos los artículos</p>
+  {/* 03 Más artículos */}
+  <section class="container py-12 md:py-16">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2 class="text-h4 text-ink font-bold">Más artículos</h2>
+      {/* El recuento sigue al filtro, así que lo repinta el script. */}
+      <p class="text-body-sm text-ink-muted" id="posts-count">
+        {rest.length} artículo{rest.length === 1 ? "" : "s"}
+      </p>
+    </div>
 
     {
       rest.length > 0 ? (
         <div
-          class="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           id="posts-grid"
           data-page-size={PAGE_SIZE}
         >
           {rest.map((post, i) => (
-            <article data-post data-category={post.category ?? ""} hidden={i >= PAGE_SIZE}>
-              <a href={`/blog/${post.slug}`} class="group block">
-                <div class="bg-surface aspect-[4/3] overflow-hidden rounded-2xl">
-                  {post.cover?.url && (
-                    <Image
-                      src={mediaUrl(post.cover.url)}
-                      alt={post.cover.alternativeText ?? post.title}
-                      width={640}
-                      height={480}
-                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                  )}
-                </div>
-                {categoryLabel(post.category) && (
-                  <p class="eyebrow mt-4">{categoryLabel(post.category)}</p>
-                )}
-                <h3 class="text-h4 text-ink mt-1 font-semibold group-hover:underline">
-                  {post.title}
-                </h3>
-                <p class="text-caption text-ink-faint mt-2">{formatPostDate(post)}</p>
-              </a>
-            </article>
+            <div data-post data-category={post.category ?? ""} hidden={i >= PAGE_SIZE}>
+              <PostCard post={post} />
+            </div>
           ))}
         </div>
       ) : (
@@ -145,7 +159,7 @@ const PAGE_SIZE = 6;
     {
       rest.length > PAGE_SIZE && (
         <div class="mt-10 text-center">
-          <button type="button" class="btn btn-outline" id="posts-more">
+          <button type="button" class="btn btn-outline w-full sm:w-auto" id="posts-more">
             Cargar más artículos
           </button>
         </div>
@@ -164,6 +178,7 @@ const PAGE_SIZE = 6;
       const pageSize = Number(grid.dataset.pageSize) || 6;
       const cards = [...grid.querySelectorAll<HTMLElement>("[data-post]")];
       const more = document.getElementById("posts-more");
+      const count = document.getElementById("posts-count");
       const filterBar = document.getElementById("post-filter");
       let category = "";
       let visible = pageSize;
@@ -173,6 +188,9 @@ const PAGE_SIZE = 6;
         cards.forEach((card) => (card.hidden = true));
         matching.slice(0, visible).forEach((card) => (card.hidden = false));
         if (more) more.hidden = matching.length <= visible;
+        if (count) {
+          count.textContent = `${matching.length} artículo${matching.length === 1 ? "" : "s"}`;
+        }
       }
 
       more?.addEventListener("click", () => {
@@ -189,11 +207,8 @@ const PAGE_SIZE = 6;
         visible = pageSize;
         filterBar.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
           const active = b === button;
-          b.classList.toggle("bg-ink", active);
-          b.classList.toggle("text-white", active);
-          b.classList.toggle("border", !active);
-          b.classList.toggle("border-line-strong", !active);
-          b.classList.toggle("text-ink-muted", !active);
+          b.classList.toggle("pill-on", active);
+          b.classList.toggle("pill-off", !active);
         });
         paint();
       });

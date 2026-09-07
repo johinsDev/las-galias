@@ -53,7 +53,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
 }));
 ---
 
-<ProjectSearch client:idle projects={searchableProjects} />
+<ProjectSearch client:load projects={searchableProjects} />
 
 {
   /* `relative` so the mobile sheet can hang off the bar and overlay the page
@@ -115,13 +115,14 @@ const searchableProjects = (await getProjects()).map((project) => ({
     </div>
 
     <div class="flex items-center gap-3">
-      <a
-        href="/proyectos"
+      <button
+        type="button"
+        data-open-search
         class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
         aria-label="Buscar proyectos"
       >
         <Search size={18} stroke-width={2.2} aria-hidden="true" />
-      </a>
+      </button>
       <a
         href="/servicio-al-cliente"
         class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
@@ -176,19 +177,18 @@ const searchableProjects = (await getProjects()).map((project) => ({
       class="max-h-[calc(100dvh-72px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100"
     >
       <div class="container-bleed py-5">
-        <form
-          action="/proyectos"
-          method="get"
-          class="border-line-strong flex items-center gap-2 rounded-full border px-4 py-3"
+        {
+          /* En el móvil, el mismo buscador pero como botón: escribir aquí y otra
+            vez dentro de la ventana sería teclear dos veces. */
+        }
+        <button
+          type="button"
+          data-open-search
+          class="border-line-strong text-ink-faint flex w-full items-center gap-2 rounded-full border px-4 py-3 text-left"
         >
           <Search size={18} stroke-width={2.2} aria-hidden="true" />
-          <input
-            type="text"
-            name="q"
-            placeholder="Busca por ciudad o proyecto…"
-            class="text-body-sm placeholder:text-ink-faint w-full min-w-0 bg-transparent outline-none"
-          />
-        </form>
+          <span class="text-body-sm">Busca por ciudad o proyecto…</span>
+        </button>
 
         <ul class="mt-2">
           {

@@ -25,7 +25,7 @@
     },
     "category": {
       "type": "enumeration",
-      "enum": ["financiacion", "guia-de-compra", "mercado", "decoracion"],
+      "enum": ["financiacion", "guia-de-compra", "mercado", "decoracion", "inversion", "proyecto"],
       "description": "Eyebrow label above the post title, and the blog listing's filter"
     },
     "featured": {
