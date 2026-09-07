@@ -388,8 +388,14 @@
    teléfono tienen que coincidir al pixel: si uno se desincroniza, la rejilla de
    dos columnas queda con los campos a distinta altura. */
 @utility field-box {
-  height: 45px;
+  height: 50px;
   border-radius: 10px;
+}
+
+/* El botón que cierra un formulario mide lo mismo que sus campos: si no, la
+   columna termina en un escalón. */
+@utility btn-field {
+  height: 50px;
 }
 
 @layer base {

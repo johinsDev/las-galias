@@ -418,7 +418,7 @@ export default function LeadForm({
         </div>
       )}
 
-      <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
+      <Button type="submit" size="lg" loading={status === "sending"} className="btn-field w-full">
         {submitLabel ?? "Quiero más información"}
       </Button>
 

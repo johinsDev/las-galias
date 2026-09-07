@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { Combobox } from "@base-ui/react/combobox";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 
@@ -126,57 +128,20 @@ function Select({
 
   if (searchable) {
     return (
-      <Combobox.Root
+      <SearchableSelect
+        id={id}
+        name={name}
+        value={value}
+        onValueChange={onValueChange}
         items={items}
-        itemToStringLabel={(item: SelectItem) => item.label}
-        filter={(item: SelectItem, query: string) =>
-          !query || fold(item.label).includes(fold(query))
-        }
-        value={selected}
-        onValueChange={(item: SelectItem | null) => onValueChange?.(item?.value ?? "")}
-      >
-        {/* Lo que lee el formulario; el control es el combobox. */}
-        <input type="hidden" name={name} value={value ?? ""} />
-
-        <Combobox.Trigger id={id} aria-label={ariaLabel} className={triggerClass}>
-          {label}
-          <span className="text-ink-faint shrink-0">
-            <ChevronDown />
-          </span>
-        </Combobox.Trigger>
-
-        <Combobox.Portal>
-          <Combobox.Positioner sideOffset={6} className="z-50 outline-none">
-            <Combobox.Popup className={popupClass}>
-              <div className="border-line border-b px-3">
-                <Combobox.Input
-                  placeholder={searchPlaceholder}
-                  className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
-                />
-              </div>
-
-              <Combobox.Empty>
-                <p className="text-body-sm text-ink-muted px-3 py-6 text-center">{emptyMessage}</p>
-              </Combobox.Empty>
-
-              <Combobox.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
-                {(item: SelectItem) => (
-                  <Combobox.Item
-                    key={item.value}
-                    value={item}
-                    className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
-                  >
-                    <span className="min-w-0 truncate">{item.label}</span>
-                    <Combobox.ItemIndicator className="text-brand shrink-0">
-                      <Check />
-                    </Combobox.ItemIndicator>
-                  </Combobox.Item>
-                )}
-              </Combobox.List>
-            </Combobox.Popup>
-          </Combobox.Positioner>
-        </Combobox.Portal>
-      </Combobox.Root>
+        selected={selected}
+        label={label}
+        triggerClass={triggerClass}
+        popupClass={popupClass}
+        ariaLabel={ariaLabel}
+        searchPlaceholder={searchPlaceholder}
+        emptyMessage={emptyMessage}
+      />
     );
   }
 
@@ -225,6 +190,105 @@ function Select({
         </SelectPrimitive.Positioner>
       </SelectPrimitive.Portal>
     </SelectPrimitive.Root>
+  );
+}
+
+/**
+ * El desplegable con buscador.
+ *
+ * Su estado abierto lo lleva este componente y no Base UI: con el buscador
+ * DENTRO del panel, el disparador por sí solo no lo abría al hacer clic —con el
+ * teclado sí—, porque el combobox espera que su input exista para poder darle el
+ * foco. Controlando `open` el clic hace lo que promete y `onOpenChange` sigue
+ * cerrándolo al pulsar fuera o con Escape.
+ */
+function SearchableSelect({
+  id,
+  name,
+  value,
+  onValueChange,
+  items,
+  selected,
+  label,
+  triggerClass,
+  popupClass,
+  ariaLabel,
+  searchPlaceholder,
+  emptyMessage,
+}: {
+  id?: string;
+  name?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  items: SelectItem[];
+  selected: SelectItem | null;
+  label: React.ReactNode;
+  triggerClass: string;
+  popupClass: string;
+  ariaLabel?: string;
+  searchPlaceholder: string;
+  emptyMessage: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Combobox.Root
+      items={items}
+      itemToStringLabel={(item: SelectItem) => item.label}
+      filter={(item: SelectItem, query: string) => !query || fold(item.label).includes(fold(query))}
+      value={selected}
+      open={open}
+      onOpenChange={setOpen}
+      onValueChange={(item: SelectItem | null) => onValueChange?.(item?.value ?? "")}
+    >
+      {/* Lo que lee el formulario; el control es el combobox. */}
+      <input type="hidden" name={name} value={value ?? ""} />
+
+      <Combobox.Trigger
+        id={id}
+        type="button"
+        aria-label={ariaLabel}
+        className={triggerClass}
+        onClick={() => setOpen((current) => !current)}
+      >
+        {label}
+        <span className="text-ink-faint shrink-0">
+          <ChevronDown />
+        </span>
+      </Combobox.Trigger>
+
+      <Combobox.Portal>
+        <Combobox.Positioner sideOffset={6} className="z-50 outline-none">
+          <Combobox.Popup className={popupClass}>
+            <div className="border-line border-b px-3">
+              <Combobox.Input
+                placeholder={searchPlaceholder}
+                className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
+              />
+            </div>
+
+            <Combobox.Empty>
+              <p className="text-body-sm text-ink-muted px-3 py-6 text-center">{emptyMessage}</p>
+            </Combobox.Empty>
+
+            <Combobox.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
+              {(item: SelectItem) => (
+                <Combobox.Item
+                  key={item.value}
+                  value={item}
+                  className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
+                >
+                  <span className="min-w-0 truncate">{item.label}</span>
+                  <Combobox.ItemIndicator className="text-brand shrink-0">
+                    <Check />
+                  </Combobox.ItemIndicator>
+                </Combobox.Item>
+              )}
+            </Combobox.List>
+          </Combobox.Popup>
+        </Combobox.Positioner>
+      </Combobox.Portal>
+    </Combobox.Root>
   );
 }
 
