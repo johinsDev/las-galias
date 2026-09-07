@@ -89,10 +89,12 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
   <section>
     <div class="container py-16 text-center md:py-20">
       <p class="eyebrow text-brand" data-reveal>{eyebrow}</p>
-      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold" data-reveal>
+      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-[680px] font-extrabold" data-reveal>
         {heroTitle}
       </h1>
-      <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-2xl" data-reveal>{heroSubtitle}</p>
+      <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-[560px]" data-reveal>
+        {heroSubtitle}
+      </p>
       <a href="#datos" class="btn btn-primary mt-8" data-reveal>{heroCtaLabel}</a>
       {
         trustBadges.length > 0 && (
@@ -123,7 +125,7 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
   {/* 02 Paso a paso — six steps in a 3×2 grid, each numbered by position. */}
   <section class="container py-16 md:py-20">
     <SectionHeading eyebrow="Cómo funciona" title={stepsTitle} />
-    <ol class="mx-auto mt-10 grid max-w-5xl gap-x-10 gap-y-10 md:grid-cols-3">
+    <ol class="mx-auto mt-10 grid max-w-[1120px] gap-x-10 gap-y-10 md:grid-cols-3">
       {
         steps.map((step, i) => (
           <li data-reveal>
@@ -172,7 +174,7 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
 
   {/* 03B Formulario de refuerzo */}
   <section id="datos" class="container py-16 md:py-20">
-    <div class="grid items-center gap-10 lg:grid-cols-2">
+    <div class="mx-auto grid max-w-[1000px] items-center gap-10 lg:grid-cols-2">
       <div data-reveal>
         <h2 class="text-h2 text-ink font-bold">{formTitle}</h2>
         <p class="text-body-lg text-ink-muted mt-4">{formBody}</p>
@@ -222,7 +224,7 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
     faqs.length > 0 && (
       <section class="border-line container border-t py-16 md:py-20">
         <SectionHeading eyebrow="FAQ" title="Preguntas frecuentes" />
-        <div class="mt-10">
+        <div class="mx-auto mt-10 max-w-[760px]">
           <FaqAccordion faqs={faqs} initial={5} />
         </div>
       </section>

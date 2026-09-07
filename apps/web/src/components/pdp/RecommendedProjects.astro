@@ -20,7 +20,7 @@ const recommended = project.recommended ?? [];
       <div class="container py-16">
         <p class="eyebrow">Proyectos similares</p>
         <h2 class="text-h3 text-ink mt-2 font-bold">También en {project.city?.name}</h2>
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {recommended.map((rec) => (
             <ProjectCard project={rec} />
           ))}

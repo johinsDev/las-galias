@@ -92,8 +92,11 @@ const stats = page?.stats?.length
   <section class="bg-brand text-white">
     <div class="container pt-16 pb-10 text-center">
       <p class="eyebrow text-white/85" data-reveal>{heroEyebrow}</p>
-      <h1 class="text-h1 mx-auto mt-4 max-w-4xl font-extrabold" data-reveal>{heroTitle}</h1>
-      <p class="text-body-lg mx-auto mt-4 max-w-2xl whitespace-pre-line text-white/90" data-reveal>
+      <h1 class="text-h1 mx-auto mt-4 max-w-[680px] font-extrabold" data-reveal>{heroTitle}</h1>
+      <p
+        class="text-body-lg mx-auto mt-4 max-w-[560px] whitespace-pre-line text-white/90"
+        data-reveal
+      >
         {heroSubtitle}
       </p>
       <form
@@ -160,7 +163,9 @@ const stats = page?.stats?.length
         eyebrow={page?.stepsEyebrow ?? "Paso a paso"}
         title={page?.stepsTitle ?? "Comprar es muy fácil"}
       />
-      <StepsGrid steps={steps} />
+      <div class="mx-auto max-w-[1120px]">
+        <StepsGrid steps={steps} />
+      </div>
     </div>
   </section>
 
