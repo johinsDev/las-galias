@@ -311,6 +311,15 @@
   border: 1px solid var(--ink);
 }
 
+/* El estado del proyecto («Lanzamiento») es la única píldora roja del grupo:
+   el diseño la usa para separar el estado de los atributos, que van en
+   contorno. */
+@utility pill-brand {
+  background: var(--brand);
+  color: var(--brand-foreground);
+  border: 1px solid var(--brand);
+}
+
 @utility pill-off {
   background: #fff;
   color: var(--ink-muted);
@@ -356,6 +365,15 @@
 /* Card that lifts slightly on hover. The shadow alone was doing all the work
    and read as flat; a couple of pixels of travel is what makes it feel
    clickable. */
+/* Carril que se arrastra con el dedo sin enseñar la barra. Se repetía a mano en
+   el carrusel del banner, en el de la card y en las pestañas de la ficha. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility card-lift {
   transition:
     box-shadow 0.3s ease,

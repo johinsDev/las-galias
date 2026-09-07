@@ -1,0 +1,44 @@
+---
+import type { LeadFormConfig, Project } from "@lasgalias/schemas";
+
+import LeadForm from "@/islands/LeadForm";
+
+interface Props {
+  project: Project;
+  config: LeadFormConfig;
+}
+
+const { project, config } = Astro.props;
+
+const eyebrow = config.adviceEyebrow ?? "Asesoría personalizada";
+const title = config.adviceTitle ?? "Recibe una asesoría personalizada";
+const body =
+  config.adviceBody ??
+  "Cuéntanos sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera.";
+---
+
+<section class="bg-surface">
+  <div class="container grid items-center gap-10 py-16 md:py-20 lg:grid-cols-[1fr_620px]">
+    <div data-reveal>
+      <p class="eyebrow text-brand">{eyebrow}</p>
+      <h2 class="text-h3 text-ink mt-3 font-bold">{title}</h2>
+      <p class="text-body-sm text-ink-muted mt-3 max-w-md">{body}</p>
+    </div>
+
+    <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
+      {
+        /* The design draws only the four selects here. A submission with no way
+           to reach the person is not a lead, so the contact row comes first and
+           the qualification follows in the two-up grid the design shows. */
+      }
+      <LeadForm
+        client:visible
+        projectDocumentId={project.documentId}
+        source={`pdp-asesoria:${project.slug}`}
+        qualification={config}
+        columns={2}
+        submitLabel="Enviar solicitud"
+      />
+    </div>
+  </div>
+</section>

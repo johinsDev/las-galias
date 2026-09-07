@@ -29,6 +29,18 @@ export const LeadSchema = v.object({
    * One checkbox in the UI, the three channels it enables here.
    */
   acceptsContact: v.optional(v.boolean(), false),
+  /**
+   * Qualification block from the PDP design. All optional: an advisor prefers a
+   * lead with a phone and nothing else over no lead at all, so none of these may
+   * ever block a submission. The values are the option labels the editor wrote
+   * in `lead-form-config`, stored verbatim — Sinco's
+   * `POST /SalaVentas/Externo/Visitas` has no field for any of them today.
+   */
+  incomeRange: v.optional(v.string()),
+  residenceCity: v.optional(v.string()),
+  severance: v.optional(v.string()),
+  savingsRange: v.optional(v.string()),
+  firstHome: v.optional(v.boolean()),
   // Campaign attribution read from the landing URL; never typed by the user.
   utmSource: v.optional(v.string()),
   utmMedium: v.optional(v.string()),

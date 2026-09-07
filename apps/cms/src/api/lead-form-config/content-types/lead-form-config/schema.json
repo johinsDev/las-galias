@@ -1,0 +1,56 @@
+{
+  "kind": "singleType",
+  "collectionName": "lead_form_config",
+  "info": {
+    "singularName": "lead-form-config",
+    "pluralName": "lead-form-configs",
+    "displayName": "Configuración · Formularios",
+    "description": "Las opciones de los desplegables de calificación. Las comparten el formulario de la ficha de proyecto y la banda «Recibe una asesoría personalizada», así que cambiarlas aquí las cambia en los dos sitios a la vez"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sectionOptions": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "incomeRanges": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true
+    },
+    "savingsRanges": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true
+    },
+    "severanceOptions": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true
+    },
+    "residenceCities": {
+      "type": "component",
+      "component": "page.list-item",
+      "repeatable": true
+    },
+    "sectionAdvice": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "adviceEyebrow": {
+      "type": "string",
+      "default": "Asesoría personalizada"
+    },
+    "adviceTitle": {
+      "type": "string",
+      "default": "Recibe una asesoría personalizada"
+    },
+    "adviceBody": {
+      "type": "text"
+    }
+  }
+}

@@ -1,0 +1,130 @@
+---
+interface Props {
+  rates: { copPerUsd: number; copPerEur: number };
+  class?: string;
+}
+
+const { rates, class: className } = Astro.props;
+---
+
+{
+  /* COP · USD · EUR beside the price, where design comment #114 asked for it —
+     it used to live in the site header, a screen away from the number it
+     changed. Lives in its own component because the card and the project page
+     both draw it, and the script below has to ship exactly once either way. */
+}
+<div
+  class:list={["seg-group relative z-10", className]}
+  role="group"
+  aria-label="Divisa"
+  data-price-currency
+  data-cop-per-usd={rates.copPerUsd}
+  data-cop-per-eur={rates.copPerEur}
+>
+  <button type="button" class="seg" data-currency="COP" aria-pressed="false">COP</button>
+  <button type="button" class="seg" data-currency="USD" aria-pressed="false">USD</button>
+  <button type="button" class="seg" data-currency="EUR" aria-pressed="false">EUR</button>
+</div>
+
+<script>
+  import { convertFromCOP, formatMoney, type Currency } from "@/lib/currency";
+
+  const STORAGE_KEY = "lg:currency";
+  const CURRENCIES: Currency[] = ["COP", "USD", "EUR"];
+
+  /**
+   * Which currency to open in when the visitor has not chosen one.
+   *
+   * The brief asked for this to key off the visitor's IP. The site is 100%
+   * static — the HTML is baked at build time, so there is no request and no IP
+   * to read. The browser's own timezone is the closest signal that costs
+   * nothing: no edge function, no per-request invocation, no cache split.
+   *
+   * It is a guess, not a location: a Colombian travelling through Madrid opens
+   * in EUR. That is why the manual choice always wins and is remembered.
+   */
+  function detectCurrency(): Currency {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
+      if (tz.startsWith("Europe/")) return "EUR";
+      if (tz === "America/Bogota") return "COP";
+      // Everywhere else defaults to USD: this page sells to Colombians abroad,
+      // and abroad the dollar is the shared yardstick.
+      return tz ? "USD" : "COP";
+    } catch {
+      return "COP";
+    }
+  }
+
+  function readStored(): Currency | null {
+    try {
+      const stored = sessionStorage.getItem(STORAGE_KEY);
+      return CURRENCIES.includes(stored as Currency) ? (stored as Currency) : null;
+    } catch {
+      // Private mode / storage disabled. Not a reason to render nothing.
+      return null;
+    }
+  }
+
+  /**
+   * Repaints ONE scope: its prices and its own three buttons. The selector is
+   * per scope on purpose — someone comparing a Bogotá flat in euros against a
+   * Medellín one in dollars is a real thing to want, and moving the whole grid
+   * from a control that sits inside a single card is surprising.
+   *
+   * The scope is the card on a grid and `[data-price-scope]` on the project
+   * page, where the switcher and the price it rewrites are siblings rather than
+   * both inside one article.
+   */
+  function paint(scope: HTMLElement, group: HTMLElement, next: Currency) {
+    const rates = {
+      copPerUsd: Number(group.dataset.copPerUsd),
+      copPerEur: Number(group.dataset.copPerEur),
+    };
+    if (!Number.isFinite(rates.copPerUsd) || !Number.isFinite(rates.copPerEur)) return;
+
+    scope.querySelectorAll<HTMLElement>("[data-price-cop]").forEach((el) => {
+      const cop = Number(el.dataset.priceCop);
+      if (!Number.isFinite(cop)) return;
+      el.textContent = formatMoney(convertFromCOP(cop, next, rates), next);
+    });
+    group.querySelectorAll<HTMLElement>("[data-currency]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.currency === next));
+    });
+  }
+
+  function setupCurrency() {
+    const groups = [...document.querySelectorAll<HTMLElement>("[data-price-currency]")];
+    if (groups.length === 0) return;
+
+    // The page still OPENS coherent — every price starts on the remembered or
+    // guessed currency. Only a click narrows to one scope.
+    const initial = readStored() ?? detectCurrency();
+
+    groups.forEach((group) => {
+      const scope = group.closest<HTMLElement>("[data-price-scope], article") ?? group;
+      paint(scope, group, initial);
+
+      // `astro:page-load` also fires on the FIRST load, so without this guard
+      // every listener is attached twice.
+      if (group.dataset.bound) return;
+      group.dataset.bound = "1";
+      group.addEventListener("click", (event) => {
+        const button = (event.target as HTMLElement).closest<HTMLElement>("[data-currency]");
+        const next = button?.dataset.currency as Currency | undefined;
+        if (!next) return;
+        try {
+          // Remembered so the next page opens the same way, even though the
+          // click itself only moves this scope.
+          sessionStorage.setItem(STORAGE_KEY, next);
+        } catch {
+          // Storage refused: the switch still works for this page view.
+        }
+        paint(scope, group, next);
+      });
+    });
+  }
+
+  setupCurrency();
+  document.addEventListener("astro:page-load", setupCurrency);
+</script>

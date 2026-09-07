@@ -133,6 +133,7 @@ interface Financing {
 interface SalesRoom {
   schedule?: string | null;
   phone?: string | null;
+  email?: string | null;
   whatsappUrl?: string | null;
 }
 
@@ -169,6 +170,7 @@ export interface Project {
   location?: Geo | null;
   video?: string | null;
   tour360Url?: string | null;
+  brochure?: Media | null;
   constructionProgress?: ConstructionProgress[];
   specSheet?: SpecSheet | null;
   financing?: Financing | null;
@@ -345,4 +347,23 @@ export interface LegalDocument {
   body?: unknown;
   seo?: Seo | null;
   publishedAt?: string;
+}
+
+/** One line of a repeatable `page.list-item`. */
+interface ListItem {
+  text: string;
+}
+
+/**
+ * Options for the qualification selects, shared by the PDP sidebar form and the
+ * "Recibe una asesoría personalizada" band, plus that band's own copy.
+ */
+export interface LeadFormConfig {
+  incomeRanges?: ListItem[];
+  savingsRanges?: ListItem[];
+  severanceOptions?: ListItem[];
+  residenceCities?: ListItem[];
+  adviceEyebrow?: string | null;
+  adviceTitle?: string | null;
+  adviceBody?: string | null;
 }

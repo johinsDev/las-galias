@@ -3,6 +3,7 @@ import type { Project } from "@lasgalias/schemas";
 
 import AmenityIcon from "@/components/AmenityIcon.astro";
 import Blocks from "@/components/Blocks.astro";
+import VideoFacade from "@/components/pdp/VideoFacade.astro";
 import TypologySimulator, { type TypologyOption } from "@/islands/TypologySimulator";
 import { mediaUrl } from "@/lib/strapi";
 import type { QuoteTerms } from "@/lib/mortgage";
@@ -23,7 +24,8 @@ function range(nums: number[], unit: string): string | null {
   if (nums.length === 0) return null;
   const min = Math.min(...nums);
   const max = Math.max(...nums);
-  return min === max ? `${min} ${unit}` : `${min}–${max} ${unit}`;
+  const fmt = (n: number) => (unit === "m²" ? n.toFixed(2) : String(n));
+  return min === max ? `${fmt(min)} ${unit}`.trim() : `${fmt(min)}–${fmt(max)} ${unit}`.trim();
 }
 const builtAreas = units
   .map((u) => u.builtAreaM2)
@@ -34,13 +36,14 @@ const privateAreas = units
 const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
 const baths = units.map((u) => u.bathrooms).filter((n): n is number => typeof n === "number");
 
+// In the design's reading order, four to a row.
 const specs = [
-  { label: "Área construida", value: range(builtAreas, "m²") },
-  { label: "Área privada", value: range(privateAreas, "m²") },
+  { label: "Área construida desde*", value: range(builtAreas, "m²") },
+  { label: "Área privada desde*", value: range(privateAreas, "m²") },
   { label: "Habitaciones", value: range(beds, "") },
   { label: "Baños", value: range(baths, "") },
-  { label: "Torres", value: spec?.towers != null ? String(spec.towers) : null },
-  { label: "Apartamentos", value: spec?.apartments != null ? String(spec.apartments) : null },
+  { label: "N° de torres", value: spec?.towers != null ? String(spec.towers) : null },
+  { label: "N° apartamentos", value: spec?.apartments != null ? String(spec.apartments) : null },
   {
     label: "Asc. / torre",
     value: spec?.elevatorsPerTower != null ? String(spec.elevatorsPerTower) : null,
@@ -65,7 +68,10 @@ const typologies: TypologyOption[] = units
 const progress = [...(project.constructionProgress ?? [])].sort((a, b) =>
   (b.date ?? "").localeCompare(a.date ?? ""),
 );
+const videoPoster = project.heroDesktop?.url ?? project.heroMobile?.url ?? null;
 
+const amenities = project.amenities ?? [];
+const salesRoom = project.salesRoom;
 const address = project.location?.address;
 const lat = project.location?.lat;
 const lng = project.location?.lng;
@@ -74,39 +80,69 @@ const mapsHref =
 const wazeHref = lat && lng ? `https://waze.com/ul?ll=${lat},${lng}&navigate=yes` : null;
 
 /**
- * The wireframe's map block. OpenStreetMap rather than Google Maps Embed: the
- * latter needs a billed API key baked into a fully static site, and the block
- * only has to show where the project is — the "ir con…" buttons below hand the
- * actual navigation to whichever app the visitor prefers.
+ * The map block. OpenStreetMap rather than Google Maps Embed: the latter needs a
+ * billed API key baked into a fully static site, and the block only has to show
+ * where the project is — the "ir con…" buttons hand the actual navigation to
+ * whichever app the visitor prefers.
  */
 const bbox = (value: number, delta: number) => (value + delta).toFixed(5);
 const mapSrc =
   lat && lng
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${bbox(lng, -0.006)}%2C${bbox(lat, -0.004)}%2C${bbox(lng, 0.006)}%2C${bbox(lat, 0.004)}&layer=mapnik&marker=${lat}%2C${lng}`
     : null;
+
+// The tab row only lists sections this project actually renders.
+const sections = [
+  { id: "descripcion", label: "Descripción", enabled: project.description != null },
+  { id: "planos", label: "Planos", enabled: typologies.length > 0 },
+  { id: "zonas-comunes", label: "Zonas comunes", enabled: amenities.length > 0 },
+  { id: "avance", label: "Avance obra", enabled: progress.length > 0 },
+  { id: "ubicacion", label: "Ubicación", enabled: Boolean(mapSrc || address) },
+].filter((section) => section.enabled);
 ---
 
 <div class="min-w-0">
   {
-    project.description != null && (
-      <div data-reveal>
-        <p class="eyebrow">Descripción</p>
-        <div class="mt-3" data-clamp>
-          <Blocks content={project.description} />
+    /* Anchors, not panels: the design stacks every section down the page and
+       uses the row to jump between them. `scroll-mt` keeps a heading from
+       landing under the sticky site header. */
+    sections.length > 1 && (
+      <div class="border-line mb-8 border-b pb-6" data-section-nav>
+        <div class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
+          {sections.map((section, i) => (
+            <a
+              href={`#${section.id}`}
+              data-section-link={section.id}
+              class:list={["pill shrink-0", i === 0 ? "pill-on" : "pill-off"]}
+            >
+              {section.label}
+            </a>
+          ))}
         </div>
-        <button type="button" class="text-body-sm text-ink mt-2 font-semibold" data-clamp-toggle>
-          Ver más ↓
-        </button>
       </div>
     )
   }
 
   {
+    project.description != null && (
+      <section id="descripcion" class="scroll-mt-28" data-reveal>
+        <h2 class="text-h4 text-ink font-bold">Descripción</h2>
+        <div class="text-body text-ink-muted mt-3" data-clamp>
+          <Blocks content={project.description} />
+        </div>
+        <button type="button" class="text-brand text-body-sm mt-2 font-bold" data-clamp-toggle>
+          Ver más ↓
+        </button>
+      </section>
+    )
+  }
+
+  {
     specs.length > 0 && (
-      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5" data-reveal>
+      <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4" data-reveal>
         {specs.map((item) => (
-          <div class="border-line rounded-xl border p-3">
-            <p class="eyebrow">{item.label}</p>
+          <div class="bg-surface rounded-xl p-4">
+            <p class="text-label text-ink-muted font-bold uppercase">{item.label}</p>
             <p class="text-ink mt-1 font-bold">{item.value}</p>
           </div>
         ))}
@@ -116,89 +152,102 @@ const mapSrc =
 
   {
     pointsOfInterest.length > 0 && (
-      <div class="mt-12" data-reveal>
-        <p class="eyebrow">Zonas de interés</p>
-        <div class="mt-3 flex flex-wrap gap-2">
+      <section class="mt-12" data-reveal>
+        <h2 class="text-h4 text-ink font-bold">Zonas de interés</h2>
+        <div class="mt-4 flex flex-wrap gap-2.5">
           {pointsOfInterest.map((poi) => (
-            <span class="chip">
+            <span class="pill pill-off">
               {poi.name}
               {poi.distanceText ? ` · ${poi.distanceText}` : ""}
             </span>
           ))}
         </div>
-      </div>
+      </section>
     )
   }
 
   {
     typologies.length > 0 && (
-      <div class="mt-12" data-reveal>
-        <p class="eyebrow">Planos por tipología + simulador</p>
+      <section id="planos" class="mt-12 scroll-mt-28" data-reveal>
+        <h2 class="text-h4 text-ink font-bold">Planos por tipología</h2>
         <div class="mt-4">
-          <TypologySimulator client:visible typologies={typologies} terms={terms} />
+          <TypologySimulator
+            client:visible
+            typologies={typologies}
+            terms={terms}
+            trusteeName={project.financing?.trusteeName}
+            trustNumber={project.financing?.trustNumber}
+            clientPortalUrl={project.financing?.clientPortalUrl}
+          />
         </div>
-      </div>
+      </section>
     )
   }
 
   {
-    (project.amenities?.length ?? 0) > 0 && (
-      <div class="mt-12" data-reveal>
-        <p class="eyebrow">Zonas comunes</p>
-        <div class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-5">
-          {project.amenities!.map((amenity) => (
-            <div class="border-line rounded-xl border p-4 text-center">
-              <div class="bg-surface text-ink mx-auto flex size-11 items-center justify-center rounded-xl">
+    amenities.length > 0 && (
+      <section id="zonas-comunes" class="mt-12 scroll-mt-28" data-reveal>
+        <h2 class="text-h4 text-ink font-bold">Zonas comunes</h2>
+        <div class="mt-6 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-5">
+          {amenities.map((amenity) => (
+            <div class="text-center">
+              <div class="bg-brand-tint text-brand mx-auto flex size-14 items-center justify-center rounded-full">
                 <AmenityIcon amenity={amenity} />
               </div>
-              <p class="text-caption text-ink mt-2 font-medium">{amenity.name}</p>
+              <p class="text-body-sm text-ink mt-3">{amenity.name}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
     )
   }
 
   {
     progress.length > 0 && (
-      <div class="mt-12" data-reveal data-progress>
-        <p class="eyebrow">Avance de obra</p>
-        <div class="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Avance de obra por mes">
-          {progress.map((entry, i) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={i === 0 ? "true" : "false"}
-              data-progress-tab={String(i)}
-              class:list={["chip transition-colors", i === 0 && "!bg-ink !border-ink !text-white"]}
-            >
-              {entry.label}
-            </button>
-          ))}
-        </div>
+      <section id="avance" class="mt-12 scroll-mt-28" data-reveal data-progress>
+        <h2 class="text-h4 text-ink font-bold">Avance de obra</h2>
+        {progress.length > 1 && (
+          <div
+            class="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0"
+            role="tablist"
+            aria-label="Avance de obra por mes"
+          >
+            {progress.map((entry, i) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={i === 0 ? "true" : "false"}
+                data-progress-tab={String(i)}
+                class:list={["pill shrink-0", i === 0 ? "pill-on" : "pill-off"]}
+              >
+                {entry.label}
+              </button>
+            ))}
+          </div>
+        )}
+        {progress.length === 1 && <p class="pill pill-on mt-4">{progress[0]!.label}</p>}
         {progress.map((entry, i) => (
-          <div class="mt-4" data-progress-panel={String(i)} hidden={i !== 0}>
-            <div class="bg-surface aspect-video overflow-hidden rounded-2xl">
-              <iframe
-                src={entry.video}
-                title={`Avance de obra ${entry.label}`}
-                loading="lazy"
-                allowfullscreen
-                class="h-full w-full border-0"
-              />
-            </div>
+          <div class="mt-5" data-progress-panel={String(i)} hidden={i !== 0}>
+            <VideoFacade
+              src={entry.video}
+              title={`Avance de obra ${entry.label}`}
+              poster={videoPoster ? mediaUrl(videoPoster) : null}
+            />
           </div>
         ))}
-      </div>
+      </section>
     )
   }
 
   {
-    (address || mapsHref) && (
-      <div class="mt-12" data-reveal>
-        <p class="eyebrow">Ubicación{address ? ` · ${address}` : ""}</p>
+    (mapSrc || address) && (
+      <section id="ubicacion" class="mt-12 scroll-mt-28" data-reveal>
+        <h2 class="text-h4 text-ink font-bold">Ubicación</h2>
         {mapSrc && (
-          <div class="bg-surface border-line mt-3 aspect-[16/9] overflow-hidden rounded-2xl border">
+          <div class="bg-surface mt-4 aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+            {/* Below the fold on every screen size, so `lazy` genuinely defers
+                it: nothing is requested from OpenStreetMap until the visitor
+                scrolls this far. */}
             <iframe
               src={mapSrc}
               title={`Mapa · ${address ?? project.name}`}
@@ -209,48 +258,46 @@ const mapSrc =
           </div>
         )}
         {mapsHref && (
-          <div class="mt-3 flex flex-wrap gap-2">
-            <a
-              href={mapsHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline px-4 py-2.5 text-sm"
-            >
+          <div class="mt-4 flex flex-wrap gap-2.5">
+            <a href={mapsHref} target="_blank" rel="noopener noreferrer" class="pill pill-off">
               Ir con Google Maps
             </a>
-            <a
-              href={wazeHref!}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline px-4 py-2.5 text-sm"
-            >
+            <a href={wazeHref!} target="_blank" rel="noopener noreferrer" class="pill pill-off">
               Ir con Waze
             </a>
           </div>
         )}
-        {(address || project.salesRoom?.schedule || project.salesRoom?.phone) && (
-          <div class="bg-surface mt-4 grid gap-4 rounded-2xl p-5 sm:grid-cols-3">
-            {address && (
-              <div>
-                <p class="eyebrow">Dirección</p>
-                <p class="text-body-sm text-ink mt-1">{address}</p>
-              </div>
-            )}
-            {project.salesRoom?.schedule && (
-              <div>
-                <p class="eyebrow">Horario</p>
-                <p class="text-body-sm text-ink mt-1">{project.salesRoom.schedule}</p>
-              </div>
-            )}
-            {project.salesRoom?.phone && (
-              <div>
-                <p class="eyebrow">Teléfono</p>
-                <p class="text-body-sm text-ink mt-1">{project.salesRoom.phone}</p>
-              </div>
-            )}
+        {(address || salesRoom?.schedule || salesRoom?.email) && (
+          <div class="mt-8">
+            <p class="text-label text-ink-muted font-bold uppercase">Sala de ventas</p>
+            <div class="bg-surface mt-3 grid gap-5 rounded-2xl p-5 sm:grid-cols-3">
+              {address && (
+                <div>
+                  <p class="text-label text-ink-muted font-bold uppercase">Dirección</p>
+                  <p class="text-body-sm text-ink mt-1 font-bold">{address}</p>
+                </div>
+              )}
+              {salesRoom?.schedule && (
+                <div>
+                  <p class="text-label text-ink-muted font-bold uppercase">Horario</p>
+                  <p class="text-body-sm text-ink mt-1 font-bold">{salesRoom.schedule}</p>
+                </div>
+              )}
+              {salesRoom?.email && (
+                <div>
+                  <p class="text-label text-ink-muted font-bold uppercase">Correo</p>
+                  <a
+                    href={`mailto:${salesRoom.email}`}
+                    class="text-body-sm text-ink hover:text-brand mt-1 block font-bold"
+                  >
+                    {salesRoom.email}
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         )}
-      </div>
+      </section>
     )
   }
 </div>
@@ -261,7 +308,7 @@ const mapSrc =
     document.querySelectorAll<HTMLElement>("[data-clamp-toggle]").forEach((toggle) => {
       const body = toggle.parentElement?.querySelector<HTMLElement>("[data-clamp]");
       if (!body) return;
-      body.classList.add("line-clamp-5");
+      body.classList.add("line-clamp-3");
 
       // `astro:page-load` also fires on first load; a double-bound toggle would
       // clamp and unclamp in the same click.
@@ -269,7 +316,7 @@ const mapSrc =
       toggle.dataset.bound = "1";
 
       toggle.addEventListener("click", () => {
-        const clamped = body.classList.toggle("line-clamp-5");
+        const clamped = body.classList.toggle("line-clamp-3");
         toggle.textContent = clamped ? "Ver más ↓" : "Ver menos ↑";
       });
     });
@@ -286,15 +333,39 @@ const mapSrc =
           tabs.forEach((t) => {
             const on = t === tab;
             t.setAttribute("aria-selected", String(on));
-            t.classList.toggle("!bg-ink", on);
-            t.classList.toggle("!border-ink", on);
-            t.classList.toggle("!text-white", on);
+            t.classList.toggle("pill-on", on);
+            t.classList.toggle("pill-off", !on);
           });
           root.querySelectorAll<HTMLElement>("[data-progress-panel]").forEach((panel) => {
             panel.hidden = panel.dataset.progressPanel !== index;
           });
         });
       });
+    });
+
+    // Section pills follow the scroll. An observer rather than a scroll handler
+    // so the browser does the maths, and `rootMargin` biases the "current"
+    // section to whatever is under the top third of the viewport.
+    const nav = document.querySelector<HTMLElement>("[data-section-nav]");
+    if (!nav || nav.dataset.bound) return;
+    nav.dataset.bound = "1";
+
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>("[data-section-link]")];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (!visible) return;
+        links.forEach((link) => {
+          const on = link.dataset.sectionLink === visible.target.id;
+          link.classList.toggle("pill-on", on);
+          link.classList.toggle("pill-off", !on);
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px" },
+    );
+    links.forEach((link) => {
+      const section = document.getElementById(link.dataset.sectionLink!);
+      if (section) observer.observe(section);
     });
   }
 

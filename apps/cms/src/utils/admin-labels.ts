@@ -96,6 +96,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     heroMobile: { label: "Imagen principal (móvil)" },
     location: { label: "Ubicación" },
     video: { label: "Video" },
+    brochure: {
+      label: "Brochure",
+      description: "PDF descargable. Sale como pestaña propia en la galería.",
+    },
     tour360Url: { label: "Recorrido 360°", description: "URL para incrustar." },
     constructionProgress: { label: "Avance de obra", description: "Un video por mes." },
     specSheet: { label: "Ficha técnica" },
@@ -119,6 +123,14 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     email: { label: "Correo" },
     phone: { label: "Celular" },
     residenceCountry: { label: "País de residencia" },
+    incomeRange: { label: "Rango de ingresos" },
+    residenceCity: { label: "Ciudad de residencia" },
+    severance: { label: "Cesantías" },
+    savingsRange: { label: "Ahorros disponibles" },
+    firstHome: {
+      label: "¿Primera vivienda?",
+      description: "Vacío significa que no lo respondió, que no es lo mismo que un no.",
+    },
     message: { label: "Mensaje" },
     project: { label: "Proyecto" },
     source: { label: "Origen" },
@@ -235,6 +247,27 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "% del ingreso disponible para la cuota",
       description: "Regla general con la que el simulador recomienda la cuota máxima.",
     },
+  },
+  "api::lead-form-config.lead-form-config": {
+    sectionOptions: {
+      label: "Opciones de los desplegables",
+      description:
+        "Las comparten el formulario de la ficha de proyecto y la banda de asesoría. Cada línea es una opción y se guarda en el lead tal cual está escrita.",
+    },
+    incomeRanges: { label: "Rango de ingresos" },
+    savingsRanges: { label: "Ahorros disponibles" },
+    severanceOptions: {
+      label: "Cesantías",
+      description: "Normalmente «Sí», «No» y «No estoy seguro».",
+    },
+    residenceCities: { label: "Ciudad de residencia" },
+    sectionAdvice: {
+      label: "Banda «Recibe una asesoría personalizada»",
+      description: "El texto que acompaña al formulario al pie de la ficha de proyecto.",
+    },
+    adviceEyebrow: { label: "Antetítulo" },
+    adviceTitle: { label: "Título" },
+    adviceBody: { label: "Texto" },
   },
   "api::faq-bot-config.faq-bot-config": {
     enabled: {
@@ -475,6 +508,7 @@ const COMPONENTS: Record<string, FieldLabels> = {
   "project.sales-room": {
     schedule: { label: "Horario" },
     phone: { label: "Teléfono" },
+    email: { label: "Correo" },
     whatsappUrl: { label: "Enlace de WhatsApp" },
   },
   "shared.geo": {

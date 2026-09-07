@@ -6,6 +6,7 @@ import type {
   ForeignBuyerPage,
   HomeBanner,
   HomePage,
+  LeadFormConfig,
   LegalDocument,
   Macroproject,
   Post,
@@ -236,6 +237,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[financing]": "true",
     "populate[salesRoom]": "true",
     "populate[constructionProgress]": "true",
+    "populate[brochure]": "true",
   });
   return data?.[0] ?? null;
 }
@@ -330,6 +332,23 @@ export async function getHomePage(): Promise<HomePage | null> {
     "populate[seo][populate][ogImage]": "true",
   });
   return homePagePromise;
+}
+
+/**
+ * Las opciones de los desplegables de calificación. Memoizado porque lo pide
+ * cada ficha de proyecto y hay una por proyecto: sin esto el build repetiría la
+ * misma consulta tantas veces como proyectos publicados haya.
+ */
+let leadFormConfigPromise: Promise<LeadFormConfig | null> | null = null;
+
+export async function getLeadFormConfig(): Promise<LeadFormConfig | null> {
+  leadFormConfigPromise ??= strapiFetch<LeadFormConfig>("lead-form-config", {
+    "populate[incomeRanges]": "true",
+    "populate[savingsRanges]": "true",
+    "populate[severanceOptions]": "true",
+    "populate[residenceCities]": "true",
+  });
+  return leadFormConfigPromise;
 }
 
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {

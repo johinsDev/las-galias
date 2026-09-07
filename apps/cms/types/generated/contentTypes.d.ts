@@ -818,6 +818,47 @@ export interface ApiJobRunJobRun extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiLeadFormConfigLeadFormConfig extends Struct.SingleTypeSchema {
+  collectionName: "lead_form_config";
+  info: {
+    description: "Las opciones de los desplegables de calificaci\u00F3n. Las comparten el formulario de la ficha de proyecto y la banda \u00ABRecibe una asesor\u00EDa personalizada\u00BB, as\u00ED que cambiarlas aqu\u00ED las cambia en los dos sitios a la vez";
+    displayName: "Configuraci\u00F3n \u00B7 Formularios";
+    pluralName: "lead-form-configs";
+    singularName: "lead-form-config";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    adviceBody: Schema.Attribute.Text;
+    adviceEyebrow: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Asesor\u00EDa personalizada">;
+    adviceTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Recibe una asesor\u00EDa personalizada">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    incomeRanges: Schema.Attribute.Component<"page.list-item", true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::lead-form-config.lead-form-config"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    residenceCities: Schema.Attribute.Component<"page.list-item", true>;
+    savingsRanges: Schema.Attribute.Component<"page.list-item", true>;
+    sectionAdvice: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionOptions: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    severanceOptions: Schema.Attribute.Component<"page.list-item", true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   collectionName: "leads";
   info: {
@@ -843,6 +884,8 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<"pending">;
     crmVisitId: Schema.Attribute.String;
     email: Schema.Attribute.Email & Schema.Attribute.Required;
+    firstHome: Schema.Attribute.Boolean;
+    incomeRange: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::lead.lead"> &
       Schema.Attribute.Private;
@@ -851,7 +894,10 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     phone: Schema.Attribute.String & Schema.Attribute.Required;
     project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
+    residenceCity: Schema.Attribute.String;
     residenceCountry: Schema.Attribute.String;
+    savingsRange: Schema.Attribute.String;
+    severance: Schema.Attribute.String;
     source: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
@@ -1075,6 +1121,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   attributes: {
     amenities: Schema.Attribute.Relation<"manyToMany", "api::amenity.amenity">;
     appliesSubsidy: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    brochure: Schema.Attribute.Media<"files" | "images">;
     city: Schema.Attribute.Relation<"manyToOne", "api::city.city"> & Schema.Attribute.Required;
     constructionProgress: Schema.Attribute.Component<"project.construction-progress", true>;
     constructionStatus: Schema.Attribute.Enumeration<
@@ -1659,6 +1706,7 @@ declare module "@strapi/strapi" {
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::home-page.home-page": ApiHomePageHomePage;
       "api::job-run.job-run": ApiJobRunJobRun;
+      "api::lead-form-config.lead-form-config": ApiLeadFormConfigLeadFormConfig;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
       "api::macroproject.macroproject": ApiMacroprojectMacroproject;

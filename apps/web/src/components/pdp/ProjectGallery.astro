@@ -12,9 +12,12 @@ const { project } = Astro.props;
 
 const hero = project.heroDesktop ?? project.heroMobile;
 const gallery = project.gallery ?? [];
-const secondary = gallery.slice(0, 2);
+// The hero is usually also the first gallery item; showing it twice next to
+// itself reads as a mistake.
+const secondary = gallery.filter((img) => img.url !== hero?.url).slice(0, 2);
 const hasTour = Boolean(project.tour360Url);
 const hasMap = Boolean(project.location?.lat && project.location?.lng);
+const brochureUrl = project.brochure?.url ? mediaUrl(project.brochure.url) : null;
 
 // Tabs only earn their place when there is more than one thing to switch to.
 const tabs = [
@@ -30,13 +33,13 @@ const mapSrc = hasMap
 
 {
   hero?.url && (
-    <section class="container py-6" data-gallery>
+    <section class="container pt-6 pb-8 md:pt-8" data-gallery>
       <div data-panel="galeria">
-        <div class="grid gap-3 md:grid-cols-[1.7fr_1fr]">
+        <div class="grid gap-4 md:grid-cols-[1.7fr_1fr]">
           {/* transition:name must stay in sync with ProjectCard.astro — it is what
               makes the card→PDP hero morph work under View Transitions. */}
           <div
-            class="bg-surface aspect-[16/11] overflow-hidden rounded-2xl"
+            class="bg-surface aspect-[348/232] overflow-hidden rounded-3xl md:aspect-[16/11] md:rounded-[28px]"
             transition:name={`project-hero-${project.slug}`}
           >
             <picture>
@@ -53,14 +56,13 @@ const mapSrc = hasMap
               />
             </picture>
           </div>
-          {/* `h-0 min-h-full` is the load-bearing bit: h-0 stops this column from
-              contributing its content height to the row (which made it taller
-              than the hero), and min-h-full stretches it to the height the hero
-              defines. The two 1fr rows then split that height exactly. */}
-          <div class="grid h-0 min-h-full grid-rows-2 gap-3">
-            {(secondary.length > 0 ? secondary : [null, null]).map((img) => (
-              <div class="bg-surface min-h-0 overflow-hidden rounded-2xl">
-                {img?.url && (
+          {/* The two side images are desktop-only: the design's phone shows a
+              single photograph, and stacking three of them would push the whole
+              page down a screen. */}
+          {secondary.length > 0 && (
+            <div class="hidden h-0 min-h-full grid-rows-2 gap-4 md:grid">
+              {secondary.map((img) => (
+                <div class="bg-surface min-h-0 overflow-hidden rounded-[28px]">
                   <Image
                     src={mediaUrl(img.url)}
                     alt={img.alternativeText ?? project.name}
@@ -68,18 +70,19 @@ const mapSrc = hasMap
                     height={375}
                     class="h-full w-full object-cover"
                   />
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {hasTour && (
         <div data-panel="tour" hidden>
-          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-2xl">
+          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+            {/* Igual que el mapa: un iframe escondido se descarga igual. */}
             <iframe
-              src={project.tour360Url!}
+              data-src={project.tour360Url!}
               title={`Recorrido 360° de ${project.name}`}
               loading="lazy"
               allowfullscreen
@@ -91,9 +94,12 @@ const mapSrc = hasMap
 
       {mapSrc && (
         <div data-panel="mapa" hidden>
-          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-2xl">
+          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+            {/* `data-src`, not `src`: this panel starts hidden, and a hidden
+                iframe still downloads Google's whole map bundle. It is swapped
+                in the first time the tab is opened. */}
             <iframe
-              src={mapSrc}
+              data-src={mapSrc}
               title={`Ubicación de ${project.name}`}
               loading="lazy"
               class="h-full w-full border-0"
@@ -102,19 +108,33 @@ const mapSrc = hasMap
         </div>
       )}
 
-      {tabs.length > 1 && (
-        <div class="mt-4 flex flex-wrap gap-2" role="tablist" aria-label="Medios del proyecto">
-          {tabs.map((tab, i) => (
-            <button
-              type="button"
-              role="tab"
-              aria-selected={i === 0 ? "true" : "false"}
-              data-tab={tab.id}
-              class:list={["chip transition-colors", i === 0 && "!bg-ink !border-ink !text-white"]}
+      {(tabs.length > 1 || brochureUrl) && (
+        <div class="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
+          <div class="flex gap-2" role="tablist" aria-label="Medios del proyecto">
+            {tabs.map((tab, i) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={i === 0 ? "true" : "false"}
+                data-tab={tab.id}
+                class:list={["pill", i === 0 ? "pill-on" : "pill-off"]}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          {/* The brochure is a download, not a panel: it never becomes the
+              selected tab, it just sits in the same row as the design draws it. */}
+          {brochureUrl && (
+            <a
+              href={brochureUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pill pill-off shrink-0"
             >
-              {tab.label}
-            </button>
-          ))}
+              Brochure
+            </a>
+          )}
         </div>
       )}
     </section>
@@ -137,12 +157,18 @@ const mapSrc = hasMap
           buttons.forEach((b) => {
             const on = b === button;
             b.setAttribute("aria-selected", String(on));
-            b.classList.toggle("!bg-ink", on);
-            b.classList.toggle("!border-ink", on);
-            b.classList.toggle("!text-white", on);
+            b.classList.toggle("pill-on", on);
+            b.classList.toggle("pill-off", !on);
           });
           root.querySelectorAll<HTMLElement>("[data-panel]").forEach((panel) => {
-            panel.hidden = panel.dataset.panel !== target;
+            const on = panel.dataset.panel === target;
+            panel.hidden = !on;
+            if (!on) return;
+            // First reveal pays for the embed; afterwards `src` is already set.
+            panel.querySelectorAll<HTMLIFrameElement>("iframe[data-src]").forEach((frame) => {
+              frame.src = frame.dataset.src!;
+              delete frame.dataset.src;
+            });
           });
         });
       });

@@ -53,6 +53,10 @@ const DEPLOY_ACTIONS = new Set(["publish", "unpublish", "discardDraft", "delete"
 const DEPLOY_ON_UPDATE = new Set<string>([
   "api::faq-bot-config.faq-bot-config",
   "api::calculator-config.calculator-config",
+  // Las opciones de los desplegables de calificación se hornean en el HTML de
+  // cada ficha de proyecto, así que añadir un rango sin reconstruir lo deja
+  // invisible en el sitio.
+  "api::lead-form-config.lead-form-config",
   // The daily cron writes here, and the site is static: without a redeploy the
   // TRM refreshes in the CMS every morning and the published pages keep quoting
   // whatever rate was current at the last build. USD and EUR prices were stale
@@ -199,6 +203,7 @@ export default {
       "api::exchange-rate.exchange-rate.find",
       "api::foreign-buyer-page.foreign-buyer-page.find",
       "api::home-page.home-page.find",
+      "api::lead-form-config.lead-form-config.find",
     ];
     const actions = [
       ...reads,
