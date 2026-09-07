@@ -12,11 +12,22 @@ export const LeadSchema = v.object({
     v.string(),
     v.trim(),
     // The field is displayed grouped ("300 123 4567"); strip whitespace before
-    // validating and sending so Strapi stores a clean "3001234567".
-    v.transform((s) => s.replace(/\s+/g, "")),
+    // validating and sending so Strapi stores a clean number.
+    v.transform((s) => s.replace(/[\s()-]/g, "")),
+    /**
+     * Colombia keeps its strict rule — a mobile is ten digits starting in 3,
+     * a landline seven or eight — and anything with another calling code is
+     * validated as plain E.164.
+     *
+     * The form now always carries a dial-code picker, so a Colombian number
+     * arrives as "+573001234567" rather than the bare "3001234567" it used to
+     * send. The CRM normalises by prepending 57 to what looks Colombian; what
+     * it does with an already-prefixed number is unverified — see
+     * docs/sinco/discovery-pruebas.md before pointing this at production.
+     */
     v.regex(
-      /^(\+57)?[3][0-9]{9}$|^(\+57)?[1-8][0-9]{6,7}$/,
-      "Ingresa un teléfono colombiano válido",
+      /^\+57[3][0-9]{9}$|^\+57[1-8][0-9]{6,7}$|^(?:\+57)?[3][0-9]{9}$|^\+(?!57)[1-9]\d{7,14}$/,
+      "Ingresa un teléfono válido con su indicativo",
     ),
   ),
   message: v.optional(v.pipe(v.string(), v.maxLength(1000))),

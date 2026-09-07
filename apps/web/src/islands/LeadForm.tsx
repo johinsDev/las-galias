@@ -1,4 +1,4 @@
-import { useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import { Field, Form, setInput, useForm } from "@formisch/react";
 
 import type { LeadFormConfig } from "@lasgalias/schemas";
@@ -8,6 +8,8 @@ import { Input } from "@lasgalias/ui/components/input";
 import { CountryCombobox } from "@lasgalias/ui/components/country-combobox";
 import { PhoneField } from "@lasgalias/ui/components/phone-field";
 import { Select } from "@lasgalias/ui/components/select";
+
+import { QUALIFICATION_EVENT, type QualificationDetail } from "@/lib/qualification";
 
 interface LeadFormProps {
   projectDocumentId?: string;
@@ -45,14 +47,6 @@ function options(items?: { text: string }[]): string[] {
 }
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
-
-/** Groups a Colombian mobile number as "300 123 4567" while typing. */
-function formatCoPhone(value: string): string {
-  const d = value.replace(/\D/g, "").slice(0, 10);
-  if (d.length <= 3) return d;
-  if (d.length <= 6) return `${d.slice(0, 3)} ${d.slice(3)}`;
-  return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
-}
 
 /**
  * Campaign attribution off the landing URL. The CRM files the lead under the
@@ -110,10 +104,30 @@ export default function LeadForm({
       // ahí el consentimiento lo da la persona y no puede venir marcado.
       ...(qualification ? {} : { acceptsDataPolicy: true }),
       acceptsContact: true,
-      ...(international ? { residenceCountry: "Colombia", phone: "+57" } : {}),
+      phone: "+57",
+      ...(international ? { residenceCountry: "Colombia" } : {}),
       ...readUtm(),
     },
   });
+
+  /**
+   * Lo que la banda de asesoría recogió abajo. Ese bloque no tiene nombre ni
+   * teléfono —el diseño no los dibuja— así que su botón trae aquí las respuestas
+   * y la persona solo añade cómo contactarla.
+   */
+  useEffect(() => {
+    if (!qualification) return;
+    const onFilled = (event: Event) => {
+      const detail = (event as CustomEvent<QualificationDetail>).detail;
+      if (!detail) return;
+      for (const [key, value] of Object.entries(detail)) {
+        if (value === undefined) continue;
+        setInput(form, { path: [key as "incomeRange"], input: value as string });
+      }
+    };
+    document.addEventListener(QUALIFICATION_EVENT, onFilled);
+    return () => document.removeEventListener(QUALIFICATION_EVENT, onFilled);
+  }, [form, qualification]);
 
   if (status === "ok") {
     return (
@@ -218,51 +232,23 @@ export default function LeadForm({
         )}
 
         <Field of={form} path={["phone"]}>
-          {(field) =>
-            international ? (
-              <div>
-                <label className={LABEL} htmlFor={`${uid}-phone`}>
-                  WhatsApp
-                </label>
-                <PhoneField
-                  id={`${uid}-phone`}
-                  name={field.props.name}
-                  value={field.input ?? ""}
-                  onValueChange={(phone: string) =>
-                    setInput(form, { path: ["phone"], input: phone })
-                  }
-                  invalid={Boolean(field.errors)}
-                />
-                {field.errors && (
-                  <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-                )}
-              </div>
-            ) : (
-              <div>
-                <label className={LABEL} htmlFor={`${uid}-phone`}>
-                  WhatsApp / Celular
-                </label>
-                <Input
-                  {...field.props}
-                  id={`${uid}-phone`}
-                  type="tel"
-                  inputMode="tel"
-                  value={field.input ?? ""}
-                  autoComplete="tel"
-                  placeholder="300 123 4567"
-                  onChange={(e) =>
-                    setInput(form, {
-                      path: ["phone"],
-                      input: formatCoPhone(e.currentTarget.value),
-                    })
-                  }
-                />
-                {field.errors && (
-                  <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
-                )}
-              </div>
-            )
-          }
+          {(field) => (
+            <div>
+              <label className={LABEL} htmlFor={`${uid}-phone`}>
+                {international ? "WhatsApp" : "WhatsApp / Celular"}
+              </label>
+              <PhoneField
+                id={`${uid}-phone`}
+                name={field.props.name}
+                value={field.input ?? ""}
+                onValueChange={(phone: string) => setInput(form, { path: ["phone"], input: phone })}
+                invalid={Boolean(field.errors)}
+              />
+              {field.errors && (
+                <p className="text-destructive text-caption mt-1">{field.errors[0]}</p>
+              )}
+            </div>
+          )}
         </Field>
 
         <Field of={form} path={["email"]}>
@@ -301,19 +287,17 @@ export default function LeadForm({
                     name={field.props.name}
                     chevron={chevronSide}
                     value={(field.input as string | undefined) ?? ""}
-                    onChange={(event) =>
+                    items={projects.map((item) => ({
+                      value: item.documentId,
+                      label: item.name,
+                    }))}
+                    onValueChange={(next: string) =>
                       setInput(form, {
                         path: ["projectDocumentId"],
-                        input: event.currentTarget.value || undefined,
+                        input: next || undefined,
                       })
                     }
-                  >
-                    {projects.map((item) => (
-                      <option key={item.documentId} value={item.documentId}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Select>
+                  />
                 </div>
               )}
             </Field>
@@ -498,16 +482,11 @@ function QualificationSelect({
             chevron={chevron}
             value={(field.input as string | undefined) ?? ""}
             placeholder={placeholder}
-            onChange={(event) =>
-              setInput(form, { path: [path], input: event.currentTarget.value || undefined })
+            items={items.map((item) => ({ value: item, label: item }))}
+            onValueChange={(next: string) =>
+              setInput(form, { path: [path], input: next || undefined })
             }
-          >
-            {items.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
       )}
     </Field>

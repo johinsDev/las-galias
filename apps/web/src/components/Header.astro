@@ -1,5 +1,7 @@
 ---
 import Logo from "@/components/Logo.astro";
+import { ProjectSearch } from "@lasgalias/ui/components/project-search";
+import { getProjects } from "@/lib/strapi";
 import { SIMULATORS } from "@/lib/simulator-pages";
 
 /**
@@ -38,7 +40,19 @@ const current = Astro.url.pathname;
  */
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
 import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
+
+// El catálogo para la paleta de búsqueda. `getProjects` está memoizado, así que
+// esto no repite la consulta una vez por página.
+const searchableProjects = (await getProjects()).map((project) => ({
+  slug: project.slug,
+  name: project.name,
+  location: [project.city?.name, project.zone?.name, project.neighborhood]
+    .filter(Boolean)
+    .join(" · "),
+}));
 ---
+
+<ProjectSearch client:idle projects={searchableProjects} />
 
 {
   /* `relative` so the mobile sheet can hang off the bar and overlay the page
@@ -210,6 +224,24 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
     border-bottom: 1px solid var(--line);
   }
 </style>
+
+<script>
+  // Los botones del encabezado son marcado suelto; la paleta es una isla. Se
+  // hablan por un evento en `document`, igual que el simulador y la barra de
+  // precio del móvil.
+  function setupSearchTriggers() {
+    document.querySelectorAll<HTMLElement>("[data-open-search]").forEach((button) => {
+      if (button.dataset.bound) return;
+      button.dataset.bound = "1";
+      button.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("lg:open-search"));
+      });
+    });
+  }
+
+  setupSearchTriggers();
+  document.addEventListener("astro:page-load", setupSearchTriggers);
+</script>
 
 <script>
   // Re-bound on every View Transitions navigation: Base.astro mounts

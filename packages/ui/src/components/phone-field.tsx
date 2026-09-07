@@ -9,27 +9,8 @@ import {
   nationalMax,
   type Country,
 } from "@lasgalias/ui/lib/countries";
+import { Select } from "@lasgalias/ui/components/select";
 import { cn } from "@lasgalias/ui/lib/utils";
-
-const icon = {
-  width: 15,
-  height: 15,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-} as const;
-
-function ChevronsUpDown() {
-  return (
-    <svg {...icon} width={14} height={14} aria-hidden="true">
-      <path d="m7 15 5 5 5-5" />
-      <path d="m7 9 5-5 5 5" />
-    </svg>
-  );
-}
 
 /**
  * Groups the national number the way its own country writes it — Colombia's ten
@@ -104,38 +85,32 @@ export function PhoneField({
       <input type="hidden" name={name} value={value} />
 
       {/*
-        El indicativo usa el mismo select nativo que el resto del formulario. Era
-        un combobox con buscador, pero aquí la búsqueda no aportaba —el país ya
-        se elige arriba, en su propio campo con buscador— y en el móvil el
-        selector del sistema gana a cualquier lista propia.
+        El indicativo usa el mismo desplegable del sistema de diseño que el
+        resto del formulario, con un disparador propio: la bandera y el prefijo,
+        que es lo único que cabe en esa caja. El buscador no hace falta —el país
+        se elige arriba, en su campo con buscador— y el panel propio evita que en
+        mitad del formulario se abra el menú gris del sistema operativo.
       */}
-      <label className="relative flex shrink-0 items-center">
-        <span className="sr-only">Indicativo del país</span>
-        <span
-          aria-hidden="true"
-          className="text-body-sm text-ink border-input pointer-events-none flex h-full items-center gap-1.5 border-r pr-2.5 pl-3"
-        >
-          <span>{flagOf(country.code)}</span>
-          <span className="tabular-nums">{country.dial}</span>
-          <span className="text-ink-faint">
-            <ChevronsUpDown />
-          </span>
-        </span>
-        <select
-          value={country.code}
-          onChange={(event) => {
-            const next = COUNTRIES.find((c) => c.code === event.target.value);
-            if (next) emit(next, national);
-          }}
-          className="absolute inset-0 cursor-pointer opacity-0"
-        >
-          {COUNTRIES.map((item) => (
-            <option key={item.code} value={item.code}>
-              {item.name} ({item.dial})
-            </option>
-          ))}
-        </select>
-      </label>
+      <Select
+        aria-label="Indicativo del país"
+        value={country.code}
+        onValueChange={(code: string) => {
+          const next = COUNTRIES.find((c) => c.code === code);
+          if (next) emit(next, national);
+        }}
+        items={COUNTRIES.map((item) => ({
+          value: item.code,
+          label: `${flagOf(item.code)}  ${item.name} ${item.dial}`,
+        }))}
+        popupClassName="w-72"
+        triggerClassName="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors outline-none"
+        trigger={
+          <>
+            <span aria-hidden="true">{flagOf(country.code)}</span>
+            <span className="tabular-nums">{country.dial}</span>
+          </>
+        }
+      />
 
       <input
         id={id}

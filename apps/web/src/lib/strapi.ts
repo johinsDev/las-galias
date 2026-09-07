@@ -207,14 +207,20 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[gallery]": "true",
 };
 
+/**
+ * Memoizado: el encabezado pide el catálogo en todas las páginas para la paleta
+ * de búsqueda, y sin esto el build repetiría la misma consulta una vez por
+ * página construida.
+ */
+let projectsPromise: Promise<Project[]> | null = null;
+
 export async function getProjects(): Promise<Project[]> {
-  return (
-    (await strapiFetch<Project[]>("projects", {
-      ...PROJECT_CARD_POPULATE,
-      "pagination[pageSize]": "100",
-      sort: "name:asc",
-    })) ?? []
-  );
+  projectsPromise ??= strapiFetch<Project[]>("projects", {
+    ...PROJECT_CARD_POPULATE,
+    "pagination[pageSize]": "100",
+    sort: "name:asc",
+  }).then((projects) => projects ?? []);
+  return projectsPromise;
 }
 
 export async function getProject(slug: string): Promise<Project | null> {

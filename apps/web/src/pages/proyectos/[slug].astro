@@ -85,7 +85,7 @@ const description = project.seo?.metaDescription ?? undefined;
   <RecommendedProjects project={project} />
 
   <!-- 05 Asesoría personalizada -->
-  {leadForm && <AdviceBand project={project} config={leadForm} projects={projectOptions} />}
+  {leadForm && <AdviceBand config={leadForm} />}
 
   {
     /* La barra de precio del móvil va al final del documento: es `fixed`, y
