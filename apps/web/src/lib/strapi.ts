@@ -5,6 +5,7 @@ import type {
   FaqBotPublicConfig,
   ForeignBuyerPage,
   HomeBanner,
+  HomePage,
   LegalDocument,
   Macroproject,
   Post,
@@ -200,6 +201,9 @@ const PROJECT_CARD_POPULATE: Query = {
   "populate[specSheet]": "true",
   "populate[salesRoom]": "true",
   "populate[zone]": "true",
+  // The approved card is a small carousel, not a single photo. The hero is
+  // still slide one; these are the rest.
+  "populate[gallery]": "true",
 };
 
 export async function getProjects(): Promise<Project[]> {
@@ -310,6 +314,22 @@ export async function getExchangeRate(): Promise<ExchangeRate | null> {
 
 export async function getCalculatorConfig(): Promise<CalculatorConfig | null> {
   return strapiFetch<CalculatorConfig>("calculator-config");
+}
+
+/**
+ * The home's copy. Memoised because `/` is one page but the layout asks for it
+ * once per build anyway, and a second fetch would be pure latency.
+ */
+let homePagePromise: Promise<HomePage | null> | null = null;
+
+export async function getHomePage(): Promise<HomePage | null> {
+  homePagePromise ??= strapiFetch<HomePage>("home-page", {
+    "populate[steps][populate][image]": "true",
+    "populate[tools]": "true",
+    "populate[stats]": "true",
+    "populate[seo][populate][ogImage]": "true",
+  });
+  return homePagePromise;
 }
 
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {

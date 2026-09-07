@@ -201,6 +201,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     desktopImage: { label: "Imagen (escritorio)" },
     mobileImage: { label: "Imagen (móvil)" },
     link: { label: "Enlace" },
+    ctaLabel: {
+      label: "Texto del botón",
+      description: "El botón sobre la imagen. Vacío no pinta botón, solo la imagen enlazada.",
+    },
     order: { label: "Orden" },
     active: { label: "Activo" },
   },
@@ -296,6 +300,50 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     eurSource: { label: "Fuente EUR" },
     validFrom: { label: "Vigente desde" },
     fetchedAt: { label: "Consultada el" },
+  },
+  "api::home-page.home-page": {
+    sectionHero: {
+      label: "Portada",
+      description:
+        "La franja roja de arriba. El buscador manda a /proyectos; aquí solo se escribe lo que dice.",
+    },
+    heroEyebrow: { label: "Antetítulo" },
+    heroTitle: { label: "Título principal" },
+    heroSubtitle: { label: "Subtítulo", description: "Un salto de línea se respeta." },
+    searchPlaceholder: { label: "Texto guía del buscador" },
+    sectionSteps: {
+      label: "Comprar es muy fácil",
+      description: "Los tres pasos con foto. El número sale del orden, no se escribe.",
+    },
+    stepsEyebrow: { label: "Antetítulo" },
+    stepsTitle: { label: "Título" },
+    steps: { label: "Pasos" },
+    sectionTools: {
+      label: "Planea tu compra",
+      description: "Los atajos a los simuladores.",
+    },
+    toolsEyebrow: { label: "Antetítulo" },
+    toolsTitle: { label: "Título" },
+    tools: { label: "Tarjetas" },
+    sectionStats: {
+      label: "Cifras",
+      description: "La banda de indicadores. Si se deja vacía, la banda no se pinta.",
+    },
+    stats: { label: "Cifras" },
+    sectionBlog: {
+      label: "Blog",
+      description:
+        "Solo los títulos: los tres artículos salen del blog, siempre los más recientes.",
+    },
+    blogEyebrow: { label: "Antetítulo" },
+    blogTitle: { label: "Título" },
+    sectionCta: { label: "Cierre", description: "La última llamada a la acción de la página." },
+    ctaTitle: { label: "Título" },
+    ctaBody: { label: "Texto" },
+    ctaLabel: { label: "Texto del botón" },
+    ctaHref: { label: "Enlace del botón" },
+    sectionSeo: { label: "SEO" },
+    seo: { label: "SEO" },
   },
   "api::foreign-buyer-page.foreign-buyer-page": {
     eyebrow: { label: "Antetítulo" },
@@ -441,6 +489,21 @@ const COMPONENTS: Record<string, FieldLabels> = {
   },
   "page.step": { title: { label: "Título" }, body: { label: "Texto" } },
   "page.list-item": { text: { label: "Texto" } },
+  "page.illustrated-step": {
+    title: { label: "Título" },
+    body: { label: "Texto" },
+    image: { label: "Foto" },
+  },
+  "page.tool-card": {
+    title: { label: "Título" },
+    body: { label: "Texto" },
+    href: { label: "Enlace", description: "Por ejemplo /simuladores/credito-hipotecario." },
+    iconKey: { label: "Icono" },
+  },
+  "page.stat": {
+    value: { label: "Cifra", description: "Tal cual se lee: «+30.000», «#1», «30 años»." },
+    label: { label: "Etiqueta" },
+  },
 };
 
 /** Merges the labels into one stored configuration; returns true if it changed. */

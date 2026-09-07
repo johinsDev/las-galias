@@ -1,0 +1,46 @@
+---
+import { Image } from "astro:assets";
+
+import { mediaUrl } from "@/lib/strapi";
+
+/**
+ * "Comprar es muy fácil" — three steps, each led by a photo. The number comes
+ * from the position, so an editor reordering the list renumbers it for free.
+ */
+interface Step {
+  title: string;
+  body: string;
+  image?: { url: string; alternativeText?: string | null } | null;
+}
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<div class="mt-10 grid gap-8 md:grid-cols-3">
+  {
+    steps.map((step, index) => (
+      <div data-reveal>
+        {step.image?.url && (
+          <div class="bg-surface aspect-[16/10] overflow-hidden rounded-2xl">
+            <Image
+              src={mediaUrl(step.image.url)}
+              alt={step.image.alternativeText ?? ""}
+              width={560}
+              height={350}
+              class="h-full w-full object-cover"
+            />
+          </div>
+        )}
+        <span class="text-brand mt-6 inline-flex size-12 items-center justify-center rounded-full bg-[#fdf9fa] text-lg font-bold">
+          {index + 1}
+        </span>
+        <h3 class="text-h4 text-ink mt-6 font-semibold">{step.title}</h3>
+        <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
+      </div>
+    ))
+  }
+</div>

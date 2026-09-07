@@ -72,6 +72,17 @@ async function main() {
     return doc;
   }
 
+  // Single types have at most one document, so this writes over whatever is
+  // there rather than piling up a second one.
+  async function upsertSingleAndPublish(uid, data) {
+    const existing = await app.documents(uid).findFirst();
+    const doc = existing
+      ? await app.documents(uid).update({ documentId: existing.documentId, data })
+      : await app.documents(uid).create({ data });
+    await app.documents(uid).publish({ documentId: doc.documentId });
+    return doc;
+  }
+
   try {
     const marker = await app
       .documents("api::city.city")
@@ -275,7 +286,13 @@ async function main() {
         macroproject: spec.macroproject,
         location: spec.location,
         salesRoom: isSale
-          ? { schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.", phone: "300 000 0000" }
+          ? {
+              schedule: "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+              phone: "300 000 0000",
+              // Without this the card's CTA falls back to "Ver proyecto" and the
+              // approved WhatsApp button never shows up in a demo build.
+              whatsappUrl: "https://wa.me/573000000000",
+            }
           : undefined,
         amenities: isSale ? amenities.slice(0, 4).map((a) => a.documentId) : [],
         unitTypes,
@@ -310,6 +327,7 @@ async function main() {
     for (const [i, spec] of [
       { title: "Vive donde florece la ciudad", link: "/proyectos", palette: "forest" },
       { title: "Entrega inmediata en Medellín", link: "/proyectos/balcones-de-provenza", palette: "clay" },
+      { title: "Nuevo lanzamiento en Bogotá", link: "/proyectos/mirador-del-parque", palette: "sky" },
     ].entries()) {
       const desktopImage = await uploadSvg(`banner-${i + 1}-desktop`, {
         width: 1920,
@@ -326,6 +344,7 @@ async function main() {
       await createAndPublish("api::home-banner.home-banner", {
         title: spec.title,
         link: spec.link,
+        ctaLabel: "Ver proyecto",
         order: i,
         active: true,
         desktopImage: desktopImage.id,
@@ -333,6 +352,74 @@ async function main() {
       });
     }
     log("Home banners (desktop + mobile)");
+
+    /* home page copy */
+    const stepImages = [];
+    for (const [i, label] of ["Elige tu proyecto", "Aparta y financia", "Recibe tu hogar"].entries()) {
+      stepImages.push(
+        await uploadSvg(`home-step-${i + 1}`, {
+          width: 800,
+          height: 500,
+          label,
+          palette: ["forest", "sky", "clay"][i],
+        }),
+      );
+    }
+    await upsertSingleAndPublish("api::home-page.home-page", {
+      heroEyebrow: "Vivienda nueva · Colombia",
+      heroTitle: "Tu hogar en la ciudad que amas",
+      heroSubtitle:
+        "Encuentra vivienda nueva en las mejores ciudades de Colombia.\nCuota inicial desde el 20%.",
+      searchPlaceholder: "Busca por ciudad, zona o proyecto…",
+      stepsEyebrow: "Paso a paso",
+      stepsTitle: "Comprar es muy fácil",
+      steps: [
+        {
+          title: "Elige tu proyecto",
+          body: "Filtra por ciudad, precio y área. Agenda visita virtual o presencial sin costo.",
+          image: stepImages[0].id,
+        },
+        {
+          title: "Aparta y financia",
+          body: "Aparta con cuota inicial desde el 20%. Te asesoramos en crédito y subsidios VIS.",
+          image: stepImages[1].id,
+        },
+        {
+          title: "Recibe tu hogar",
+          body: "Entrega con estándares de alta calidad y acompañamiento postventa incluido.",
+          image: stepImages[2].id,
+        },
+      ],
+      toolsEyebrow: "Herramientas",
+      toolsTitle: "Planea tu compra",
+      tools: [
+        {
+          title: "Simulador de crédito",
+          body: "Calcula tu cuota mensual según precio, cuota inicial y plazo.",
+          href: "/simuladores/credito-hipotecario",
+          iconKey: "credit-card",
+        },
+        {
+          title: "¿Aplica subsidio VIS?",
+          body: "Verifica si accedes a subsidio Mi Casa Ya y cuánto te descuentan.",
+          href: "/simuladores/capacidad-de-pago",
+          iconKey: "subsidy",
+        },
+      ],
+      stats: [
+        { value: "+30.000", label: "Viviendas entregadas" },
+        { value: "+30", label: "Proyectos activos" },
+        { value: "#1", label: "En ventas VIS · Colombia" },
+        { value: "30 años", label: "De trayectoria" },
+      ],
+      blogEyebrow: "Blog",
+      blogTitle: "Aprende sobre vivienda",
+      ctaTitle: "Agenda tu cita sin costo",
+      ctaBody: "Un asesor te acompañará por todos los proyectos y opciones de financiación.",
+      ctaLabel: "Agenda tu cita",
+      ctaHref: "/servicio-al-cliente",
+    });
+    log("Home page copy");
 
     /* posts */
     // One post per category, so the blog listing's filters have something to

@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_page_stats",
+  "info": {
+    "displayName": "Cifra",
+    "description": "Una cifra de la banda de indicadores: el número grande y su etiqueta"
+  },
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

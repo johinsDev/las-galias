@@ -63,8 +63,10 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: "Figtree",
-      cssVariable: "--font-figtree",
+      // The design file's type is Public Sans, not Figtree — the eyebrow reads
+      // "Public Sans / 700 / 12px / 1.2px tracking" in Figma's inspector.
+      name: "Public Sans",
+      cssVariable: "--font-public-sans",
       weights: [400, 500, 600, 700, 800],
       styles: ["normal"],
       subsets: ["latin"],

@@ -1,0 +1,124 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_page",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "Página · Home",
+    "description": "The copy of the home page. The project cards, the banner carousel and the blog cards are NOT here: they come from their own collections. This is only the text around them"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "sectionHero": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "heroEyebrow": {
+      "type": "string",
+      "default": "Vivienda nueva · Colombia"
+    },
+    "heroTitle": {
+      "type": "string",
+      "required": true
+    },
+    "heroSubtitle": {
+      "type": "text"
+    },
+    "searchPlaceholder": {
+      "type": "string",
+      "default": "Busca por ciudad, zona o proyecto…"
+    },
+    "sectionSteps": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "stepsEyebrow": {
+      "type": "string",
+      "default": "Paso a paso"
+    },
+    "stepsTitle": {
+      "type": "string",
+      "default": "Comprar es muy fácil"
+    },
+    "steps": {
+      "type": "component",
+      "component": "page.illustrated-step",
+      "repeatable": true
+    },
+    "sectionTools": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "toolsEyebrow": {
+      "type": "string",
+      "default": "Herramientas"
+    },
+    "toolsTitle": {
+      "type": "string",
+      "default": "Planea tu compra"
+    },
+    "tools": {
+      "type": "component",
+      "component": "page.tool-card",
+      "repeatable": true
+    },
+    "sectionStats": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "stats": {
+      "type": "component",
+      "component": "page.stat",
+      "repeatable": true
+    },
+    "sectionBlog": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "blogEyebrow": {
+      "type": "string",
+      "default": "Blog"
+    },
+    "blogTitle": {
+      "type": "string",
+      "default": "Aprende sobre vivienda"
+    },
+    "sectionCta": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "ctaTitle": {
+      "type": "string",
+      "default": "Agenda tu cita sin costo"
+    },
+    "ctaBody": {
+      "type": "text"
+    },
+    "ctaLabel": {
+      "type": "string",
+      "default": "Agenda tu cita"
+    },
+    "ctaHref": {
+      "type": "string",
+      "default": "/servicio-al-cliente"
+    },
+    "sectionSeo": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

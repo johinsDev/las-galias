@@ -1,4 +1,5 @@
 ---
+import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import LeadForm from "@/islands/LeadForm";
@@ -23,32 +24,14 @@ const cities = [
   </section>
 
   <section class="container py-10 md:py-14">
-    {
-      cities.length > 1 && (
-        <div class="flex flex-wrap justify-center gap-2" id="city-filter">
-          <button
-            type="button"
-            data-filter=""
-            class="bg-primary text-primary-foreground text-body-sm rounded-full px-4 py-2 font-medium"
-          >
-            Todos
-          </button>
-          {cities.map((city) => (
-            <button
-              type="button"
-              data-filter={city.slug}
-              class="border-line-strong text-ink-muted hover:text-ink text-body-sm rounded-full border px-4 py-2 font-medium transition-colors"
-            >
-              {city.name}
-            </button>
-          ))}
-        </div>
-      )
-    }
+    <CityFilter cities={cities} target="#projects-grid" />
 
     {
       projects.length > 0 ? (
-        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" id="projects-grid">
+        <div
+          class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          id="projects-grid"
+        >
           {projects.map((project) => (
             <ProjectCard project={project} />
           ))}
@@ -123,29 +106,4 @@ const cities = [
       <a href="/servicio-al-cliente" class="btn btn-primary mt-8">Déjanos tus datos</a>
     </div>
   </section>
-
-  <script>
-    function initCityFilter() {
-      const container = document.getElementById("city-filter");
-      if (!container) return;
-      container.addEventListener("click", (event) => {
-        const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-filter]");
-        if (!button) return;
-        const filter = button.dataset.filter ?? "";
-        container.querySelectorAll<HTMLButtonElement>("[data-filter]").forEach((b) => {
-          const active = b === button;
-          b.classList.toggle("bg-primary", active);
-          b.classList.toggle("text-primary-foreground", active);
-          b.classList.toggle("border", !active);
-          b.classList.toggle("border-line-strong", !active);
-          b.classList.toggle("text-ink-muted", !active);
-        });
-        document.querySelectorAll<HTMLElement>("#projects-grid [data-city]").forEach((card) => {
-          card.style.display = !filter || card.dataset.city === filter ? "" : "none";
-        });
-      });
-    }
-    initCityFilter();
-    document.addEventListener("astro:page-load", initCityFilter);
-  </script>
 </Base>

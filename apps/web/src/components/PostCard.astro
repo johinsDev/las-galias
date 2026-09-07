@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+import type { Post } from "@lasgalias/schemas";
+
+import { categoryLabel, formatPostDate, readingMinutes } from "@/lib/blog";
+import { mediaUrl } from "@/lib/strapi";
+
+/**
+ * Blog card. Lived inline in the home page until the redesign asked for the
+ * same card on /blog and under an article, so it moved here.
+ */
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+
+// "4 jun 2026 · 9 min lectura" — the reading time is always there, estimated
+// from the body when no editor set it.
+const meta = [formatPostDate(post), `${readingMinutes(post)} min lectura`]
+  .filter(Boolean)
+  .join(" · ");
+const label = categoryLabel(post.category);
+---
+
+<article
+  class="group card-lift border-line hover:shadow-card-lg flex flex-col overflow-hidden rounded-2xl border bg-white"
+  data-reveal
+>
+  <a href={`/blog/${post.slug}`} class="flex flex-1 gap-4 p-3 sm:flex-col sm:gap-0 sm:p-0">
+    <div
+      class="bg-surface size-20 shrink-0 overflow-hidden rounded-xl sm:aspect-[16/10] sm:size-auto sm:rounded-none"
+    >
+      {
+        post.cover?.url && (
+          <Image
+            src={mediaUrl(post.cover.url)}
+            alt={post.cover.alternativeText ?? post.title}
+            width={640}
+            height={400}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        )
+      }
+    </div>
+    <div class="flex min-w-0 flex-1 flex-col sm:p-5">
+      {
+        label && (
+          <span class="eyebrow bg-brand-tint text-brand inline-flex self-start rounded-md px-2.5 py-1.5">
+            {label}
+          </span>
+        )
+      }
+      <h3 class="text-ink mt-2 leading-snug font-semibold">{post.title}</h3>
+      {
+        post.excerpt && (
+          <p class="text-body-sm text-ink-muted mt-2 line-clamp-2 max-sm:hidden">{post.excerpt}</p>
+        )
+      }
+      <p class="text-caption text-ink-faint mt-auto pt-2 sm:pt-4">{meta}</p>
+    </div>
+  </a>
+</article>

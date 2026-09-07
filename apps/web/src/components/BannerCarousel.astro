@@ -1,0 +1,384 @@
+---
+import { Image } from "astro:assets";
+import type { HomeBanner } from "@lasgalias/schemas";
+
+import { MoveLeft, MoveRight } from "lucide-astro";
+
+import { mediaUrl } from "@/lib/strapi";
+
+/**
+ * The campaign slider that straddles the hero's red band. The approved design
+ * lets the slide hang past the bottom of the red onto the white below, with the
+ * dots sitting on the white — so this draws its own white shelf rather than
+ * relying on where the section happens to end.
+ *
+ * It is a scroll-snap rail rather than a transform slider: the peek, the drag
+ * on touch and the keyboard scroll all come free, and with no JS at all it
+ * degrades to a horizontally scrollable strip.
+ *
+ * The loop is done by rendering the banners three times and silently jumping
+ * back to the middle copy once a scroll settles in an outer one. That keeps a
+ * neighbour visible on both sides at every position — the design never shows an
+ * empty gutter — without the rewind a "wrap to the first slide" would cause.
+ */
+interface Props {
+  banners: HomeBanner[];
+}
+
+const { banners } = Astro.props;
+
+// One copy cannot loop, so a single banner just sits there.
+const loops = banners.length > 1 ? 3 : 1;
+const slides = Array.from({ length: loops }, () => banners).flat();
+---
+
+{
+  banners.length > 0 && (
+    <div
+      class="banner relative"
+      data-banner-carousel
+      data-banner-count={banners.length}
+      data-banner-loop={loops > 1 ? "true" : "false"}
+      data-reveal
+    >
+      {/* The white the slide hangs onto. Behind everything, hence z-0. */}
+      <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />
+
+      <div class="relative z-10">
+        <div
+          class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
+          data-banner-rail
+        >
+          {slides.map((banner, index) => {
+            const image = banner.desktopImage;
+            const inner = (
+              <>
+                <Image
+                  src={mediaUrl(image.url)}
+                  alt={image.alternativeText ?? banner.title ?? ""}
+                  width={1000}
+                  height={640}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  class="h-full w-full object-cover"
+                />
+                {banner.ctaLabel && (
+                  <span class="btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl">
+                    {banner.ctaLabel}
+                  </span>
+                )}
+              </>
+            );
+            return (
+              <div class="banner-slide shrink-0 snap-center" data-banner-index={index}>
+                {/* The scale lives on this inner box so the snap box keeps its
+                    untransformed size and the centring maths stays exact. */}
+                <div class="banner-scale bg-brand-bright relative aspect-[348/242] overflow-hidden rounded-3xl md:aspect-[1424/780] md:rounded-[48px]">
+                  {banner.link ? (
+                    <a href={banner.link} class="block h-full w-full">
+                      {inner}
+                    </a>
+                  ) : (
+                    inner
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {banners.length > 1 && (
+          <>
+            {/* Centred on the slide's own edges, as the design places them —
+                not out at the viewport edges. */}
+            <button
+              type="button"
+              data-banner-prev
+              aria-label="Banner anterior"
+              class="banner-arrow banner-arrow-prev text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
+            >
+              <MoveLeft size={22} stroke-width={1.5} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              data-banner-next
+              aria-label="Banner siguiente"
+              class="banner-arrow banner-arrow-next text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
+            >
+              <MoveRight size={22} stroke-width={1.5} aria-hidden="true" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {banners.length > 1 && (
+        <div class="relative z-10 flex justify-center gap-2 pt-5" data-banner-dots>
+          {banners.map((_, index) => (
+            <button
+              type="button"
+              data-banner-dot={index}
+              aria-label={`Ir al banner ${index + 1}`}
+              class="h-1.5 rounded-full transition-all duration-300"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+<style>
+  /* The slide is a LENGTH and the padding is derived from it, on purpose.
+     Sizing the slide as a percentage resolves it against the rail's content
+     box, which the padding has already shrunk: the slides came out too narrow,
+     the rail could not scroll far enough to centre the last one, and
+     scroll-snap sprang it back to the first. Deriving the padding instead makes
+     every slide's centre an exactly reachable scroll offset.
+
+     1424 x 780 with a 48px radius is what the inspector reports for the slide
+     in the 1776-wide design frame. */
+  .banner {
+    /* 348 of a 390-wide mobile frame, per the inspector. */
+    --banner-slide: 89vw;
+    --banner-slide-max: 1600px;
+    /* How far the slide hangs past the red, plus room for the dots. */
+    --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
+  }
+
+  @media (width >= 48rem) {
+    .banner {
+      /* The slide is the CONTAINER's width — Figma measures it 1424 wide in a
+         1776 frame, which 80vw matches exactly. It sits at 84vw instead: with
+         the neighbours scaling toward the centre they now show their whole
+         margin, and the full 176px read as too much of them — this trims the
+         peek to about 140 without losing it. */
+      --banner-slide: min(86vw, var(--banner-slide-max));
+    }
+  }
+
+  /* The rail runs the full width and the gutters are faded out instead of
+     capped. A hard cap stopped the carousel at an interior line, so on a very
+     wide monitor the neighbour ended mid-air and read as a rendering bug;
+     letting it run to the edge and dissolve reads as "there is more".
+
+     The mask is opaque across exactly the centre slide and fades over the
+     gutters, so what the fade eats is only ever neighbour. It lives on the
+     scroller, so it stays put at the screen edges while the content moves
+     under it. */
+  .banner-rail {
+    padding-inline: calc((100% - var(--banner-slide)) / 2);
+    gap: 2.5rem;
+    --banner-fade: linear-gradient(
+      to right,
+      transparent 0,
+      #000 calc((100% - var(--banner-slide)) / 2),
+      #000 calc((100% + var(--banner-slide)) / 2),
+      transparent 100%
+    );
+    -webkit-mask-image: var(--banner-fade);
+    mask-image: var(--banner-fade);
+  }
+
+  .banner-slide {
+    width: var(--banner-slide);
+  }
+
+  .banner-shelf {
+    height: var(--banner-shelf);
+  }
+
+  /* The neighbours sit smaller than the centre one, as the design draws them.
+     The script writes the exact scale from the distance to the centre; this is
+     just the easing and the starting value for a no-JS render. */
+  .banner-scale {
+    transform: scale(0.82);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  /* On a phone the buttons straddle the slide edge — about a third of them
+     outside, which is all the gutter there is — so they stop landing on top of
+     the headline. From md up they hang ~70% over the edge, as the design draws
+     them. */
+  .banner-arrow-prev {
+    left: calc((100% - var(--banner-slide)) / 2 - 1rem);
+  }
+
+  .banner-arrow-next {
+    right: calc((100% - var(--banner-slide)) / 2 - 1rem);
+  }
+
+  @media (width >= 48rem) {
+    .banner-arrow-prev {
+      left: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    }
+
+    .banner-arrow-next {
+      right: calc((100% - var(--banner-slide)) / 2 - 1.9rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .banner-scale {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * One rail per page today, but written for many: the home is the only caller
+   * and the script is bundled once regardless.
+   */
+  function setupBannerCarousels() {
+    document.querySelectorAll<HTMLElement>("[data-banner-carousel]").forEach((root) => {
+      const rail = root.querySelector<HTMLElement>("[data-banner-rail]");
+      if (!rail) return;
+
+      const slides = [...rail.children] as HTMLElement[];
+      const dots = [...root.querySelectorAll<HTMLElement>("[data-banner-dot]")];
+      const count = Number(root.dataset.bannerCount) || slides.length;
+      const looping = root.dataset.bannerLoop === "true" && slides.length >= count * 3;
+
+      const centreOf = (slide: HTMLElement) => slide.offsetLeft + slide.offsetWidth / 2;
+      const railCentre = () => rail.scrollLeft + rail.clientWidth / 2;
+
+      /** Index of the slide whose centre is nearest the rail's centre. */
+      const currentIndex = () => {
+        let best = 0;
+        let bestDistance = Infinity;
+        slides.forEach((slide, i) => {
+          const distance = Math.abs(centreOf(slide) - railCentre());
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            best = i;
+          }
+        });
+        return best;
+      };
+
+      const offsetFor = (index: number) => centreOf(slides[index]) - rail.clientWidth / 2;
+
+      /**
+       * Scale by distance from the centre: 1 at the middle, 0.88 a full slide
+       * away. Written on every frame of the scroll so dragging feels continuous
+       * rather than snapping between two states.
+       */
+      const paintScale = () => {
+        const centre = railCentre();
+        slides.forEach((slide) => {
+          const box = slide.firstElementChild as HTMLElement | null;
+          if (!box) return;
+          const delta = centreOf(slide) - centre;
+          const away = Math.min(1, Math.abs(delta) / slide.offsetWidth);
+          // Shrink toward the middle of the rail: with the default centre
+          // origin a neighbour pulls away from the centre slide as it scales
+          // and its peek all but disappears.
+          box.style.transformOrigin =
+            delta < -1 ? "right center" : delta > 1 ? "left center" : "center";
+          box.style.transform = `scale(${(1 - 0.18 * away).toFixed(4)})`;
+        });
+      };
+
+      // Active dot is a red bar, the rest are grey circles — painted rather
+      // than class-toggled so the variants need not exist at build time.
+      const paintDots = () => {
+        const active = currentIndex() % count;
+        dots.forEach((dot, i) => {
+          const on = i === active;
+          dot.style.width = on ? "22px" : "6px";
+          dot.style.backgroundColor = on ? "var(--brand)" : "#d7d7dc";
+        });
+      };
+
+      /**
+       * Keep the viewer inside the middle copy. Jumping a whole copy's width
+       * with no animation is invisible: the slide under the centre is identical
+       * and lands on the same pixel.
+       */
+      const recentre = () => {
+        if (!looping) return;
+        const index = currentIndex();
+        if (index >= count && index < count * 2) return;
+        const target = (index % count) + count;
+        const boxes = slides
+          .map((slide) => slide.firstElementChild as HTMLElement | null)
+          .filter((box): box is HTMLElement => box !== null);
+
+        // Without this the jump animates the scale all over again, so finishing
+        // a lap looked like the slides re-zoomed for no reason.
+        boxes.forEach((box) => (box.style.transition = "none"));
+
+        const behavior = rail.style.scrollBehavior;
+        rail.style.scrollBehavior = "auto";
+        rail.scrollLeft = offsetFor(target);
+        rail.style.scrollBehavior = behavior;
+        paintScale();
+
+        // Restore synchronously after a forced reflow, NOT in a rAF: a
+        // backgrounded tab never runs the callback, and the easing would stay
+        // switched off for the rest of the session.
+        void rail.offsetWidth;
+        boxes.forEach((box) => (box.style.transition = ""));
+      };
+
+      const goTo = (index: number) => {
+        const clamped = looping ? index : Math.max(0, Math.min(slides.length - 1, index));
+        const slide = slides[clamped];
+        if (!slide) return;
+        rail.scrollTo({ left: offsetFor(clamped), behavior: "smooth" });
+      };
+
+      // Start in the middle copy so there is a neighbour on both sides.
+      if (looping) rail.scrollLeft = offsetFor(count);
+      paintScale();
+      paintDots();
+
+      // `astro:page-load` fires on first load too; without the guard every
+      // listener is bound twice and one click advances two slides.
+      if (root.dataset.bound) return;
+      root.dataset.bound = "1";
+
+      root.querySelector("[data-banner-prev]")?.addEventListener("click", () => {
+        goTo(currentIndex() - 1);
+      });
+      root.querySelector("[data-banner-next]")?.addEventListener("click", () => {
+        goTo(currentIndex() + 1);
+      });
+      dots.forEach((dot, i) =>
+        dot.addEventListener("click", () => {
+          // Reach the wanted banner through whichever copy is closest, so the
+          // rail never sweeps back across the whole strip.
+          const here = currentIndex();
+          const base = Math.floor(here / count) * count;
+          const candidates = [base + i - count, base + i, base + i + count].filter(
+            (n) => n >= 0 && n < slides.length,
+          );
+          goTo(candidates.reduce((a, b) => (Math.abs(b - here) < Math.abs(a - here) ? b : a)));
+        }),
+      );
+
+      let frame = 0;
+      let idle: ReturnType<typeof setTimeout>;
+      rail.addEventListener("scroll", () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          paintScale();
+          paintDots();
+        });
+        // Only rewind once the scroll has stopped: doing it mid-gesture fights
+        // the smooth scroll and stutters.
+        clearTimeout(idle);
+        idle = setTimeout(recentre, 160);
+      });
+
+      window.addEventListener("resize", () => {
+        paintScale();
+        paintDots();
+      });
+    });
+  }
+
+  setupBannerCarousels();
+  document.addEventListener("astro:page-load", setupBannerCarousels);
+</script>

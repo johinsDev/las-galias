@@ -176,14 +176,14 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
   const chips = suggestedQuestions.filter((s) => s !== question);
 
   return (
-    <div className="border-line mx-auto max-w-3xl rounded-2xl border bg-white p-5 sm:p-6">
-      <p className="eyebrow">Pregúntale al asistente</p>
-      <p className="text-body-sm text-ink-muted mt-1">
+    <div className="border-line bg-brand-subtle mx-auto max-w-3xl rounded-2xl border p-6 sm:p-8">
+      <p className="text-h4 text-ink text-center font-semibold">Pregúntale al asistente</p>
+      <p className="text-body-sm text-ink-muted mt-2 text-center">
         Resuelve tu duda al instante con la información de nuestros proyectos.
       </p>
 
       <form
-        className="mt-4 flex flex-col gap-2 sm:flex-row"
+        className="mt-5 flex flex-col gap-3 sm:flex-row"
         onSubmit={(e) => {
           e.preventDefault();
           void ask(question);
@@ -198,25 +198,25 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
           value={question}
           maxLength={MAX_CHARS}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="¿Cuánto necesito para la cuota inicial?"
-          className="border-line-strong text-body-sm text-ink focus:border-ink h-11 w-full rounded-lg border px-3 transition-colors outline-none"
+          placeholder="Escribe tu pregunta"
+          className="border-line text-body-sm text-ink focus:border-ink-faint h-12 w-full rounded-xl border bg-white px-4 transition-colors outline-none"
         />
         <button
           type="submit"
           disabled={busy || question.trim().length < 3}
-          className="btn btn-primary shrink-0 disabled:opacity-50"
+          className="bg-brand hover:bg-brand-bright h-12 shrink-0 rounded-xl px-7 text-sm font-semibold text-white transition-colors disabled:opacity-50"
         >
           {busy ? "Pensando…" : "Preguntar"}
         </button>
       </form>
 
       {!busy && chips.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
           {chips.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
-              className="chip hover:bg-surface transition-colors"
+              className="border-line text-caption text-ink-muted hover:text-ink hover:border-ink-faint rounded-full border bg-white px-3.5 py-2 transition-colors"
               onClick={() => void ask(suggestion)}
             >
               {suggestion}

@@ -30,14 +30,15 @@
   --line-dark: #262a31; /* border on dark bands */
 
   /* brand red — CTAs, badges, step numbers and section eyebrows in the UI.
-     Taken from the corporate logo itself (public/logo.svg, fill #cc2c3d), which
-     is the only authoritative source available: the Figma file has exporting
-     disabled and the MCP seat is out of calls. galias.com.co paints the same
-     red as #ce253a, close enough to be the same ink. */
-  --brand: #cc2c3d;
-  --brand-bright: #b12635; /* hover / pressed */
+     Read off the Figma itself (the header, hero and footer fills all measure
+     #ce253a), which is also what galias.com.co paints. The logo file rounds it
+     to #cc2c3d; the design file wins because everything else on the page is
+     spaced and coloured against it. */
+  --brand: #ce253a;
+  --brand-bright: #b21e30; /* hover / pressed */
   --brand-foreground: #ffffff;
-  --brand-subtle: #fcf4f5; /* pale section background under red headings */
+  --brand-subtle: #fdf9fa; /* pale bands: steps, stats, final CTA — from the design */
+  --brand-tint: #fdeef1; /* one step pinker: number pills and icon squares */
 
   /* shadcn semantic tokens, mapped onto the neutral ramp */
   --radius: 0.875rem;
@@ -79,6 +80,7 @@
   --color-brand-bright: var(--brand-bright);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-subtle: var(--brand-subtle);
+  --color-brand-tint: var(--brand-tint);
 
   /* shadcn semantic utilities */
   --color-background: var(--background);
@@ -145,14 +147,37 @@
   --text-caption--line-height: 1.4;
 
   /* fonts */
-  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Centered page container (max ~1200px) with responsive gutters */
+/* Page content column.
+   93.75rem = 1500px, which is the widest block the Figma draws: the four
+   project cards are 356.66 wide with 24 gaps, so the grid measures 1498.64.
+   It used to be 75rem, which squeezed that grid to four narrow cards and, on a
+   wide monitor, left the whole page floating in a column down the middle.
+   Sections whose text should stay narrower say so themselves (the design uses
+   1120 for the step grids, 1000 for the lead form and 760 for the FAQ). */
 @utility container {
   margin-inline: auto;
   width: 100%;
-  max-width: 75rem;
+  max-width: 93.75rem;
+  padding-inline: --spacing(5);
+  @media (width >= 48rem) {
+    padding-inline: --spacing(8);
+  }
+}
+
+/* Header and footer are full-bleed in the design — 32px gutters and no max
+   width, so the logo sits against the left edge instead of drifting inward on
+   a big screen. */
+@utility container-bleed {
+  width: 100%;
+  /* The design frame is 1776 wide, so up to there this really is edge to edge.
+     Past 120rem it stops stretching, or on an ultra-wide monitor the nav and
+     the buttons end up a foot apart with nothing in between. */
+  max-width: 120rem;
+  margin-inline: auto;
   padding-inline: --spacing(5);
   @media (width >= 48rem) {
     padding-inline: --spacing(8);
@@ -165,7 +190,7 @@
   line-height: var(--text-label--line-height);
   letter-spacing: var(--text-label--letter-spacing);
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink-faint);
 }
 
@@ -184,9 +209,16 @@
   line-height: 1;
   white-space: nowrap;
   transition:
-    background-color 0.2s,
-    color 0.2s,
-    border-color 0.2s;
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.12s ease,
+    box-shadow 0.2s ease;
+  /* A button that moves 1px under the finger reads as pressed; without it the
+     only feedback is a colour change that the cursor is usually covering. */
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 @utility btn-primary {
@@ -254,11 +286,104 @@
   white-space: nowrap;
 }
 
+/* City filter pill. The Figma paints the selected one solid near-black and the
+   rest as hairline outlines — not a brand-red selection, which would fight the
+   red CTAs sitting right below in the cards. */
+@utility pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding-inline: --spacing(4);
+  padding-block: --spacing(2.5);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+@utility pill-on {
+  background: var(--ink);
+  color: #fff;
+  border: 1px solid var(--ink);
+}
+
+@utility pill-off {
+  background: #fff;
+  color: var(--ink-muted);
+  border: 1px solid var(--line-strong);
+  &:hover {
+    color: var(--ink);
+    border-color: var(--ink-faint);
+  }
+}
+
+/* Segmented COP/USD/EUR control that sits inline with the price on the
+   foreign-buyer cards. Same selected treatment as the filter pills. */
+@utility seg-group {
+  display: inline-flex;
+  align-items: center;
+  gap: --spacing(0.5);
+  border-radius: 9999px;
+  background: var(--surface-2);
+  padding: --spacing(0.5);
+}
+
+@utility seg {
+  border-radius: 9999px;
+  padding-inline: --spacing(2);
+  padding-block: --spacing(1);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  color: var(--ink-muted);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  &:hover {
+    color: var(--ink);
+  }
+  &[aria-pressed="true"] {
+    background: var(--ink);
+    color: #fff;
+  }
+}
+
+/* Card that lifts slightly on hover. The shadow alone was doing all the work
+   and read as flat; a couple of pixels of travel is what makes it feel
+   clickable. */
+@utility card-lift {
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
 @layer base {
   *,
   ::after,
   ::before {
     border-color: var(--border);
+  }
+
+  /* Anyone who has asked the OS to calm animations down gets no travel and no
+     scroll-smooth — including the reveal-on-scroll, which motion reads from the
+     same media query. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::after,
+    ::before {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
   body {
     background-color: var(--background);

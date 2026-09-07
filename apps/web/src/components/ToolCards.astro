@@ -1,0 +1,54 @@
+---
+import type { ToolIconKey } from "@lasgalias/schemas";
+import { ArrowRight, BadgePercent, Calculator, CreditCard, PiggyBank } from "lucide-astro";
+
+/**
+ * The two shortcuts into the simulators. The icon is a key, not an uploaded
+ * file, so the stroke weight always matches the rest of the page — and it
+ * resolves to a Lucide glyph rather than a path drawn by hand.
+ */
+interface Tool {
+  title: string;
+  body?: string | null;
+  href: string;
+  iconKey?: ToolIconKey | null;
+}
+
+interface Props {
+  tools: Tool[];
+}
+
+const { tools } = Astro.props;
+
+const ICONS = {
+  "credit-card": CreditCard,
+  subsidy: BadgePercent,
+  calculator: Calculator,
+  wallet: PiggyBank,
+} as const;
+---
+
+<div class="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
+  {
+    tools.map((tool) => {
+      const Icon = ICONS[tool.iconKey ?? "credit-card"] ?? CreditCard;
+      return (
+        <a
+          href={tool.href}
+          class="group card-lift border-line hover:border-line-strong hover:shadow-card block rounded-2xl border bg-white p-6"
+          data-reveal
+        >
+          <span class="bg-brand-tint text-brand inline-flex size-11 items-center justify-center rounded-xl">
+            <Icon size={22} stroke-width={1.8} aria-hidden="true" />
+          </span>
+          <p class="text-ink mt-4 font-semibold">{tool.title}</p>
+          {tool.body && <p class="text-body-sm text-ink-muted mt-1">{tool.body}</p>}
+          <span class="text-body-sm text-brand mt-4 inline-flex items-center gap-1.5 font-semibold">
+            Ir
+            <ArrowRight size={15} stroke-width={2} aria-hidden="true" />
+          </span>
+        </a>
+      );
+    })
+  }
+</div>

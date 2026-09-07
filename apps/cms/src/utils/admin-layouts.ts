@@ -110,7 +110,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
   "api::faq.faq": [["question:12"], ["audience", "order"], ["answer"]],
   "api::home-banner.home-banner": [
     ["title", "link"],
-    ["active", "order"],
+    ["ctaLabel:6", "active:3", "order:3"],
     ["desktopImage", "mobileImage"],
   ],
   "api::redirect.redirect": [
@@ -146,6 +146,28 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["validFrom", "fetchedAt"],
   ],
   // En el orden en que la página se lee de arriba abajo.
+  "api::home-page.home-page": [
+    ["sectionHero"],
+    ["heroEyebrow", "heroTitle"],
+    ["heroSubtitle:12"],
+    ["searchPlaceholder:12"],
+    ["sectionSteps"],
+    ["stepsEyebrow", "stepsTitle"],
+    ["steps"],
+    ["sectionTools"],
+    ["toolsEyebrow", "toolsTitle"],
+    ["tools"],
+    ["sectionStats"],
+    ["stats"],
+    ["sectionBlog"],
+    ["blogEyebrow", "blogTitle"],
+    ["sectionCta"],
+    ["ctaTitle", "ctaLabel"],
+    ["ctaBody:12"],
+    ["ctaHref:12"],
+    ["sectionSeo"],
+    ["seo"],
+  ],
   "api::foreign-buyer-page.foreign-buyer-page": [
     ["eyebrow", "heroTitle"],
     ["heroSubtitle:12"],

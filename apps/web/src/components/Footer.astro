@@ -1,115 +1,173 @@
 ---
 import Logo from "@/components/Logo.astro";
 import { LEGAL_DOCUMENTS } from "@lasgalias/schemas";
+import { getProjects } from "@/lib/strapi";
 
 const year = new Date().getFullYear();
 
-// Only the two documents people actually look for go in the footer; the other
-// four are one click away on /legales. Slugs come from the shared list so the
-// footer, the pages and the CMS seed cannot drift apart.
+// Only the two documents people actually look for go in the bottom bar; the
+// other four are one click away on /legales. Slugs come from the shared list so
+// the footer, the pages and the CMS seed cannot drift apart.
 const [terms, privacy] = LEGAL_DOCUMENTS;
 
-const columns = [
-  {
-    title: "Proyectos",
-    links: [
-      { label: "Todos los proyectos", href: "/proyectos" },
-      { label: "Macroproyectos", href: "/macroproyectos" },
-      { label: "Compra desde el exterior", href: "/compra-desde-el-exterior" },
-    ],
-  },
-  {
-    title: "Empresa",
-    links: [
-      { label: "Quienes somos", href: "/nosotros" },
-      { label: "Blog", href: "/blog" },
-      { label: "Calculadoras", href: "/simuladores" },
-    ],
-  },
-  {
-    title: "Atención",
-    links: [
-      { label: "Servicio al cliente", href: "/servicio-al-cliente" },
-      { label: "Radicar un PQR", href: "/servicio-al-cliente" },
-      { label: "sala@lasgalias.com.co", href: "mailto:sala@lasgalias.com.co" },
-    ],
-  },
-  {
-    title: "Legales",
-    links: [
-      { label: terms.title, href: `/legales/${terms.slug}` },
-      { label: privacy.title, href: `/legales/${privacy.slug}` },
-      { label: "Todos los documentos", href: "/legales" },
-    ],
-  },
-];
-
-const socials = [
-  { label: "Instagram", short: "ig", href: "https://www.instagram.com/lasgaliasc/" },
-  { label: "Facebook", short: "fb", href: "https://www.facebook.com/ConstructoralasGalias" },
-  {
-    label: "YouTube",
-    short: "yt",
-    href: "https://www.youtube.com/channel/UC4NnF-NhRKba5kIdzSS680A",
-  },
-  { label: "LinkedIn", short: "in", href: "https://www.linkedin.com/company/galias" },
-];
+/**
+ * The cities column is the published catalogue, not a hardcoded list: the
+ * design shows Bogotá / Cali / Manizales / Pereira because those are the
+ * cities that have projects today, and a fifth one should appear here the day
+ * it is published rather than the day someone remembers to edit this file.
+ */
+const projects = await getProjects();
+const cities = [
+  ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
+].slice(0, 4);
 ---
 
 {
-  /* Brand red band. Secondary text sits at white/80 and above: on #cc2c3d the
+  /* Brand red band. Secondary text sits at white/85 and above: on #ce253a the
     old white/55 fell under the 4.5:1 contrast ratio. */
 }
 <footer class="bg-brand text-white">
-  <div class="container grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
+  <div class="container-bleed grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
     <div>
-      <Logo variant="light" height={26} />
-      <p class="text-body-sm mt-4 max-w-xs text-white/85">
-        Construimos los lugares donde vive Colombia. +30 mil viviendas entregadas.
+      <Logo variant="light" height={28} />
+      <p class="text-body-sm mt-5 max-w-xs text-white/85">
+        Constructora colombiana con más de 30 años de experiencia entregando vivienda de calidad.
       </p>
-      <div class="mt-5 flex gap-2">
-        {
-          socials.map((s) => (
-            <a
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              class="flex size-9 items-center justify-center rounded-lg bg-white/15 text-xs font-semibold text-white transition-colors hover:bg-white/25"
-            >
-              <span aria-hidden="true">{s.short}</span>
-            </a>
-          ))
-        }
+      <div class="mt-6 flex gap-3">
+        <a
+          href="https://www.instagram.com/lasgaliasc/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          class="text-brand flex size-9 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-85"
+        >
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4"></circle>
+            <circle cx="17.5" cy="6.5" r="1"></circle>
+          </svg>
+        </a>
+        <a
+          href="https://www.facebook.com/ConstructoralasGalias"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+          class="text-brand flex size-9 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-85"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5h1.65V3.6A22 22 0 0 0 14.3 3.5c-2.4 0-4 1.45-4 4.1v2.3H7.6V13h2.7v8h3.2Z"
+            ></path>
+          </svg>
+        </a>
+        <a
+          href="https://www.youtube.com/channel/UC4NnF-NhRKba5kIdzSS680A"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube"
+          class="text-brand flex size-9 items-center justify-center rounded-full bg-white transition-opacity hover:opacity-85"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M21.6 7.2a2.5 2.5 0 0 0-1.75-1.77C18.3 5 12 5 12 5s-6.3 0-7.85.43A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.75 1.77C5.7 19 12 19 12 19s6.3 0 7.85-.43a2.5 2.5 0 0 0 1.75-1.77A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5.2 3-5.2 3Z"
+            ></path>
+          </svg>
+        </a>
       </div>
     </div>
-    {
-      columns.map((col) => (
-        <nav aria-label={col.title}>
-          <p class="eyebrow text-white/75">{col.title}</p>
-          <ul class="mt-4 space-y-2.5">
-            {col.links.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="text-body-sm text-white/85 transition-colors hover:text-white"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      ))
-    }
+
+    <nav aria-label="Proyectos">
+      <p class="eyebrow text-white">Proyectos</p>
+      <ul class="mt-5 space-y-3">
+        {
+          cities.map((city) => (
+            <li>
+              <a
+                href={`/proyectos?ciudad=${city.slug}`}
+                class="text-body-sm text-white/85 transition-colors hover:text-white"
+              >
+                {city.name}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a
+            href="/proyectos"
+            class="text-body-sm text-white/85 transition-colors hover:text-white"
+          >
+            Ver todos
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Empresa">
+      <p class="eyebrow text-white">Empresa</p>
+      <ul class="mt-5 space-y-3">
+        <li>
+          <a href="/nosotros" class="text-body-sm text-white/85 transition-colors hover:text-white">
+            Nosotros
+          </a>
+        </li>
+        <li>
+          <a href="/blog" class="text-body-sm text-white/85 transition-colors hover:text-white">
+            Blog
+          </a>
+        </li>
+        <li>
+          <a
+            href="/servicio-al-cliente"
+            class="text-body-sm text-white/85 transition-colors hover:text-white"
+          >
+            Servicio al cliente
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div>
+      {
+        /* The design's phone line is still the placeholder "300 000 0000", so it
+          is left out rather than shipped as a number nobody answers. */
+      }
+      <p class="eyebrow text-white">Contacto</p>
+      <ul class="mt-5 space-y-3">
+        <li>
+          <a
+            href="mailto:sala@lasgalias.com.co"
+            class="text-body-sm text-white/85 transition-colors hover:text-white"
+          >
+            sala@lasgalias.com.co
+          </a>
+        </li>
+        <li class="text-body-sm text-white/85">Bogotá, Colombia</li>
+      </ul>
+    </div>
   </div>
+
   <div class="border-t border-white/25">
-    <div class="container flex flex-col gap-2 py-6 md:flex-row md:items-center md:justify-between">
-      <p class="text-caption text-white/80">
+    <div
+      class="container-bleed flex flex-col gap-2 py-6 md:flex-row md:items-center md:justify-between"
+    >
+      <p class="text-caption text-white/85">
         © {year} Constructora Las Galias. Todos los derechos reservados.
       </p>
-      <p class="text-caption text-white/80">
-        Vigilado Superintendencia de Sociedades · NIT 900.000.000-0
+      <p class="text-caption text-white/85">
+        <a href={`/legales/${terms.slug}`} class="hover:text-white hover:underline">{terms.title}</a
+        > · <a href={`/legales/${privacy.slug}`} class="hover:text-white hover:underline"
+          >{privacy.title}</a
+        > · <a href="/legales" class="hover:text-white hover:underline">Todos los documentos</a>
       </p>
     </div>
   </div>

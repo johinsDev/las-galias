@@ -13,8 +13,9 @@ const cop = Number(copValue);
 
 {
   /* Always rendered in COP and tagged with `data-price-cop`. That attribute is
-     the contract with the header's CurrencySwitcher, which rewrites this node's
-     text into USD or EUR from the rates baked at build time.
+     the contract with the currency selector ProjectCard renders beside the
+     price, which rewrites this node's text into USD or EUR from the rates baked
+     at build time.
 
      This used to also accept a `currency`/`rates` pair so the foreign-buyer
      landing could bake USD server-side. That page then could not be switched

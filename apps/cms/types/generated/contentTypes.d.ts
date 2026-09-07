@@ -711,6 +711,7 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
     active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    ctaLabel: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Ver proyecto">;
     desktopImage: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
     link: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -720,6 +721,70 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
+  collectionName: "home_page";
+  info: {
+    description: "The copy of the home page. The project cards, the banner carousel and the blog cards are NOT here: they come from their own collections. This is only the text around them";
+    displayName: "P\u00E1gina \u00B7 Home";
+    pluralName: "home-pages";
+    singularName: "home-page";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    blogEyebrow: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Blog">;
+    blogTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Aprende sobre vivienda">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    ctaBody: Schema.Attribute.Text;
+    ctaHref: Schema.Attribute.String & Schema.Attribute.DefaultTo<"/servicio-al-cliente">;
+    ctaLabel: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Agenda tu cita">;
+    ctaTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Agenda tu cita sin costo">;
+    heroEyebrow: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Vivienda nueva \u00B7 Colombia">;
+    heroSubtitle: Schema.Attribute.Text;
+    heroTitle: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::home-page.home-page"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    searchPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Busca por ciudad, zona o proyecto\u2026">;
+    sectionBlog: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionCta: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionHero: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionSeo: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionStats: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionSteps: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionTools: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    stats: Schema.Attribute.Component<"page.stat", true>;
+    steps: Schema.Attribute.Component<"page.illustrated-step", true>;
+    stepsEyebrow: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Paso a paso">;
+    stepsTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Comprar es muy f\u00E1cil">;
+    tools: Schema.Attribute.Component<"page.tool-card", true>;
+    toolsEyebrow: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Herramientas">;
+    toolsTitle: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Planea tu compra">;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1592,6 +1657,7 @@ declare module "@strapi/strapi" {
       "api::faq.faq": ApiFaqFaq;
       "api::foreign-buyer-page.foreign-buyer-page": ApiForeignBuyerPageForeignBuyerPage;
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
+      "api::home-page.home-page": ApiHomePageHomePage;
       "api::job-run.job-run": ApiJobRunJobRun;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;

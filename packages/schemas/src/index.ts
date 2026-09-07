@@ -13,6 +13,7 @@ export type {
   ForeignBuyerPage,
   Geo,
   HomeBanner,
+  HomePage,
   LegalDocument,
   Macroproject,
   Media,
@@ -23,5 +24,6 @@ export type {
   Redirect,
   Seo,
   Stage,
+  ToolIconKey,
   UnitType,
 } from "./content-types";
