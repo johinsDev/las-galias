@@ -44,7 +44,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
       {/* The white the slide hangs onto. Behind everything, hence z-0. */}
       <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />
 
-      <div class="banner-viewport relative z-10 mx-auto">
+      <div class="relative z-10">
         <div
           class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
           data-banner-rail
@@ -140,7 +140,6 @@ const slides = Array.from({ length: loops }, () => banners).flat();
     /* 348 of a 390-wide mobile frame, per the inspector. */
     --banner-slide: 89vw;
     --banner-slide-max: 1600px;
-    --banner-peek-max: 120px;
     /* How far the slide hangs past the red, plus room for the dots. */
     --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
   }
@@ -156,17 +155,27 @@ const slides = Array.from({ length: loops }, () => banners).flat();
     }
   }
 
-  /* Slide plus the most neighbour we ever want on screen, either side. Past
-     this the carousel simply stops widening instead of showing more and more
-     of the next banner. The gap eats into that margin, so what actually shows
-     of the neighbour is the peek minus the gap. */
-  .banner-viewport {
-    max-width: calc(var(--banner-slide-max) + 2 * var(--banner-peek-max));
-  }
+  /* The rail runs the full width and the gutters are faded out instead of
+     capped. A hard cap stopped the carousel at an interior line, so on a very
+     wide monitor the neighbour ended mid-air and read as a rendering bug;
+     letting it run to the edge and dissolve reads as "there is more".
 
+     The mask is opaque across exactly the centre slide and fades over the
+     gutters, so what the fade eats is only ever neighbour. It lives on the
+     scroller, so it stays put at the screen edges while the content moves
+     under it. */
   .banner-rail {
     padding-inline: calc((100% - var(--banner-slide)) / 2);
     gap: 2.5rem;
+    --banner-fade: linear-gradient(
+      to right,
+      transparent 0,
+      #000 calc((100% - var(--banner-slide)) / 2),
+      #000 calc((100% + var(--banner-slide)) / 2),
+      transparent 100%
+    );
+    -webkit-mask-image: var(--banner-fade);
+    mask-image: var(--banner-fade);
   }
 
   .banner-slide {
