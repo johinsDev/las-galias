@@ -26,8 +26,12 @@ interface LeadFormProps {
    * one and an advisor calling about a mortgage needs the record.
    */
   qualification?: LeadFormConfig | null;
-  /** Shown read-only as "Proyecto de interés" when the form sits on a PDP. */
-  projectName?: string;
+  /**
+   * Catálogo para el desplegable "Proyecto de interés". Arranca en
+   * `projectDocumentId` —la ficha en la que está el formulario— pero se puede
+   * cambiar: alguien puede llegar por un proyecto y preguntar por otro.
+   */
+  projects?: { documentId: string; name: string }[];
   /** The qualification selects go two-up in the wide advice band, one-up in the sidebar. */
   columns?: 1 | 2;
 }
@@ -74,9 +78,22 @@ export default function LeadForm({
   international = false,
   submitLabel,
   qualification = null,
-  projectName,
+  projects,
   columns = 1,
 }: LeadFormProps) {
+  /**
+   * La ficha de proyecto monta este formulario dos veces —barra lateral y banda
+   * de asesoría— y sin un prefijo los dos comparten los `id` y, peor, el `name`
+   * de la casilla: `getElementsByName` encontraba dos y la librería la trataba
+   * como un grupo de casillas, guardando un array en vez de `true`. Resultado:
+   * no había forma de aceptar los términos.
+   */
+  const uid = source.replace(/[^a-z0-9]+/gi, "-");
+
+  // El Figma dibuja la banda ancha con etiquetas en mayúsculas y el chevron a la
+  // izquierda, y la barra lateral en caja baja con el chevron a la derecha.
+  const labelClass = columns === 2 ? LABEL : SOFT_LABEL;
+  const chevronSide = columns === 2 ? "left" : "right";
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
   const form = useForm({
@@ -157,12 +174,12 @@ export default function LeadForm({
         <Field of={form} path={["name"]}>
           {(field) => (
             <div>
-              <label className={LABEL} htmlFor="lead-name">
+              <label className={LABEL} htmlFor={`${uid}-name`}>
                 Nombre completo
               </label>
               <Input
                 {...field.props}
-                id="lead-name"
+                id={`${uid}-name`}
                 value={field.input ?? ""}
                 autoComplete="name"
                 placeholder="Tu nombre"
@@ -178,11 +195,11 @@ export default function LeadForm({
           <Field of={form} path={["residenceCountry"]}>
             {(field) => (
               <div>
-                <label className={LABEL} htmlFor="lead-country">
+                <label className={LABEL} htmlFor={`${uid}-country`}>
                   País de residencia
                 </label>
                 <CountryCombobox
-                  id="lead-country"
+                  id={`${uid}-country`}
                   name={field.props.name}
                   value={field.input ?? ""}
                   // The combobox hands back a plain value, not a change event, so
@@ -204,11 +221,11 @@ export default function LeadForm({
           {(field) =>
             international ? (
               <div>
-                <label className={LABEL} htmlFor="lead-phone">
+                <label className={LABEL} htmlFor={`${uid}-phone`}>
                   WhatsApp
                 </label>
                 <PhoneField
-                  id="lead-phone"
+                  id={`${uid}-phone`}
                   name={field.props.name}
                   value={field.input ?? ""}
                   onValueChange={(phone: string) =>
@@ -222,12 +239,12 @@ export default function LeadForm({
               </div>
             ) : (
               <div>
-                <label className={LABEL} htmlFor="lead-phone">
+                <label className={LABEL} htmlFor={`${uid}-phone`}>
                   WhatsApp / Celular
                 </label>
                 <Input
                   {...field.props}
-                  id="lead-phone"
+                  id={`${uid}-phone`}
                   type="tel"
                   inputMode="tel"
                   value={field.input ?? ""}
@@ -251,12 +268,12 @@ export default function LeadForm({
         <Field of={form} path={["email"]}>
           {(field) => (
             <div>
-              <label className={LABEL} htmlFor="lead-email">
+              <label className={LABEL} htmlFor={`${uid}-email`}>
                 Correo electrónico
               </label>
               <Input
                 {...field.props}
-                id="lead-email"
+                id={`${uid}-email`}
                 type="email"
                 value={field.input ?? ""}
                 autoComplete="email"
@@ -272,21 +289,42 @@ export default function LeadForm({
 
       {qualification && (
         <div className="space-y-4">
-          {projectName && (
-            <div>
-              <span className={SOFT_LABEL}>Proyecto de interés</span>
-              {/* Read-only: the visitor got here from this project, and a select
-                  that can be changed would send the lead to the wrong one. The
-                  real value travels in `projectDocumentId`. */}
-              <p className="border-input field-box text-ink flex items-center border bg-white px-3.5">
-                {projectName}
-              </p>
-            </div>
+          {projects && projects.length > 0 && (
+            <Field of={form} path={["projectDocumentId"]}>
+              {(field) => (
+                <div>
+                  <label className={labelClass} htmlFor={`${uid}-project`}>
+                    Proyecto de interés
+                  </label>
+                  <Select
+                    id={`${uid}-project`}
+                    name={field.props.name}
+                    chevron={chevronSide}
+                    value={(field.input as string | undefined) ?? ""}
+                    onChange={(event) =>
+                      setInput(form, {
+                        path: ["projectDocumentId"],
+                        input: event.currentTarget.value || undefined,
+                      })
+                    }
+                  >
+                    {projects.map((item) => (
+                      <option key={item.documentId} value={item.documentId}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
+            </Field>
           )}
 
           <div className={columns === 2 ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
             <QualificationSelect
               form={form}
+              labelClass={labelClass}
+              chevron={chevronSide}
+              uid={uid}
               path="incomeRange"
               label="Rango de ingresos"
               placeholder="Selecciona un rango"
@@ -294,6 +332,9 @@ export default function LeadForm({
             />
             <QualificationSelect
               form={form}
+              labelClass={labelClass}
+              chevron={chevronSide}
+              uid={uid}
               path="residenceCity"
               label="Ciudad de residencia"
               placeholder="Selecciona la ciudad"
@@ -301,6 +342,9 @@ export default function LeadForm({
             />
             <QualificationSelect
               form={form}
+              labelClass={labelClass}
+              chevron={chevronSide}
+              uid={uid}
               path="severance"
               label="Cesantías"
               placeholder="¿Tienes cesantías?"
@@ -308,6 +352,9 @@ export default function LeadForm({
             />
             <QualificationSelect
               form={form}
+              labelClass={labelClass}
+              chevron={chevronSide}
+              uid={uid}
               path="savingsRange"
               label="Ahorros disponibles"
               placeholder="Selecciona un rango"
@@ -345,6 +392,7 @@ export default function LeadForm({
                 <label className="text-body-sm text-ink-muted flex items-start gap-2.5">
                   <input
                     {...field.props}
+                    name={`${uid}-${field.props.name}`}
                     type="checkbox"
                     checked={field.input === true}
                     className="accent-brand mt-0.5 size-4 shrink-0"
@@ -419,6 +467,9 @@ function QualificationSelect({
   label,
   placeholder,
   items,
+  labelClass,
+  chevron,
+  uid,
 }: {
   // El store que devuelve `useForm`, tomado de donde ya está tipado.
   form: ComponentProps<typeof Field>["of"];
@@ -426,6 +477,9 @@ function QualificationSelect({
   label: string;
   placeholder: string;
   items: string[];
+  labelClass: string;
+  chevron: "left" | "right";
+  uid: string;
 }) {
   // An empty list means the editor has not filled that option list in yet.
   // Drawing a select with nothing but a placeholder is worse than not drawing it.
@@ -435,12 +489,13 @@ function QualificationSelect({
     <Field of={form} path={[path]}>
       {(field) => (
         <div>
-          <label className={SOFT_LABEL} htmlFor={`lead-${path}`}>
+          <label className={labelClass} htmlFor={`${uid}-${path}`}>
             {label}
           </label>
           <Select
-            id={`lead-${path}`}
+            id={`${uid}-${path}`}
             name={field.props.name}
+            chevron={chevron}
             value={(field.input as string | undefined) ?? ""}
             placeholder={placeholder}
             onChange={(event) =>

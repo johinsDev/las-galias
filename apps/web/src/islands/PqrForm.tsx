@@ -314,8 +314,13 @@ export default function PqrForm({ projects }: PqrFormProps) {
         {(field) => (
           <div>
             <label className="text-body-sm text-ink-muted flex items-start gap-2">
+              {/* El `name` lleva prefijo: esta página monta también el
+                  formulario de leads, y con el mismo `name` la librería veía dos
+                  casillas, las trataba como un grupo y guardaba un array en vez
+                  de `true` — no se podían aceptar los términos en ninguna. */}
               <input
                 {...field.props}
+                name={`pqr-${field.props.name}`}
                 type="checkbox"
                 checked={field.input === true}
                 className="accent-ink mt-1"

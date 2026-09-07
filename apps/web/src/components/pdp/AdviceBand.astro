@@ -6,9 +6,10 @@ import LeadForm from "@/islands/LeadForm";
 interface Props {
   project: Project;
   config: LeadFormConfig;
+  projects: { documentId: string; name: string }[];
 }
 
-const { project, config } = Astro.props;
+const { project, config, projects } = Astro.props;
 
 const eyebrow = config.adviceEyebrow ?? "Asesoría personalizada";
 const title = config.adviceTitle ?? "Recibe una asesoría personalizada";
@@ -34,6 +35,7 @@ const body =
       <LeadForm
         client:visible
         projectDocumentId={project.documentId}
+        projects={projects}
         source={`pdp-asesoria:${project.slug}`}
         qualification={config}
         columns={2}

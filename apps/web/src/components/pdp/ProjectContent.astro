@@ -1,4 +1,5 @@
 ---
+import { ChevronDown } from "lucide-astro";
 import type { Project } from "@lasgalias/schemas";
 
 import AmenityIcon from "@/components/AmenityIcon.astro";
@@ -130,8 +131,19 @@ const sections = [
         <div class="text-body text-ink-muted mt-3" data-clamp>
           <Blocks content={project.description} />
         </div>
-        <button type="button" class="text-brand text-body-sm mt-2 font-bold" data-clamp-toggle>
-          Ver más ↓
+        <button
+          type="button"
+          class="text-brand text-body-sm mt-2 inline-flex items-center gap-1.5 font-bold"
+          data-clamp-toggle
+        >
+          <span data-clamp-label>Ver más</span>
+          <ChevronDown
+            size={16}
+            stroke-width={2.5}
+            aria-hidden="true"
+            class="transition-transform duration-200"
+            data-clamp-chevron
+          />
         </button>
       </section>
     )
@@ -141,7 +153,7 @@ const sections = [
     specs.length > 0 && (
       <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4" data-reveal>
         {specs.map((item) => (
-          <div class="bg-surface rounded-xl p-4">
+          <div class="border-line rounded-xl border bg-[#fdfbfc] p-4">
             <p class="text-label text-ink-muted font-bold uppercase">{item.label}</p>
             <p class="text-ink mt-1 font-bold">{item.value}</p>
           </div>
@@ -270,7 +282,7 @@ const sections = [
         {(address || salesRoom?.schedule || salesRoom?.email) && (
           <div class="mt-8">
             <p class="text-label text-ink-muted font-bold uppercase">Sala de ventas</p>
-            <div class="bg-surface mt-3 grid gap-5 rounded-2xl p-5 sm:grid-cols-3">
+            <div class="bg-brand-subtle mt-3 grid gap-5 rounded-2xl p-5 sm:grid-cols-3">
               {address && (
                 <div>
                   <p class="text-label text-ink-muted font-bold uppercase">Dirección</p>
@@ -315,9 +327,13 @@ const sections = [
       if (toggle.dataset.bound) return;
       toggle.dataset.bound = "1";
 
+      const label = toggle.querySelector<HTMLElement>("[data-clamp-label]");
+      const chevron = toggle.querySelector<HTMLElement>("[data-clamp-chevron]");
       toggle.addEventListener("click", () => {
         const clamped = body.classList.toggle("line-clamp-3");
-        toggle.textContent = clamped ? "Ver más ↓" : "Ver menos ↑";
+        if (label) label.textContent = clamped ? "Ver más" : "Ver menos";
+        // Se gira el chevron en vez de cambiar el icono: así la transición se ve.
+        if (chevron) chevron.style.transform = clamped ? "" : "rotate(180deg)";
       });
     });
 

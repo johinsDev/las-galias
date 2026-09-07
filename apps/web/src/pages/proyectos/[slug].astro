@@ -23,12 +23,17 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const [project, calculator, exchangeRate, leadForm] = await Promise.all([
+const [project, calculator, exchangeRate, leadForm, allProjects] = await Promise.all([
   getProject(slug!),
   getCalculatorConfig(),
   getExchangeRate(),
   getLeadFormConfig(),
+  getProjects(),
 ]);
+
+// Catálogo para el desplegable "Proyecto de interés": arranca en esta ficha,
+// pero se puede cambiar sin salir de ella.
+const projectOptions = allProjects.map((p) => ({ documentId: p.documentId, name: p.name }));
 
 if (!project) {
   return Astro.redirect("/proyectos");
@@ -72,7 +77,7 @@ const description = project.seo?.metaDescription ?? undefined;
   <section class="container pb-14">
     <div class="grid gap-10 lg:grid-cols-[1fr_400px]">
       <ProjectContent project={project} terms={terms} />
-      <ProjectSidebar project={project} leadForm={leadForm} />
+      <ProjectSidebar project={project} leadForm={leadForm} projects={projectOptions} />
     </div>
   </section>
 
@@ -80,7 +85,7 @@ const description = project.seo?.metaDescription ?? undefined;
   <RecommendedProjects project={project} />
 
   <!-- 05 Asesoría personalizada -->
-  {leadForm && <AdviceBand project={project} config={leadForm} />}
+  {leadForm && <AdviceBand project={project} config={leadForm} projects={projectOptions} />}
 
   {
     /* La barra de precio del móvil va al final del documento: es `fixed`, y

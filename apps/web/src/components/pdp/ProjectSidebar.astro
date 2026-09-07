@@ -7,20 +7,17 @@ import LeadForm from "@/islands/LeadForm";
 interface Props {
   project: Project;
   leadForm: LeadFormConfig | null;
+  /** Catálogo para el desplegable "Proyecto de interés". */
+  projects: { documentId: string; name: string }[];
 }
 
-const { project, leadForm } = Astro.props;
+const { project, leadForm, projects } = Astro.props;
 
 const salesRoom = project.salesRoom;
 ---
 
-{
-  /* Floats alongside the content, as asked: `sticky` keeps the form on screen
-     the whole way down a page that is several screens tall, and `h-fit` stops
-     the column from stretching to the content's height, which would leave
-     nothing for the sticky to travel within. */
-}
-<aside class="lg:sticky lg:top-24 lg:h-fit">
+{/* Sin `sticky`: acompañar el scroll varias pantallas cansaba más que ayudaba. */}
+<aside>
   <div class="space-y-5">
     <div class="border-line rounded-2xl border bg-white p-6" id="lead">
       <h2 class="text-h4 text-ink font-bold">¿Te interesa este proyecto?</h2>
@@ -30,7 +27,7 @@ const salesRoom = project.salesRoom;
       <LeadForm
         client:visible
         projectDocumentId={project.documentId}
-        projectName={project.name}
+        projects={projects}
         source={`pdp:${project.slug}`}
         qualification={leadForm}
         submitLabel="Quiero que me contacten"

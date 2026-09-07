@@ -1,10 +1,8 @@
 "use client";
 
-import { Combobox } from "@base-ui/react/combobox";
 import { useMemo } from "react";
 
 import {
-  COMMON_COUNT,
   COUNTRIES,
   flagOf,
   groupsFor,
@@ -96,16 +94,6 @@ export function PhoneField({
   const emit = (next: Country, digits: string) =>
     onValueChange?.(`${next.dial}${digits.slice(0, nationalMax(next))}`);
 
-  const filter = (item: Country, query: string) => {
-    if (!query) return true;
-    const fold = (s: string) =>
-      s
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "")
-        .toLowerCase();
-    return fold(item.name).includes(fold(query)) || item.dial.includes(query.replace(/\s/g, ""));
-  };
-
   return (
     <div
       className={cn(
@@ -115,62 +103,39 @@ export function PhoneField({
     >
       <input type="hidden" name={name} value={value} />
 
-      <Combobox.Root
-        items={COUNTRIES}
-        itemToStringLabel={(item: Country) => `${item.name} ${item.dial}`}
-        filter={filter}
-        value={country}
-        onValueChange={(next: Country | null) => emit(next ?? country, national)}
-      >
-        <Combobox.Trigger
-          aria-label={`Indicativo del país, ${country.name} ${country.dial}`}
-          className="text-body-sm text-ink border-input hover:bg-surface flex shrink-0 items-center gap-1.5 rounded-l-[10px] border-r px-3 transition-colors"
+      {/*
+        El indicativo usa el mismo select nativo que el resto del formulario. Era
+        un combobox con buscador, pero aquí la búsqueda no aportaba —el país ya
+        se elige arriba, en su propio campo con buscador— y en el móvil el
+        selector del sistema gana a cualquier lista propia.
+      */}
+      <label className="relative flex shrink-0 items-center">
+        <span className="sr-only">Indicativo del país</span>
+        <span
+          aria-hidden="true"
+          className="text-body-sm text-ink border-input pointer-events-none flex h-full items-center gap-1.5 border-r pr-2.5 pl-3"
         >
-          <span aria-hidden="true">{flagOf(country.code)}</span>
+          <span>{flagOf(country.code)}</span>
           <span className="tabular-nums">{country.dial}</span>
           <span className="text-ink-faint">
             <ChevronsUpDown />
           </span>
-        </Combobox.Trigger>
-
-        <Combobox.Portal>
-          <Combobox.Positioner sideOffset={6} align="start" className="z-50 outline-none">
-            <Combobox.Popup className="border-line shadow-card-lg w-72 max-w-[var(--available-width)] overflow-hidden rounded-xl border bg-white">
-              <div className="border-line border-b px-3">
-                <Combobox.Input
-                  placeholder="Busca tu país…"
-                  className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
-                />
-              </div>
-
-              <Combobox.Empty>
-                <p className="text-body-sm text-ink-muted px-3 py-6 text-center">
-                  No encontramos ese país.
-                </p>
-              </Combobox.Empty>
-
-              <Combobox.List className="max-h-[min(16rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
-                {(item: Country) => (
-                  <Combobox.Item
-                    key={item.code}
-                    value={item}
-                    className={cn(
-                      "text-body-sm text-ink flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none",
-                      "data-highlighted:bg-surface data-selected:font-semibold",
-                      COUNTRIES.indexOf(item) === COMMON_COUNT - 1 &&
-                        "border-line mb-1 border-b pb-2.5",
-                    )}
-                  >
-                    <span aria-hidden="true">{flagOf(item.code)}</span>
-                    <span className="min-w-0 flex-1 truncate">{item.name}</span>
-                    <span className="text-ink-faint shrink-0 tabular-nums">{item.dial}</span>
-                  </Combobox.Item>
-                )}
-              </Combobox.List>
-            </Combobox.Popup>
-          </Combobox.Positioner>
-        </Combobox.Portal>
-      </Combobox.Root>
+        </span>
+        <select
+          value={country.code}
+          onChange={(event) => {
+            const next = COUNTRIES.find((c) => c.code === event.target.value);
+            if (next) emit(next, national);
+          }}
+          className="absolute inset-0 cursor-pointer opacity-0"
+        >
+          {COUNTRIES.map((item) => (
+            <option key={item.code} value={item.code}>
+              {item.name} ({item.dial})
+            </option>
+          ))}
+        </select>
+      </label>
 
       <input
         id={id}
