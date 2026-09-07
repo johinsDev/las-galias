@@ -24,7 +24,11 @@ const heroSubtitle =
   page?.heroSubtitle ??
   "Asesoría personalizada, pagos 100% digitales y acompañamiento en cada paso, sin importar en qué país vivas hoy.";
 const heroCtaLabel = page?.heroCtaLabel ?? "Déjanos tus datos";
-const trustBadges = page?.trustBadges?.map((b) => b.text) ?? ["Broker autorizado", "Pagos por PSE"];
+// `?.map() ?? []` no sirve aquí: un array vacío del CMS es truthy y se comía el
+// fallback, así que la página salía sin chips ni bullets. Se mira la longitud.
+const trustBadges = page?.trustBadges?.length
+  ? page.trustBadges.map((b) => b.text)
+  : ["Broker autorizado", "Pagos por PSE"];
 const stepsTitle = page?.stepsTitle ?? "Conoce el paso a paso";
 const steps = page?.steps?.length
   ? page.steps
@@ -55,11 +59,9 @@ const formTitle = page?.formTitle ?? "¿Listo para dar el primer paso?";
 const formBody =
   page?.formBody ??
   "Déjanos tus datos y uno de nuestros asesores especializados en compradores internacionales te contactará en menos de 24 horas.";
-const formBullets = page?.formBullets?.map((b) => b.text) ?? [
-  "Sin costo · Sin compromiso",
-  "Atención en español · Inglés",
-  "Proceso 100% digital",
-];
+const formBullets = page?.formBullets?.length
+  ? page.formBullets.map((b) => b.text)
+  : ["Sin costo · Sin compromiso", "Atención en español · Inglés", "Proceso 100% digital"];
 
 // Only projects actually on sale — an expectation-stage project has no price to
 // show in USD, which is the whole point of this grid.
