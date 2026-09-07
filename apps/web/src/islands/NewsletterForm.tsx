@@ -58,7 +58,7 @@ export default function NewsletterForm({ source }: NewsletterFormProps) {
       <button
         type="submit"
         disabled={status === "sending"}
-        className="btn btn-primary btn-field mt-3 w-full disabled:opacity-70"
+        className="btn btn-primary mt-3 w-full disabled:opacity-70"
       >
         {status === "sending" ? "Enviando…" : "Suscribirme gratis"}
       </button>

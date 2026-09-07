@@ -199,12 +199,12 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
           maxLength={MAX_CHARS}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Escribe tu pregunta"
-          className="border-line text-body-sm text-ink focus:border-ink-faint h-12 w-full rounded-xl border bg-white px-4 transition-colors outline-none"
+          className="border-input field-box text-body text-ink focus:border-ink w-full border bg-white px-3.5 transition-colors outline-none"
         />
         <button
           type="submit"
           disabled={busy || question.trim().length < 3}
-          className="bg-brand hover:bg-brand-bright h-12 shrink-0 rounded-xl px-7 text-sm font-semibold text-white transition-colors disabled:opacity-50"
+          className="btn btn-primary shrink-0 disabled:opacity-50"
         >
           {busy ? "Pensando…" : "Preguntar"}
         </button>

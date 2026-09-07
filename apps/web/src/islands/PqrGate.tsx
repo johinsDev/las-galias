@@ -132,7 +132,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
         <button
           type="submit"
           disabled={!canValidate}
-          className="btn btn-field mt-4 w-full bg-[#8f9198] text-white transition-colors hover:bg-[#7d7f86] disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn mt-4 w-full bg-[#8f9198] text-white transition-colors hover:bg-[#7d7f86] disabled:cursor-not-allowed disabled:opacity-60"
         >
           Consultar
         </button>
@@ -169,7 +169,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary btn-field mt-4 w-full">
+          <button type="submit" className="btn btn-primary mt-4 w-full">
             Continuar
           </button>
         </div>
