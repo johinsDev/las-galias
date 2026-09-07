@@ -44,7 +44,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
       {/* The white the slide hangs onto. Behind everything, hence z-0. */}
       <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />
 
-      <div class="relative z-10">
+      <div class="banner-viewport relative z-10 mx-auto">
         <div
           class="banner-rail flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [&::-webkit-scrollbar]:hidden"
           data-banner-rail
@@ -139,6 +139,8 @@ const slides = Array.from({ length: loops }, () => banners).flat();
   .banner {
     /* 348 of a 390-wide mobile frame, per the inspector. */
     --banner-slide: 89vw;
+    --banner-slide-max: 1600px;
+    --banner-peek-max: 120px;
     /* How far the slide hangs past the red, plus room for the dots. */
     --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
   }
@@ -150,13 +152,21 @@ const slides = Array.from({ length: loops }, () => banners).flat();
          the neighbours scaling toward the centre they now show their whole
          margin, and the full 176px read as too much of them — this trims the
          peek to about 140 without losing it. */
-      --banner-slide: min(89vw, 1600px);
+      --banner-slide: min(86vw, var(--banner-slide-max));
     }
+  }
+
+  /* Slide plus the most neighbour we ever want on screen, either side. Past
+     this the carousel simply stops widening instead of showing more and more
+     of the next banner. The gap eats into that margin, so what actually shows
+     of the neighbour is the peek minus the gap. */
+  .banner-viewport {
+    max-width: calc(var(--banner-slide-max) + 2 * var(--banner-peek-max));
   }
 
   .banner-rail {
     padding-inline: calc((100% - var(--banner-slide)) / 2);
-    gap: 1.5rem;
+    gap: 2.5rem;
   }
 
   .banner-slide {
