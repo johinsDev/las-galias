@@ -63,6 +63,26 @@ const recorded: Snapshot = {};
  */
 let usingSnapshot = false;
 
+/**
+ * Network failures get two more tries; HTTP answers never do. A build fires
+ * dozens of requests at a small instance, and now and then one connection
+ * stalls until undici's 10 s connect timeout ("fetch failed") while the very
+ * next one answers in 300 ms — without this, that one hiccup failed the whole
+ * build. A status code is a real answer and goes straight to the caller.
+ */
+async function fetchWithRetry(url: URL, headers: Record<string, string>): Promise<Response> {
+  const attempts = 3;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fetch(url, { headers, signal: AbortSignal.timeout(15_000) });
+    } catch (err) {
+      if (attempt >= attempts) throw err;
+      console.warn(`[strapi] ${url.pathname} falló (${String(err)}); reintento ${attempt}`);
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+    }
+  }
+}
+
 /** Stable key for one request: path plus its sorted query. */
 function snapshotKey(path: string, query: Query): string {
   const params = new URLSearchParams(Object.entries(query).sort(([a], [b]) => a.localeCompare(b)));
@@ -143,12 +163,9 @@ async function strapiFetch<T>(
   }
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        accept: "application/json",
-        ...(STRAPI_API_TOKEN && !anonymous ? { authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
-      },
-      signal: AbortSignal.timeout(15_000),
+    const res = await fetchWithRetry(url, {
+      accept: "application/json",
+      ...(STRAPI_API_TOKEN && !anonymous ? { authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
     });
     if (!res.ok) {
       console.warn(`[strapi] ${path} responded ${res.status}`);

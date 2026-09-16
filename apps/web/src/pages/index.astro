@@ -1,5 +1,5 @@
 ---
-import BannerCarousel from "@/components/BannerCarousel.astro";
+import ImageCarousel from "@/components/ImageCarousel.astro";
 import CityFilter from "@/components/CityFilter.astro";
 import PostCard from "@/components/PostCard.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
@@ -119,7 +119,19 @@ import { Search } from "lucide-astro";
       </button>
     </div>
 
-    <BannerCarousel banners={banners} />
+    <ImageCarousel
+      slides={banners.map((banner) => ({
+        url: banner.desktopImage.url,
+        alt: banner.desktopImage.alternativeText ?? banner.title ?? "",
+        href: banner.link,
+        cta: banner.ctaLabel,
+      }))}
+      labels={{ prev: "Banner anterior", next: "Banner siguiente", goTo: "Ir al banner" }}
+      frameClass="bg-brand-bright aspect-[348/242] rounded-3xl md:aspect-[1424/780] md:rounded-[48px]"
+      imageWidth={1000}
+      imageHeight={640}
+      shelf
+    />
   </section>
 
   {/* Proyectos */}

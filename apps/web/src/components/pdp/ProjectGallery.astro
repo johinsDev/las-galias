@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
 import type { Project } from "@lasgalias/schemas";
 
+import ImageCarousel from "@/components/ImageCarousel.astro";
 import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
@@ -11,10 +11,12 @@ interface Props {
 const { project } = Astro.props;
 
 const hero = project.heroDesktop ?? project.heroMobile;
-const gallery = project.gallery ?? [];
-// The hero is usually also the first gallery item; showing it twice next to
-// itself reads as a mistake.
-const secondary = gallery.filter((img) => img.url !== hero?.url).slice(0, 2);
+// Hero first, then the gallery. The hero is usually also the first gallery
+// item; showing it twice in a row reads as a mistake.
+const photos = [hero, ...(project.gallery ?? [])].filter(
+  (img, i, all): img is NonNullable<typeof img> =>
+    Boolean(img?.url) && all.findIndex((other) => other?.url === img?.url) === i,
+);
 const hasTour = Boolean(project.tour360Url);
 const hasMap = Boolean(project.location?.lat && project.location?.lng);
 const brochureUrl = project.brochure?.url ? mediaUrl(project.brochure.url) : null;
@@ -33,110 +35,86 @@ const mapSrc = hasMap
 
 {
   hero?.url && (
-    <section class="container pt-6 pb-8 md:pt-8" data-gallery>
+    <section class="pt-6 pb-8 md:pt-8" data-gallery>
+      {/* Full-bleed, like the home's banners: the neighbours peek in from the
+          screen edges, so the rail cannot live inside the container. */}
       <div data-panel="galeria">
-        <div class="grid gap-4 md:grid-cols-[1.7fr_1fr]">
-          {/* transition:name must stay in sync with ProjectCard.astro — it is what
-              makes the card→PDP hero morph work under View Transitions. */}
-          <div
-            class="bg-surface aspect-[348/232] overflow-hidden rounded-3xl md:aspect-[16/11] md:rounded-[28px]"
-            transition:name={`project-hero-${project.slug}`}
-          >
-            <picture>
-              {project.heroDesktop?.url && (
-                <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
-              )}
-              <Image
-                src={mediaUrl(hero.url)}
-                alt={hero.alternativeText ?? project.name}
-                width={1200}
-                height={825}
-                loading="eager"
-                class="h-full w-full object-cover"
-              />
-            </picture>
-          </div>
-          {/* The two side images are desktop-only: the design's phone shows a
-              single photograph, and stacking three of them would push the whole
-              page down a screen. */}
-          {secondary.length > 0 && (
-            <div class="hidden h-0 min-h-full grid-rows-2 gap-4 md:grid">
-              {secondary.map((img) => (
-                <div class="bg-surface min-h-0 overflow-hidden rounded-[28px]">
-                  <Image
-                    src={mediaUrl(img.url)}
-                    alt={img.alternativeText ?? project.name}
-                    width={600}
-                    height={375}
-                    class="h-full w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ImageCarousel
+          slides={photos.map((img) => ({
+            url: img.url,
+            alt: img.alternativeText ?? project.name,
+          }))}
+          labels={{ prev: "Foto anterior", next: "Foto siguiente", goTo: "Ir a la foto" }}
+          frameClass="bg-surface aspect-[348/232] rounded-3xl md:aspect-[16/9] md:rounded-[28px]"
+          imageWidth={1200}
+          imageHeight={675}
+          slideMax="1200px"
+          firstTransitionName={`project-hero-${project.slug}`}
+        />
       </div>
 
-      {hasTour && (
-        <div data-panel="tour" hidden>
-          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
-            {/* Igual que el mapa: un iframe escondido se descarga igual. */}
-            <iframe
-              data-src={project.tour360Url!}
-              title={`Recorrido 360° de ${project.name}`}
-              loading="lazy"
-              allowfullscreen
-              class="h-full w-full border-0"
-            />
+      <div class="container">
+        {hasTour && (
+          <div data-panel="tour" hidden>
+            <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+              {/* Igual que el mapa: un iframe escondido se descarga igual. */}
+              <iframe
+                data-src={project.tour360Url!}
+                title={`Recorrido 360° de ${project.name}`}
+                loading="lazy"
+                allowfullscreen
+                class="h-full w-full border-0"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {mapSrc && (
-        <div data-panel="mapa" hidden>
-          <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
-            {/* `data-src`, not `src`: this panel starts hidden, and a hidden
+        {mapSrc && (
+          <div data-panel="mapa" hidden>
+            <div class="bg-surface aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+              {/* `data-src`, not `src`: this panel starts hidden, and a hidden
                 iframe still downloads Google's whole map bundle. It is swapped
                 in the first time the tab is opened. */}
-            <iframe
-              data-src={mapSrc}
-              title={`Ubicación de ${project.name}`}
-              loading="lazy"
-              class="h-full w-full border-0"
-            />
+              <iframe
+                data-src={mapSrc}
+                title={`Ubicación de ${project.name}`}
+                loading="lazy"
+                class="h-full w-full border-0"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {(tabs.length > 1 || brochureUrl) && (
-        <div class="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
-          <div class="flex gap-2" role="tablist" aria-label="Medios del proyecto">
-            {tabs.map((tab, i) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={i === 0 ? "true" : "false"}
-                data-tab={tab.id}
-                class:list={["pill", i === 0 ? "pill-on" : "pill-off"]}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          {/* The brochure is a download, not a panel: it never becomes the
+        {(tabs.length > 1 || brochureUrl) && (
+          <div class="no-scrollbar -mx-4 mt-5 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
+            <div class="flex gap-2" role="tablist" aria-label="Medios del proyecto">
+              {tabs.map((tab, i) => (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={i === 0 ? "true" : "false"}
+                  data-tab={tab.id}
+                  class:list={["pill", i === 0 ? "pill-on" : "pill-off"]}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {/* The brochure is a download, not a panel: it never becomes the
               selected tab, it just sits in the same row as the design draws it. */}
-          {brochureUrl && (
-            <a
-              href={brochureUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="pill pill-off shrink-0"
-            >
-              Brochure
-            </a>
-          )}
-        </div>
-      )}
+            {brochureUrl && (
+              <a
+                href={brochureUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="pill pill-off shrink-0"
+              >
+                Brochure
+              </a>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   )
 }

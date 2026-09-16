@@ -1,69 +1,101 @@
 ---
 import { Image } from "astro:assets";
-import type { HomeBanner } from "@lasgalias/schemas";
 
 import { MoveLeft, MoveRight } from "lucide-astro";
 
 import { mediaUrl } from "@/lib/strapi";
 
 /**
- * The campaign slider that straddles the hero's red band. The approved design
- * lets the slide hang past the bottom of the red onto the white below, with the
- * dots sitting on the white — so this draws its own white shelf rather than
- * relying on where the section happens to end.
+ * The home's campaign slider, shared with the project page's gallery so both
+ * move the same way: the centre slide full size, the neighbours smaller and
+ * peeking from both sides, snapping on drag.
  *
  * It is a scroll-snap rail rather than a transform slider: the peek, the drag
  * on touch and the keyboard scroll all come free, and with no JS at all it
  * degrades to a horizontally scrollable strip.
  *
- * The loop is done by rendering the banners three times and silently jumping
+ * The loop is done by rendering the slides three times and silently jumping
  * back to the middle copy once a scroll settles in an outer one. That keeps a
  * neighbour visible on both sides at every position — the design never shows an
  * empty gutter — without the rewind a "wrap to the first slide" would cause.
  */
-interface Props {
-  banners: HomeBanner[];
+interface CarouselSlide {
+  url: string;
+  alt: string;
+  href?: string | null;
+  cta?: string | null;
 }
 
-const { banners } = Astro.props;
+interface Props {
+  slides: CarouselSlide[];
+  /** Button labels: { prev: "Banner anterior", next: "Banner siguiente", goTo: "Ir al banner" }. */
+  labels: { prev: string; next: string; goTo: string };
+  /** Aspect ratio, corner radius and backdrop of a slide. */
+  frameClass: string;
+  /** Size requested from the image CDN. */
+  imageWidth: number;
+  imageHeight: number;
+  /** Upper bound of a slide's width on wide screens. */
+  slideMax?: string;
+  /**
+   * Home only: the approved design lets the slide hang past the bottom of the
+   * hero's red band onto a white shelf, with the dots sitting on the white.
+   */
+  shelf?: boolean;
+  /** View Transitions name for the slide shown first (card → PDP morph). */
+  firstTransitionName?: string;
+}
 
-// One copy cannot loop, so a single banner just sits there.
-const loops = banners.length > 1 ? 3 : 1;
-const slides = Array.from({ length: loops }, () => banners).flat();
+const {
+  slides: items,
+  labels,
+  frameClass,
+  imageWidth,
+  imageHeight,
+  slideMax = "1600px",
+  shelf = false,
+  firstTransitionName,
+} = Astro.props;
+
+// One copy cannot loop, so a single slide just sits there.
+const loops = items.length > 1 ? 3 : 1;
+const slides = Array.from({ length: loops }, () => items).flat();
+// The slide on screen at load: the first of the middle copy.
+const firstShown = loops > 1 ? items.length : 0;
 ---
 
 {
-  banners.length > 0 && (
+  items.length > 0 && (
     <div
-      class="banner relative"
+      class:list={["banner relative", shelf && "banner-with-shelf"]}
+      style={`--banner-slide-max: ${slideMax}`}
       data-banner-carousel
-      data-banner-count={banners.length}
+      data-banner-count={items.length}
       data-banner-loop={loops > 1 ? "true" : "false"}
       data-reveal
     >
       {/* The white the slide hangs onto. Behind everything, hence z-0. */}
-      <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />
+      {shelf && <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />}
 
       <div class="relative z-10">
         <div
           class="no-scrollbar banner-rail flex snap-x snap-mandatory overflow-x-auto"
           data-banner-rail
         >
-          {slides.map((banner, index) => {
-            const image = banner.desktopImage;
+          {slides.map((slide, index) => {
             const inner = (
               <>
                 <Image
-                  src={mediaUrl(image.url)}
-                  alt={image.alternativeText ?? banner.title ?? ""}
-                  width={1000}
-                  height={640}
-                  loading={index === 0 ? "eager" : "lazy"}
+                  src={mediaUrl(slide.url)}
+                  alt={slide.alt}
+                  width={imageWidth}
+                  height={imageHeight}
+                  loading={index === firstShown ? "eager" : "lazy"}
                   class="h-full w-full object-cover"
                 />
-                {banner.ctaLabel && (
+                {slide.cta && (
                   <span class="btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl">
-                    {banner.ctaLabel}
+                    {slide.cta}
                   </span>
                 )}
               </>
@@ -72,9 +104,12 @@ const slides = Array.from({ length: loops }, () => banners).flat();
               <div class="banner-slide shrink-0 snap-center" data-banner-index={index}>
                 {/* The scale lives on this inner box so the snap box keeps its
                     untransformed size and the centring maths stays exact. */}
-                <div class="banner-scale bg-brand-bright relative aspect-[348/242] overflow-hidden rounded-3xl md:aspect-[1424/780] md:rounded-[48px]">
-                  {banner.link ? (
-                    <a href={banner.link} class="block h-full w-full">
+                <div
+                  class:list={["banner-scale relative overflow-hidden", frameClass]}
+                  transition:name={index === firstShown ? firstTransitionName : undefined}
+                >
+                  {slide.href ? (
+                    <a href={slide.href} class="block h-full w-full">
                       {inner}
                     </a>
                   ) : (
@@ -86,14 +121,14 @@ const slides = Array.from({ length: loops }, () => banners).flat();
           })}
         </div>
 
-        {banners.length > 1 && (
+        {items.length > 1 && (
           <>
             {/* Centred on the slide's own edges, as the design places them —
                 not out at the viewport edges. */}
             <button
               type="button"
               data-banner-prev
-              aria-label="Banner anterior"
+              aria-label={labels.prev}
               class="banner-arrow banner-arrow-prev text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
             >
               <MoveLeft size={22} stroke-width={1.5} aria-hidden="true" />
@@ -101,7 +136,7 @@ const slides = Array.from({ length: loops }, () => banners).flat();
             <button
               type="button"
               data-banner-next
-              aria-label="Banner siguiente"
+              aria-label={labels.next}
               class="banner-arrow banner-arrow-next text-ink absolute top-1/2 z-20 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/92 transition-colors duration-200 hover:bg-white"
             >
               <MoveRight size={22} stroke-width={1.5} aria-hidden="true" />
@@ -110,16 +145,16 @@ const slides = Array.from({ length: loops }, () => banners).flat();
         )}
       </div>
 
-      {banners.length > 1 && (
+      {items.length > 1 && (
         <div class="relative z-10 flex justify-center gap-1 pt-4" data-banner-dots>
-          {banners.map((_, index) => (
+          {items.map((_, index) => (
             /* La barrita es de 6px, pero el botón mide 24px de alto: por debajo
                de eso Lighthouse lo marca como objetivo táctil insuficiente y,
                sobre todo, cuesta acertarle con el pulgar. */
             <button
               type="button"
               data-banner-dot={index}
-              aria-label={`Ir al banner ${index + 1}`}
+              aria-label={`${labels.goTo} ${index + 1}`}
               class="flex h-6 items-center px-1"
             >
               <span class="h-1.5 rounded-full transition-all duration-300" data-banner-bar />
@@ -144,7 +179,6 @@ const slides = Array.from({ length: loops }, () => banners).flat();
   .banner {
     /* 348 of a 390-wide mobile frame, per the inspector. */
     --banner-slide: 89vw;
-    --banner-slide-max: 1600px;
     /* How far the slide hangs past the red, plus room for the dots. */
     --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
   }
