@@ -23,6 +23,7 @@ export type {
   Post,
   PostCategory,
   PqrPage,
+  CustomerServicePage,
   Project,
   Redirect,
   Seo,

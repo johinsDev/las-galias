@@ -1,5 +1,6 @@
 import type {
   CalculatorConfig,
+  CustomerServicePage,
   ExchangeRate,
   Faq,
   FaqBotPublicConfig,
@@ -385,6 +386,18 @@ export async function getLeadFormConfig(): Promise<LeadFormConfig | null> {
 export async function getPqrPage(): Promise<PqrPage | null> {
   return strapiFetch<PqrPage>("pqr-page", {
     "populate[heroImage]": "true",
+    "populate[seo][populate][ogImage]": "true",
+  });
+}
+
+/**
+ * /servicio-al-cliente. A CMS that does not have the type yet answers 404, which
+ * degrades to the design's copy instead of stopping the build.
+ */
+export async function getCustomerServicePage(): Promise<CustomerServicePage | null> {
+  return strapiFetch<CustomerServicePage>("customer-service-page", {
+    "populate[heroImage]": "true",
+    "populate[offices]": "true",
     "populate[seo][populate][ogImage]": "true",
   });
 }

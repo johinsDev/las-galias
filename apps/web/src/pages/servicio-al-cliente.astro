@@ -1,85 +1,284 @@
 ---
-import LeadForm from "@/islands/LeadForm";
+import { Image } from "astro:assets";
+import { Clock, House, Mail, MapPin, Phone, SquareArrowOutUpRight } from "lucide-astro";
+
 import Base from "@/layouts/Base.astro";
+import { getCustomerServicePage, mediaUrl } from "@/lib/strapi";
+
+const page = await getCustomerServicePage();
+
+// Each text falls back to the design's words, so the page reads right before
+// anyone fills the single type in. Contact data does NOT: the design's numbers
+// are placeholders, and a channel without real data is simply not drawn.
+const heroTitle = page?.heroTitle ?? "Estamos aquí para acompañarte";
+const heroSubtitle =
+  page?.heroSubtitle ??
+  "Antes, durante y después de tu compra. Elige el canal que prefieras o encuentra respuesta en nuestras preguntas frecuentes.";
+const pqrTitle = page?.pqrTitle ?? "¿Tienes una petición, queja o reclamo?";
+const pqrBody =
+  page?.pqrBody ??
+  "Radica tu PQR en nuestra página dedicada. Nuestro equipo te dará respuesta dentro de los 15 días hábiles siguientes, conforme a la Ley 1480 de 2011.";
+const postSaleTitle =
+  page?.postSaleTitle ?? "¿Ya recibiste tu vivienda y necesitas soporte posventa?";
+const postSaleBody =
+  page?.postSaleBody ??
+  "Radica fácilmente tus solicitudes de posventa o garantía a través de nuestro portal de clientes. Cobertura conforme a Ley 1796 de 2016.";
+// Without a portal, post-sale goes to the PQR form, which takes post-sale too.
+const postSaleHref = page?.postSaleUrl || "/servicio-al-cliente/pqr";
+const postSaleExternal = Boolean(page?.postSaleUrl);
+
+const offices = (page?.offices ?? []).filter((office) => office.city);
+
+const digits = (value: string) => value.replace(/\D/g, "");
+const whatsappHref =
+  page?.whatsappUrl ||
+  (page?.whatsappNumber
+    ? `https://wa.me/${digits(page.whatsappNumber).replace(/^(?=3)/, "57")}`
+    : null);
 
 const channels = [
-  {
+  page?.whatsappNumber && {
+    kind: "whatsapp" as const,
+    title: "WhatsApp",
+    body: "Respuesta en minutos, todos los días de 8am a 8pm.",
+    value: page.whatsappNumber,
+    href: whatsappHref,
+    external: true,
+  },
+  page?.phoneNumber && {
+    kind: "phone" as const,
+    title: "Línea telefónica",
+    body: "Atención personalizada de lunes a domingo.",
+    value: page.phoneNumber,
+    href: `tel:${digits(page.phoneNumber)}`,
+    external: false,
+  },
+  page?.email && {
+    kind: "mail" as const,
+    title: "Correo electrónico",
+    body: "Para solicitudes formales o envío de documentos.",
+    value: page.email,
+    href: `mailto:${page.email}`,
+    external: false,
+  },
+  offices.length > 0 && {
+    kind: "office" as const,
     title: "Sala de ventas",
-    body: "Para cotizaciones, disponibilidad y visitas a los proyectos.",
-    action: "sala@lasgalias.com.co",
-    href: "mailto:sala@lasgalias.com.co",
+    body: `Visítanos en cualquiera de nuestras ${offices.length} sedes.`,
+    value: "Ver ubicaciones →",
+    href: "#sedes",
+    external: false,
   },
-  {
-    title: "Postventa",
-    body: "Garantías y arreglos sobre un inmueble ya entregado. Radícalo abajo con tu torre y apartamento a la mano.",
-    action: "Radicar postventa",
-    href: "/servicio-al-cliente/pqr",
-  },
-  {
-    title: "Peticiones, quejas y reclamos",
-    body: "Respondemos dentro de los 15 días hábiles que fija la Ley 1755 de 2015.",
-    action: "Radicar PQR",
-    href: "/servicio-al-cliente/pqr",
-  },
-];
+].filter((channel) => Boolean(channel)) as {
+  kind: "whatsapp" | "phone" | "mail" | "office";
+  title: string;
+  body: string;
+  value: string;
+  href: string | null;
+  external: boolean;
+}[];
+
+const title = page?.seo?.metaTitle ?? "Servicio al cliente — Las Galias";
+const description =
+  page?.seo?.metaDescription ??
+  "Canales de atención de Constructora Las Galias: WhatsApp, línea telefónica, correo, PQR, posventa y salas de ventas.";
+
+// Measures from the Figma frame (node 2839:19966): a 1152 column inside a
+// 1216 rule, 16px cards on a 1.43px hairline.
+const SECTION = "mx-auto max-w-[1216px] px-5 md:px-8";
+const RULE = "border-cloud border-t-[0.71px]";
+const CARD = "border-mist rounded-2xl border-[1.43px] bg-white";
+const BAND_TITLE =
+  "text-graphite text-xl leading-[1.3] font-bold md:text-[22px] md:leading-[28.6px]";
+const BAND_BODY = "text-iron mt-2 max-w-[620px] text-sm leading-[23.8px]";
+const BAND_ACTION =
+  "inline-flex shrink-0 items-center justify-center rounded-full text-sm leading-[21px] font-semibold transition-colors";
 ---
 
-<Base
-  title="Servicio al cliente — Las Galias"
-  description="Radica una petición, queja, reclamo, sugerencia o solicitud de postventa ante Constructora Las Galias, o habla con un asesor comercial."
->
-  <section class="border-line border-b">
-    <div class="container py-12 md:py-16">
-      <p class="eyebrow text-brand" data-reveal>Servicio al cliente</p>
-      <h1 class="text-h1 text-ink mt-3 max-w-2xl font-extrabold" data-reveal>
-        Estamos para responderte
+<Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
+  {/* 01 Portada */}
+  <section
+    class="bg-fog relative isolate flex min-h-[360px] items-center overflow-hidden md:h-[596px]"
+  >
+    {
+      page?.heroImage?.url && (
+        <>
+          <Image
+            src={mediaUrl(page.heroImage.url)}
+            alt=""
+            width={1920}
+            height={644}
+            loading="eager"
+            class="absolute inset-0 -z-10 h-full w-full object-cover"
+          />
+          <div class="absolute inset-0 -z-10 bg-white/85" aria-hidden="true" />
+        </>
+      )
+    }
+    <div class="mx-auto px-5 py-16 text-center">
+      <h1
+        class="text-graphite mx-auto max-w-[576px] text-[34px] leading-[1.15] font-extrabold md:text-5xl md:leading-[54px]"
+        data-reveal
+      >
+        {heroTitle}
       </h1>
-      <p class="text-ink-muted mt-4 max-w-xl" data-reveal>
-        Si ya eres cliente, radica tu solicitud y te damos un número de seguimiento. Si todavía
-        estás buscando vivienda, un asesor comercial te acompaña.
+      <p
+        class="text-iron mx-auto mt-3 max-w-[480px] text-base leading-[1.45] md:text-[17px] md:leading-[23.92px]"
+        data-reveal
+      >
+        {heroSubtitle}
       </p>
+    </div>
+  </section>
 
-      <div class="mt-10 grid gap-4 md:grid-cols-3">
-        {
-          channels.map((channel) => (
-            <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
-              <h2 class="text-h4 text-ink font-semibold">{channel.title}</h2>
-              <p class="text-body-sm text-ink-muted mt-2">{channel.body}</p>
-              <a href={channel.href} class="text-body-sm text-brand mt-4 inline-block font-medium">
-                {channel.action} →
-              </a>
+  {/* 02 Canales */}
+  {
+    channels.length > 0 && (
+      <section class:list={[SECTION, "py-16"]}>
+        <div class="mx-auto grid max-w-[1152px] gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {channels.map((channel) => (
+            <div class:list={[CARD, "flex flex-col gap-3 p-6"]} data-reveal>
+              <span
+                class:list={[
+                  "flex size-11 items-center justify-center rounded-xl",
+                  channel.kind === "whatsapp"
+                    ? "bg-[#25D366] text-white"
+                    : "bg-brand-subtle text-brand",
+                ]}
+              >
+                {channel.kind === "whatsapp" && (
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12.04 2a9.9 9.9 0 0 0-8.5 15l-1.3 4.7 4.83-1.27A9.9 9.9 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 1 1-4.13 15.06l-.3-.18-2.87.75.77-2.8-.19-.3A8.1 8.1 0 0 1 12.04 3.8Zm4.66 10.2c-.25-.13-1.48-.73-1.71-.81-.23-.09-.4-.13-.56.12-.17.25-.65.81-.8.98-.14.16-.29.18-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.66-1.25-1.48-1.4-1.73-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.09-.16.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.43h-.47c-.16 0-.42.06-.64.31-.22.25-.84.82-.84 2 0 1.18.86 2.32.98 2.48.12.17 1.7 2.6 4.12 3.64.58.25 1.02.4 1.37.51.58.18 1.1.16 1.51.1.46-.07 1.48-.6 1.69-1.19.2-.58.2-1.08.15-1.18-.06-.11-.23-.17-.48-.29Z" />
+                  </svg>
+                )}
+                {channel.kind === "phone" && (
+                  <Phone size={20} stroke-width={1.8} aria-hidden="true" />
+                )}
+                {channel.kind === "mail" && (
+                  <Mail size={20} stroke-width={1.8} aria-hidden="true" />
+                )}
+                {channel.kind === "office" && (
+                  <House size={20} stroke-width={1.8} aria-hidden="true" />
+                )}
+              </span>
+              <h2 class="text-graphite text-[15px] leading-[22.5px] font-bold">{channel.title}</h2>
+              <p class="text-iron text-[13px] leading-[20.8px]">{channel.body}</p>
+              {channel.href ? (
+                <a
+                  href={channel.href}
+                  {...(channel.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  class="text-graphite hover:text-brand mt-auto text-[13px] leading-[19.5px] font-bold break-all"
+                >
+                  {channel.value}
+                </a>
+              ) : (
+                <p class="text-graphite mt-auto text-[13px] leading-[19.5px] font-bold">
+                  {channel.value}
+                </p>
+              )}
             </div>
-          ))
-        }
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {/* 03 PQR */}
+  <section class:list={[SECTION]}>
+    <div class:list={[channels.length > 0 && RULE, "py-14"]}>
+      <div
+        class:list={[
+          CARD,
+          "mx-auto flex max-w-[1152px] flex-col gap-6 px-6 py-8 md:min-h-[160px] md:flex-row md:items-center md:justify-between md:px-10 md:py-9",
+        ]}
+        data-reveal
+      >
+        <div>
+          <h2 class={BAND_TITLE}>{pqrTitle}</h2>
+          <p class={BAND_BODY}>{pqrBody}</p>
+        </div>
+        <a
+          href="/servicio-al-cliente/pqr"
+          class:list={[
+            BAND_ACTION,
+            "border-mist text-graphite hover:bg-cloud h-[50px] gap-1 border-[1.43px] bg-[#F3F4F5] px-6",
+          ]}
+        >
+          Radicar PQR
+          <SquareArrowOutUpRight size={14} stroke-width={2} aria-hidden="true" />
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="bg-surface border-line border-b" id="radicar">
-    <div class="container py-12 md:py-16">
-      <div class="mx-auto max-w-3xl text-center" data-reveal>
-        <p class="eyebrow">Radicación</p>
-        <h2 class="text-h3 text-ink mt-2 font-bold">Radica tu solicitud</h2>
-        <p class="text-body-sm text-ink-muted mx-auto mt-3 max-w-xl">
-          Un solo formulario para peticiones, quejas, reclamos, sugerencias y postventa. Al enviarlo
-          recibes un número de radicado para hacerle seguimiento.
-        </p>
-        <a href="/servicio-al-cliente/pqr" class="btn btn-primary mt-6">Radicar PQR</a>
+  {/* 04 Posventa */}
+  <section class:list={[SECTION]}>
+    <div class:list={[RULE, "py-14"]}>
+      <div
+        class="bg-blush border-mist mx-auto flex max-w-[1152px] flex-col gap-6 rounded-2xl border-[0.48px] px-6 py-8 md:min-h-[160px] md:flex-row md:items-center md:justify-between md:px-10 md:py-9"
+        data-reveal
+      >
+        <div>
+          <h2 class={BAND_TITLE}>{postSaleTitle}</h2>
+          <p class={BAND_BODY}>{postSaleBody}</p>
+        </div>
+        <a
+          href={postSaleHref}
+          {...postSaleExternal ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+          class:list={[
+            BAND_ACTION,
+            "bg-brand hover:bg-brand-bright h-[49px] gap-2 px-7 text-white",
+          ]}
+        >
+          Radicar solicitud de posventa
+          <SquareArrowOutUpRight size={14} stroke-width={2} aria-hidden="true" />
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="container grid gap-12 py-12 md:grid-cols-2 md:py-16">
-    <div data-reveal>
-      <p class="eyebrow">Asesoría comercial</p>
-      <h2 class="text-h3 text-ink mt-2 font-bold">¿Todavía estás buscando?</h2>
-      <p class="text-ink-muted mt-4 max-w-md">
-        Cuéntanos qué estás buscando y uno de nuestros asesores te contacta para acompañarte en todo
-        el proceso. Esto no es una PQR: es una conversación de ventas.
-      </p>
-    </div>
-    <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
-      <LeadForm client:visible source="servicio-al-cliente" />
-    </div>
-  </section>
+  {/* 05 Salas de ventas */}
+  {
+    offices.length > 0 && (
+      <section class:list={[SECTION, "scroll-mt-24"]} id="sedes">
+        <div class:list={[RULE, "py-16"]}>
+          <div class="mx-auto grid max-w-[1152px] gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {offices.map((office) => (
+              <div class:list={[CARD, "p-6"]} data-reveal>
+                <p class="text-graphite flex items-center gap-2 text-base leading-6 font-bold">
+                  <MapPin
+                    size={16}
+                    stroke-width={2}
+                    aria-hidden="true"
+                    class="text-brand shrink-0"
+                  />
+                  {office.city}
+                </p>
+                {office.address && (
+                  <p class="text-iron mt-2 text-[13px] leading-[20.8px]">{office.address}</p>
+                )}
+                {office.region && (
+                  <p class="text-steel mt-1.5 text-[11px] leading-[16.5px] font-semibold tracking-[0.55px] uppercase">
+                    {office.region}
+                  </p>
+                )}
+                {office.schedule && (
+                  <p class="border-mist text-steel mt-2.5 flex items-center gap-1.5 border-t-[1.43px] pt-2 text-[12.5px] leading-[18.75px]">
+                    <Clock size={14} stroke-width={1.8} aria-hidden="true" class="shrink-0" />
+                    {office.schedule}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 </Base>

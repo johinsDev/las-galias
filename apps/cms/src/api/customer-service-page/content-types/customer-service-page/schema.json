@@ -1,0 +1,89 @@
+{
+  "kind": "singleType",
+  "collectionName": "customer_service_page",
+  "info": {
+    "singularName": "customer-service-page",
+    "pluralName": "customer-service-pages",
+    "displayName": "Página · Servicio al cliente",
+    "description": "Portada, canales de contacto, bloques de PQR y posventa y las salas de ventas de /servicio-al-cliente. Un dato de contacto vacío no se muestra"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "sectionHero": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "heroTitle": {
+      "type": "string",
+      "default": "Estamos aquí para acompañarte"
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "default": "Antes, durante y después de tu compra. Elige el canal que prefieras o encuentra respuesta en nuestras preguntas frecuentes."
+    },
+    "sectionChannels": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "whatsappNumber": {
+      "type": "string"
+    },
+    "whatsappUrl": {
+      "type": "string"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "sectionRequests": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "pqrTitle": {
+      "type": "string",
+      "default": "¿Tienes una petición, queja o reclamo?"
+    },
+    "pqrBody": {
+      "type": "text",
+      "default": "Radica tu PQR en nuestra página dedicada. Nuestro equipo te dará respuesta dentro de los 15 días hábiles siguientes, conforme a la Ley 1480 de 2011."
+    },
+    "postSaleTitle": {
+      "type": "string",
+      "default": "¿Ya recibiste tu vivienda y necesitas soporte posventa?"
+    },
+    "postSaleBody": {
+      "type": "text",
+      "default": "Radica fácilmente tus solicitudes de posventa o garantía a través de nuestro portal de clientes. Cobertura conforme a Ley 1796 de 2016."
+    },
+    "postSaleUrl": {
+      "type": "string"
+    },
+    "sectionOffices": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "offices": {
+      "type": "component",
+      "component": "page.office",
+      "repeatable": true
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    }
+  }
+}

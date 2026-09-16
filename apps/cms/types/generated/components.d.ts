@@ -24,6 +24,20 @@ export interface PageListItem extends Struct.ComponentSchema {
   };
 }
 
+export interface PageOffice extends Struct.ComponentSchema {
+  collectionName: "components_page_offices";
+  info: {
+    description: "Una sede en la p\u00E1gina de servicio al cliente";
+    displayName: "Sala de ventas";
+  };
+  attributes: {
+    address: Schema.Attribute.String;
+    city: Schema.Attribute.String & Schema.Attribute.Required;
+    region: Schema.Attribute.String;
+    schedule: Schema.Attribute.String;
+  };
+}
+
 export interface PageStat extends Struct.ComponentSchema {
   collectionName: "components_page_stats";
   info: {
@@ -178,6 +192,7 @@ declare module "@strapi/strapi" {
     export interface ComponentSchemas {
       "page.illustrated-step": PageIllustratedStep;
       "page.list-item": PageListItem;
+      "page.office": PageOffice;
       "page.stat": PageStat;
       "page.step": PageStep;
       "page.tool-card": PageToolCard;

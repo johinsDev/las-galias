@@ -508,6 +508,64 @@ export interface ApiCityCity extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCustomerServicePageCustomerServicePage extends Struct.SingleTypeSchema {
+  collectionName: "customer_service_page";
+  info: {
+    description: "Portada, canales de contacto, bloques de PQR y posventa y las salas de ventas de /servicio-al-cliente. Un dato de contacto vac\u00EDo no se muestra";
+    displayName: "P\u00E1gina \u00B7 Servicio al cliente";
+    pluralName: "customer-service-pages";
+    singularName: "customer-service-page";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    email: Schema.Attribute.Email;
+    heroImage: Schema.Attribute.Media<"images">;
+    heroSubtitle: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<"Antes, durante y despu\u00E9s de tu compra. Elige el canal que prefieras o encuentra respuesta en nuestras preguntas frecuentes.">;
+    heroTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Estamos aqu\u00ED para acompa\u00F1arte">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::customer-service-page.customer-service-page"
+    > &
+      Schema.Attribute.Private;
+    offices: Schema.Attribute.Component<"page.office", true>;
+    phoneNumber: Schema.Attribute.String;
+    postSaleBody: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<"Radica f\u00E1cilmente tus solicitudes de posventa o garant\u00EDa a trav\u00E9s de nuestro portal de clientes. Cobertura conforme a Ley 1796 de 2016.">;
+    postSaleTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"\u00BFYa recibiste tu vivienda y necesitas soporte posventa?">;
+    postSaleUrl: Schema.Attribute.String;
+    pqrBody: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<"Radica tu PQR en nuestra p\u00E1gina dedicada. Nuestro equipo te dar\u00E1 respuesta dentro de los 15 d\u00EDas h\u00E1biles siguientes, conforme a la Ley 1480 de 2011.">;
+    pqrTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"\u00BFTienes una petici\u00F3n, queja o reclamo?">;
+    publishedAt: Schema.Attribute.DateTime;
+    sectionChannels: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionHero: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionOffices: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionRequests: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    whatsappNumber: Schema.Attribute.String;
+    whatsappUrl: Schema.Attribute.String;
+  };
+}
+
 export interface ApiExchangeRateExchangeRate extends Struct.SingleTypeSchema {
   collectionName: "exchange_rates";
   info: {
@@ -1761,6 +1819,7 @@ declare module "@strapi/strapi" {
       "api::amenity.amenity": ApiAmenityAmenity;
       "api::calculator-config.calculator-config": ApiCalculatorConfigCalculatorConfig;
       "api::city.city": ApiCityCity;
+      "api::customer-service-page.customer-service-page": ApiCustomerServicePageCustomerServicePage;
       "api::exchange-rate.exchange-rate": ApiExchangeRateExchangeRate;
       "api::faq-bot-config.faq-bot-config": ApiFaqBotConfigFaqBotConfig;
       "api::faq-bot-question.faq-bot-question": ApiFaqBotQuestionFaqBotQuestion;

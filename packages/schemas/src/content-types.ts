@@ -380,6 +380,30 @@ export interface LeadFormConfig {
 }
 
 /** Single type de la página para radicar PQR. */
+interface Office {
+  city: string;
+  address?: string | null;
+  region?: string | null;
+  schedule?: string | null;
+}
+
+export interface CustomerServicePage {
+  heroImage?: Media | null;
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  whatsappNumber?: string | null;
+  whatsappUrl?: string | null;
+  phoneNumber?: string | null;
+  email?: string | null;
+  pqrTitle?: string | null;
+  pqrBody?: string | null;
+  postSaleTitle?: string | null;
+  postSaleBody?: string | null;
+  postSaleUrl?: string | null;
+  offices?: Office[] | null;
+  seo?: Seo | null;
+}
+
 export interface PqrPage {
   heroImage?: Media | null;
   heroTitle?: string | null;

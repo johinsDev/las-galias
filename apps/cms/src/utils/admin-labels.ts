@@ -266,6 +266,43 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     faqTitle: { label: "Título de las preguntas" },
     seo: { label: "SEO" },
   },
+  "api::customer-service-page.customer-service-page": {
+    sectionHero: { label: "Portada" },
+    heroImage: {
+      label: "Foto de portada",
+      description: "Se cubre con un velo blanco para que el titular se lea encima.",
+    },
+    heroTitle: { label: "Titular" },
+    heroSubtitle: { label: "Bajada" },
+    sectionChannels: {
+      label: "Canales de contacto",
+      description:
+        "Las cuatro tarjetas bajo la portada. Un canal sin dato no se muestra, así la página nunca publica un teléfono de ejemplo.",
+    },
+    whatsappNumber: { label: "WhatsApp (como se lee)", description: "Ej.: 300 000 0000." },
+    whatsappUrl: {
+      label: "Enlace de WhatsApp",
+      description: "Ej.: https://wa.me/573000000000. Vacío: se arma con el número.",
+    },
+    phoneNumber: { label: "Línea telefónica", description: "Ej.: 01 8000 000 000." },
+    email: { label: "Correo de servicio al cliente" },
+    sectionRequests: { label: "Bloques de PQR y posventa" },
+    pqrTitle: { label: "PQR · título" },
+    pqrBody: { label: "PQR · texto", description: "El botón lleva a /servicio-al-cliente/pqr." },
+    postSaleTitle: { label: "Posventa · título" },
+    postSaleBody: { label: "Posventa · texto" },
+    postSaleUrl: {
+      label: "Posventa · enlace del portal",
+      description: "Vacío: el botón lleva al formulario de PQR, que también recibe posventa.",
+    },
+    sectionOffices: {
+      label: "Salas de ventas",
+      description:
+        "Una tarjeta por sede, en este orden. La tarjeta «Sala de ventas» de arriba baja hasta aquí.",
+    },
+    offices: { label: "Sedes" },
+    seo: { label: "SEO" },
+  },
   "api::lead-form-config.lead-form-config": {
     sectionOptions: {
       label: "Opciones de los desplegables",
@@ -547,6 +584,12 @@ const COMPONENTS: Record<string, FieldLabels> = {
   },
   "page.step": { title: { label: "Título" }, body: { label: "Texto" } },
   "page.list-item": { text: { label: "Texto" } },
+  "page.office": {
+    city: { label: "Ciudad" },
+    address: { label: "Dirección", description: "Ej.: Calle 175 N° 22-10, San Antonio." },
+    region: { label: "Zona o departamento", description: "Ej.: Zona norte, Valle del Cauca." },
+    schedule: { label: "Horario", description: "Ej.: Lun–Dom 9:00am – 5:00pm." },
+  },
   "page.illustrated-step": {
     title: { label: "Título" },
     body: { label: "Texto" },

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_page_offices",
+  "info": {
+    "displayName": "Sala de ventas",
+    "description": "Una sede en la página de servicio al cliente"
+  },
+  "attributes": {
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "schedule": {
+      "type": "string"
+    }
+  }
+}

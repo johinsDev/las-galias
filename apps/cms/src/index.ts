@@ -42,6 +42,7 @@ const PUBLIC_UIDS = new Set<string>([
   "api::foreign-buyer-page.foreign-buyer-page",
   "api::home-page.home-page",
   "api::pqr-page.pqr-page",
+  "api::customer-service-page.customer-service-page",
   "api::legal-document.legal-document",
 ]);
 
@@ -209,6 +210,7 @@ export default {
       "api::foreign-buyer-page.foreign-buyer-page.find",
       "api::home-page.home-page.find",
       "api::pqr-page.pqr-page.find",
+      "api::customer-service-page.customer-service-page.find",
       "api::lead-form-config.lead-form-config.find",
     ];
     const actions = [
