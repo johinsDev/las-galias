@@ -345,7 +345,8 @@ function readSheet() {
             .filter(Boolean),
           tour: clean(r[C.tour]),
           video: clean(r[C.video]),
-          brochure: clean(r[C.brochure]),
+          // www.galias.com.co no resuelve; el mismo archivo está sin «www».
+          brochure: clean(r[C.brochure])?.replace("://www.galias.com.co/", "://galias.com.co/") ?? null,
           schedule: clean(r[C.schedule]),
           email: clean(r[C.email]),
           url: clean(r[C.url]),
