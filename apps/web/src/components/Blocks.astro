@@ -1,5 +1,8 @@
 ---
+import { Image } from "astro:assets";
+
 import { extractHeadings, textOf } from "@/lib/blocks";
+import { mediaUrl } from "@/lib/strapi";
 
 /**
  * Minimal renderer for Strapi's "blocks" rich text (paragraphs, headings,
@@ -19,12 +22,20 @@ interface BlockNode {
   level?: number;
   format?: "ordered" | "unordered";
   children?: BlockChild[];
-  image?: { url: string; alternativeText?: string | null };
+  image?: {
+    url: string;
+    alternativeText?: string | null;
+    width?: number | null;
+    height?: number | null;
+  };
 }
 
 interface Props {
   content: unknown;
 }
+
+/** The article column tops out around 800 px; 1200 covers 1.5x screens. */
+const MAX_IMAGE_WIDTH = 1200;
 
 type Rendered =
   | { kind: "h2"; text: string; id: string }
@@ -33,7 +44,7 @@ type Rendered =
   | { kind: "p"; text: string }
   | { kind: "ol"; items: string[] }
   | { kind: "ul"; items: string[] }
-  | { kind: "img"; url: string; alt: string };
+  | { kind: "img"; url: string; alt: string; width?: number; height?: number };
 
 const { content } = Astro.props;
 const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
@@ -59,7 +70,18 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
     return block.format === "ordered" ? [{ kind: "ol", items }] : [{ kind: "ul", items }];
   }
   if (block.type === "image" && block.image?.url) {
-    return [{ kind: "img", url: block.image.url, alt: block.image.alternativeText ?? "" }];
+    const { url, alternativeText, width, height } = block.image;
+    // Never wider than the article column; the CDN resizes the original.
+    const scale = width && width > MAX_IMAGE_WIDTH ? MAX_IMAGE_WIDTH / width : 1;
+    return [
+      {
+        kind: "img",
+        url,
+        alt: alternativeText ?? "",
+        width: width ? Math.round(width * scale) : undefined,
+        height: height ? Math.round(height * scale) : undefined,
+      },
+    ];
   }
   const text = textOf(block.children);
   return text ? [{ kind: "p", text }] : [];
@@ -92,7 +114,24 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
           ))}
         </ul>
       ) : node.kind === "img" ? (
-        <img src={node.url} alt={node.alt} loading="lazy" class="rounded-xl" />
+        node.width && node.height ? (
+          <Image
+            src={mediaUrl(node.url)}
+            alt={node.alt}
+            width={node.width}
+            height={node.height}
+            loading="lazy"
+            class="h-auto w-full rounded-xl"
+          />
+        ) : (
+          <Image
+            src={mediaUrl(node.url)}
+            alt={node.alt}
+            inferSize
+            loading="lazy"
+            class="h-auto w-full rounded-xl"
+          />
+        )
       ) : (
         <p class="text-body text-ink">{node.text}</p>
       ),

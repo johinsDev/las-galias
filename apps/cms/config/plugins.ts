@@ -1,6 +1,21 @@
 import type { Core } from "@strapi/strapi";
 
-const allowedMediaTypes = ["image/*", "video/*", "application/pdf"];
+/**
+ * Only the image formats every browser renders. `image/*` also let in HEIC and
+ * TIFF, which upload fine and then show as a broken image on most browsers.
+ * SVG stays: amenity icons are SVGs the site inlines (sanitized in
+ * apps/web/src/lib/svg.ts) so the editor can recolor them.
+ */
+const allowedMediaTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+  "image/svg+xml",
+  "video/*",
+  "application/pdf",
+];
 
 const deniedExecutableTypes = [
   "application/vnd.microsoft.portable-executable",
