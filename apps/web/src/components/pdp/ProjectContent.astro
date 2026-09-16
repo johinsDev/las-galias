@@ -51,7 +51,8 @@ const specs = [
   },
   { label: "Parqueadero", value: spec?.parking ?? null },
   { label: "Estrato", value: spec?.stratum != null ? String(spec.stratum) : null },
-  { label: "Entrega", value: spec?.deliveryYear != null ? String(spec.deliveryYear) : null },
+  // Con asterisco: la fecha depende de la etapa de cada torre (comentario #120).
+  { label: "Entrega", value: spec?.deliveryYear != null ? `${spec.deliveryYear}*` : null },
 ].filter((s) => s.value);
 
 // Only typologies with a price can drive the simulator.
@@ -158,13 +159,21 @@ const sections = [
 
   {
     specs.length > 0 && (
-      <div class="mt-4 grid grid-cols-2 gap-3.5 lg:grid-cols-4" data-reveal>
-        {specs.map((item) => (
-          <div class={SPEC_CARD}>
-            <p class={SPEC_LABEL}>{item.label}</p>
-            <p class={SPEC_VALUE}>{item.value}</p>
-          </div>
-        ))}
+      <div class="mt-4" data-reveal>
+        <div class="grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+          {specs.map((item) => (
+            <div class={SPEC_CARD}>
+              <p class={SPEC_LABEL}>{item.label}</p>
+              <p class={SPEC_VALUE}>{item.value}</p>
+            </div>
+          ))}
+        </div>
+        {spec?.deliveryYear != null && (
+          <p class="text-steel mt-2.5 text-[13px] leading-5">
+            *La fecha de entrega depende de la etapa de preventas o inmobiliario y según la fase
+            (torre). Se debe verificar en sala de ventas la etapa en la que se encuentra cada torre.
+          </p>
+        )}
       </div>
     )
   }
