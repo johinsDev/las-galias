@@ -3,6 +3,9 @@
  *
  *   node scripts/load-projects.cjs          # dice qué haría, sin escribir
  *   node scripts/load-projects.cjs --yes    # borra y carga
+ *   node scripts/load-projects.cjs --solo-brochures [--yes]
+ *       # solo sube los brochures que falten, sin borrar nada: recargar todo
+ *       # crea documentos nuevos y los leads ya recibidos perderían su proyecto
  *
  * La fuente es `data/proyectos.csv`: la hoja «carga_proyectos_galias.xlsx»
  * descargada tal cual (Archivo → Descargar → CSV). Para recargar, se vuelve a
@@ -33,6 +36,7 @@ process.chdir(appDir);
 require("dotenv").config({ path: ".env" });
 
 const APPLY = process.argv.includes("--yes");
+const ONLY_BROCHURES = process.argv.includes("--solo-brochures");
 const URL_BASE = (process.env.STRAPI_URL || "http://localhost:1337").replace(/\/$/, "");
 const TOKEN = process.env.STRAPI_WRITE_TOKEN;
 const CSV = path.join(appDir, "data/proyectos.csv");
@@ -393,8 +397,8 @@ async function download(url) {
 
 const MIME = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", pdf: "application/pdf" };
 const uploaded = new Map();
-/** El tope del plugin de upload (`config/plugins.ts`); los brochures lo pasan. */
-const MAX_BYTES = Number(process.env.UPLOAD_MAX_BYTES) || 2 * 1024 * 1024;
+/** El tope del plugin de upload para documentos (`config/plugins.ts`). */
+const MAX_BYTES = Number(process.env.UPLOAD_MAX_BYTES) || 30 * 1024 * 1024;
 const tooBig = [];
 
 /** Sube un archivo de galias.com.co una sola vez; devuelve su id de media. */
@@ -506,6 +510,27 @@ async function sincoTowers() {
   return byMacro;
 }
 
+async function loadBrochures(sheet) {
+  for (const p of sheet) {
+    if (!p.brochure) continue;
+    const slug = slugify(p.name);
+    const json = await api(`projects?status=draft&filters[slug][$eq]=${slug}&populate[brochure]=true`);
+    const project = json.data[0];
+    if (!project) {
+      console.log(`  ${p.name}: no está en el CMS`);
+      continue;
+    }
+    if (project.brochure) continue;
+    const published = await api(`projects?filters[slug][$eq]=${slug}&fields[0]=slug`);
+    const status = published.data.length > 0 ? "published" : "draft";
+    console.log(`  ${p.name}: subir brochure (${status})`);
+    if (!APPLY) continue;
+    const brochure = await media(p.brochure, `${p.name} brochure`);
+    if (brochure) await send("PUT", `projects/${project.documentId}?status=${status}`, { brochure });
+  }
+  if (tooBig.length) console.log(`\nSin subir, pasan de ${MAX_BYTES / 1024 / 1024} MB: ${tooBig.join(", ")}`);
+}
+
 async function main() {
   if (!fs.existsSync(CSV)) {
     console.error(`No existe ${path.relative(appDir, CSV)}: descarga la hoja como CSV ahí.`);
@@ -518,6 +543,7 @@ async function main() {
   }
 
   console.log(`${APPLY ? "CARGANDO" : "SIMULACIÓN"} contra ${URL_BASE} — ${sheet.length} proyectos\n`);
+  if (ONLY_BROCHURES) return loadBrochures(sheet);
   console.log("1. Borrado");
   await wipe();
   console.log("2. Ciudades");

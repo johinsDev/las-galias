@@ -238,6 +238,11 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[macroproject][populate][pointsOfInterest]": "true",
     "populate[zone]": "true",
     "populate[recommended][populate][city]": "true",
+    // The recommended cards are the same ProjectCard as the listing: without
+    // their images they render the "Sin imagen disponible" placeholder.
+    "populate[recommended][populate][heroDesktop]": "true",
+    "populate[recommended][populate][heroMobile]": "true",
+    "populate[recommended][populate][gallery]": "true",
     // PDP blocks added with the new wireframe.
     "populate[logo]": "true",
     "populate[specSheet]": "true",

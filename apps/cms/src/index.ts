@@ -19,6 +19,7 @@ import {
   SINCO_PROJECT_UID,
   syncSincoCatalogIfIncomplete,
 } from "./utils/sinco-catalog";
+import { applyUploadLimits } from "./utils/upload-limits";
 
 /**
  * Content types whose publish/unpublish must rebuild the static site.
@@ -182,6 +183,8 @@ export default {
    * create-only on leads. Idempotent — runs on every boot.
    */
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    applyUploadLimits(strapi);
+
     const publicRole = await strapi
       .query("plugin::users-permissions.role")
       .findOne({ where: { type: "public" } });

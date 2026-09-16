@@ -49,8 +49,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
     },
     upload: {
       config: {
-        // Max upload size for every image/media field (requirement).
-        sizeLimit: env.int("UPLOAD_MAX_BYTES", 2 * 1024 * 1024),
+        // Max upload size for documents (brochures are print PDFs up to ~25 MB).
+        // Images keep their 2 MB requirement in src/utils/upload-limits.ts.
+        sizeLimit: env.int("UPLOAD_MAX_BYTES", 30 * 1024 * 1024),
         // Only a thumbnail for the admin: final resize/format is done by the
         // Vercel image CDN, not sharp on Fargate (saves CPU and S3).
         breakpoints: {
