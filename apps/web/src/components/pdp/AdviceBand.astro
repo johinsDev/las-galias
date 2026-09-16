@@ -16,12 +16,17 @@ const body =
   "Cuéntanos un poco sobre ti y un asesor de Galias te contactará con las mejores opciones para tu situación financiera.";
 ---
 
-<section class="bg-brand-subtle border-line border-t">
-  <div class="container grid items-center gap-10 py-16 md:py-20 lg:grid-cols-[1fr_1.15fr]">
-    <div data-reveal>
-      <p class="eyebrow text-brand">{eyebrow}</p>
-      <h2 class="text-h3 text-ink mt-3 font-bold">{title}</h2>
-      <p class="text-body-sm text-ink-muted mt-3 max-w-md">{body}</p>
+<section class="bg-brand-subtle border-mist border-t-[1.43px]">
+  {/* 1216 wide and centred, as the Figma frame draws the band (node 2710:5654). */}
+  <div
+    class="mx-auto grid max-w-[1216px] items-start gap-10 px-5 py-14 md:px-8 lg:grid-cols-[421.5fr_674.5fr] lg:gap-14"
+  >
+    <div class="pt-2" data-reveal>
+      <p class="text-brand text-xs leading-[18px] font-bold tracking-[1.2px] uppercase">
+        {eyebrow}
+      </p>
+      <h2 class="text-graphite mt-2.5 text-[26px] leading-[31.2px] font-semibold">{title}</h2>
+      <p class="text-iron mt-3 text-[15px] leading-6">{body}</p>
     </div>
 
     <div data-reveal>

@@ -92,6 +92,13 @@ const mapSrc =
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${bbox(lng, -0.006)}%2C${bbox(lat, -0.004)}%2C${bbox(lng, 0.006)}%2C${bbox(lat, 0.004)}&layer=mapnik&marker=${lat}%2C${lng}`
     : null;
 
+// Type and card styles from the Figma frame, shared by several blocks below.
+const HEADING = "text-graphite text-lg leading-[25.2px] font-semibold";
+const SPEC_CARD = "bg-blush border-cloud rounded-xl border-[0.71px] p-3.5";
+const SPEC_LABEL = "text-steel text-[10.5px] leading-[15.75px] tracking-[0.42px] uppercase";
+const SPEC_VALUE = "text-graphite mt-1.5 text-[15px] leading-[22.5px] font-bold";
+const SALES_VALUE = "text-graphite mt-1 text-[13.5px] leading-[20.25px] font-bold";
+
 // The tab row only lists sections this project actually renders.
 const sections = [
   { id: "descripcion", label: "Descripción", enabled: project.description != null },
@@ -108,13 +115,13 @@ const sections = [
        uses the row to jump between them. `scroll-mt` keeps a heading from
        landing under the sticky site header. */
     sections.length > 1 && (
-      <div class="border-line mb-8 border-b pb-6" data-section-nav>
-        <div class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0">
+      <div class="border-cloud border-b-[0.71px] pb-4" data-section-nav>
+        <div class="no-scrollbar -mx-5 flex gap-2.5 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0">
           {sections.map((section, i) => (
             <a
               href={`#${section.id}`}
               data-section-link={section.id}
-              class:list={["pill shrink-0", i === 0 ? "pill-on" : "pill-off"]}
+              class:list={["pdp-pill shrink-0 py-[9px]", i === 0 && "pdp-pill-on"]}
             >
               {section.label}
             </a>
@@ -126,19 +133,19 @@ const sections = [
 
   {
     project.description != null && (
-      <section id="descripcion" class="scroll-mt-28" data-reveal>
-        <h2 class="text-h4 text-ink font-bold">Descripción</h2>
-        <div class="text-body text-ink-muted mt-3" data-clamp>
-          <Blocks content={project.description} />
+      <section id="descripcion" class="scroll-mt-28 pt-7" data-reveal>
+        <h2 class={HEADING}>Descripción</h2>
+        <div class="text-iron mt-3.5 text-sm leading-[22.4px]" data-clamp>
+          <Blocks content={project.description} inheritText />
         </div>
         <button
           type="button"
-          class="text-brand text-body-sm mt-2 inline-flex items-center gap-1.5 font-bold"
+          class="text-brand mt-2 inline-flex items-center gap-1 text-xs leading-[18px] font-bold"
           data-clamp-toggle
         >
           <span data-clamp-label>Ver más</span>
           <ChevronDown
-            size={16}
+            size={13}
             stroke-width={2.5}
             aria-hidden="true"
             class="transition-transform duration-200"
@@ -151,11 +158,11 @@ const sections = [
 
   {
     specs.length > 0 && (
-      <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4" data-reveal>
+      <div class="mt-4 grid grid-cols-2 gap-3.5 lg:grid-cols-4" data-reveal>
         {specs.map((item) => (
-          <div class="border-line rounded-xl border bg-[#fdfbfc] p-4">
-            <p class="text-label text-ink-muted font-bold uppercase">{item.label}</p>
-            <p class="text-ink mt-1 font-bold">{item.value}</p>
+          <div class={SPEC_CARD}>
+            <p class={SPEC_LABEL}>{item.label}</p>
+            <p class={SPEC_VALUE}>{item.value}</p>
           </div>
         ))}
       </div>
@@ -164,11 +171,11 @@ const sections = [
 
   {
     pointsOfInterest.length > 0 && (
-      <section class="mt-12" data-reveal>
-        <h2 class="text-h4 text-ink font-bold">Zonas de interés</h2>
-        <div class="mt-4 flex flex-wrap gap-2.5">
+      <section class="pt-7" data-reveal>
+        <h2 class={HEADING}>Zonas de interés</h2>
+        <div class="mt-3.5 flex flex-wrap gap-2">
           {pointsOfInterest.map((poi) => (
-            <span class="pill pill-off">
+            <span class="pdp-pill hover:border-mist">
               {poi.name}
               {poi.distanceText ? ` · ${poi.distanceText}` : ""}
             </span>
@@ -180,33 +187,31 @@ const sections = [
 
   {
     typologies.length > 0 && (
-      <section id="planos" class="mt-12 scroll-mt-28" data-reveal>
-        <h2 class="text-h4 text-ink font-bold">Planos por tipología</h2>
-        <div class="mt-4">
-          <TypologySimulator
-            client:visible
-            typologies={typologies}
-            terms={terms}
-            trusteeName={project.financing?.trusteeName}
-            trustNumber={project.financing?.trustNumber}
-            clientPortalUrl={project.financing?.clientPortalUrl}
-          />
-        </div>
+      <section id="planos" class="scroll-mt-28 pt-9" data-reveal>
+        <h2 class={HEADING}>Planos por tipología</h2>
+        <TypologySimulator
+          client:visible
+          typologies={typologies}
+          terms={terms}
+          trusteeName={project.financing?.trusteeName}
+          trustNumber={project.financing?.trustNumber}
+          clientPortalUrl={project.financing?.clientPortalUrl}
+        />
       </section>
     )
   }
 
   {
     amenities.length > 0 && (
-      <section id="zonas-comunes" class="mt-12 scroll-mt-28" data-reveal>
-        <h2 class="text-h4 text-ink font-bold">Zonas comunes</h2>
-        <div class="mt-6 grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-5">
+      <section id="zonas-comunes" class="scroll-mt-28 pt-9" data-reveal>
+        <h2 class={HEADING}>Zonas comunes</h2>
+        <div class="mt-4 grid grid-cols-3 gap-x-2.5 gap-y-[18px] sm:grid-cols-5">
           {amenities.map((amenity) => (
             <div class="text-center">
-              <div class="bg-brand-tint text-brand mx-auto flex size-14 items-center justify-center rounded-full">
-                <AmenityIcon amenity={amenity} />
+              <div class="bg-brand-subtle text-brand mx-auto flex size-[52px] items-center justify-center rounded-full">
+                <AmenityIcon amenity={amenity} size={24} />
               </div>
-              <p class="text-body-sm text-ink mt-3">{amenity.name}</p>
+              <p class="text-iron mt-2.5 text-xs leading-[18px] font-semibold">{amenity.name}</p>
             </div>
           ))}
         </div>
@@ -216,30 +221,27 @@ const sections = [
 
   {
     progress.length > 0 && (
-      <section id="avance" class="mt-12 scroll-mt-28" data-reveal data-progress>
-        <h2 class="text-h4 text-ink font-bold">Avance de obra</h2>
-        {progress.length > 1 && (
-          <div
-            class="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0"
-            role="tablist"
-            aria-label="Avance de obra por mes"
-          >
-            {progress.map((entry, i) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={i === 0 ? "true" : "false"}
-                data-progress-tab={String(i)}
-                class:list={["pill shrink-0", i === 0 ? "pill-on" : "pill-off"]}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </div>
-        )}
-        {progress.length === 1 && <p class="pill pill-on mt-4">{progress[0]!.label}</p>}
+      <section id="avance" class="scroll-mt-28 pt-9" data-reveal data-progress>
+        <h2 class={HEADING}>Avance de obra</h2>
+        <div
+          class="no-scrollbar -mx-5 mt-3.5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0"
+          role="tablist"
+          aria-label="Avance de obra por mes"
+        >
+          {progress.map((entry, i) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+              data-progress-tab={String(i)}
+              class:list={["pdp-pill shrink-0", i === 0 && "pdp-pill-on"]}
+            >
+              {entry.label}
+            </button>
+          ))}
+        </div>
         {progress.map((entry, i) => (
-          <div class="mt-5" data-progress-panel={String(i)} hidden={i !== 0}>
+          <div class="mt-4" data-progress-panel={String(i)} hidden={i !== 0}>
             <VideoFacade
               src={entry.video}
               title={`Avance de obra ${entry.label}`}
@@ -253,10 +255,10 @@ const sections = [
 
   {
     (mapSrc || address) && (
-      <section id="ubicacion" class="mt-12 scroll-mt-28" data-reveal>
-        <h2 class="text-h4 text-ink font-bold">Ubicación</h2>
+      <section id="ubicacion" class="scroll-mt-28 pt-9" data-reveal>
+        <h2 class={HEADING}>Ubicación</h2>
         {mapSrc && (
-          <div class="bg-surface mt-4 aspect-[16/9] overflow-hidden rounded-3xl md:rounded-[28px]">
+          <div class="bg-cloud mt-3.5 aspect-[4/3] overflow-hidden rounded-[14px] sm:aspect-[1336/585]">
             {/* Below the fold on every screen size, so `lazy` genuinely defers
                 it: nothing is requested from OpenStreetMap until the visitor
                 scrolls this far. */}
@@ -270,44 +272,56 @@ const sections = [
           </div>
         )}
         {mapsHref && (
-          <div class="mt-4 flex flex-wrap gap-2.5">
-            <a href={mapsHref} target="_blank" rel="noopener noreferrer" class="pill pill-off">
+          <div class="mt-3.5 flex flex-wrap gap-2.5">
+            <a
+              href={mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pdp-pill px-[17px] py-[9px]"
+            >
               Ir con Google Maps
             </a>
-            <a href={wazeHref!} target="_blank" rel="noopener noreferrer" class="pill pill-off">
+            <a
+              href={wazeHref!}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pdp-pill px-[17px] py-[9px]"
+            >
               Ir con Waze
             </a>
           </div>
         )}
         {(address || salesRoom?.schedule || salesRoom?.email) && (
-          <div class="mt-8">
-            <p class="text-label text-ink-muted font-bold uppercase">Sala de ventas</p>
-            <div class="bg-brand-subtle mt-3 grid gap-5 rounded-2xl p-5 sm:grid-cols-3">
+          <>
+            <h3 class="text-steel pt-4 text-xs leading-[16.8px] font-semibold tracking-[0.72px] uppercase">
+              Sala de ventas
+            </h3>
+            <div class="bg-blush mt-4 grid gap-4 rounded-[14px] p-[18px] sm:grid-cols-3">
               {address && (
                 <div>
-                  <p class="text-label text-ink-muted font-bold uppercase">Dirección</p>
-                  <p class="text-body-sm text-ink mt-1 font-bold">{address}</p>
+                  <p class={SPEC_LABEL}>Dirección</p>
+                  <p class={SALES_VALUE}>{address}</p>
                 </div>
               )}
               {salesRoom?.schedule && (
                 <div>
-                  <p class="text-label text-ink-muted font-bold uppercase">Horario</p>
-                  <p class="text-body-sm text-ink mt-1 font-bold">{salesRoom.schedule}</p>
+                  <p class={SPEC_LABEL}>Horario</p>
+                  <p class={SALES_VALUE}>{salesRoom.schedule}</p>
                 </div>
               )}
               {salesRoom?.email && (
                 <div>
-                  <p class="text-label text-ink-muted font-bold uppercase">Correo</p>
+                  <p class={SPEC_LABEL}>Correo</p>
                   <a
                     href={`mailto:${salesRoom.email}`}
-                    class="text-body-sm text-ink hover:text-brand mt-1 block font-bold"
+                    class:list={[SALES_VALUE, "hover:text-brand block break-all"]}
                   >
                     {salesRoom.email}
                   </a>
                 </div>
               )}
             </div>
-          </div>
+          </>
         )}
       </section>
     )
@@ -349,8 +363,7 @@ const sections = [
           tabs.forEach((t) => {
             const on = t === tab;
             t.setAttribute("aria-selected", String(on));
-            t.classList.toggle("pill-on", on);
-            t.classList.toggle("pill-off", !on);
+            t.classList.toggle("pdp-pill-on", on);
           });
           root.querySelectorAll<HTMLElement>("[data-progress-panel]").forEach((panel) => {
             panel.hidden = panel.dataset.progressPanel !== index;
@@ -373,8 +386,7 @@ const sections = [
         if (!visible) return;
         links.forEach((link) => {
           const on = link.dataset.sectionLink === visible.target.id;
-          link.classList.toggle("pill-on", on);
-          link.classList.toggle("pill-off", !on);
+          link.classList.toggle("pdp-pill-on", on);
         });
       },
       { rootMargin: "-20% 0px -70% 0px" },

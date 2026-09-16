@@ -64,7 +64,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
 
   return (
     <form
-      className="border-line rounded-2xl border bg-white p-6 md:p-7"
+      className="border-mist form-compact rounded-2xl border-[1.43px] bg-white p-6 md:p-7"
       onSubmit={(event) => {
         event.preventDefault();
         if (!accepted) {
@@ -78,11 +78,11 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
         document.getElementById("lead")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }}
     >
-      <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+      <div className="[&_.field-box_.text-ink-faint]:text-graphite grid gap-4 sm:grid-cols-2 [&_.field-box]:gap-[3px] [&_.field-box]:px-[9px]">
         {fields.map((field) => (
           <div key={field.key}>
             <label
-              className="text-label text-ink-muted mb-1.5 block font-bold uppercase"
+              className="text-steel mb-1.5 block text-[11px] leading-[16.5px] font-semibold tracking-[0.44px] uppercase"
               htmlFor={`advice-${field.key}`}
             >
               {field.label}
@@ -102,25 +102,27 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
         ))}
       </div>
 
-      <div className="mt-5 flex items-center gap-4">
-        <span className="text-body-sm text-ink font-bold">¿Es tu primera vivienda?</span>
-        <span className="flex items-center gap-2">
-          <span className="text-body-sm text-ink-muted">No</span>
+      <div className="mt-4 flex items-center gap-6">
+        <span className="text-graphite text-[13.5px] leading-[20.25px] font-semibold">
+          ¿Es tu primera vivienda?
+        </span>
+        <span className="flex items-center gap-2.5">
+          <span className="text-iron text-[13.5px]">No</span>
           <button
             type="button"
             role="switch"
             aria-checked={values.firstHome === true}
             aria-label="¿Es tu primera vivienda?"
             onClick={() => set("firstHome", values.firstHome !== true)}
-            className="bg-surface-2 aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-out"
+            className="bg-mist aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-out"
           >
-            <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ease-out in-aria-checked:translate-x-5" />
+            <span className="absolute top-[3px] left-[3px] size-[18px] rounded-full bg-white shadow transition-transform duration-200 ease-out in-aria-checked:translate-x-5" />
           </button>
-          <span className="text-body-sm text-ink-muted">Sí</span>
+          <span className="text-iron text-[13.5px]">Sí</span>
         </span>
       </div>
 
-      <label className="text-body-sm text-ink-muted mt-4 flex items-start gap-2.5">
+      <label className="text-iron mt-4 flex items-start gap-2.5 text-[13px] leading-[19.5px]">
         <input
           type="checkbox"
           name="advice-accepts"
@@ -134,7 +136,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
             href="/legales"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand font-medium"
+            className="text-brand font-semibold"
           >
             términos y condiciones
           </a>{" "}
@@ -143,7 +145,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
             href={`/legales/${DATA_POLICY_SLUG}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand font-medium"
+            className="text-brand font-semibold"
           >
             tratamiento de datos personales
           </a>{" "}
@@ -154,7 +156,11 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
       {error && <p className="text-destructive text-caption mt-2">{error}</p>}
 
       {/* Ancho automático y alineado a la izquierda, como el Figma. */}
-      <Button type="submit" size="lg" className="mt-5 px-8">
+      <Button
+        type="submit"
+        size="lg"
+        className="mt-4 h-[45.5px] px-7 text-[13px] leading-[19.5px] font-semibold"
+      >
         Enviar solicitud
       </Button>
     </form>

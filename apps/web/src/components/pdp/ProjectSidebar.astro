@@ -1,5 +1,4 @@
 ---
-import { MessageCircle } from "lucide-astro";
 import type { LeadFormConfig, Project } from "@lasgalias/schemas";
 
 import LeadForm from "@/islands/LeadForm";
@@ -12,34 +11,41 @@ interface Props {
 const { project, leadForm } = Astro.props;
 
 const salesRoom = project.salesRoom;
+
+// Card and type sizes from the Figma frame (nodes 2710:5440 and 2710:5483).
+const CARD = "border-mist rounded-2xl border-[1.43px] bg-white p-5";
+const TITLE = "text-graphite text-[15px] leading-[21px] font-semibold";
+const BODY = "text-iron mt-2 text-sm leading-[22.4px]";
+const ACTION =
+  "inline-flex h-[43.6px] flex-1 items-center justify-center rounded-full px-5 text-[13px] leading-[19px] font-semibold transition-colors";
 ---
 
 {/* Sin `sticky`: acompañar el scroll varias pantallas cansaba más que ayudaba. */}
 <aside>
-  <div class="space-y-5">
-    <div class="border-line scroll-mt-28 rounded-2xl border bg-white p-6" id="lead">
-      <h2 class="text-h4 text-ink font-bold">¿Te interesa este proyecto?</h2>
-      <p class="text-body-sm text-ink-muted mt-1 mb-5">
-        Déjanos tus datos — un asesor te contacta hoy
-      </p>
+  <div class="space-y-4">
+    <div class:list={[CARD, "scroll-mt-28"]} id="lead">
+      <h2 class={TITLE}>¿Te interesa este proyecto?</h2>
+      <p class:list={[BODY, "mb-3.5"]}>Déjanos tus datos, un asesor te contacta hoy</p>
       <LeadForm
         client:visible
         projectDocumentId={project.documentId}
         source={`pdp:${project.slug}`}
         qualification={leadForm}
         submitLabel="Quiero que me contacten"
+        compact
       />
     </div>
 
     {
       (salesRoom?.schedule || salesRoom?.phone || salesRoom?.whatsappUrl) && (
-        <div class="border-line rounded-2xl border bg-white p-6">
-          <h2 class="text-h4 text-ink font-bold">¿Tienes preguntas?</h2>
-          <p class="text-body-sm text-ink-muted mt-1">
-            {[salesRoom.schedule, salesRoom.phone].filter(Boolean).join(" · ")}
-          </p>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <a href="#lead" class="btn btn-outline px-5 py-2.5 text-sm">
+        <div class={CARD}>
+          <h2 class={TITLE}>¿Tienes preguntas?</h2>
+          <p class={BODY}>{[salesRoom.schedule, salesRoom.phone].filter(Boolean).join(" · ")}</p>
+          <div class="mt-3.5 flex gap-2">
+            <a
+              href="#lead"
+              class:list={[ACTION, "border-mist text-graphite hover:bg-fog border-[1.43px]"]}
+            >
               Déjanos tus datos
             </a>
             {salesRoom.whatsappUrl && (
@@ -47,9 +53,8 @@ const salesRoom = project.salesRoom;
                 href={salesRoom.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn btn-primary gap-2 px-5 py-2.5 text-sm"
+                class:list={[ACTION, "bg-brand hover:bg-brand-bright text-white"]}
               >
-                <MessageCircle size={16} stroke-width={2} aria-hidden="true" />
                 WhatsApp
               </a>
             )}

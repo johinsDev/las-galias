@@ -1,10 +1,12 @@
 ---
 interface Props {
   rates: { copPerUsd: number; copPerEur: number };
+  /** The project page draws it smaller: 10px segments on the pale fog pill. */
+  compact?: boolean;
   class?: string;
 }
 
-const { rates, class: className } = Astro.props;
+const { rates, compact = false, class: className } = Astro.props;
 ---
 
 {
@@ -14,7 +16,12 @@ const { rates, class: className } = Astro.props;
      both draw it, and the script below has to ship exactly once either way. */
 }
 <div
-  class:list={["seg-group relative z-10", className]}
+  class:list={[
+    "seg-group relative z-10",
+    compact &&
+      "bg-fog [&_.seg]:text-steel [&_.seg[aria-pressed=true]]:bg-graphite gap-0.5 p-0.5 [&_.seg]:px-2 [&_.seg]:py-1 [&_.seg]:text-[10px] [&_.seg]:leading-[1.2] [&_.seg]:tracking-normal [&_.seg[aria-pressed=true]]:font-bold [&_.seg[aria-pressed=true]]:text-white",
+    className,
+  ]}
   role="group"
   aria-label="Divisa"
   data-price-currency

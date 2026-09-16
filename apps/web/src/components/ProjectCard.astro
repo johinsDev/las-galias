@@ -15,9 +15,14 @@ interface Props {
   rates?: { copPerUsd: number; copPerEur: number } | null;
   /** WhatsApp on the home, "Habla con un asesor" on the foreign-buyer page. */
   cta?: "whatsapp" | "asesor";
+  /**
+   * "Proyectos similares" on the project page: no action button, the project
+   * logo on the photo and that frame's smaller type (Figma node 2710:5505).
+   */
+  compact?: boolean;
 }
 
-const { project, rates = null, cta = "whatsapp" } = Astro.props;
+const { project, rates = null, cta = "whatsapp", compact = false } = Astro.props;
 const isExpectation = project.stage === "expectation";
 
 /**
@@ -57,13 +62,14 @@ const locationTrail = [
 const units = project.unitTypes ?? [];
 const areas = units.map((u) => u.builtAreaM2).filter((n): n is number => typeof n === "number");
 const beds = units.map((u) => u.bedrooms).filter((n): n is number => typeof n === "number");
-function range(nums: number[], unit: string): string | null {
+function range(nums: number[], unit: string, decimals?: number): string | null {
   if (nums.length === 0) return null;
+  const fmt = (n: number) => (decimals == null ? String(n) : n.toFixed(decimals));
   const min = Math.min(...nums);
   const max = Math.max(...nums);
-  return min === max ? `${min} ${unit}` : `${min} – ${max} ${unit}`;
+  return min === max ? `${fmt(min)} ${unit}` : `${fmt(min)} – ${fmt(max)} ${unit}`;
 }
-const areaChip = range(areas, "m²");
+const areaChip = range(areas, "m²", compact ? 2 : undefined);
 const bedChip = range(beds, "hab");
 
 /**
@@ -80,13 +86,27 @@ const ctaLabel = whatsappHref
   : "Ver proyecto";
 const ctaHref = whatsappHref ?? `/proyectos/${project.slug}`;
 import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
+
+const BADGE =
+  "rounded-md px-2.5 py-[5px] text-[11px] leading-[16.5px] font-bold tracking-[0.33px] uppercase";
+const CHIP =
+  "border-mist text-iron inline-flex items-center gap-[5px] rounded-full border-[0.71px] px-3 py-1.5 text-xs leading-[18px] font-semibold";
 ---
 
 <article
-  class="group card-lift border-line hover:shadow-card-lg relative flex flex-col overflow-hidden rounded-2xl border bg-white shadow-xs"
+  class:list={[
+    "group card-lift hover:shadow-card-lg relative flex flex-col overflow-hidden rounded-2xl bg-white",
+    compact ? "border-mist border-[0.71px]" : "border-line border shadow-xs",
+  ]}
   data-city={project.city?.slug}
 >
-  <div class="bg-surface relative aspect-[4/3] overflow-hidden" data-card-carousel>
+  <div
+    class:list={[
+      "relative overflow-hidden",
+      compact ? "bg-cloud aspect-[553/380]" : "bg-surface aspect-[4/3]",
+    ]}
+    data-card-carousel
+  >
     {
       images.length > 0 ? (
         <div class="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto" data-card-rail>
@@ -128,17 +148,50 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
     {/* Status + commercial badges, top-left, stacked in the design's order. */}
     <div class="pointer-events-none absolute top-3 left-3 flex flex-wrap gap-1.5 pr-6">
-      {statusLabel && <span class="badge badge-brand">{statusLabel}</span>}
-      {project.hasDiscount && <span class="badge badge-dark">Descuento</span>}
-      {project.appliesSubsidy && <span class="badge badge-light">Aplica subsidio</span>}
-      {project.lastUnits && <span class="badge badge-dark">Últimas unidades</span>}
+      {
+        compact ? (
+          <>
+            {statusLabel && <span class:list={[BADGE, "bg-brand text-white"]}>{statusLabel}</span>}
+            {project.hasDiscount && (
+              <span class:list={[BADGE, "bg-graphite text-white"]}>Descuento</span>
+            )}
+            {project.appliesSubsidy && (
+              <span class:list={[BADGE, "text-graphite bg-white"]}>Aplica subsidio</span>
+            )}
+            {project.lastUnits && (
+              <span class:list={[BADGE, "bg-graphite text-white"]}>Últimas unidades</span>
+            )}
+          </>
+        ) : (
+          <>
+            {statusLabel && <span class="badge badge-brand">{statusLabel}</span>}
+            {project.hasDiscount && <span class="badge badge-dark">Descuento</span>}
+            {project.appliesSubsidy && <span class="badge badge-light">Aplica subsidio</span>}
+            {project.lastUnits && <span class="badge badge-dark">Últimas unidades</span>}
+          </>
+        )
+      }
     </div>
+
+    {
+      compact && project.logo?.url && (
+        <span class="border-mist pointer-events-none absolute right-3 bottom-3 flex size-[34px] items-center justify-center overflow-hidden rounded-[10px] border-[0.71px] bg-white p-1">
+          <img
+            src={mediaUrl(project.logo.url)}
+            alt=""
+            class="max-h-full max-w-full object-contain"
+          />
+        </span>
+      )
+    }
 
     {
       images.length > 1 && (
         <>
           {/* Scrim so the dots stay legible over a bright photo. */}
-          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/45 to-transparent" />
+          {!compact && (
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/45 to-transparent" />
+          )}
           <button
             type="button"
             data-card-prev
@@ -155,7 +208,12 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
           >
             <ChevronRight size={20} stroke-width={2} aria-hidden="true" />
           </button>
-          <div class="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
+          <div
+            class:list={[
+              "absolute inset-x-0 bottom-3 justify-center gap-1.5",
+              compact ? "hidden" : "flex",
+            ]}
+          >
             {images.map((_, index) => (
               <span data-card-dot={index} class="h-1 rounded-full bg-white/50 transition-all" />
             ))}
@@ -165,68 +223,108 @@ import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
     }
   </div>
 
-  <div class="relative flex flex-1 flex-col p-[18px]">
-    <a
-      href={`/proyectos/${project.slug}`}
-      class="absolute inset-0 z-0"
-      aria-label={`Ver ${project.name}`}></a>
-    <div class="flex flex-1 flex-col">
-      <p class="text-caption text-ink-muted flex items-center gap-1.5">
-        <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
-        {locationTrail}
-      </p>
-      <h3 class="text-h4 text-ink mt-1.5 font-semibold">{project.name}</h3>
-
-      {
-        !isExpectation && project.priceFromCOP ? (
+  {
+    compact ? (
+      <div class="relative flex flex-1 flex-col p-3.5">
+        <a
+          href={`/proyectos/${project.slug}`}
+          class="absolute inset-0 z-0"
+          aria-label={`Ver ${project.name}`}
+        />
+        <p class="text-steel flex items-center gap-1.5 text-xs leading-[18px] font-medium">
+          <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
+          {locationTrail}
+        </p>
+        <h3 class="text-graphite mt-2 text-sm leading-[21px] font-bold">{project.name}</h3>
+        {!isExpectation && project.priceFromCOP ? (
           <>
-            <div class="mt-3 flex min-h-8 items-center justify-between gap-3">
-              <p class="text-caption text-ink-muted">Precio desde</p>
-              {rates && <PriceSwitcher rates={rates} />}
-            </div>
-            {/* Always COP in the HTML. The selector rewrites it from
-                `data-price-cop`, which is what lets a card show USD or EUR — a
-                card baked in USD could not be switched back. */}
-            <p class="text-ink mt-0.5 text-2xl font-bold">
+            <p class="text-steel mt-1.5 text-[11px] leading-[16.5px]">Precio desde</p>
+            <p class="text-graphite mt-0.5 text-[17px] leading-[25.5px] font-extrabold">
               <Price copValue={project.priceFromCOP} />
             </p>
           </>
         ) : (
-          <p class="text-body-sm text-ink-muted mt-3">Precios de lanzamiento muy pronto</p>
-        )
-      }
-
-      {
-        (areaChip || bedChip) && (
-          <div class="mt-3.5 flex flex-wrap gap-2">
+          <p class="text-iron mt-1.5 text-xs">Precios de lanzamiento muy pronto</p>
+        )}
+        {(areaChip || bedChip) && (
+          <div class="mt-2 flex flex-wrap gap-2">
             {areaChip && (
-              <span class="chip py-1.5">
-                <Ruler size={14} stroke-width={1.8} aria-hidden="true" />
+              <span class={CHIP}>
+                <Ruler size={13} stroke-width={1.8} aria-hidden="true" />
                 {areaChip}
               </span>
             )}
             {bedChip && (
-              <span class="chip py-1.5">
-                <Bed size={14} stroke-width={1.8} aria-hidden="true" />
+              <span class={CHIP}>
+                <Bed size={13} stroke-width={1.8} aria-hidden="true" />
                 {bedChip}
               </span>
             )}
           </div>
-        )
-      }
-    </div>
+        )}
+      </div>
+    ) : (
+      <div class="relative flex flex-1 flex-col p-[18px]">
+        <a
+          href={`/proyectos/${project.slug}`}
+          class="absolute inset-0 z-0"
+          aria-label={`Ver ${project.name}`}
+        />
+        <div class="flex flex-1 flex-col">
+          <p class="text-caption text-ink-muted flex items-center gap-1.5">
+            <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
+            {locationTrail}
+          </p>
+          <h3 class="text-h4 text-ink mt-1.5 font-semibold">{project.name}</h3>
 
-    {/* Full-width action across the card's footer, above a hairline divider. */}
-    <div class="border-line mt-4 border-t pt-4">
-      <a
-        href={ctaHref}
-        {...whatsappHref ? { target: "_blank", rel: "noopener noreferrer" } : {}}
-        class="btn btn-primary relative z-10 w-full py-2.5 text-sm"
-      >
-        {ctaLabel}
-      </a>
-    </div>
-  </div>
+          {!isExpectation && project.priceFromCOP ? (
+            <>
+              <div class="mt-3 flex min-h-8 items-center justify-between gap-3">
+                <p class="text-caption text-ink-muted">Precio desde</p>
+                {rates && <PriceSwitcher rates={rates} />}
+              </div>
+              {/* Always COP in the HTML. The selector rewrites it from
+                `data-price-cop`, which is what lets a card show USD or EUR — a
+                card baked in USD could not be switched back. */}
+              <p class="text-ink mt-0.5 text-2xl font-bold">
+                <Price copValue={project.priceFromCOP} />
+              </p>
+            </>
+          ) : (
+            <p class="text-body-sm text-ink-muted mt-3">Precios de lanzamiento muy pronto</p>
+          )}
+
+          {(areaChip || bedChip) && (
+            <div class="mt-3.5 flex flex-wrap gap-2">
+              {areaChip && (
+                <span class="chip py-1.5">
+                  <Ruler size={14} stroke-width={1.8} aria-hidden="true" />
+                  {areaChip}
+                </span>
+              )}
+              {bedChip && (
+                <span class="chip py-1.5">
+                  <Bed size={14} stroke-width={1.8} aria-hidden="true" />
+                  {bedChip}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Full-width action across the card's footer, above a hairline divider. */}
+        <div class="border-line mt-4 border-t pt-4">
+          <a
+            href={ctaHref}
+            {...(whatsappHref ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="btn btn-primary relative z-10 w-full py-2.5 text-sm"
+          >
+            {ctaLabel}
+          </a>
+        </div>
+      </div>
+    )
+  }
 </article>
 
 <script>

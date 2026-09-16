@@ -32,6 +32,11 @@ interface BlockNode {
 
 interface Props {
   content: unknown;
+  /**
+   * Take size and colour from the container instead of the article defaults —
+   * the project description sets its own (14px, the design's body grey).
+   */
+  inheritText?: boolean;
 }
 
 /** The article column tops out around 800 px; 1200 covers 1.5x screens. */
@@ -46,7 +51,7 @@ type Rendered =
   | { kind: "ul"; items: string[] }
   | { kind: "img"; url: string; alt: string; width?: number; height?: number };
 
-const { content } = Astro.props;
+const { content, inheritText = false } = Astro.props;
 const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
 
 // Ids come from the same pass the index uses, so duplicate headings are
@@ -88,7 +93,7 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
 });
 ---
 
-<div class="space-y-4">
+<div class:list={[inheritText ? "space-y-3.5" : "space-y-4"]}>
   {
     rendered.map((node) =>
       node.kind === "h2" ? (
@@ -133,7 +138,7 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
           />
         )
       ) : (
-        <p class="text-body text-ink">{node.text}</p>
+        <p class:list={[!inheritText && "text-body text-ink"]}>{node.text}</p>
       ),
     )
   }

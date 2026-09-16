@@ -65,7 +65,7 @@ export default function TypologySimulator({
     <div>
       {typologies.length > 1 && (
         <div
-          className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:px-0"
+          className="no-scrollbar -mx-5 mt-3.5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0"
           role="tablist"
           aria-label="Tipologías"
         >
@@ -76,7 +76,7 @@ export default function TypologySimulator({
               role="tab"
               aria-selected={i === selected}
               onClick={() => setSelected(i)}
-              className={`pill shrink-0 ${i === selected ? "pill-on" : "pill-off"}`}
+              className={`pdp-pill shrink-0 ${i === selected ? "pdp-pill-on" : ""}`}
             >
               {typology.name}
               {/* The area only fits beside the name on a wide screen; the phone
@@ -91,9 +91,9 @@ export default function TypologySimulator({
         </div>
       )}
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
+      <div className="mt-4 grid gap-6 lg:grid-cols-[803fr_509fr]">
         <div>
-          <div className="border-line bg-surface flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border border-dashed">
+          <div className="bg-blush border-mist flex aspect-[803/490] items-center justify-center overflow-hidden rounded-[14px] border-[0.71px] border-dashed">
             {current.floorPlanUrl ? (
               <img
                 src={current.floorPlanUrl}
@@ -102,7 +102,19 @@ export default function TypologySimulator({
                 className="h-full w-full object-contain"
               />
             ) : (
-              <span className="text-body-sm text-ink-faint px-4 text-center">
+              <span className="text-steel flex flex-col items-center gap-2.5 px-4 text-center text-[13px] leading-[19.5px] font-semibold">
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
                 Plano {current.name}
                 {current.builtAreaM2 != null ? ` · ${current.builtAreaM2.toFixed(2)} m²` : ""}
               </span>
@@ -110,10 +122,10 @@ export default function TypologySimulator({
           </div>
           {(current.builtAreaM2 != null || current.privateAreaM2 != null) && (
             <>
-              <div className="mt-4 grid grid-cols-2 gap-4">
+              <div className="mt-4 grid grid-cols-2 gap-6">
                 {current.builtAreaM2 != null && (
                   <Stat
-                    label="Á. construida desde*"
+                    label="Área construida desde*"
                     value={`${current.builtAreaM2.toFixed(2)} m²`}
                   />
                 )}
@@ -124,27 +136,27 @@ export default function TypologySimulator({
                   />
                 )}
               </div>
-              <p className="text-caption text-ink-faint mt-3">
+              <p className="text-steel mt-2.5 text-[13px] leading-5">
                 *Puede variar en apartamentos atípicos según la unidad.
               </p>
             </>
           )}
         </div>
 
-        <div className="bg-surface rounded-2xl p-5">
-          <p className="text-label text-ink-muted font-bold uppercase">
+        <div className="bg-brand-subtle border-cloud self-start rounded-[14px] border-[0.71px] px-6 py-[33px]">
+          <p className="text-steel text-[11px] leading-[17.6px] font-bold tracking-[0.66px] uppercase">
             Simulador · {current.name}
           </p>
 
-          <div className="mt-4 rounded-xl bg-white p-4">
-            <p className="text-label text-ink-muted font-bold uppercase">Precio</p>
-            <p className="text-ink mt-1 text-2xl font-extrabold">
+          <div className="mt-2 rounded-xl bg-white px-3.5 py-3">
+            <p className={LABEL}>Precio</p>
+            <p className="text-graphite mt-1 text-lg leading-[27px] font-extrabold">
               {formatMoney(quote.price, "COP")}
             </p>
           </div>
 
-          {/* Hairlines between the rows, as the phone design draws them. */}
-          <dl className="mt-4">
+          {/* Hairlines between the rows, as the design draws them. */}
+          <dl className="mt-3.5">
             <Row
               label={`CI ${terms.downPaymentPct}% en ${terms.builderInstallmentMonths}m`}
               value={formatMoney(quote.downPayment, "COP")}
@@ -159,23 +171,27 @@ export default function TypologySimulator({
             />
           </dl>
 
-          <div className="bg-ink mt-4 rounded-xl p-5 text-white">
-            <p className="text-label font-bold text-white/60 uppercase">Cuota hipotecaria est.</p>
-            <p className="mt-1 text-2xl font-extrabold">
+          <div className="bg-graphite mt-3.5 rounded-xl px-4 py-3.5 text-white">
+            <p className={`${LABEL} text-pewter`}>Cuota hipotecaria est.</p>
+            <p className="text-[22px] leading-[33px] font-extrabold">
               {formatMoney(quote.monthlyPayment, "COP")}
-              <span className="text-body-sm font-medium">/mes</span>
+              <span className="text-xs leading-[18px] font-medium">/mes</span>
             </p>
-            <p className="text-caption mt-1 text-white/60">
+            <p className="text-steel mt-[3px] text-[11px] leading-[16.5px]">
               {terms.annualRatePct}% EA · {terms.termYears} años
             </p>
           </div>
 
           {(trusteeName || trustNumber) && (
-            <div className="mt-4 rounded-xl bg-white p-4">
-              <p className="text-label text-ink-muted font-bold uppercase">Fiduciaria</p>
-              {trusteeName && <p className="text-body-sm text-ink mt-1 font-bold">{trusteeName}</p>}
+            <div className="mt-3.5 rounded-xl bg-white px-3.5 py-3">
+              <p className={LABEL}>Fiduciaria</p>
+              {trusteeName && (
+                <p className="text-graphite mt-1 text-[13px] leading-[19.5px] font-bold">
+                  {trusteeName}
+                </p>
+              )}
               {trustNumber && (
-                <p className="text-caption text-ink-muted">Fideicomiso N° {trustNumber}</p>
+                <p className="text-steel text-xs leading-[18px]">Fideicomiso N° {trustNumber}</p>
               )}
             </div>
           )}
@@ -185,11 +201,11 @@ export default function TypologySimulator({
               href={clientPortalUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-brand text-body-sm mt-4 inline-flex items-center gap-2 font-medium hover:underline"
+              className="text-brand mt-3 inline-flex items-center gap-1.5 text-[12.5px] leading-[18.75px] font-semibold hover:underline"
             >
               <svg
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -205,33 +221,35 @@ export default function TypologySimulator({
             </a>
           )}
 
-          <a href="#lead" className="btn btn-primary mt-5 w-full">
+          <a
+            href="#lead"
+            className="bg-brand hover:bg-brand-bright mt-3.5 flex h-[44.5px] w-full items-center justify-center rounded-full text-[13px] leading-[19.5px] font-semibold text-white transition-colors"
+          >
             Quiero más información
           </a>
-
-          <p className="text-caption text-ink-faint mt-3 text-center">
-            Valores estimados; no constituyen una oferta comercial.
-          </p>
         </div>
       </div>
     </div>
   );
 }
 
+/** The 10.5px caps label every box in the simulator starts with. */
+const LABEL = "text-steel text-[10.5px] leading-[15.75px] tracking-[0.42px] uppercase";
+
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-surface rounded-xl p-4">
-      <p className="text-label text-ink-muted font-bold uppercase">{label}</p>
-      <p className="text-ink mt-1 font-bold">{value}</p>
+    <div className="bg-blush border-cloud rounded-xl border-[0.71px] p-3.5">
+      <p className={LABEL}>{label}</p>
+      <p className="text-graphite mt-1.5 text-[15px] leading-[22.5px] font-bold">{value}</p>
     </div>
   );
 }
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-line flex items-baseline justify-between gap-4 border-b py-3 last:border-b-0">
-      <dt className="text-body-sm text-ink-muted">{label}</dt>
-      <dd className="text-body-sm text-ink font-bold">{value}</dd>
+    <div className="border-cloud flex items-baseline justify-between gap-4 border-b-[0.71px] py-2 last:border-b-0">
+      <dt className="text-iron text-[13px] leading-[19.5px]">{label}</dt>
+      <dd className="text-graphite text-right text-[13px] leading-[19.5px] font-bold">{value}</dd>
     </div>
   );
 }

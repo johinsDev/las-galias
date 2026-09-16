@@ -8,6 +8,7 @@ import { Input } from "@lasgalias/ui/components/input";
 import { CountryCombobox } from "@lasgalias/ui/components/country-combobox";
 import { PhoneField } from "@lasgalias/ui/components/phone-field";
 import { Select } from "@lasgalias/ui/components/select";
+import { cn } from "@lasgalias/ui/lib/utils";
 
 import { QUALIFICATION_EVENT, type QualificationDetail } from "@/lib/qualification";
 
@@ -30,11 +31,19 @@ interface LeadFormProps {
   qualification?: LeadFormConfig | null;
   /** The qualification selects go two-up in the wide advice band, one-up in the sidebar. */
   columns?: 1 | 2;
+  /**
+   * The project page's sidebar: 43px fields, 11px caps labels, a bell on the
+   * button — the sizes of that Figma frame, smaller than the rest of the site's.
+   */
+  compact?: boolean;
 }
 
 const LABEL = "text-label text-ink-muted mb-1.5 block font-bold uppercase";
 /** The design writes the qualification labels in sentence case, not caps. */
 const SOFT_LABEL = "text-body-sm text-ink-muted mb-1.5 block";
+const COMPACT_LABEL =
+  "text-steel mb-1.5 block text-[11px] leading-[16.5px] font-semibold tracking-[0.44px] uppercase";
+const COMPACT_SOFT_LABEL = "text-steel mb-1.5 block text-xs leading-[14px] font-medium";
 
 function options(items?: { text: string }[]): string[] {
   return (items ?? []).map((item) => item.text).filter(Boolean);
@@ -67,6 +76,7 @@ export default function LeadForm({
   submitLabel,
   qualification = null,
   columns = 1,
+  compact = false,
 }: LeadFormProps) {
   /**
    * La ficha de proyecto monta este formulario dos veces —barra lateral y banda
@@ -79,7 +89,8 @@ export default function LeadForm({
 
   // El Figma dibuja la banda ancha con etiquetas en mayúsculas y el chevron a la
   // izquierda, y la barra lateral en caja baja con el chevron a la derecha.
-  const labelClass = columns === 2 ? LABEL : SOFT_LABEL;
+  const labelClass = compact ? COMPACT_SOFT_LABEL : columns === 2 ? LABEL : SOFT_LABEL;
+  const fieldLabel = compact ? COMPACT_LABEL : LABEL;
   const chevronSide = columns === 2 ? "left" : "right";
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
 
@@ -173,7 +184,7 @@ export default function LeadForm({
           setStatus("error");
         }
       }}
-      className="space-y-4"
+      className={compact ? "form-compact space-y-4" : "space-y-4"}
     >
       {/* Four fields, two per row, in the design's reading order:
           nombre / país, then whatsapp / correo. */}
@@ -181,7 +192,7 @@ export default function LeadForm({
         <Field of={form} path={["name"]}>
           {(field) => (
             <div>
-              <label className={LABEL} htmlFor={`${uid}-name`}>
+              <label className={fieldLabel} htmlFor={`${uid}-name`}>
                 Nombre completo
               </label>
               <Input
@@ -202,7 +213,7 @@ export default function LeadForm({
           <Field of={form} path={["residenceCountry"]}>
             {(field) => (
               <div>
-                <label className={LABEL} htmlFor={`${uid}-country`}>
+                <label className={fieldLabel} htmlFor={`${uid}-country`}>
                   País de residencia
                 </label>
                 <CountryCombobox
@@ -227,7 +238,7 @@ export default function LeadForm({
         <Field of={form} path={["phone"]}>
           {(field) => (
             <div>
-              <label className={LABEL} htmlFor={`${uid}-phone`}>
+              <label className={fieldLabel} htmlFor={`${uid}-phone`}>
                 {international ? "WhatsApp" : "WhatsApp / Celular"}
               </label>
               <PhoneField
@@ -247,7 +258,7 @@ export default function LeadForm({
         <Field of={form} path={["email"]}>
           {(field) => (
             <div>
-              <label className={LABEL} htmlFor={`${uid}-email`}>
+              <label className={fieldLabel} htmlFor={`${uid}-email`}>
                 Correo electrónico
               </label>
               <Input
@@ -268,7 +279,13 @@ export default function LeadForm({
 
       {qualification && (
         <div className="space-y-4">
-          <div className={columns === 2 ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
+          <div
+            className={cn(
+              columns === 2 ? "grid gap-4 sm:grid-cols-2" : "space-y-4",
+              // Los desplegables del diseño compacto son 3px más bajos que los campos.
+              compact && "[--field-height:40px] [&_.field-box]:text-sm",
+            )}
+          >
             <QualificationSelect
               form={form}
               labelClass={labelClass}
@@ -317,9 +334,21 @@ export default function LeadForm({
           <Field of={form} path={["firstHome"]}>
             {(field) => (
               <div className="flex items-center justify-between gap-4">
-                <span className="text-body-sm text-ink font-bold">¿Es tu primera vivienda?</span>
-                <span className="flex items-center gap-2">
-                  <span className="text-body-sm text-ink-muted">No</span>
+                <span
+                  className={
+                    compact
+                      ? "text-graphite text-[13.5px] leading-[20.25px] font-semibold"
+                      : "text-body-sm text-ink font-bold"
+                  }
+                >
+                  ¿Es tu primera vivienda?
+                </span>
+                <span className={cn("flex items-center", compact ? "gap-2.5" : "gap-2")}>
+                  <span
+                    className={compact ? "text-iron text-[13.5px]" : "text-body-sm text-ink-muted"}
+                  >
+                    No
+                  </span>
                   <button
                     type="button"
                     role="switch"
@@ -328,11 +357,25 @@ export default function LeadForm({
                     onClick={() =>
                       setInput(form, { path: ["firstHome"], input: field.input !== true })
                     }
-                    className="bg-surface-2 aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-out"
+                    className={cn(
+                      "aria-checked:bg-brand relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-out",
+                      compact ? "bg-mist" : "bg-surface-2",
+                    )}
                   >
-                    <span className="absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ease-out in-aria-checked:translate-x-5" />
+                    <span
+                      className={cn(
+                        "absolute rounded-full bg-white shadow transition-transform duration-200 ease-out",
+                        compact
+                          ? "top-[3px] left-[3px] size-[18px] in-aria-checked:translate-x-5"
+                          : "top-0.5 left-0.5 size-5 in-aria-checked:translate-x-5",
+                      )}
+                    />
                   </button>
-                  <span className="text-body-sm text-ink-muted">Sí</span>
+                  <span
+                    className={compact ? "text-iron text-[13.5px]" : "text-body-sm text-ink-muted"}
+                  >
+                    Sí
+                  </span>
                 </span>
               </div>
             )}
@@ -341,7 +384,14 @@ export default function LeadForm({
           <Field of={form} path={["acceptsDataPolicy"]}>
             {(field) => (
               <div>
-                <label className="text-body-sm text-ink-muted flex items-start gap-2.5">
+                <label
+                  className={cn(
+                    "flex items-start",
+                    compact
+                      ? "text-iron gap-2.5 text-[13px] leading-[19.5px]"
+                      : "text-body-sm text-ink-muted gap-2.5",
+                  )}
+                >
                   <input
                     {...field.props}
                     name={`${uid}-${field.props.name}`}
@@ -355,7 +405,7 @@ export default function LeadForm({
                       href="/legales"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-brand font-medium"
+                      className={cn("text-brand", compact ? "font-semibold" : "font-medium")}
                     >
                       términos y condiciones
                     </a>{" "}
@@ -364,7 +414,7 @@ export default function LeadForm({
                       href={`/legales/${DATA_POLICY_SLUG}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-brand font-medium"
+                      className={cn("text-brand", compact ? "font-semibold" : "font-medium")}
                     >
                       tratamiento de datos personales
                     </a>{" "}
@@ -380,7 +430,16 @@ export default function LeadForm({
         </div>
       )}
 
-      <Button type="submit" size="lg" loading={status === "sending"} className="w-full">
+      <Button
+        type="submit"
+        size="lg"
+        loading={status === "sending"}
+        className={cn(
+          "w-full",
+          compact && "mt-3! h-[45.5px] gap-1.5 text-[13px] leading-[19.5px] font-semibold",
+        )}
+      >
+        {compact && <BellIcon />}
         {submitLabel ?? "Quiero más información"}
       </Button>
 
@@ -405,6 +464,25 @@ export default function LeadForm({
         </p>
       )}
     </Form>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
   );
 }
 

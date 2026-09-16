@@ -105,8 +105,8 @@ const description = project.seo?.metaDescription ?? undefined;
   <ProjectGallery project={project} />
 
   <!-- 03 Contenido + formulario -->
-  <section class="container pb-14">
-    <div class="grid gap-10 lg:grid-cols-[1fr_400px]">
+  <section class="container-bleed pt-2 pb-[60px]">
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_340px]">
       <ProjectContent project={project} terms={terms} />
       <ProjectSidebar project={project} leadForm={leadFormConfig} />
     </div>

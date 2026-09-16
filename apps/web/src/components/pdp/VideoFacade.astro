@@ -19,7 +19,7 @@ const { src, title, poster } = Astro.props;
      the design draws, a still with a play button over it. */
 }
 <div
-  class="bg-surface relative aspect-video overflow-hidden rounded-3xl md:rounded-[28px]"
+  class="bg-graphite relative aspect-video overflow-hidden rounded-[14px]"
   data-video
   data-video-src={src}
   data-video-title={title}
@@ -43,7 +43,7 @@ const { src, title, poster } = Astro.props;
     data-video-play
   >
     <span
-      class="shadow-card-lg flex size-16 items-center justify-center rounded-full bg-white transition-transform hover:scale-105"
+      class="shadow-card-lg text-graphite flex size-[60px] items-center justify-center rounded-full bg-white transition-transform hover:scale-105"
     >
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path

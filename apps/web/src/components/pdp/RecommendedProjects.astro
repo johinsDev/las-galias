@@ -16,13 +16,13 @@ const recommended = project.recommended ?? [];
 
 {
   recommended.length > 0 && (
-    <section class="border-line border-t">
-      <div class="container py-14 md:py-16">
+    <section class="border-cloud border-t-[0.71px]">
+      <div class="container-bleed pt-12 pb-12">
         {/* Un solo título, como el diseño: la ciudad ya la dice cada card. */}
-        <h2 class="text-h4 text-ink font-bold">Proyectos similares</h2>
-        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 class="text-graphite text-lg leading-[26px] font-semibold">Proyectos similares</h2>
+        <div class="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recommended.map((rec) => (
-            <ProjectCard project={rec} />
+            <ProjectCard project={rec} compact />
           ))}
         </div>
       </div>

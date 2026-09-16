@@ -39,6 +39,20 @@
   --brand-foreground: #ffffff;
   --brand-subtle: #fdf9fa; /* pale bands: steps, stats, final CTA — from the design */
   --brand-tint: #fdeef1; /* one step pinker: number pills and icon squares */
+  --brand-soft: #e85a6b; /* outline of the red secondary button ("Ya soy cliente") */
+  --brand-deep: #a81e2f; /* its label */
+
+  /* The project page's own greys, read off its Figma frame node by node. The
+     rest of the site was built on the neutral ramp above; the PDP was drawn on
+     this cooler one, and pixel-matching it means using it as-is. */
+  --graphite: #1a1d21; /* text and dark fills */
+  --iron: #5a626b; /* body copy */
+  --steel: #8a929a; /* labels, captions, placeholders */
+  --pewter: #9ca0a6; /* labels on dark */
+  --mist: #e7e9ec; /* borders */
+  --cloud: #eff1f3; /* hairlines, empty image */
+  --fog: #f6f7f8; /* currency toggle */
+  --blush: #fefbfc; /* spec cards */
 
   /* shadcn semantic tokens, mapped onto the neutral ramp */
   --radius: 0.875rem;
@@ -81,6 +95,16 @@
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-subtle: var(--brand-subtle);
   --color-brand-tint: var(--brand-tint);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-deep: var(--brand-deep);
+  --color-graphite: var(--graphite);
+  --color-iron: var(--iron);
+  --color-steel: var(--steel);
+  --color-pewter: var(--pewter);
+  --color-mist: var(--mist);
+  --color-cloud: var(--cloud);
+  --color-fog: var(--fog);
+  --color-blush: var(--blush);
 
   /* shadcn semantic utilities */
   --color-background: var(--background);
@@ -332,6 +356,39 @@
   }
 }
 
+/* The project page's pill: section tabs, media tabs, points of interest,
+   typologies, "Ir con Waze". 13/19.5 semibold on a 1.43px hairline, from the
+   Figma frame. `pdp-pill-on` is the selected, filled one. */
+@utility pdp-pill {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1.43px solid var(--mist);
+  background: #fff;
+  padding: 8px 16px;
+  font-size: 13px;
+  line-height: 19.5px;
+  font-weight: 600;
+  color: var(--graphite);
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+  &:hover {
+    border-color: var(--steel);
+  }
+}
+
+@utility pdp-pill-on {
+  background: var(--graphite);
+  border-color: var(--graphite);
+  color: #fff;
+  &:hover {
+    border-color: var(--graphite);
+  }
+}
+
 /* Segmented COP/USD/EUR control that sits inline with the price on the
    foreign-buyer cards. Same selected treatment as the filter pills. */
 @utility seg-group {
@@ -412,8 +469,25 @@
    teléfono tienen que coincidir al pixel: si uno se desincroniza, la rejilla de
    dos columnas queda con los campos a distinta altura. */
 @utility field-box {
-  height: 50px;
+  height: var(--field-height, 50px);
   border-radius: 10px;
+}
+
+/* The project page draws its forms smaller than the rest of the site: 43px
+   fields with 13.5px type and the cooler border. Set on the form's container,
+   so the shared input, select and phone components need no variant. */
+@utility form-compact {
+  --field-height: 43px;
+  & .field-box {
+    border-width: 1.43px;
+    border-color: var(--mist);
+    font-size: 13.5px;
+  }
+  & .field-box::placeholder,
+  & .field-box input::placeholder,
+  & .field-box .text-ink-faint {
+    color: var(--steel);
+  }
 }
 
 @layer base {
