@@ -28,12 +28,6 @@ interface LeadFormProps {
    * one and an advisor calling about a mortgage needs the record.
    */
   qualification?: LeadFormConfig | null;
-  /**
-   * Catálogo para el desplegable "Proyecto de interés". Arranca en
-   * `projectDocumentId` —la ficha en la que está el formulario— pero se puede
-   * cambiar: alguien puede llegar por un proyecto y preguntar por otro.
-   */
-  projects?: { documentId: string; name: string }[];
   /** The qualification selects go two-up in the wide advice band, one-up in the sidebar. */
   columns?: 1 | 2;
 }
@@ -72,7 +66,6 @@ export default function LeadForm({
   international = false,
   submitLabel,
   qualification = null,
-  projects,
   columns = 1,
 }: LeadFormProps) {
   /**
@@ -275,37 +268,6 @@ export default function LeadForm({
 
       {qualification && (
         <div className="space-y-4">
-          {projects && projects.length > 0 && (
-            <Field of={form} path={["projectDocumentId"]}>
-              {(field) => (
-                <div>
-                  <label className={labelClass} htmlFor={`${uid}-project`}>
-                    Proyecto de interés
-                  </label>
-                  <Select
-                    id={`${uid}-project`}
-                    name={field.props.name}
-                    chevron={chevronSide}
-                    value={(field.input as string | undefined) ?? ""}
-                    searchable
-                    searchPlaceholder="Busca un proyecto…"
-                    emptyMessage="No encontramos ese proyecto."
-                    items={projects.map((item) => ({
-                      value: item.documentId,
-                      label: item.name,
-                    }))}
-                    onValueChange={(next: string) =>
-                      setInput(form, {
-                        path: ["projectDocumentId"],
-                        input: next || undefined,
-                      })
-                    }
-                  />
-                </div>
-              )}
-            </Field>
-          )}
-
           <div className={columns === 2 ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>
             <QualificationSelect
               form={form}

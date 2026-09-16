@@ -129,7 +129,14 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   CRM so both can be compared.
 - `sinco-project` is a **read-only mirror** of the Sinco catalog, refreshed by
   cron. Deleting an entry is blocked by middleware: a `project` may point at it and
-  its leads would silently stop reaching the CRM.
+  its leads would silently stop reaching the CRM. It only mirrors the
+  macroprojects in `SINCO_MACRO_ALLOWLIST` (`src/utils/sinco-catalog.ts`); every
+  boot prunes the rest unless a project points at them. A new project for sale
+  needs its Sinco macro id added there, or it never shows up in the picker.
+- The real projects are loaded from the company sheet with
+  `node scripts/load-projects.cjs [--yes]` (data in `apps/cms/data/projects.json`).
+  It REPLACES every project, macroproject, zone and amenity — run it once, not
+  on top of edited content.
 - A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the
   request path — `crmStatus` records the outcome and a cron retries.
 - The FAQ assistant (`POST /api/faq-bot/ask`) answers one question at a time —

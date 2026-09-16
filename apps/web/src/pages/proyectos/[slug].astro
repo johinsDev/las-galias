@@ -25,12 +25,11 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const [project, calculator, exchangeRate, leadForm, allProjects] = await Promise.all([
+const [project, calculator, exchangeRate, leadForm] = await Promise.all([
   getProject(slug!),
   getCalculatorConfig(),
   getExchangeRate(),
   getLeadFormConfig(),
-  getProjects(),
 ]);
 
 /**
@@ -64,22 +63,8 @@ const leadFormConfig: LeadFormConfig = {
     : ["Sí", "No", "No estoy seguro"].map((text) => ({ text })),
   residenceCities: leadForm?.residenceCities?.length
     ? leadForm.residenceCities
-    : [
-        "Bogotá",
-        "Cali",
-        "Manizales",
-        "Pereira",
-        "Medellín",
-        "Barranquilla",
-        "Bucaramanga",
-        "Otra ciudad",
-        "Vivo fuera de Colombia",
-      ].map((text) => ({ text })),
+    : ["Bogotá", "Manizales", "Pereira", "Cali", "Madrid"].map((text) => ({ text })),
 };
-
-// Catálogo para el desplegable "Proyecto de interés": arranca en esta ficha,
-// pero se puede cambiar sin salir de ella.
-const projectOptions = allProjects.map((p) => ({ documentId: p.documentId, name: p.name }));
 
 if (!project) {
   return Astro.redirect("/proyectos");
@@ -123,7 +108,7 @@ const description = project.seo?.metaDescription ?? undefined;
   <section class="container pb-14">
     <div class="grid gap-10 lg:grid-cols-[1fr_400px]">
       <ProjectContent project={project} terms={terms} />
-      <ProjectSidebar project={project} leadForm={leadFormConfig} projects={projectOptions} />
+      <ProjectSidebar project={project} leadForm={leadFormConfig} />
     </div>
   </section>
 

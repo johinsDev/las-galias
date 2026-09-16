@@ -15,6 +15,7 @@ import {
 } from "./utils/project-rules";
 import {
   guardSincoCatalog,
+  pruneSincoCatalog,
   SINCO_PROJECT_UID,
   syncSincoCatalogIfEmpty,
 } from "./utils/sinco-catalog";
@@ -246,6 +247,10 @@ export default {
     // escriben la misma fila del store, y así la segunda lee lo que dejó la
     // primera en vez de pisarla.
     await applyAdminLayouts(strapi);
+
+    // Only the allowlisted macroprojects stay in the picker. A database-only
+    // pass, so it runs before the sync and does not need Sinco to be up.
+    await pruneSincoCatalog(strapi);
 
     // The Sinco picker must not come up empty on a fresh install; afterwards the
     // cron owns it. Not awaited — a slow ERP must not hold up the boot.

@@ -29,18 +29,25 @@ const MACROS = "/Macroproyectos/Externo";
 const CONCURRENCY = 6;
 
 /**
- * Builds the full project catalog: one call for the macroprojects plus one per
- * macroproject (there is no bulk endpoint). ~110 calls, ~1.5 s in total — cheap
- * enough to refresh on a schedule and never call at edit time.
+ * Builds the project catalog: one call for the macroprojects plus one per
+ * macroproject (there is no bulk endpoint). ~110 calls, ~1.5 s for all of them —
+ * cheap enough to refresh on a schedule and never call at edit time.
+ *
+ * `macroIds` narrows it to those macroprojects: Sinco also lists sales rooms,
+ * PQR queues and long-sold projects, which nobody should pick from.
  *
  * A macroproject that fails is skipped, not fatal: a partial catalog is more
  * useful than none, and the next refresh picks it up.
  */
-export async function fetchProjectCatalog(client: SincoClient): Promise<SincoCatalogEntry[]> {
+export async function fetchProjectCatalog(
+  client: SincoClient,
+  macroIds?: readonly string[],
+): Promise<SincoCatalogEntry[]> {
   const macros = await client.get<MacroExterno[]>(MACROS);
   if (!Array.isArray(macros)) return [];
 
-  const queue = [...macros];
+  const wanted = macroIds ? new Set(macroIds) : null;
+  const queue = wanted ? macros.filter((macro) => wanted.has(String(macro.id))) : [...macros];
   const entries: SincoCatalogEntry[] = [];
 
   await Promise.all(
