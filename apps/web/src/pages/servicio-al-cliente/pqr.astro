@@ -30,8 +30,10 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
 ---
 
 <Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
-  {/* 01 Portada */}
-  <section class="relative isolate overflow-hidden">
+  {/* 01 Portada — medidas del frame de Figma (nodo 2742:6567). */}
+  <section
+    class="bg-fog relative isolate flex min-h-[380px] items-center overflow-hidden md:h-[596px]"
+  >
     {
       page?.heroImage?.url && (
         <>
@@ -39,38 +41,44 @@ const description = page?.seo?.metaDescription ?? heroSubtitle;
             src={mediaUrl(page.heroImage.url)}
             alt=""
             width={1920}
-            height={700}
+            height={644}
             loading="eager"
             class="absolute inset-0 -z-10 h-full w-full object-cover"
           />
           {/* La foto queda casi lavada: es ambiente, y el titular tiene que
               leerse encima sin depender de qué se fotografió ese día. */}
-          <div class="absolute inset-0 -z-10 bg-white/88" aria-hidden="true" />
+          <div class="absolute inset-0 -z-10 bg-white/85" aria-hidden="true" />
         </>
       )
     }
 
-    <div class="container py-10 md:py-14">
-      <a
-        href="/servicio-al-cliente"
-        class="text-brand text-body-sm inline-flex items-center gap-1.5 font-bold hover:underline"
-      >
-        <ChevronLeft size={17} stroke-width={2.4} aria-hidden="true" />
-        Volver a Servicio al cliente
-      </a>
+    <a
+      href="/servicio-al-cliente"
+      class="text-brand absolute top-6 left-5 inline-flex items-center gap-1.5 text-[13.5px] leading-[20.25px] font-semibold hover:underline md:top-8 md:left-8"
+    >
+      <ChevronLeft size={16} stroke-width={2.4} aria-hidden="true" />
+      Volver a Servicio al cliente
+    </a>
 
-      <div class="mx-auto mt-10 max-w-[680px] pb-6 text-center md:mt-16 md:pb-16">
-        <h1 class="text-h1 text-ink font-extrabold" data-reveal>{heroTitle}</h1>
-        <p class="text-body text-ink-muted mx-auto mt-4 max-w-[560px]" data-reveal>
-          {heroSubtitle}
-        </p>
-      </div>
+    <div class="mx-auto px-5 pt-16 pb-12 text-center md:py-16">
+      <h1
+        class="text-graphite mx-auto max-w-[576px] text-[34px] leading-[1.15] font-extrabold md:text-5xl md:leading-[54px]"
+        data-reveal
+      >
+        {heroTitle}
+      </h1>
+      <p
+        class="text-iron mx-auto mt-3 max-w-[480px] text-base leading-[1.45] md:text-[17px] md:leading-[23.92px]"
+        data-reveal
+      >
+        {heroSubtitle}
+      </p>
     </div>
   </section>
 
   {/* 02 Radicar */}
-  <section class="container -mt-6 pb-4 md:-mt-10" id="radicar">
-    <div class="mx-auto max-w-[760px]">
+  <section class="px-5 pt-10" id="radicar">
+    <div class="mx-auto max-w-[696px]">
       <PqrGate client:visible projects={projectOptions} />
     </div>
   </section>

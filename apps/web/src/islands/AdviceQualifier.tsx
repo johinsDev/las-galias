@@ -64,7 +64,7 @@ export default function AdviceQualifier({ config }: AdviceQualifierProps) {
 
   return (
     <form
-      className="border-mist form-compact rounded-2xl border-[1.43px] bg-white p-6 md:p-7"
+      className="border-mist form-compact rounded-[16px] border-[1.43px] bg-white p-6 md:p-7"
       onSubmit={(event) => {
         event.preventDefault();
         if (!accepted) {

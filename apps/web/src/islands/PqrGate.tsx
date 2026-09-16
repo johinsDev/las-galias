@@ -78,7 +78,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
 
   return (
     <form
-      className="border-line rounded-2xl border bg-white p-6 md:p-8"
+      className="border-mist rounded-[20px] border-[1.43px] bg-white p-6 md:p-8"
       onSubmit={(event) => {
         event.preventDefault();
         if (!validated) {
@@ -98,15 +98,15 @@ export default function PqrGate({ projects }: PqrGateProps) {
         setOpen(true);
       }}
     >
-      <p className="text-h4 text-ink flex items-center gap-2 font-bold">
+      <p className="text-graphite flex items-center gap-2 text-base leading-[22.4px] font-extrabold">
         Radica tu PQR
-        <span aria-hidden="true" className="text-ink-faint">
+        <span aria-hidden="true" className="text-steel text-sm font-normal">
           →
         </span>
       </p>
 
       <label
-        className="text-label text-ink-muted mt-5 mb-1.5 block font-bold uppercase"
+        className="text-steel mt-5 mb-1.5 block text-[10px] leading-[15px] font-bold tracking-[0.7px] uppercase"
         htmlFor="pqr-document"
       >
         Número de cédula
@@ -117,6 +117,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
         autoComplete="off"
         value={document}
         placeholder="Ej. 1012345678"
+        className="border-mist placeholder:text-steel rounded-[12px]! border-[1.43px] px-3.5 text-sm [--field-height:45.8px]"
         onChange={(event) => {
           setDocument(cleanDocument(event.currentTarget.value));
           // Cambiar el documento invalida lo ya comprobado: si no, alguien
@@ -132,7 +133,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
         <button
           type="submit"
           disabled={!canValidate}
-          className="btn mt-4 w-full bg-[#8f9198] text-white transition-colors hover:bg-[#7d7f86] disabled:cursor-not-allowed disabled:opacity-60"
+          className="bg-graphite mt-4 flex h-[49px] w-full items-center justify-center rounded-full text-[15px] leading-[22.5px] font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Consultar
         </button>
@@ -147,13 +148,15 @@ export default function PqrGate({ projects }: PqrGateProps) {
         aria-hidden={!validated}
       >
         <div className="overflow-hidden">
-          <p className="text-body-sm mt-4 inline-flex items-center gap-2 rounded-lg bg-[#eaf7ee] px-3 py-1.5 font-bold text-[#1a7f37]">
+          <p className="mt-6 inline-flex items-center gap-1.5 rounded-[6px] bg-[#eaf6ee] px-2.5 py-[7.5px] text-[13px] leading-none font-semibold text-[#217347]">
             <Check />
             Documento validado
           </p>
 
-          <p className="text-ink mt-5 font-bold">Selecciona el negocio para tu solicitud</p>
-          <div className="mt-2">
+          <p className="text-graphite mt-4 text-[15px] leading-[18px] font-bold">
+            Selecciona el negocio para tu solicitud
+          </p>
+          <div className="mt-3 [--field-height:38px] [&_.field-box]:rounded-[12px] [&_.field-box]:border-[1.42px] [&_.field-box]:border-[#e7eaed] [&_.field-box]:text-[13px]">
             <Select
               id="pqr-negocio"
               placeholder="Seleccionar negocio…"
@@ -169,7 +172,10 @@ export default function PqrGate({ projects }: PqrGateProps) {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary mt-4 w-full">
+          <button
+            type="submit"
+            className="bg-brand hover:bg-brand-bright mt-[18px] flex h-[49px] w-full items-center justify-center rounded-full text-[15px] leading-[22.5px] font-bold text-white transition-colors"
+          >
             Continuar
           </button>
         </div>
@@ -177,7 +183,7 @@ export default function PqrGate({ projects }: PqrGateProps) {
 
       {error && <p className="text-destructive text-caption mt-3">{error}</p>}
 
-      <p className="text-caption text-ink-muted mt-4 flex items-center justify-center gap-2">
+      <p className="text-steel mt-3.5 flex items-center justify-center gap-1.5 text-center text-[12.5px] leading-5">
         <Lock />
         Tus datos están protegidos · Respuesta en máx. 15 días hábiles
       </p>

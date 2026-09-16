@@ -88,15 +88,17 @@ const ctaHref = whatsappHref ?? `/proyectos/${project.slug}`;
 import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
 const BADGE =
-  "rounded-md px-2.5 py-[5px] text-[11px] leading-[16.5px] font-bold tracking-[0.33px] uppercase";
+  "rounded-[6px] px-2.5 py-[5px] text-[11px] leading-[16.5px] font-bold tracking-[0.33px] uppercase";
 const CHIP =
   "border-mist text-iron inline-flex items-center gap-[5px] rounded-full border-[0.71px] px-3 py-1.5 text-xs leading-[18px] font-semibold";
 ---
 
 <article
   class:list={[
-    "group card-lift hover:shadow-card-lg relative flex flex-col overflow-hidden rounded-2xl bg-white",
-    compact ? "border-mist border-[0.71px]" : "border-line border shadow-xs",
+    "group card-lift hover:shadow-card-lg relative flex flex-col overflow-hidden bg-white",
+    compact
+      ? "border-mist rounded-[16px] border-[0.71px]"
+      : "border-line rounded-2xl border shadow-xs",
   ]}
   data-city={project.city?.slug}
 >

@@ -148,7 +148,7 @@ export default function TypologySimulator({
             Simulador · {current.name}
           </p>
 
-          <div className="mt-2 rounded-xl bg-white px-3.5 py-3">
+          <div className="mt-2 rounded-[12px] bg-white px-3.5 py-3">
             <p className={LABEL}>Precio</p>
             <p className="text-graphite mt-1 text-lg leading-[27px] font-extrabold">
               {formatMoney(quote.price, "COP")}
@@ -171,7 +171,7 @@ export default function TypologySimulator({
             />
           </dl>
 
-          <div className="bg-graphite mt-3.5 rounded-xl px-4 py-3.5 text-white">
+          <div className="bg-graphite mt-3.5 rounded-[12px] px-4 py-3.5 text-white">
             <p className={`${LABEL} text-pewter`}>Cuota hipotecaria est.</p>
             <p className="text-[22px] leading-[33px] font-extrabold">
               {formatMoney(quote.monthlyPayment, "COP")}
@@ -183,7 +183,7 @@ export default function TypologySimulator({
           </div>
 
           {(trusteeName || trustNumber) && (
-            <div className="mt-3.5 rounded-xl bg-white px-3.5 py-3">
+            <div className="mt-3.5 rounded-[12px] bg-white px-3.5 py-3">
               <p className={LABEL}>Fiduciaria</p>
               {trusteeName && (
                 <p className="text-graphite mt-1 text-[13px] leading-[19.5px] font-bold">
@@ -238,7 +238,7 @@ const LABEL = "text-steel text-[10.5px] leading-[15.75px] tracking-[0.42px] uppe
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-blush border-cloud rounded-xl border-[0.71px] p-3.5">
+    <div className="bg-blush border-cloud rounded-[12px] border-[0.71px] p-3.5">
       <p className={LABEL}>{label}</p>
       <p className="text-graphite mt-1.5 text-[15px] leading-[22.5px] font-bold">{value}</p>
     </div>
