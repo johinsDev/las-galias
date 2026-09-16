@@ -130,11 +130,13 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - `sinco-project` is a **read-only mirror** of the Sinco catalog, refreshed by
   cron. Deleting an entry is blocked by middleware: a `project` may point at it and
   its leads would silently stop reaching the CRM. It only mirrors the
-  macroprojects in `SINCO_MACRO_ALLOWLIST` (`src/utils/sinco-catalog.ts`); every
-  boot prunes the rest unless a project points at them. A new project for sale
-  needs its Sinco macro id added there, or it never shows up in the picker.
+  towers on sale listed in `SINCO_ACTIVE_TOWERS` (`src/utils/sinco-catalog.ts`,
+  from the company's "proyectos activos" export); every boot prunes the rest
+  unless a project points at them, and re-syncs if a listed tower is missing. A
+  new tower for sale needs its Sinco id added there, or it never shows up in the
+  picker.
 - The real projects are loaded from the company sheet with
-  `node scripts/load-projects.cjs [--yes]` (data in `apps/cms/data/projects.json`).
+  `node scripts/load-projects.cjs [--yes]` (data in `apps/cms/data/proyectos.csv`, the sheet downloaded as CSV).
   It REPLACES every project, macroproject, zone and amenity — run it once, not
   on top of edited content.
 - A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the

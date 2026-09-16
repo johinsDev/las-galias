@@ -17,7 +17,7 @@ import {
   guardSincoCatalog,
   pruneSincoCatalog,
   SINCO_PROJECT_UID,
-  syncSincoCatalogIfEmpty,
+  syncSincoCatalogIfIncomplete,
 } from "./utils/sinco-catalog";
 
 /**
@@ -248,12 +248,13 @@ export default {
     // primera en vez de pisarla.
     await applyAdminLayouts(strapi);
 
-    // Only the allowlisted macroprojects stay in the picker. A database-only
-    // pass, so it runs before the sync and does not need Sinco to be up.
+    // Only the towers on sale stay in the picker. A database-only pass, so it
+    // runs before the sync and does not need Sinco to be up.
     await pruneSincoCatalog(strapi);
 
-    // The Sinco picker must not come up empty on a fresh install; afterwards the
-    // cron owns it. Not awaited — a slow ERP must not hold up the boot.
-    void syncSincoCatalogIfEmpty(strapi);
+    // The picker must hold every tower on sale — on a fresh install and right
+    // after one is added to the list; otherwise the cron owns it. Not awaited:
+    // a slow ERP must not hold up the boot.
+    void syncSincoCatalogIfIncomplete(strapi);
   },
 };

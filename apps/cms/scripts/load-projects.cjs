@@ -62,28 +62,34 @@ const CITIES = [
 const CITY_ALIASES = { mosquera: "bogota" };
 
 /**
- * Proyecto de la hoja → macroproyectos de Sinco. En Sinco un «proyecto» es una
- * torre; el lead se amarra a la primera torre activa del primer macro. Los que
- * no están aquí no aparecieron en el catálogo (cruce del 2026-09-16) y sus
- * leads se quedan en Strapi hasta que Las Galias dé los ids. Debe coincidir con
- * SINCO_MACRO_ALLOWLIST en `src/utils/sinco-catalog.ts`.
+ * Proyecto de la hoja → macroproyectos de Sinco, según la exportación «proyectos
+ * activos» de Las Galias. En Sinco un «proyecto» es una torre; el lead se amarra
+ * a la primera torre activa del primer macro. Los que no están aquí no tienen
+ * macro identificado y sus leads se quedan en Strapi hasta que Las Galias dé los
+ * ids. Los macros tienen que estar en SINCO_ACTIVE_TOWERS
+ * (`src/utils/sinco-catalog.ts`) o no hay torre que amarrar.
  */
 const SINCO_MACROS = {
+  "ronda de verano": ["196"],
   "estacion fontibon": ["164"],
+  "moratti ciudad hayuelos": ["221"],
   "sabantti ciudad hayuelos": ["195"],
   "terra castilla": ["193"],
   "molinos caracas": ["192"],
   "paseo de la rivera": ["170"],
   "brezza ciudadela belari": ["190"],
+  "soffio ciudadela belari": ["205"],
   "altavista 2000": ["159"],
   "chipichape 6 35": ["202"],
-  "alborada de cuba": ["185", "206"],
-  "altavista del parque": ["194"],
-  "bosques de cuba": ["108", "165"],
-  "brisas de belmonte": ["204", "214"],
-  "reserva de llano grande": ["173", "210"],
-  "foresta de la sultana": ["188"],
-  "mirador de los alcazares": ["167", "215"],
+  "alborada de cuba": ["206"],
+  "altavista del parque": ["212"],
+  "bosques de cuba": ["165"],
+  "brisas de belmonte": ["204"],
+  "reserva de llano grande": ["210"],
+  "ciudad campestre": ["219"],
+  "heliconias ciudad floral": ["220"],
+  "foresta de la sultana": ["188", "213"],
+  "mirador de los alcazares": ["215", "167"],
   "portal de los cambulos": ["144"],
   "parque central fontibon 2": ["160"],
 };
