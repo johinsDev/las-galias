@@ -42,8 +42,6 @@ interface Props {
    * hero's red band onto a white shelf, with the dots sitting on the white.
    */
   shelf?: boolean;
-  /** How the photo fills its frame: banners crop, the photo viewer shows it whole. */
-  fit?: "cover" | "contain";
   /**
    * Fade in on scroll and load the first photo eagerly. Both off inside the
    * photo viewer, which starts hidden and should cost nothing until opened.
@@ -59,7 +57,6 @@ const {
   imageHeight,
   slideMax = "1600px",
   shelf = false,
-  fit = "cover",
   reveal = true,
 } = Astro.props;
 
@@ -97,10 +94,7 @@ const firstShown = loops > 1 ? items.length : 0;
                   width={imageWidth}
                   height={imageHeight}
                   loading={reveal && index === firstShown ? "eager" : "lazy"}
-                  class:list={[
-                    "h-full w-full",
-                    fit === "contain" ? "object-contain" : "object-cover",
-                  ]}
+                  class="h-full w-full object-cover"
                 />
                 {slide.cta && (
                   <span class="btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl">

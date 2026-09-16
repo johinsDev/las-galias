@@ -11,13 +11,20 @@ export interface SelectItem {
   label: string;
 }
 
+/** Opciones agrupadas bajo un título; sin título, el grupo se pinta sin cabecera. */
+export interface SelectGroup {
+  label?: string;
+  items: SelectItem[];
+}
+
 interface SelectProps {
   id?: string;
   name?: string;
   value?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
-  items: SelectItem[];
+  /** Lista plana o por grupos, con su título encima de cada uno. */
+  items: SelectItem[] | SelectGroup[];
   /** El Figma pone el chevron a la izquierda en la banda de asesoría. */
   chevron?: "left" | "right";
   invalid?: boolean;
@@ -39,6 +46,63 @@ function fold(value: string): string {
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase();
+}
+
+function toGroups(items: SelectItem[] | SelectGroup[]): SelectGroup[] {
+  return items.length > 0 && "items" in items[0]!
+    ? (items as SelectGroup[])
+    : [{ items: items as SelectItem[] }];
+}
+
+const ITEM_CLASS =
+  "text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold";
+const GROUP_LABEL_CLASS = "text-label text-ink-faint px-3 pt-3 pb-1 font-semibold uppercase";
+
+/**
+ * Las opciones, con o sin grupos. `visible` decide cuáles se ven sin
+ * desmontar ninguna (ver `SearchableSelect`); un grupo sin opciones visibles
+ * se oculta entero, cabecera incluida.
+ */
+function Options({
+  groups,
+  visible = () => true,
+}: {
+  groups: SelectGroup[];
+  visible?: (item: SelectItem) => boolean;
+}) {
+  return groups.map((group, index) => {
+    const options = group.items.map((item) => (
+      <SelectPrimitive.Item
+        key={item.value}
+        value={item.value}
+        hidden={!visible(item)}
+        className={ITEM_CLASS}
+      >
+        <SelectPrimitive.ItemText className="min-w-0 truncate">
+          {item.label}
+        </SelectPrimitive.ItemText>
+        <SelectPrimitive.ItemIndicator className="text-brand shrink-0">
+          <Check />
+        </SelectPrimitive.ItemIndicator>
+      </SelectPrimitive.Item>
+    ));
+    const hidden = !group.items.some(visible);
+    if (!group.label) {
+      return (
+        <div key={index} hidden={hidden}>
+          {options}
+        </div>
+      );
+    }
+    return (
+      <SelectPrimitive.Group key={group.label} hidden={hidden}>
+        <SelectPrimitive.GroupLabel className={GROUP_LABEL_CLASS}>
+          {group.label}
+        </SelectPrimitive.GroupLabel>
+        {options}
+      </SelectPrimitive.Group>
+    );
+  });
 }
 
 function Check() {
@@ -115,7 +179,9 @@ function Select({
     "border-line shadow-card-lg max-w-[var(--available-width)] overflow-hidden rounded-xl border bg-white",
     popupClassName ?? "w-[var(--anchor-width)]",
   );
-  const selected = items.find((item) => item.value === value) ?? null;
+  const groups = toGroups(items);
+  const flat = groups.flatMap((group) => group.items);
+  const selected = flat.find((item) => item.value === value) ?? null;
 
   const label = trigger ?? (
     <span
@@ -132,7 +198,8 @@ function Select({
         name={name}
         value={value}
         onValueChange={onValueChange}
-        items={items}
+        groups={groups}
+        items={flat}
         label={label}
         triggerClass={triggerClass}
         popupClass={popupClass}
@@ -145,7 +212,7 @@ function Select({
 
   return (
     <SelectPrimitive.Root
-      items={items}
+      items={flat}
       value={value ?? ""}
       // Base UI entrega `null` al limpiar; aquí eso es «sin elegir».
       onValueChange={(next: string | null) => onValueChange?.(next ?? "")}
@@ -166,23 +233,7 @@ function Select({
         >
           <SelectPrimitive.Popup className={popupClass}>
             <SelectPrimitive.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1">
-              {items.map((item) => (
-                <SelectPrimitive.Item
-                  key={item.value}
-                  value={item.value}
-                  className={cn(
-                    "text-body-sm text-ink flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 outline-none",
-                    "data-highlighted:bg-surface data-selected:font-semibold",
-                  )}
-                >
-                  <SelectPrimitive.ItemText className="min-w-0 flex-1">
-                    {item.label}
-                  </SelectPrimitive.ItemText>
-                  <SelectPrimitive.ItemIndicator className="text-brand shrink-0">
-                    <Check />
-                  </SelectPrimitive.ItemIndicator>
-                </SelectPrimitive.Item>
-              ))}
+              <Options groups={groups} />
             </SelectPrimitive.List>
           </SelectPrimitive.Popup>
         </SelectPrimitive.Positioner>
@@ -200,14 +251,25 @@ function Select({
  * darle el foco. Aquí el panel es un Select normal y el filtrado lo hace este
  * componente, que es la parte fácil.
  *
+ * El filtro OCULTA las opciones que no coinciden, no las desmonta. Desmontarlas
+ * le robaba el foco al buscador: el Select sabe la opción elegida por su
+ * posición en la lista, al filtrar esa posición cambiaba (Colombia pasaba de la
+ * 1 a la 0, por ejemplo) y Base UI, al ver cambiar el índice elegido con el
+ * panel abierto, vuelve a enfocar esa opción como si acabara de abrirse. Por
+ * eso el foco saltaba justo cuando la búsqueda seguía incluyendo el país
+ * elegido. Con todas montadas los índices no se mueven, y la navegación con
+ * flechas ya se salta las ocultas.
+ *
  * El input se traga sus propias teclas: si no, el Select las interpretaría como
- * su búsqueda por letra inicial y saltaría de opción mientras se escribe.
+ * su búsqueda por letra inicial y saltaría de opción mientras se escribe. Salvo
+ * las flechas, que bajan a la lista, y Escape y Tab, que siguen cerrando.
  */
 function SearchableSelect({
   id,
   name,
   value,
   onValueChange,
+  groups,
   items,
   label,
   triggerClass,
@@ -220,6 +282,7 @@ function SearchableSelect({
   name?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  groups: SelectGroup[];
   items: SelectItem[];
   label: React.ReactNode;
   triggerClass: string;
@@ -230,13 +293,36 @@ function SearchableSelect({
 }) {
   const [query, setQuery] = useState("");
   const search = useRef<HTMLInputElement>(null);
+  const list = useRef<HTMLDivElement>(null);
 
   const needle = fold(query.trim());
-  const filtered = needle ? items.filter((item) => fold(item.label).includes(needle)) : items;
+  const visible = (item: SelectItem) => !needle || fold(item.label).includes(needle);
+  const empty = !items.some(visible);
+
+  const onSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Escape" || event.key === "Tab") return;
+    event.stopPropagation();
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    // Al primer (o último) resultado visible. Al enfocarlo, Base UI lo toma
+    // como la opción activa y las flechas siguen desde ahí.
+    event.preventDefault();
+    const options = list.current?.querySelectorAll<HTMLElement>('[role="option"]:not([hidden])');
+    const target = event.key === "ArrowDown" ? options?.[0] : options?.[options.length - 1];
+    target?.focus();
+  };
+
+  const onListKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    // Escribir con una opción enfocada vuelve al buscador, y la letra cae ahí
+    // en vez de disparar la búsqueda por inicial del Select.
+    if (event.key.length !== 1 || event.key === " ") return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    event.stopPropagation();
+    search.current?.focus();
+  };
 
   return (
     <SelectPrimitive.Root
-      items={filtered}
+      items={items}
       value={value ?? ""}
       name={name}
       onValueChange={(next: string | null) => onValueChange?.(next ?? "")}
@@ -267,32 +353,23 @@ function SearchableSelect({
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                onKeyDown={(event) => event.stopPropagation()}
+                onKeyDown={onSearchKeyDown}
                 placeholder={searchPlaceholder}
                 className="text-body-sm text-ink placeholder:text-ink-faint h-11 w-full bg-transparent outline-none"
               />
             </div>
 
-            {filtered.length === 0 ? (
+            {empty && (
               <p className="text-body-sm text-ink-muted px-3 py-6 text-center">{emptyMessage}</p>
-            ) : (
-              <SelectPrimitive.List className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1">
-                {filtered.map((item) => (
-                  <SelectPrimitive.Item
-                    key={item.value}
-                    value={item.value}
-                    className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
-                  >
-                    <SelectPrimitive.ItemText className="min-w-0 truncate">
-                      {item.label}
-                    </SelectPrimitive.ItemText>
-                    <SelectPrimitive.ItemIndicator className="text-brand shrink-0">
-                      <Check />
-                    </SelectPrimitive.ItemIndicator>
-                  </SelectPrimitive.Item>
-                ))}
-              </SelectPrimitive.List>
             )}
+            <SelectPrimitive.List
+              ref={list}
+              hidden={empty}
+              onKeyDown={onListKeyDown}
+              className="max-h-[min(18rem,var(--available-height))] overflow-y-auto p-1"
+            >
+              <Options groups={groups} visible={visible} />
+            </SelectPrimitive.List>
           </SelectPrimitive.Popup>
         </SelectPrimitive.Positioner>
       </SelectPrimitive.Portal>

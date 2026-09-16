@@ -1,11 +1,12 @@
 /**
- * Countries offered in the "País de residencia" field, in Spanish and sorted
- * the way a Spanish speaker reads them (so "Ñ" and accents land where they
- * belong, not where their code points do).
+ * Countries offered in the "País de residencia" field and the phone field's
+ * calling code, in Spanish and sorted the way a Spanish speaker reads them (so
+ * "Ñ" and accents land where they belong, not where their code points do).
  *
- * The list leads with the markets the foreign-buyer page actually sells to —
- * where the Colombian diaspora is largest — and then covers the rest, so the
- * common answer is one keystroke away without hiding anyone else.
+ * The list is grouped by region, nearest first: Colombia on its own at the top,
+ * then the rest of Latin America, North America and Europe — where the
+ * Colombian diaspora is largest — and everyone else last, so the likely answer
+ * is at the top without hiding anyone.
  */
 export interface Country {
   /** ISO 3166-1 alpha-2, which is what the CRM will want the day it takes one. */
@@ -56,8 +57,6 @@ export function groupsFor(length: number): number[] {
 export function flagOf(code: string): string {
   return String.fromCodePoint(...[...code.toUpperCase()].map((c) => 0x1f1a5 + c.charCodeAt(0)));
 }
-
-const COMMON = ["US", "ES", "CA", "MX", "CL", "PA", "EC", "PE", "AR", "CR"];
 
 const ALL: Country[] = [
   { code: "DE", dial: "+49", nsn: 11, name: "Alemania" },
@@ -148,11 +147,53 @@ const ALL: Country[] = [
 
 const collator = new Intl.Collator("es");
 
-/** The whole list, common destinations first, each block alphabetical. */
-export const COUNTRIES: Country[] = [
-  ...COMMON.map((code) => ALL.find((c) => c.code === code)!).filter(Boolean),
-  ...ALL.filter((c) => !COMMON.includes(c.code)).sort((a, b) => collator.compare(a.name, b.name)),
+/**
+ * Regions in display order, as space-separated ISO codes. `lead` goes first in
+ * its group regardless of the alphabet (the biggest market of each); the rest
+ * follow alphabetically. The last region has no list: it takes every country
+ * the others did not claim, so adding a country to `ALL` can never make it
+ * vanish from the picker.
+ */
+const REGIONS: { label?: string; lead?: string; codes?: string }[] = [
+  // No heading: a group of one called "Colombia" would only repeat the name.
+  { lead: "CO", codes: "" },
+  { label: "Sudamérica", codes: "AR BO BR CL EC GY PY PE UY VE" },
+  { label: "Centroamérica y el Caribe", codes: "BZ CR CU SV GT HT HN JM NI PA DO TT" },
+  { label: "Norteamérica", lead: "US", codes: "CA MX" },
+  {
+    label: "Europa",
+    lead: "ES",
+    codes:
+      "DE AD AT BE BG CZ CY VA HR DK SK SI EE FI FR GR HU IE IS IT LV LT LU MT MC NO NL PL PT GB RO RU SE CH UA",
+  },
+  { label: "Resto del mundo" },
 ];
 
-/** How many of the above are the shortlist, so the list can rule them off. */
-export const COMMON_COUNT = COMMON.length;
+export interface CountryGroup {
+  /** Heading shown above the group; absent for Colombia, which needs none. */
+  label?: string;
+  items: Country[];
+}
+
+const byName = (a: Country, b: Country) => collator.compare(a.name, b.name);
+const codesOf = (list = "") => list.split(" ").filter(Boolean);
+const claimed = new Set(REGIONS.flatMap((r) => [...codesOf(r.lead), ...codesOf(r.codes)]));
+
+/** The list as the pickers show it: by region, most likely first. */
+export const COUNTRY_GROUPS: CountryGroup[] = REGIONS.map(({ label, lead, codes }) => {
+  const leading = codesOf(lead);
+  const members = codes === undefined ? null : codesOf(codes);
+  return {
+    label,
+    items: [
+      ...ALL.filter((c) => leading.includes(c.code)),
+      ...ALL.filter(
+        (c) =>
+          !leading.includes(c.code) && (members ? members.includes(c.code) : !claimed.has(c.code)),
+      ).sort(byName),
+    ],
+  };
+});
+
+/** The same list, flat. */
+export const COUNTRIES: Country[] = COUNTRY_GROUPS.flatMap((group) => group.items);

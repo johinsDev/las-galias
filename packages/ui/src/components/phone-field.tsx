@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import {
   COUNTRIES,
+  COUNTRY_GROUPS,
   flagOf,
   groupsFor,
   nationalMax,
@@ -32,16 +33,42 @@ function group(digits: string, country: Country): string {
   return parts.join(" ");
 }
 
-/** Splits an E.164 string back into the country it belongs to and the rest. */
-function split(value: string): { country: Country; national: string } {
+/**
+ * Who a calling code means when several countries share it and nothing else
+ * says which: +1 is the United States before it is Jamaica, +39 is Italy
+ * before it is the Vatican. The list order is by region and cannot decide it.
+ */
+const MAIN_FOR_DIAL = ["US", "IT", "RU"];
+
+// Longest dial code first, so +1 does not swallow +1-something; among equals,
+// the main country of that code.
+const BY_DIAL = [...COUNTRIES].sort(
+  (a, b) =>
+    b.dial.length - a.dial.length ||
+    Number(MAIN_FOR_DIAL.includes(b.code)) - Number(MAIN_FOR_DIAL.includes(a.code)),
+);
+
+/**
+ * Splits an E.164 string back into the country it belongs to and the rest.
+ * `preferred` is the country the person picked: the value alone cannot tell
+ * Canada from the United States, so the pick wins while its code still fits.
+ */
+function split(value: string, preferred?: string): { country: Country; national: string } {
   const digits = value.replace(/[^\d+]/g, "");
-  // Longest dial code first, so +1 does not swallow +1-something.
-  const match = [...COUNTRIES]
-    .sort((a, b) => b.dial.length - a.dial.length)
-    .find((c) => digits.startsWith(c.dial));
+  const picked = BY_DIAL.find((c) => c.code === preferred && digits.startsWith(c.dial));
+  const match = picked ?? BY_DIAL.find((c) => digits.startsWith(c.dial));
   const country = match ?? COUNTRIES.find((c) => c.code === "US")!;
   return { country, national: digits.slice(match ? match.dial.length : 0).replace(/\D/g, "") };
 }
+
+/** The picker's options, grouped by region like the country list itself. */
+const OPTIONS = COUNTRY_GROUPS.map((group) => ({
+  label: group.label,
+  items: group.items.map((item) => ({
+    value: item.code,
+    label: `${flagOf(item.code)}  ${item.name} ${item.dial}`,
+  })),
+}));
 
 interface PhoneFieldProps {
   id?: string;
@@ -70,7 +97,8 @@ export function PhoneField({
   invalid = false,
   placeholder,
 }: PhoneFieldProps) {
-  const { country, national } = useMemo(() => split(value), [value]);
+  const [picked, setPicked] = useState<string>();
+  const { country, national } = useMemo(() => split(value, picked), [value, picked]);
 
   const emit = (next: Country, digits: string) =>
     onValueChange?.(`${next.dial}${digits.slice(0, nationalMax(next))}`);
@@ -87,21 +115,20 @@ export function PhoneField({
       {/*
         El indicativo usa el mismo desplegable del sistema de diseño que el
         resto del formulario, con un disparador propio: la bandera y el prefijo,
-        que es lo único que cabe en esa caja. El buscador no hace falta —el país
-        se elige arriba, en su campo con buscador— y el panel propio evita que en
-        mitad del formulario se abra el menú gris del sistema operativo.
+        que es lo único que cabe en esa caja. Los países van por región, los
+        más probables arriba, y el panel propio evita que en mitad del
+        formulario se abra el menú gris del sistema operativo.
       */}
       <Select
         aria-label="Indicativo del país"
         value={country.code}
         onValueChange={(code: string) => {
           const next = COUNTRIES.find((c) => c.code === code);
-          if (next) emit(next, national);
+          if (!next) return;
+          setPicked(next.code);
+          emit(next, national);
         }}
-        items={COUNTRIES.map((item) => ({
-          value: item.code,
-          label: `${flagOf(item.code)}  ${item.name} ${item.dial}`,
-        }))}
+        items={OPTIONS}
         searchable
         searchPlaceholder="Busca tu país…"
         emptyMessage="No encontramos ese país."

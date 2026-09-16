@@ -121,11 +121,10 @@ const mapSrc = hasMap
               alt: img.alternativeText ?? project.name,
             }))}
             labels={{ prev: "Foto anterior", next: "Foto siguiente", goTo: "Ir a la foto" }}
-            frameClass="bg-white/5 aspect-[348/232] rounded-2xl md:aspect-[16/10] md:rounded-[28px]"
+            frameClass="bg-ink-800 aspect-[348/232] rounded-2xl md:aspect-[16/10] md:rounded-[28px]"
             imageWidth={1600}
             imageHeight={1000}
             slideMax="min(1400px, 130vh)"
-            fit="contain"
             reveal={false}
           />
         </div>
@@ -199,7 +198,7 @@ const mapSrc = hasMap
 
 <style>
   .lightbox::backdrop {
-    background: rgb(10 10 12 / 0.92);
+    background: rgb(10 10 12 / 0.96);
   }
 </style>
 

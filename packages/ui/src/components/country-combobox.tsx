@@ -1,7 +1,13 @@
 "use client";
 
 import { Combobox } from "@base-ui/react/combobox";
-import { COMMON_COUNT, COUNTRIES, flagOf, type Country } from "@lasgalias/ui/lib/countries";
+import {
+  COUNTRIES,
+  COUNTRY_GROUPS,
+  flagOf,
+  type Country,
+  type CountryGroup,
+} from "@lasgalias/ui/lib/countries";
 import { cn } from "@lasgalias/ui/lib/utils";
 
 /* Inline rather than an icon package: nothing else in this design system pulls
@@ -63,7 +69,9 @@ interface CountryComboboxProps {
  * This stores the Spanish name, which is what the lead schema already expects.
  *
  * Matching is accent-insensitive on purpose: someone typing "peru" or "mexico"
- * on a keyboard without accents should still find Perú and México.
+ * on a keyboard without accents should still find Perú and México. The list is
+ * grouped by region; Base UI filters inside each group and drops the ones left
+ * empty, heading and all.
  */
 export function CountryCombobox({
   id,
@@ -86,7 +94,7 @@ export function CountryCombobox({
 
   return (
     <Combobox.Root
-      items={COUNTRIES}
+      items={COUNTRY_GROUPS}
       itemToStringLabel={(country: Country) => country.name}
       filter={filter}
       value={COUNTRIES.find((country: Country) => country.name === value) ?? null}
@@ -131,27 +139,31 @@ export function CountryCombobox({
             </Combobox.Empty>
 
             <Combobox.List className="max-h-[min(16rem,var(--available-height))] overflow-y-auto p-1 data-empty:p-0">
-              {(country: Country) => (
-                <Combobox.Item
-                  key={country.code}
-                  value={country}
-                  className={cn(
-                    "text-body-sm text-ink flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none",
-                    "data-highlighted:bg-surface data-selected:font-semibold",
-                    // A hairline under the shortlist, so the common destinations
-                    // read as a group and not as an arbitrary reordering.
-                    COUNTRIES.indexOf(country) === COMMON_COUNT - 1 &&
-                      "border-line mb-1 border-b pb-2.5",
+              {(group: CountryGroup) => (
+                <Combobox.Group key={group.label ?? ""} items={group.items}>
+                  {group.label && (
+                    <Combobox.GroupLabel className="text-label text-ink-faint px-3 pt-3 pb-1 font-semibold uppercase">
+                      {group.label}
+                    </Combobox.GroupLabel>
                   )}
-                >
-                  <span className="flex min-w-0 items-center gap-2">
-                    <span aria-hidden="true">{flagOf(country.code)}</span>
-                    <span className="truncate">{country.name}</span>
-                  </span>
-                  <Combobox.ItemIndicator className="text-brand shrink-0">
-                    <Check />
-                  </Combobox.ItemIndicator>
-                </Combobox.Item>
+                  <Combobox.Collection>
+                    {(country: Country) => (
+                      <Combobox.Item
+                        key={country.code}
+                        value={country}
+                        className="text-body-sm text-ink data-highlighted:bg-surface flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 outline-none data-selected:font-semibold"
+                      >
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span aria-hidden="true">{flagOf(country.code)}</span>
+                          <span className="truncate">{country.name}</span>
+                        </span>
+                        <Combobox.ItemIndicator className="text-brand shrink-0">
+                          <Check />
+                        </Combobox.ItemIndicator>
+                      </Combobox.Item>
+                    )}
+                  </Combobox.Collection>
+                </Combobox.Group>
               )}
             </Combobox.List>
           </Combobox.Popup>
