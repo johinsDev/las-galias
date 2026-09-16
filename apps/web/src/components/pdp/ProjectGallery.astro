@@ -1,5 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import type { Project } from "@lasgalias/schemas";
+
+import { Images, X } from "lucide-astro";
 
 import ImageCarousel from "@/components/ImageCarousel.astro";
 import { mediaUrl } from "@/lib/strapi";
@@ -17,6 +20,8 @@ const photos = [hero, ...(project.gallery ?? [])].filter(
   (img, i, all): img is NonNullable<typeof img> =>
     Boolean(img?.url) && all.findIndex((other) => other?.url === img?.url) === i,
 );
+// The mosaic shows the hero plus the next two; every photo opens the viewer.
+const secondary = photos.slice(1, 3);
 const hasTour = Boolean(project.tour360Url);
 const hasMap = Boolean(project.location?.lat && project.location?.lng);
 const brochureUrl = project.brochure?.url ? mediaUrl(project.brochure.url) : null;
@@ -35,23 +40,96 @@ const mapSrc = hasMap
 
 {
   hero?.url && (
-    <section class="pt-6 pb-8 md:pt-8" data-gallery>
-      {/* Full-bleed, like the home's banners: the neighbours peek in from the
-          screen edges, so the rail cannot live inside the container. */}
+    <section class="container pt-6 pb-8 md:pt-8" data-gallery>
       <div data-panel="galeria">
-        <ImageCarousel
-          slides={photos.map((img) => ({
-            url: img.url,
-            alt: img.alternativeText ?? project.name,
-          }))}
-          labels={{ prev: "Foto anterior", next: "Foto siguiente", goTo: "Ir a la foto" }}
-          frameClass="bg-surface aspect-[348/232] rounded-3xl md:aspect-[16/9] md:rounded-[28px]"
-          imageWidth={1200}
-          imageHeight={675}
-          slideMax="1200px"
-          firstTransitionName={`project-hero-${project.slug}`}
-        />
+        <div class="grid gap-4 md:grid-cols-[1.7fr_1fr]">
+          {/* transition:name must stay in sync with ProjectCard.astro — it is what
+              makes the card→PDP hero morph work under View Transitions. */}
+          <button
+            type="button"
+            data-lightbox-open="0"
+            aria-label={`Ver las fotos de ${project.name}`}
+            class="group bg-surface relative aspect-[348/232] cursor-zoom-in overflow-hidden rounded-3xl md:aspect-[16/11] md:rounded-[28px]"
+            transition:name={`project-hero-${project.slug}`}
+          >
+            <picture>
+              {project.heroDesktop?.url && (
+                <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
+              )}
+              <Image
+                src={mediaUrl(hero.url)}
+                alt={hero.alternativeText ?? project.name}
+                width={1200}
+                height={825}
+                loading="eager"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+            </picture>
+            {photos.length > 1 && (
+              <span class="text-ink absolute right-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-white/92 px-4 py-2 text-sm font-bold">
+                <Images size={16} stroke-width={2} aria-hidden="true" />
+                {photos.length} fotos
+              </span>
+            )}
+          </button>
+          {/* The two side images are desktop-only: the design's phone shows a
+              single photograph, and stacking three of them would push the whole
+              page down a screen. */}
+          {secondary.length > 0 && (
+            <div class="hidden h-0 min-h-full grid-rows-2 gap-4 md:grid">
+              {secondary.map((img, i) => (
+                <button
+                  type="button"
+                  data-lightbox-open={i + 1}
+                  aria-label={`Ver la foto ${i + 2} de ${project.name}`}
+                  class="group bg-surface min-h-0 cursor-zoom-in overflow-hidden rounded-[28px]"
+                >
+                  <Image
+                    src={mediaUrl(img.url)}
+                    alt={img.alternativeText ?? project.name}
+                    width={600}
+                    height={375}
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* The viewer: the home's carousel, full screen, opening on the photo that
+          was clicked. A native <dialog> gives Esc, the focus trap and the top
+          layer for free. */}
+      <dialog
+        data-lightbox
+        aria-label={`Fotos de ${project.name}`}
+        class="lightbox m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0"
+      >
+        <div class="flex h-full flex-col justify-center" data-lightbox-stage>
+          <button
+            type="button"
+            data-lightbox-close
+            aria-label="Cerrar"
+            class="text-ink absolute top-4 right-4 z-30 inline-flex size-11 items-center justify-center rounded-full bg-white/92 hover:bg-white md:top-6 md:right-6"
+          >
+            <X size={22} stroke-width={1.75} aria-hidden="true" />
+          </button>
+          <ImageCarousel
+            slides={photos.map((img) => ({
+              url: img.url,
+              alt: img.alternativeText ?? project.name,
+            }))}
+            labels={{ prev: "Foto anterior", next: "Foto siguiente", goTo: "Ir a la foto" }}
+            frameClass="bg-white/5 aspect-[348/232] rounded-2xl md:aspect-[16/10] md:rounded-[28px]"
+            imageWidth={1600}
+            imageHeight={1000}
+            slideMax="min(1400px, 130vh)"
+            fit="contain"
+            reveal={false}
+          />
+        </div>
+      </dialog>
 
       <div class="container">
         {hasTour && (
@@ -119,6 +197,12 @@ const mapSrc = hasMap
   )
 }
 
+<style>
+  .lightbox::backdrop {
+    background: rgb(10 10 12 / 0.92);
+  }
+</style>
+
 <script>
   // Plain DOM: the panels are static markup, so an island here would ship React
   // just to toggle `hidden`.
@@ -153,6 +237,46 @@ const mapSrc = hasMap
     });
   }
 
-  setupGalleryTabs();
-  document.addEventListener("astro:page-load", setupGalleryTabs);
+  /** Photo viewer: open on the clicked photo, close on ✕, Esc or the backdrop. */
+  function setupLightbox() {
+    document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((root) => {
+      const dialog = root.querySelector<HTMLDialogElement>("[data-lightbox]");
+      const carousel = dialog?.querySelector<HTMLElement>("[data-banner-carousel]");
+      if (!dialog || !carousel || dialog.dataset.bound) return;
+      dialog.dataset.bound = "1";
+
+      const close = () => dialog.close();
+      dialog.addEventListener("close", () => {
+        document.documentElement.style.overflow = "";
+      });
+      dialog.querySelector("[data-lightbox-close]")?.addEventListener("click", close);
+      // A click that lands on the dark stage rather than on a photo or control.
+      dialog.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        if (target === dialog || target.matches("[data-lightbox-stage], [data-banner-rail]"))
+          close();
+      });
+
+      root.querySelectorAll<HTMLElement>("[data-lightbox-open]").forEach((trigger) => {
+        trigger.addEventListener("click", () => {
+          document.documentElement.style.overflow = "hidden";
+          dialog.showModal();
+          // Only now does the rail have a size to measure.
+          carousel.dispatchEvent(
+            new CustomEvent("carousel:goto", {
+              detail: { index: Number(trigger.dataset.lightboxOpen), instant: true },
+            }),
+          );
+        });
+      });
+    });
+  }
+
+  function setupGallery() {
+    setupGalleryTabs();
+    setupLightbox();
+  }
+
+  setupGallery();
+  document.addEventListener("astro:page-load", setupGallery);
 </script>

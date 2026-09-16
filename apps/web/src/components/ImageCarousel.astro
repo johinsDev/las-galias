@@ -42,8 +42,13 @@ interface Props {
    * hero's red band onto a white shelf, with the dots sitting on the white.
    */
   shelf?: boolean;
-  /** View Transitions name for the slide shown first (card → PDP morph). */
-  firstTransitionName?: string;
+  /** How the photo fills its frame: banners crop, the photo viewer shows it whole. */
+  fit?: "cover" | "contain";
+  /**
+   * Fade in on scroll and load the first photo eagerly. Both off inside the
+   * photo viewer, which starts hidden and should cost nothing until opened.
+   */
+  reveal?: boolean;
 }
 
 const {
@@ -54,7 +59,8 @@ const {
   imageHeight,
   slideMax = "1600px",
   shelf = false,
-  firstTransitionName,
+  fit = "cover",
+  reveal = true,
 } = Astro.props;
 
 // One copy cannot loop, so a single slide just sits there.
@@ -72,7 +78,7 @@ const firstShown = loops > 1 ? items.length : 0;
       data-banner-carousel
       data-banner-count={items.length}
       data-banner-loop={loops > 1 ? "true" : "false"}
-      data-reveal
+      data-reveal={reveal ? "" : undefined}
     >
       {/* The white the slide hangs onto. Behind everything, hence z-0. */}
       {shelf && <div class="banner-shelf absolute inset-x-0 bottom-0 z-0 bg-white" />}
@@ -90,8 +96,11 @@ const firstShown = loops > 1 ? items.length : 0;
                   alt={slide.alt}
                   width={imageWidth}
                   height={imageHeight}
-                  loading={index === firstShown ? "eager" : "lazy"}
-                  class="h-full w-full object-cover"
+                  loading={reveal && index === firstShown ? "eager" : "lazy"}
+                  class:list={[
+                    "h-full w-full",
+                    fit === "contain" ? "object-contain" : "object-cover",
+                  ]}
                 />
                 {slide.cta && (
                   <span class="btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl">
@@ -104,10 +113,7 @@ const firstShown = loops > 1 ? items.length : 0;
               <div class="banner-slide shrink-0 snap-center" data-banner-index={index}>
                 {/* The scale lives on this inner box so the snap box keeps its
                     untransformed size and the centring maths stays exact. */}
-                <div
-                  class:list={["banner-scale relative overflow-hidden", frameClass]}
-                  transition:name={index === firstShown ? firstTransitionName : undefined}
-                >
+                <div class:list={["banner-scale relative overflow-hidden", frameClass]}>
                   {slide.href ? (
                     <a href={slide.href} class="block h-full w-full">
                       {inner}
@@ -422,6 +428,21 @@ const firstShown = loops > 1 ? items.length : 0;
       });
 
       window.addEventListener("resize", () => {
+        paintScale();
+        paintDots();
+      });
+
+      // Jump or glide to a slide from outside — the photo viewer opens on the
+      // photo that was clicked. Aimed at the middle copy so both neighbours show.
+      root.addEventListener("carousel:goto", (event) => {
+        const { index, instant } = (event as CustomEvent<{ index: number; instant?: boolean }>)
+          .detail;
+        const target = looping ? count + index : index;
+        if (!instant) return goTo(target);
+        const behavior = rail.style.scrollBehavior;
+        rail.style.scrollBehavior = "auto";
+        rail.scrollLeft = offsetFor(target);
+        rail.style.scrollBehavior = behavior;
         paintScale();
         paintDots();
       });
