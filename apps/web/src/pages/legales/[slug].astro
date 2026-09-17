@@ -78,7 +78,7 @@ const updated = formatCalendarDate(doc.effectiveDate);
                       href={`#${heading.id}`}
                       data-index-link={heading.id}
                       aria-current={i === 0 ? "true" : undefined}
-                      class="relative block rounded-[4px] border-l-[1.43px] border-transparent px-2.5 py-[7px] text-[13px] leading-[19.5px] transition-colors duration-300 ease-out"
+                      class="relative block rounded-[4px] border-l-[1.43px] border-transparent px-2.5 py-[7px] text-[13px] leading-[19.5px]"
                     >
                       {heading.text}
                     </a>
@@ -104,13 +104,25 @@ const updated = formatCalendarDate(doc.effectiveDate);
   /* Only the text changes per link; the band is [data-index-indicator]. */
   [data-index-link] {
     color: var(--iron);
+    text-shadow:
+      0.35px 0 0 transparent,
+      -0.35px 0 0 transparent;
+    transition:
+      color 0.3s ease-out,
+      text-shadow 0.3s ease-out;
   }
   [data-index-link]:hover {
     color: var(--graphite);
   }
+  /* The active clause reads bold through a hairline shadow on both sides, not
+     font-weight: a real bold is wider, and "6. Limitación de responsabilidad"
+     jumped to two lines when clicked. The shadow keeps the metrics — and,
+     unlike the weight, it animates. */
   [data-index-link][aria-current="true"] {
     color: var(--brand);
-    font-weight: 700;
+    text-shadow:
+      0.35px 0 0 currentColor,
+      -0.35px 0 0 currentColor;
   }
   [data-index-indicator] {
     transition:

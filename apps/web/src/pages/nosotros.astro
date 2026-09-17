@@ -1,17 +1,19 @@
 ---
+import { Image } from "astro:assets";
+import { Award, Heart, ShieldCheck, Sprout, SquareArrowOutUpRight, Users, Zap } from "lucide-astro";
+
 import Base from "@/layouts/Base.astro";
-import { getProjects } from "@/lib/strapi";
+import { getProjects, mediaUrl } from "@/lib/strapi";
 
+// The design's photo is a stand-in ("Equipo Las Galias") nobody has sent yet,
+// so the hero shows a real project render until there is one.
 const projects = await getProjects();
+const heroImage = projects.find((project) => project.heroDesktop?.url)?.heroDesktop;
 
-// Cities come from the CMS, so this stays true as the portfolio grows.
-const cities = [
-  ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
-];
+const CAREERS_URL = "https://constructora-las-galias.pandape.computrabajo.com/";
+const SUSTAINABILITY_URL = "https://galias.com.co/sostenibilidad/";
 
-// Same figures as the home stats band. They are business claims, so they should
-// end up in an editable single type rather than living in two files — see the
-// note in the plan about the stats band.
+// Same figures as the home stats band.
 const stats = [
   { value: "+30.000", label: "Viviendas entregadas" },
   { value: "+30", label: "Proyectos activos" },
@@ -19,104 +21,332 @@ const stats = [
   { value: "30 años", label: "De trayectoria" },
 ];
 
-const pillars = [
+const purpose = [
   {
-    title: "Vivienda que sí se entrega",
-    body: "Cada proyecto se estructura con fiducia y punto de equilibrio antes de iniciar obra, para que la entrega no dependa del ritmo de ventas.",
+    title: "Misión",
+    body: "Construimos ciudad y ayudamos a materializar sueños, trabajando para generar bienestar y mejorar la calidad de vida en el entorno, en nuestros clientes y los accionistas, apoyados en un recurso humano talentoso, feliz y comprometido con la calidad, la sostenibilidad, la rentabilidad y la satisfacción de las soluciones inmobiliarias que ideamos, construimos, comercializamos y entregamos.",
   },
   {
-    title: "Acompañamiento hasta la escritura",
-    body: "Un asesor te guía en crédito, subsidios y trámites. No te dejamos solo entre la separación y la entrega.",
-  },
-  {
-    title: "Postventa incluida",
-    body: "La relación no termina con las llaves: acompañamos la garantía y el proceso de postventa de cada unidad entregada.",
+    title: "Visión",
+    body: "Las Galias es una plataforma empresarial que identifica, estructura y ejecuta negocios rentables y sostenibles, con especial fortaleza en el sector de la Construcción y una capacidad permanente de anticiparse y adaptarse a las dinámicas del mercado. Operamos desde una visión estratégica que transforma los cambios en oportunidades de crecimiento, integrando rigor técnico, análisis estratégico, innovación continua y el trabajo colaborativo de un equipo multidisciplinario con conocimiento integral y transversal. Nuestras áreas de soporte actúan como un eje estratégico que conecta, fortalece y potencia todas las unidades de negocio presentes y futuras, garantizando decisiones sólidas, responsables y alineadas con la estrategia empresarial. Creamos experiencias que inspiran confianza y tranquilidad, desarrollamos soluciones inteligentes que previenen riesgos y generan valor económico, humano, social y reputacional que perdura en el tiempo.",
   },
 ];
+
+const principles = [
+  {
+    title: "Propósito con sentido",
+    body: "Construimos para servir, crecer y dejar huella positiva.",
+  },
+  {
+    title: "Rentabilidad consciente",
+    body: "Buscamos resultados sostenibles que beneficien a todos los grupos de interés.",
+  },
+  {
+    title: "Personas primero",
+    body: "Reconocemos en cada colaborador, cliente y aliado el verdadero cimiento de nuestro éxito.",
+  },
+  {
+    title: "Sostenibilidad integral",
+    body: "Cada decisión considera su impacto social, ambiental y económico.",
+  },
+];
+
+const values = [
+  { title: "Integridad profesional", icon: ShieldCheck },
+  { title: "Compromiso", icon: Heart },
+  { title: "Colaboración", icon: Users },
+  { title: "Proactividad", icon: Zap },
+  { title: "Calidad y servicio", icon: Award },
+  { title: "Sostenibilidad", icon: Sprout },
+];
+
+const policy = [
+  "El mejoramiento continuo de nuestros procesos, la productividad, y el desarrollo humano de los colaboradores reconociendo la importancia de la calidad de los productos y servicios que ofrecemos.",
+  "Garantizando un entorno de trabajo seguro y saludable, gestionando los riesgos para proteger la integridad de nuestros colaboradores y partes interesadas, y promoviendo una cultura de bienestar físico y mental.",
+  "Promocionando la participación y consulta a nuestros grupos de interés para la identificación de peligros, valoración de los riesgos encaminados en la prevención de lesiones, enfermedades laborales, la protección del medio ambiente y la viabilidad del negocio.",
+  "Identificando los aspectos e impactos ambientales procedentes de las actividades que realiza la Constructora, con el fin de determinar medidas de control y seguimiento que contribuyan al cumplimiento de las metas ambientales enfocadas en la disminución de la contaminación, la mitigación del cambio climático y la protección del medio ambiente, implementando estrategias de economía circular para optimizar el uso de recursos, valorizar los residuos y minimizar de forma integral nuestra huella ambiental.",
+  "Asignando los recursos humanos, financieros, tecnológicos y físicos necesarios para el correcto funcionamiento del Sistema Integrado de Gestión, para la elaboración, implementación, evaluación y mantenimiento del plan de prevención, preparación y respuesta ante emergencias y todas aquellas disposiciones que por cumplimiento de los requisitos legales, técnicos y reglamentarios vigentes sean de carácter obligatorio.",
+];
+
+const figures = [
+  { value: "30.000", label: "viviendas" },
+  { value: "1'900.000 m²", label: "Construidos" },
+];
+
+const certifications = ["ISO 9001", "Camacol", "Fiduciaria Bogotá", "Superintendencia Financiera"];
+
+// Measures from the Figma frame (node 2839:17271): a 1152 column, sections
+// 48px apart, each opened by a red eyebrow 20px over its content.
+const EYEBROW = "text-brand text-xs leading-[18px] font-bold tracking-[1.2px] uppercase";
+const SECTION = "mt-12 flex flex-col gap-5";
+const CARD = "border-mist rounded-[16px] border-[1.43px] bg-white";
+const BAND =
+  "flex flex-col gap-6 rounded-[16px] px-6 py-8 md:flex-row md:items-center md:justify-between md:px-10 md:py-9";
+const BAND_TITLE =
+  "text-graphite text-xl leading-[1.3] font-bold md:text-[22px] md:leading-[28.6px]";
+const BAND_BODY = "text-iron mt-2 max-w-[600px] text-sm leading-[23.8px]";
+const BAND_ACTION =
+  "inline-flex h-[50px] shrink-0 items-center justify-center gap-1.5 self-start rounded-full px-6 text-sm leading-[21px] font-semibold transition-colors md:self-auto";
+const GRAY_BUTTON =
+  "border-mist text-graphite hover:bg-cloud inline-flex h-12 items-center rounded-[10px] border-[1.43px] bg-[#F3F4F5] px-5 text-sm leading-[21px] font-semibold transition-colors";
 ---
 
 <Base
   title="Nosotros — Las Galias"
-  description="Constructora colombiana con más de 30 años entregando vivienda de calidad."
+  description="Constructora colombiana con 30 años de trayectoria y más de 30.000 viviendas entregadas en Bogotá, Cali, Manizales y Pereira."
 >
-  <section class="border-line border-b">
-    <div class="container py-12 text-center md:py-16">
-      <p class="eyebrow text-brand" data-reveal>Nosotros</p>
-      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-3xl font-extrabold" data-reveal>
-        Construimos los barrios donde la gente se queda
+  <div class="mx-auto max-w-[1216px] px-5 pt-8 pb-16 md:px-8 md:pt-10">
+    {/* 01 Historia */}
+    <section class="flex flex-col">
+      <p class={EYEBROW} data-reveal>Nuestra historia</p>
+      <h1
+        class="text-graphite mt-4 max-w-[820px] text-[30px] leading-[1.15] font-extrabold md:text-[40px] md:leading-[46px]"
+        data-reveal
+      >
+        30 años construyendo el hogar de miles de familias colombianas
       </h1>
-      <p class="text-ink-muted mx-auto mt-4 max-w-2xl" data-reveal>
-        Somos una constructora colombiana con más de 30 años de experiencia entregando vivienda de
-        calidad en las principales ciudades del país.
+      <p class="text-steel mt-3 max-w-[700px] text-[15px] leading-6" data-reveal>
+        Somos una constructora colombiana con presencia en Bogotá, Cali, Manizales y Pereira,
+        comprometida con la calidad, la transparencia y el acompañamiento a cada familia en el
+        proceso de compra.
       </p>
-    </div>
-  </section>
+      {
+        heroImage?.url && (
+          <Image
+            src={mediaUrl(heroImage.url)}
+            alt="Proyecto de Las Galias Constructora"
+            width={1152}
+            height={384}
+            densities={[1, 2]}
+            loading="eager"
+            class="bg-cloud mt-6 aspect-[3/2] w-full rounded-[16px] object-cover md:aspect-[3/1]"
+          />
+        )
+      }
+      <div class="text-steel mt-12 flex flex-col gap-4 text-[14.5px] leading-[23.92px]">
+        <p data-reveal>
+          Las Galias nació en 1996 con un propósito claro: construir vivienda de calidad accesible
+          para las familias trabajadoras de Colombia. Empezamos con un único proyecto en el norte de
+          Bogotá y, tres décadas después, hemos entregado más de 30.000 viviendas en cuatro ciudades
+          del país, manteniendo el mismo compromiso con la calidad constructiva y la cercanía con
+          cada comprador.
+        </p>
+        <p data-reveal>
+          A lo largo de este camino hemos evolucionado junto con las necesidades de nuestros
+          clientes: hoy ofrecemos acompañamiento financiero personalizado, herramientas digitales
+          para simular tu compra desde cualquier lugar del mundo, y un equipo de asesores dedicados
+          a resolver cada duda del proceso, desde la elección del proyecto hasta la entrega de las
+          llaves. Seguimos siendo una empresa familiar en su esencia, con la solidez de una compañía
+          que ha resistido y crecido a través de distintos ciclos económicos del sector inmobiliario
+          colombiano.
+        </p>
+      </div>
+    </section>
 
-  <section class="bg-ink-900 text-white">
-    <div class="container grid grid-cols-2 gap-8 py-14 text-center lg:grid-cols-4">
+    {/* 02 Cifras */}
+    <section
+      class="bg-brand-subtle mt-12 grid grid-cols-2 gap-x-4 gap-y-8 rounded-[24px] px-5 py-8 md:flex md:flex-wrap md:items-start md:justify-center md:gap-16 md:px-8 md:py-12"
+      aria-label="Cifras"
+      data-reveal
+    >
       {
         stats.map((stat) => (
-          <div data-reveal>
-            <p
-              class="text-hero font-extrabold tracking-tight"
-              style="font-size:clamp(2.25rem,4vw,3.25rem)"
-            >
+          <div class="flex flex-col items-center gap-1 text-center">
+            <p class="text-graphite text-[32px] leading-[1.1] font-extrabold md:text-[64px] md:leading-[48px]">
               {stat.value}
             </p>
-            <p class="text-body-sm mt-1 text-white/55">{stat.label}</p>
+            <p class="text-pewter text-[12.5px] leading-[18.75px]">{stat.label}</p>
           </div>
         ))
       }
-    </div>
-  </section>
+    </section>
 
-  <section class="container py-12 md:py-16">
-    <div class="text-center" data-reveal>
-      <p class="eyebrow">Cómo trabajamos</p>
-      <h2 class="text-h3 text-ink mt-2 font-bold">Lo que nos hace diferentes</h2>
-    </div>
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
-      {
-        pillars.map((pillar) => (
-          <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
-            <h3 class="text-h4 text-ink font-semibold">{pillar.title}</h3>
-            <p class="text-body-sm text-ink-muted mt-2">{pillar.body}</p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
+    {/* 03 Misión y visión */}
+    <section class={SECTION}>
+      <h2 class={EYEBROW} data-reveal>Misión y visión</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        {
+          purpose.map((item) => (
+            <div class:list={[CARD, "p-6 md:p-7"]} data-reveal>
+              <h3 class="text-graphite text-lg leading-[25.2px] font-bold">{item.title}</h3>
+              <p class="text-iron mt-3 text-[15px] leading-[24.75px]">{item.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
 
-  {
-    cities.length > 0 && (
-      <section class="bg-surface border-line border-y">
-        <div class="container py-12 md:py-16">
-          <div class="text-center" data-reveal>
-            <p class="eyebrow">Presencia</p>
-            <h2 class="text-h3 text-ink mt-2 font-bold">Dónde estamos</h2>
-          </div>
-          <div class="mt-8 flex flex-wrap justify-center gap-2" data-reveal>
-            {cities.map((city) => (
-              <a href="/proyectos" class="chip hover:bg-surface-2 transition-colors">
-                {city.name}
-              </a>
-            ))}
-          </div>
+    {/* 04 Filosofía */}
+    <section class={SECTION}>
+      <h2 class={EYEBROW} data-reveal>Nuestra filosofía</h2>
+      <div class="text-iron flex flex-col gap-5 text-[15px] leading-[25.5px]">
+        <p data-reveal>
+          En Constructora Las Galias creemos que construir vivienda es construir confianza,
+          bienestar y futuro.
+        </p>
+        <p data-reveal>
+          Nuestra razón de ser va más allá de edificar estructuras: buscamos generar valor
+          compartido para las personas, las comunidades y el entorno donde operamos. Actuamos desde
+          la coherencia entre lo que pensamos, decidimos y hacemos, integrando la rentabilidad con
+          la responsabilidad social y ambiental. Cada proyecto refleja nuestro compromiso con un
+          modelo de negocio consciente, donde el éxito económico sólo tiene sentido si impulsa el
+          progreso humano y contribuye a un entorno sostenible.
+        </p>
+        <p data-reveal>
+          Creemos en el poder de las relaciones basadas en la confianza, la transparencia y la
+          integridad, pilares que fortalecen nuestros vínculos con clientes, aliados, colaboradores
+          y comunidades. Desarrollamos soluciones inmobiliarias que superan expectativas,
+          transformando espacios en hogares, y hogares en oportunidades de vida digna y crecimiento.
+        </p>
+        <p class="text-graphite font-semibold" data-reveal>
+          Nuestra filosofía se sustenta en cuatro principios esenciales:
+        </p>
+        <ul class="grid gap-4 md:grid-cols-2">
+          {
+            principles.map((principle) => (
+              <li class:list={[CARD, "flex flex-col gap-2 p-5 md:p-6"]} data-reveal>
+                <h3 class="text-graphite text-base leading-6 font-bold">{principle.title}</h3>
+                <p class="text-iron text-[13px] leading-[20.8px]">{principle.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p data-reveal>
+          Así, avanzamos con la convicción de que una empresa rentable es aquella que genera
+          bienestar, y que la verdadera construcción es la de la confianza, los valores y el futuro
+          que edificamos juntos.
+        </p>
+      </div>
+    </section>
+
+    {/* 05 Valores */}
+    <section class={SECTION}>
+      <h2 class={EYEBROW} data-reveal>Valores</h2>
+      <ul class="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
+        {
+          values.map((value) => (
+            <li
+              class:list={[
+                CARD,
+                "flex items-center gap-3 px-4 py-3.5 md:flex-col md:items-start md:p-6",
+              ]}
+              data-reveal
+            >
+              <span class="bg-brand-subtle text-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
+                <value.icon size={20} stroke-width={1.67} aria-hidden="true" />
+              </span>
+              <h3 class="text-graphite text-base leading-6 font-bold md:text-[17px] md:leading-[25.5px]">
+                {value.title}
+              </h3>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {/* 06 Política SIG */}
+    <section class={SECTION}>
+      <h2 class={EYEBROW} data-reveal>Política SIG</h2>
+      <div class="text-iron flex flex-col gap-4 text-[14.5px] leading-[23.92px]">
+        <p data-reveal>
+          En CONSTRUCTORA LAS GALIAS S.A.S trabajamos comprometidos con el logro de los resultados
+          que satisfagan las necesidades y expectativas de nuestros clientes, el entorno y todos
+          aquellos que interactúan con nuestra organización mediante:
+        </p>
+        <ul class="flex flex-col gap-3 text-sm leading-[23.1px]">
+          {
+            policy.map((item) => (
+              <li class="relative pl-4" data-reveal>
+                <span
+                  class="bg-steel absolute top-[10px] left-0 size-[3px] rounded-full"
+                  aria-hidden="true"
+                />
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+        <p data-reveal>
+          Lo anterior, enmarcado en la mejora continua, la responsabilidad social empresarial con
+          nuestras partes interesadas y el desarrollo sostenible de la Constructora.
+        </p>
+      </div>
+      <p class="text-steel -mt-1 text-xs leading-[19.2px]">Versión 05 · Fecha: 25/09/2025</p>
+    </section>
+
+    {/* 07 Trayectoria y certificaciones */}
+    <section class="mt-12" aria-label="Trayectoria">
+      <ul class="flex flex-wrap gap-x-16 gap-y-6" data-reveal>
+        {
+          figures.map((figure) => (
+            <li class="text-iron flex flex-col text-base leading-6">
+              <span>+de</span>
+              <span class="text-graphite text-[32px] leading-[1.1] font-extrabold md:text-4xl md:leading-[39.6px]">
+                {figure.value}
+              </span>
+              <span>{figure.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-6 flex flex-wrap gap-3" data-reveal>
+        <a href={CAREERS_URL} target="_blank" rel="noopener noreferrer" class={GRAY_BUTTON}>
+          Trabaja con nosotros
+        </a>
+        <a href="/legales" class={GRAY_BUTTON}>Políticas</a>
+      </div>
+      <ul class="mt-12 flex flex-wrap gap-3" aria-label="Certificaciones y aliados" data-reveal>
+        {
+          certifications.map((name) => (
+            <li class="border-mist text-steel flex h-[48.4px] items-center rounded-[12px] border-[0.71px] bg-[#F3F4F5] px-5 text-[12.5px] leading-[18.75px] font-semibold">
+              {name}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {/* 08 Sostenibilidad y empleo */}
+    <section class="mt-12 flex flex-col gap-12">
+      <div class:list={[CARD, BAND, "md:min-h-[164px]"]} data-reveal>
+        <div>
+          <h2 class={BAND_TITLE}>Informe de Sostenibilidad</h2>
+          <p class={BAND_BODY}>
+            Conoce nuestro compromiso ambiental, social y de gobernanza. Descarga el informe anual
+            (2021–2025).
+          </p>
         </div>
-      </section>
-    )
-  }
-
-  <section class="container py-16 text-center" data-reveal>
-    <h2 class="text-h2 text-ink mx-auto max-w-2xl font-extrabold">
-      ¿Quieres conocer nuestros proyectos?
-    </h2>
-    <p class="text-ink-muted mx-auto mt-4 max-w-xl">
-      Agenda una cita sin costo y te acompañamos por las opciones que se ajustan a ti.
-    </p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="/proyectos" class="btn btn-primary">Ver proyectos</a>
-      <a href="/servicio-al-cliente" class="btn btn-outline">Agenda tu cita</a>
-    </div>
-  </section>
+        <a
+          href={SUSTAINABILITY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class:list={[
+            BAND_ACTION,
+            "border-mist text-graphite hover:bg-cloud border-[1.43px] bg-[#F3F4F5]",
+          ]}
+        >
+          Ver informe
+          <SquareArrowOutUpRight size={14} stroke-width={2} aria-hidden="true" />
+        </a>
+      </div>
+      <div class:list={["bg-blush border-mist border-[0.48px]", BAND]} data-reveal>
+        <div>
+          <h2 class={BAND_TITLE}>Únete a nuestro equipo</h2>
+          <p class={BAND_BODY}>
+            Conoce las oportunidades laborales vigentes en Las Galias y sé parte de nuestros
+            proyectos.
+          </p>
+        </div>
+        <a
+          href={CAREERS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class:list={[BAND_ACTION, "bg-brand hover:bg-brand-bright text-white"]}
+        >
+          Ver vacantes
+          <SquareArrowOutUpRight size={14} stroke-width={2} aria-hidden="true" />
+        </a>
+      </div>
+    </section>
+  </div>
 </Base>
