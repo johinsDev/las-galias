@@ -63,14 +63,22 @@ const updated = formatCalendarDate(doc.effectiveDate);
               <p class="text-steel text-[10px] leading-4 font-bold tracking-[0.7px] uppercase">
                 Contenido
               </p>
-              <ul id="legal-index" class="mt-2.5 space-y-0.5">
+              <ul id="legal-index" class="relative mt-2.5 space-y-0.5">
+                {/* The pink band with the red rule is ONE element that slides to
+                    the active clause, instead of each link switching its own
+                    background on and off. */}
+                <span
+                  data-index-indicator
+                  aria-hidden="true"
+                  class="border-brand bg-brand-subtle pointer-events-none absolute top-0 left-0 w-full rounded-[4px] border-l-[1.43px] opacity-0"
+                />
                 {headings.map((heading, i) => (
                   <li>
                     <a
                       href={`#${heading.id}`}
                       data-index-link={heading.id}
                       aria-current={i === 0 ? "true" : undefined}
-                      class="block rounded-[4px] border-l-[1.43px] px-2.5 py-[7px] text-[13px] leading-[19.5px] transition-[background-color,border-color,color] duration-300"
+                      class="relative block rounded-[4px] border-l-[1.43px] border-transparent px-2.5 py-[7px] text-[13px] leading-[19.5px] transition-colors duration-300 ease-out"
                     >
                       {heading.text}
                     </a>
@@ -93,21 +101,27 @@ const updated = formatCalendarDate(doc.effectiveDate);
 </Base>
 
 <style>
-  /* Estado del índice: el enlace activo es la franja rosada con filete rojo del
-     diseño; el resto, texto gris sin borde visible. */
+  /* Only the text changes per link; the band is [data-index-indicator]. */
   [data-index-link] {
-    border-color: transparent;
     color: var(--iron);
   }
   [data-index-link]:hover {
     color: var(--graphite);
-    background: var(--fog);
   }
   [data-index-link][aria-current="true"] {
-    border-color: var(--brand);
-    background: var(--brand-subtle);
     color: var(--brand);
     font-weight: 700;
+  }
+  [data-index-indicator] {
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-index-indicator] {
+      transition: none;
+    }
   }
 </style>
 
@@ -120,6 +134,12 @@ const updated = formatCalendarDate(doc.effectiveDate);
    * <ClientRouter /> swaps the document without reloading the script.
    */
   let observer: IntersectionObserver | null = null;
+
+  // While a click is scrolling the page, the clauses it passes must not steal
+  // the mark — the band would stutter through each of them. Released as soon as
+  // the smooth scroll ends, with a timeout as the fallback.
+  let lockedUntil = 0;
+  window.addEventListener("scrollend", () => (lockedUntil = 0), { passive: true });
 
   function setupScrollSpy() {
     observer?.disconnect();
@@ -139,18 +159,53 @@ const updated = formatCalendarDate(doc.effectiveDate);
       .filter((el): el is HTMLElement => el !== null);
 
     const visible = new Set<string>();
+    const indicator = index.querySelector<HTMLElement>("[data-index-indicator]");
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /** Marks a clause and slides the band under it. */
+    const mark = (id: string) => {
+      const link = links.get(id);
+      if (!link) return;
+      links.forEach((other, otherId) => {
+        if (otherId === id) other.setAttribute("aria-current", "true");
+        else other.removeAttribute("aria-current");
+      });
+      if (!indicator) return;
+      indicator.style.transform = `translateY(${link.offsetTop}px)`;
+      indicator.style.height = `${link.offsetHeight}px`;
+      indicator.style.opacity = "1";
+    };
 
     const paint = () => {
+      if (Date.now() < lockedUntil) return;
       // With several headings on screen the topmost one wins, which is what the
       // reader perceives as "where I am".
       const current = headings.find((h) => visible.has(h.id))?.id;
       // Nothing in the band (a long clause): keep the last one marked.
-      if (!current) return;
-      links.forEach((link, id) => {
-        if (id === current) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
-      });
+      if (current) mark(current);
     };
+
+    // First paint in place, without sliding in from the top.
+    if (indicator) {
+      indicator.style.transition = "none";
+      mark(headings[0]?.id ?? "");
+      void indicator.offsetHeight;
+      indicator.style.transition = "";
+    }
+
+    links.forEach((link, id) => {
+      if (link.dataset.bound) return;
+      link.dataset.bound = "1";
+      link.addEventListener("click", (event) => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        event.preventDefault();
+        mark(id);
+        lockedUntil = Date.now() + (calm ? 0 : 900);
+        target.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
+        history.replaceState(history.state, "", `#${id}`);
+      });
+    });
 
     observer = new IntersectionObserver(
       (entries) => {
