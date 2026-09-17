@@ -1,9 +1,7 @@
 ---
-import { Image } from "astro:assets";
-
 import { MoveLeft, MoveRight } from "lucide-astro";
 
-import { mediaUrl } from "@/lib/strapi";
+import CmsImage from "@/components/CmsImage.astro";
 
 /**
  * The home's campaign slider, shared with the project page's gallery so both
@@ -32,9 +30,12 @@ interface Props {
   labels: { prev: string; next: string; goTo: string };
   /** Aspect ratio, corner radius and backdrop of a slide. */
   frameClass: string;
-  /** Size requested from the image CDN. */
+  /** Intrinsic size the slide reserves (aspect ratio). */
   imageWidth: number;
   imageHeight: number;
+  /** Candidate widths for the `srcset` and how wide a slide is drawn. */
+  imageWidths: number[];
+  imageSizes: string;
   /** Upper bound of a slide's width on wide screens. */
   slideMax?: string;
   /**
@@ -55,6 +56,8 @@ const {
   frameClass,
   imageWidth,
   imageHeight,
+  imageWidths,
+  imageSizes,
   slideMax = "1600px",
   shelf = false,
   reveal = true,
@@ -63,8 +66,12 @@ const {
 // One copy cannot loop, so a single slide just sits there.
 const loops = items.length > 1 ? 3 : 1;
 const slides = Array.from({ length: loops }, () => items).flat();
-// The slide on screen at load: the first of the middle copy.
-const firstShown = loops > 1 ? items.length : 0;
+// The slide on screen at load is the first of the middle copy — but the same
+// photo also sits at the head of the outer copies, and the browser issues ONE
+// request per URL from whichever <img> it meets first in the DOM. Hinting only
+// the middle copy left the LCP request at the priority of the lazy first copy,
+// so every copy of that photo is eager and high priority.
+const leads = (index: number) => reveal && index % items.length === 0;
 ---
 
 {
@@ -88,12 +95,15 @@ const firstShown = loops > 1 ? items.length : 0;
           {slides.map((slide, index) => {
             const inner = (
               <>
-                <Image
-                  src={mediaUrl(slide.url)}
+                <CmsImage
+                  src={slide.url}
                   alt={slide.alt}
                   width={imageWidth}
                   height={imageHeight}
-                  loading={reveal && index === firstShown ? "eager" : "lazy"}
+                  widths={imageWidths}
+                  sizes={imageSizes}
+                  loading={leads(index) ? "eager" : "lazy"}
+                  fetchpriority={leads(index) ? "high" : undefined}
                   class="h-full w-full object-cover"
                 />
                 {slide.cta && (
@@ -146,16 +156,16 @@ const firstShown = loops > 1 ? items.length : 0;
       </div>
 
       {items.length > 1 && (
-        <div class="relative z-10 flex justify-center gap-1 pt-4" data-banner-dots>
+        <div class="relative z-10 flex justify-center gap-2 pt-4" data-banner-dots>
           {items.map((_, index) => (
-            /* La barrita es de 6px, pero el botón mide 24px de alto: por debajo
-               de eso Lighthouse lo marca como objetivo táctil insuficiente y,
-               sobre todo, cuesta acertarle con el pulgar. */
+            /* La barrita es de 6px, pero el botón mide 24×24 como mínimo: por
+               debajo de eso Lighthouse lo marca como objetivo táctil
+               insuficiente y, sobre todo, cuesta acertarle con el pulgar. */
             <button
               type="button"
               data-banner-dot={index}
               aria-label={`${labels.goTo} ${index + 1}`}
-              class="flex h-6 items-center px-1"
+              class="flex h-6 min-w-6 items-center justify-center px-2"
             >
               <span class="h-1.5 rounded-full transition-all duration-300" data-banner-bar />
             </button>

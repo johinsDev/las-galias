@@ -13,7 +13,14 @@ export interface TypologyOption {
   builtAreaM2?: number | null;
   privateAreaM2?: number | null;
   priceCOP: number;
-  floorPlanUrl?: string | null;
+  /** Optimized plan image, resolved at build time by ProjectContent.astro. */
+  floorPlan?: {
+    src: string;
+    srcSet: string;
+    sizes: string;
+    width: number;
+    height: number;
+  } | null;
 }
 
 interface TypologySimulatorProps {
@@ -94,11 +101,16 @@ export default function TypologySimulator({
       <div className="mt-4 grid gap-6 lg:grid-cols-[803fr_509fr]">
         <div>
           <div className="bg-blush border-mist flex aspect-[803/490] items-center justify-center overflow-hidden rounded-[14px] border-[0.71px] border-dashed">
-            {current.floorPlanUrl ? (
+            {current.floorPlan ? (
               <img
-                src={current.floorPlanUrl}
+                src={current.floorPlan.src}
+                srcSet={current.floorPlan.srcSet}
+                sizes={current.floorPlan.sizes}
+                width={current.floorPlan.width}
+                height={current.floorPlan.height}
                 alt={`Plano ${current.name}`}
                 loading="lazy"
+                decoding="async"
                 className="h-full w-full object-contain"
               />
             ) : (

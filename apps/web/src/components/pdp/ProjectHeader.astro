@@ -4,9 +4,9 @@ import type { Project } from "@lasgalias/schemas";
 
 import { ShareMenu } from "@lasgalias/ui/components/share-menu";
 
+import CmsImage from "@/components/CmsImage.astro";
 import Price from "@/components/Price.astro";
 import PriceSwitcher from "@/components/PriceSwitcher.astro";
-import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
@@ -95,9 +95,15 @@ const action =
         >
           {
             project.logo?.url ? (
-              <img
-                src={mediaUrl(project.logo.url)}
+              <CmsImage
+                src={project.logo.url}
                 alt=""
+                width={128}
+                height={128}
+                widths={[64, 128, 256]}
+                sizes="56px"
+                quality={80}
+                loading="eager"
                 class="size-full bg-white object-contain p-1.5"
               />
             ) : (
@@ -150,7 +156,7 @@ const action =
 
       <div class="flex flex-wrap gap-2">
         <ShareMenu
-          client:idle
+          client:interact
           title={project.name}
           className="border-mist! text-graphite hover:bg-fog! gap-1.5 border-[1.43px]! px-4 py-[9px] text-[13px] leading-[19.5px] font-semibold [&_svg]:size-3.5"
         />

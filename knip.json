@@ -8,7 +8,12 @@
       "ignoreDependencies": ["astro-eslint-parser"]
     },
     "apps/web": {
-      "entry": ["src/pages/**/*.{astro,ts}", "src/scripts/**/*.ts", "src/islands/**/*.tsx"],
+      "entry": [
+        "src/pages/**/*.{astro,ts}",
+        "src/scripts/**/*.ts",
+        "src/islands/**/*.tsx",
+        "src/directives/*.ts"
+      ],
       "project": ["src/**/*.{astro,ts,tsx}"],
       "ignoreDependencies": ["tailwindcss"]
     },

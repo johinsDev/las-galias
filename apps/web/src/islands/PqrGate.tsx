@@ -146,6 +146,9 @@ export default function PqrGate({ projects }: PqrGateProps) {
         className="grid transition-[grid-template-rows,opacity] duration-300 ease-out"
         style={{ gridTemplateRows: validated ? "1fr" : "0fr", opacity: validated ? 1 : 0 }}
         aria-hidden={!validated}
+        // `inert` too: hidden from assistive tech but still reachable with Tab
+        // is exactly what axe flags, and a collapsed form should not take focus.
+        inert={!validated}
       >
         <div className="overflow-hidden">
           <p className="mt-6 inline-flex items-center gap-1.5 rounded-[6px] bg-[#eaf6ee] px-2.5 py-[7.5px] text-[13px] leading-none font-semibold text-[#217347]">

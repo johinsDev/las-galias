@@ -136,10 +136,17 @@ export function ShareMenu({ title, label = "Compartir", className }: ShareMenuPr
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setUrl(window.location.href);
     setCanShare(typeof navigator !== "undefined" && Boolean(navigator.share));
+    // Hidratado bajo demanda (`client:interact`): si el visitante pulsó antes
+    // de que llegara el JS, la directiva deja esta marca y el menú se abre solo.
+    if (document.documentElement.dataset.lgOpenShare) {
+      delete document.documentElement.dataset.lgOpenShare;
+      setOpen(true);
+    }
   }, []);
 
   const encodedUrl = encodeURIComponent(url);
@@ -156,7 +163,7 @@ export function ShareMenu({ title, label = "Compartir", className }: ShareMenuPr
   };
 
   return (
-    <Popover.Root>
+    <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         className={cn("btn btn-outline gap-2 px-5 py-2.5 text-sm", className)}
         aria-label={`Compartir: ${title}`}

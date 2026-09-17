@@ -1,4 +1,5 @@
 ---
+import { getImage } from "astro:assets";
 import { ChevronDown } from "lucide-astro";
 import type { Project } from "@lasgalias/schemas";
 
@@ -55,16 +56,39 @@ const specs = [
   { label: "Entrega", value: spec?.deliveryYear != null ? `${spec.deliveryYear}*` : null },
 ].filter((s) => s.value);
 
+// The island draws the plan itself, so the optimized `srcset` is computed here
+// at build time and handed over: a raw PNG from S3 was 60 KB for a 370px box.
+async function floorPlanFor(url: string | undefined | null) {
+  if (!url) return null;
+  const image = await getImage({
+    src: mediaUrl(url),
+    width: 828,
+    height: 506,
+    widths: [640, 828, 1200],
+    sizes: "(min-width: 1024px) 55vw, 100vw",
+    quality: 80,
+  });
+  return {
+    src: image.src,
+    srcSet: image.srcSet.attribute,
+    sizes: "(min-width: 1024px) 55vw, 100vw",
+    width: image.attributes.width as number,
+    height: image.attributes.height as number,
+  };
+}
+
 // Only typologies with a price can drive the simulator.
-const typologies: TypologyOption[] = units
-  .filter((u) => u.priceCOP != null && Number(u.priceCOP) > 0)
-  .map((u) => ({
-    name: u.name,
-    builtAreaM2: u.builtAreaM2 ?? null,
-    privateAreaM2: u.privateAreaM2 ?? null,
-    priceCOP: Number(u.priceCOP),
-    floorPlanUrl: u.floorPlan?.url ? mediaUrl(u.floorPlan.url) : null,
-  }));
+const typologies: TypologyOption[] = await Promise.all(
+  units
+    .filter((u) => u.priceCOP != null && Number(u.priceCOP) > 0)
+    .map(async (u) => ({
+      name: u.name,
+      builtAreaM2: u.builtAreaM2 ?? null,
+      privateAreaM2: u.privateAreaM2 ?? null,
+      priceCOP: Number(u.priceCOP),
+      floorPlan: await floorPlanFor(u.floorPlan?.url),
+    })),
+);
 
 // Newest month first; the label is what the editor typed, the date only sorts.
 const progress = [...(project.constructionProgress ?? [])].sort((a, b) =>
@@ -268,11 +292,12 @@ const sections = [
         <h2 class={HEADING}>Ubicación</h2>
         {mapSrc && (
           <div class="bg-cloud mt-3.5 aspect-[4/3] overflow-hidden rounded-[14px] sm:aspect-[1336/585]">
-            {/* Below the fold on every screen size, so `lazy` genuinely defers
-                it: nothing is requested from OpenStreetMap until the visitor
-                scrolls this far. */}
+            {/* `data-src`, not `src`: `loading="lazy"` was not enough, Chrome
+                starts a lazy iframe a couple of screens early and OpenStreetMap's
+                embed is 300 KB of script. The observer below sets `src` only
+                when the section is about to scroll into view. */}
             <iframe
-              src={mapSrc}
+              data-src={mapSrc}
               title={`Mapa · ${address ?? project.name}`}
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
@@ -379,6 +404,24 @@ const sections = [
           });
         });
       });
+    });
+
+    // The map embed loads once its section is a screen away, not on page load.
+    document.querySelectorAll<HTMLIFrameElement>("#ubicacion iframe[data-src]").forEach((frame) => {
+      // `astro:page-load` also fires on first load: a second observer on the
+      // same frame would read a `data-src` the first one already consumed.
+      if (frame.dataset.bound) return;
+      frame.dataset.bound = "1";
+      const near = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting) || !frame.dataset.src) return;
+          frame.src = frame.dataset.src;
+          delete frame.dataset.src;
+          near.disconnect();
+        },
+        { rootMargin: "200px 0px" },
+      );
+      near.observe(frame);
     });
 
     // Section pills follow the scroll. An observer rather than a scroll handler

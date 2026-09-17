@@ -1,8 +1,9 @@
-import { animate, inView } from "motion";
-
 /**
- * Scroll reveals with motion (vanilla API, ~5kb): any element with
- * [data-reveal] fades and rises into view when it enters the viewport.
+ * Scroll reveals: any element with [data-reveal] fades and rises into view when
+ * it enters the viewport. Pure CSS transition driven by an IntersectionObserver
+ * (`.reveal-out` / `.reveal-in` in globals.css) — it used to import `motion`,
+ * 23 KB gz on every page for a single opacity/translate tween.
+ *
  * Idempotent: re-runs on every astro:page-load (View Transitions).
  *
  * Anything already on screen when the page loads is left alone. Hiding it and
@@ -11,24 +12,32 @@ import { animate, inView } from "motion";
  * "entrance" to play anyway; the reader is looking at it.
  */
 export function initReveals(): void {
-  document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-reveal-bound])").forEach((el) => {
+  const pending = [
+    ...document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-reveal-bound])"),
+  ];
+  if (pending.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        el.classList.remove("reveal-out");
+        el.classList.add("reveal-in");
+        observer.unobserve(el);
+      });
+    },
+    { threshold: 0.2 },
+  );
+
+  pending.forEach((el) => {
     el.dataset.revealBound = "true";
 
     const box = el.getBoundingClientRect();
     const onScreen = box.top < window.innerHeight && box.bottom > 0;
     if (onScreen) return;
 
-    el.style.opacity = "0";
-    inView(
-      el,
-      () => {
-        animate(
-          el,
-          { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0px)"] },
-          { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-        );
-      },
-      { amount: 0.2 },
-    );
+    el.classList.add("reveal-out");
+    observer.observe(el);
   });
 }

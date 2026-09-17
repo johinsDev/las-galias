@@ -1,10 +1,9 @@
 ---
-import { Image } from "astro:assets";
 import type { Media, Project } from "@lasgalias/schemas";
 
+import CmsImage from "@/components/CmsImage.astro";
 import Price from "@/components/Price.astro";
 import PriceSwitcher from "@/components/PriceSwitcher.astro";
-import { mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
@@ -20,9 +19,28 @@ interface Props {
    * logo on the photo and that frame's smaller type (Figma node 2710:5505).
    */
   compact?: boolean;
+  /**
+   * Fetch the first photo eagerly. Only for cards that sit above the fold on a
+   * phone (the first two of the listing); everywhere else every photo is lazy,
+   * so a grid of eight cards no longer downloads eight photos on load.
+   */
+  priority?: boolean;
+  /**
+   * Heading level of the project name. `h3` under a section heading (home,
+   * foreign-buyer page, "Proyectos similares"); the listing has nothing but
+   * its `h1` above the grid, so there the cards are `h2` or the outline skips.
+   */
+  heading?: "h2" | "h3";
 }
 
-const { project, rates = null, cta = "whatsapp", compact = false } = Astro.props;
+const {
+  project,
+  rates = null,
+  cta = "whatsapp",
+  compact = false,
+  priority = false,
+  heading: Heading = "h3",
+} = Astro.props;
 const isExpectation = project.stage === "expectation";
 
 /**
@@ -116,12 +134,14 @@ const CHIP =
               class="h-full w-full shrink-0 snap-center"
               transition:name={index === 0 ? `project-hero-${project.slug}` : undefined}
             >
-              <Image
-                src={mediaUrl(media.url)}
+              <CmsImage
+                src={media.url}
                 alt={media.alternativeText ?? project.name}
                 width={640}
                 height={480}
-                loading={index === 0 ? undefined : "lazy"}
+                widths={[420, 640, 828]}
+                sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                loading={priority && index === 0 ? "eager" : "lazy"}
                 class="h-full w-full object-cover"
               />
             </div>
@@ -177,9 +197,14 @@ const CHIP =
     {
       compact && project.logo?.url && (
         <span class="border-mist pointer-events-none absolute right-3 bottom-3 flex size-[34px] items-center justify-center overflow-hidden rounded-[10px] border-[0.71px] bg-white p-1">
-          <img
-            src={mediaUrl(project.logo.url)}
+          <CmsImage
+            src={project.logo.url}
             alt=""
+            width={128}
+            height={128}
+            widths={[64, 128]}
+            sizes="34px"
+            quality={80}
             class="max-h-full max-w-full object-contain"
           />
         </span>
@@ -197,7 +222,7 @@ const CHIP =
             type="button"
             data-card-prev
             aria-label="Imagen anterior"
-            class="absolute top-1/2 left-3 -translate-y-1/2 text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
+            class="absolute top-1/2 left-1 inline-flex size-8 -translate-y-1/2 items-center justify-center text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
           >
             <ChevronLeft size={20} stroke-width={2} aria-hidden="true" />
           </button>
@@ -205,7 +230,7 @@ const CHIP =
             type="button"
             data-card-next
             aria-label="Imagen siguiente"
-            class="absolute top-1/2 right-3 -translate-y-1/2 text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
+            class="absolute top-1/2 right-1 inline-flex size-8 -translate-y-1/2 items-center justify-center text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
           >
             <ChevronRight size={20} stroke-width={2} aria-hidden="true" />
           </button>
@@ -236,7 +261,9 @@ const CHIP =
           <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
           {locationTrail}
         </p>
-        <h3 class="text-graphite mt-2 text-sm leading-[21px] font-bold">{project.name}</h3>
+        <Heading class="text-graphite mt-2 text-sm leading-[21px] font-bold">
+          {project.name}
+        </Heading>
         {!isExpectation && project.priceFromCOP ? (
           <>
             <p class="text-steel mt-1.5 text-[11px] leading-[16.5px]">Precio desde</p>
@@ -276,7 +303,7 @@ const CHIP =
             <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
             {locationTrail}
           </p>
-          <h3 class="text-h4 text-ink mt-1.5 font-semibold">{project.name}</h3>
+          <Heading class="text-h4 text-ink mt-1.5 font-semibold">{project.name}</Heading>
 
           {!isExpectation && project.priceFromCOP ? (
             <>

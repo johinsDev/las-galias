@@ -1,6 +1,7 @@
 ---
 import type { Amenity, AmenityIconKey } from "@lasgalias/schemas";
 
+import CmsImage from "@/components/CmsImage.astro";
 import { mediaUrl } from "@/lib/strapi";
 import { inlineSvg } from "@/lib/svg";
 
@@ -83,12 +84,16 @@ const inlined = isSvg && uploadedUrl ? await inlineSvg(uploadedUrl) : null;
     ) : inlined ? (
       <span class="inline-flex" style={`width:${size}px;height:${size}px`} set:html={inlined} />
     ) : (
-      <img
-        src={uploadedUrl}
+      <CmsImage
+        src={uploadedUrl!}
         alt=""
-        width={size}
-        height={size}
+        width={64}
+        height={64}
+        widths={[64, 128]}
+        sizes={`${size}px`}
+        quality={80}
         class="object-contain"
+        style={`width:${size}px;height:${size}px`}
         loading="lazy"
       />
     )

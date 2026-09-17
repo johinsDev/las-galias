@@ -7,7 +7,7 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `@astrojs/vercel` (needed even though the site is static: it emits the CMS
   redirects as real 301s and enables Vercel Image Optimization). Near-zero JS: the
   React islands (`src/islands/`, `client:visible`) are LeadForm, the three
-  simulators, TypologySimulator and FaqBot. Animations with `motion` (vanilla API) + View Transitions.
+  simulators, TypologySimulator and FaqBot. Animations are CSS transitions driven by an IntersectionObserver (`scripts/reveal.ts`) + View Transitions; no animation library.
   Public URLs and site copy are Spanish (Colombian audience); code is English.
   The three simulators on `/simuladores` (cuota inicial, crédito hipotecario,
   capacidad de pago) share `lib/simulators.ts` for the math and
@@ -43,6 +43,18 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   It is not a code bug: the incremental install leaves a second physical copy of
   React in the root `node_modules`, so SSR loads two instances. Fix with
   `rm -rf node_modules apps/*/node_modules packages/*/node_modules && bun install`.
+- Lighthouse móvil está en 100/100/100/100 en todas las rutas y hay tres reglas
+  que lo sostienen. (1) Toda imagen del CMS pasa por `components/CmsImage.astro`
+  (calidad 75, `widths` + `sizes` reales); un `<Image>` suelto vuelve a calidad
+  100 sin `srcset`. Los anchos permitidos viven en `lib/image-sizes.ts` y se
+  declaran también al adaptador de Vercel: un ancho fuera de la lista se redondea
+  y filtra un `inputtedWidth` al HTML. (2) Ninguna isla hidrata en `client:load`
+  ni `client:idle`: el buscador usa `client:search` y el menú de compartir
+  `client:interact` (`src/directives/`), que hidratan al primer uso y, si el
+  clic llega antes que el JS, dejan una marca en `<html>` para que el componente
+  se abra al montar. (3) Los grises `--steel`, `--ink-faint` y `--ink-muted`
+  están en el valor más claro que pasa 4,5:1 sobre blanco, fog, cloud y
+  surface-2; no se pueden aclarar sin perder accesibilidad.
 - Git hooks: **lefthook** (pre-commit: prettier + eslint on staged files;
   commit-msg: commitlint / Conventional Commits). Installed on `bun install`.
 - Design tokens live only in `packages/ui/src/styles/globals.css` (Tailwind v4
