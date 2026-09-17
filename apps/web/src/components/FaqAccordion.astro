@@ -34,20 +34,24 @@ const bot = await getFaqBotConfig();
 
 {
   bot.enabled && (
-    <div class="mb-10">
+    <div class="mb-8">
       <FaqBot client:visible suggestedQuestions={bot.suggestedQuestions} />
     </div>
   )
 }
 
-<div class="mx-auto max-w-3xl" data-faq>
+<div class="mx-auto max-w-[760px]" data-faq>
   <div class="space-y-3">
     {
       faqs.map((faq, i) => (
-        <div class="border-line rounded-2xl border bg-white" data-faq-item hidden={i >= initial}>
+        <div
+          class="border-cloud rounded-[12px] border-[0.71px] bg-white"
+          data-faq-item
+          hidden={i >= initial}
+        >
           <button
             type="button"
-            class="text-body-sm text-ink flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left font-medium"
+            class="text-graphite flex min-h-[53px] w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left text-[13px] leading-[19.5px] font-semibold"
             aria-expanded="false"
             aria-controls={`faq-answer-${i}`}
             data-faq-toggle
@@ -55,7 +59,7 @@ const bot = await getFaqBotConfig();
             {faq.question}
             {/* A plus turned 45° is the × the design shows when open. */}
             <span
-              class="text-ink-muted shrink-0 text-lg leading-none transition-transform duration-300 ease-out"
+              class="text-steel shrink-0 text-lg leading-[18px] transition-transform duration-300 ease-out"
               data-faq-icon
             >
               +
@@ -67,8 +71,8 @@ const bot = await getFaqBotConfig();
             data-open="false"
             class="overflow-hidden transition-[max-height] duration-300 ease-out"
           >
-            <div class="text-body-sm text-ink-muted px-5 pb-4">
-              <Blocks content={faq.answer} />
+            <div class="text-iron px-5 pb-4 text-[13px] leading-[20.8px]">
+              <Blocks content={faq.answer} variant="inherit" />
             </div>
           </div>
         </div>
@@ -78,8 +82,12 @@ const bot = await getFaqBotConfig();
 
   {
     hidden > 0 && (
-      <div class="mt-6 text-center">
-        <button type="button" class="btn btn-outline" data-faq-more>
+      <div class="mt-7 text-center">
+        <button
+          type="button"
+          class="border-mist text-graphite hover:bg-fog h-[40px] cursor-pointer rounded-full border-[1.43px] bg-white px-5 text-[13px] font-semibold transition-colors"
+          data-faq-more
+        >
           Ver más preguntas
         </button>
       </div>

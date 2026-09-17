@@ -1,10 +1,10 @@
 ---
 import { Image } from "astro:assets";
+import { Check } from "lucide-astro";
 
 import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
-import SectionHeading from "@/components/SectionHeading.astro";
 import LeadForm from "@/islands/LeadForm";
 import Base from "@/layouts/Base.astro";
 import { getExchangeRate, getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
@@ -66,7 +66,21 @@ const formBullets = page?.formBullets?.length
 // Only projects actually on sale — an expectation-stage project has no price to
 // show in USD, which is the whole point of this grid.
 const sellable = projects.filter((p) => p.stage === "sale" && p.priceFromCOP);
-const cities = [...new Map(sellable.map((p) => [p.city?.slug, p.city])).entries()]
+
+// The design shows one row of four, and "Ver todos" leads to the rest. They
+// are dealt one city at a time, so every city pill above has a card to show.
+const byCity = new Map<string, typeof sellable>();
+for (const project of sellable) {
+  const key = project.city?.slug ?? "";
+  byCity.set(key, [...(byCity.get(key) ?? []), project]);
+}
+const featured: typeof sellable = [];
+for (let round = 0; featured.length < 4 && featured.length < sellable.length; round++) {
+  for (const group of byCity.values()) {
+    if (group[round] && featured.length < 4) featured.push(group[round]);
+  }
+}
+const cities = [...new Map(featured.map((p) => [p.city?.slug, p.city])).entries()]
   .filter(([slug]) => slug)
   .map(([, city]) => city!);
 
@@ -81,7 +95,14 @@ const rates =
 
 const title = page?.seo?.metaTitle ?? "Compra desde el exterior — Las Galias";
 const description = page?.seo?.metaDescription ?? heroSubtitle;
-import { Check } from "lucide-astro";
+
+// Measures from the Figma frame (node 2798:12878): 1776 wide, sections 56px
+// tall on each side of a 0.71px rule, a red 12px eyebrow over a 30px title.
+const SECTION = "border-cloud border-t-[0.71px] px-5 py-14 md:px-8";
+const EYEBROW = "text-brand text-xs leading-[18px] font-bold tracking-[1.2px] uppercase";
+const TITLE = "text-graphite mt-3 text-[26px] leading-[1.2] font-bold md:text-[30px] md:leading-9";
+const PRIMARY =
+  "bg-brand hover:bg-brand-bright inline-flex h-[48.5px] items-center justify-center rounded-full px-7 text-sm leading-[21px] font-semibold text-white transition-colors";
 ---
 
 <Base title={title} description={description} ogImage={mediaUrl(page?.seo?.ogImage?.url)}>
@@ -90,20 +111,23 @@ import { Check } from "lucide-astro";
       argument, and the photograph below it carries the colour. */
   }
   <section>
-    <div class="container py-16 text-center md:py-20">
-      <p class="eyebrow text-brand" data-reveal>{eyebrow}</p>
-      <h1 class="text-h1 text-ink mx-auto mt-3 max-w-[680px] font-extrabold" data-reveal>
+    <div class="px-5 pt-14 pb-10 text-center md:px-8 md:pt-[72px]">
+      <p class:list={[EYEBROW, "pt-[3px]"]} data-reveal>{eyebrow}</p>
+      <h1
+        class="text-graphite mx-auto mt-4 max-w-[680px] text-[32px] leading-[1.15] font-bold md:text-[40px] md:leading-[46px]"
+        data-reveal
+      >
         {heroTitle}
       </h1>
-      <p class="text-body-lg text-ink-muted mx-auto mt-4 max-w-[560px]" data-reveal>
+      <p class="text-iron mx-auto mt-3 max-w-[520px] text-base leading-[25.6px]" data-reveal>
         {heroSubtitle}
       </p>
-      <a href="#datos" class="btn btn-primary mt-8" data-reveal>{heroCtaLabel}</a>
+      <a href="#datos" class:list={[PRIMARY, "mt-6"]} data-reveal>{heroCtaLabel}</a>
       {
         trustBadges.length > 0 && (
-          <div class="mt-6 flex flex-wrap justify-center gap-2" data-reveal>
+          <div class="mt-[18px] flex flex-wrap justify-center gap-2.5" data-reveal>
             {trustBadges.map((badge) => (
-              <span class="text-brand text-label inline-flex h-8 items-center rounded-full border border-[#f16577] bg-[#ce253a]/[0.02] px-3 font-bold uppercase">
+              <span class="text-brand inline-flex h-8 items-center rounded-full border border-[#F16577] bg-[#ce253a]/[0.02] px-3 text-[10px] leading-[15px] font-bold tracking-[0.4px] uppercase">
                 {badge}
               </span>
             ))}
@@ -113,14 +137,16 @@ import { Check } from "lucide-astro";
     </div>
     {
       page?.heroImage?.url && (
-        <div class="container-bleed">
-          <div class="bg-surface aspect-[348/232] w-full overflow-hidden rounded-3xl md:aspect-[1712/652] md:rounded-[56px]">
+        <div class="px-5 pb-14 md:px-8">
+          <div class="bg-cloud mx-auto aspect-[348/232] w-full max-w-[1712px] overflow-hidden rounded-[24px] md:aspect-[1712/652] md:rounded-[56px]">
             <Image
               src={mediaUrl(page.heroImage.url)}
               alt={page.heroImage.alternativeText ?? ""}
               width={1712}
               height={652}
+              densities={[1, 2]}
               loading="eager"
+              fetchpriority="high"
               class="h-full w-full object-cover"
             />
           </div>
@@ -130,72 +156,81 @@ import { Check } from "lucide-astro";
   </section>
 
   {/* 02 Paso a paso — six steps in a 3×2 grid, each numbered by position. */}
-  <section class="border-t-[0.75px] border-[#eff1f3]">
-    <div class="container py-16 md:py-20">
-      <SectionHeading eyebrow="Cómo funciona" title={stepsTitle} />
-      <ol class="mx-auto mt-10 grid max-w-[1120px] gap-x-10 gap-y-10 md:grid-cols-3">
-        {
-          steps.map((step, i) => (
-            <li data-reveal>
-              <span class="text-brand flex size-12 items-center justify-center rounded-full bg-[#fdf9fa] text-lg font-bold">
-                {i + 1}
-              </span>
-              <h3 class="text-ink mt-4 font-semibold">{step.title}</h3>
-              <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
-            </li>
-          ))
-        }
-      </ol>
+  <section class={SECTION}>
+    <div class="text-center" data-reveal>
+      <p class={EYEBROW}>Cómo funciona</p>
+      <h2 class={TITLE}>{stepsTitle}</h2>
     </div>
+    <ol class="mx-auto mt-8 grid max-w-[1120px] gap-7 sm:grid-cols-2 md:grid-cols-3">
+      {
+        steps.map((step, i) => (
+          <li data-reveal>
+            <span class="bg-brand-subtle text-brand flex size-11 items-center justify-center rounded-full text-base leading-6 font-extrabold">
+              {i + 1}
+            </span>
+            <h3 class="text-graphite mt-4 text-lg leading-[25.2px] font-semibold">{step.title}</h3>
+            <p class="text-iron mt-2 text-sm leading-[22.4px]">{step.body}</p>
+          </li>
+        ))
+      }
+    </ol>
   </section>
 
   {/* 03 Proyectos, con selector de moneda en cada card */}
-  <section>
-    <div class="container py-16 md:py-20">
-      <SectionHeading eyebrow="¡Invierte ahora!" title="Proyectos disponibles para ti" />
-      <CityFilter cities={cities} target="#exterior-grid" />
-
-      {
-        sellable.length > 0 ? (
-          <>
-            <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" id="exterior-grid">
-              {sellable.map((project) => (
-                <ProjectCard project={project} rates={rates} cta="asesor" />
-              ))}
-            </div>
-            <p class="text-caption text-ink-muted mx-auto mt-8 max-w-3xl text-center">
-              {priceDisclaimer}
-            </p>
-            <div class="mt-6 text-center" data-reveal>
-              <a href="/proyectos" class="btn btn-outline">
-                Ver todos los proyectos
-              </a>
-            </div>
-          </>
-        ) : (
-          <p class="text-ink-muted mt-8 text-center">
-            Estamos preparando nuevos proyectos. Déjanos tus datos y te avisamos primero.
-          </p>
-        )
-      }
+  <section class={SECTION}>
+    <div class="text-center" data-reveal>
+      <p class={EYEBROW}>¡Invierte ahora!</p>
+      <h2 class={TITLE}>Proyectos disponibles para ti</h2>
     </div>
+    {
+      featured.length > 0 ? (
+        <>
+          <CityFilter cities={cities} target="#exterior-grid" />
+          <div
+            class="mx-auto mt-7 grid max-w-[1499px] gap-6 sm:grid-cols-2 xl:grid-cols-4"
+            id="exterior-grid"
+          >
+            {featured.map((project) => (
+              <ProjectCard project={project} rates={rates} cta="asesor" />
+            ))}
+          </div>
+          <p class="text-steel mx-auto mt-7 max-w-[760px] text-center text-xs leading-[18px]">
+            {priceDisclaimer}
+          </p>
+          <div class="mt-7 text-center" data-reveal>
+            <a
+              href="/proyectos"
+              class="border-mist text-graphite hover:bg-fog inline-flex h-[40.34px] items-center rounded-full border-[1.43px] bg-white px-5 text-[13px] font-semibold transition-colors"
+            >
+              Ver todos los proyectos
+            </a>
+          </div>
+        </>
+      ) : (
+        <p class="text-iron mt-8 text-center">
+          Estamos preparando nuevos proyectos. Déjanos tus datos y te avisamos primero.
+        </p>
+      )
+    }
   </section>
 
   {/* 03B Formulario de refuerzo */}
-  <section id="datos" class="border-t-[0.75px] border-[#eff1f3] bg-[#fdfbfc]">
-    <div
-      class="container grid max-w-[1180px] items-center gap-12 py-16 md:py-20 lg:grid-cols-[1fr_540px]"
-    >
+  <section id="datos" class:list={[SECTION, "bg-blush scroll-mt-20"]}>
+    <div class="mx-auto grid max-w-[1000px] items-center gap-10 lg:grid-cols-2">
       <div data-reveal>
-        <h2 class="text-h2 text-ink font-bold">{formTitle}</h2>
-        <p class="text-body-lg text-ink-muted mt-4">{formBody}</p>
-        <ul class="mt-6 space-y-3">
+        <h2
+          class="text-graphite text-[24px] leading-[1.2] font-bold md:text-[26px] md:leading-[31.2px]"
+        >
+          {formTitle}
+        </h2>
+        <p class="text-iron mt-3 text-base leading-[25.6px]">{formBody}</p>
+        <ul class="mt-5 space-y-2">
           {
             formBullets.map((bullet) => (
-              <li class="text-body-sm text-ink flex items-center gap-2.5">
+              <li class="text-graphite flex items-center gap-2 text-[13px] leading-[19.5px] font-semibold">
                 <Check
-                  size={18}
-                  stroke-width={2.5}
+                  size={16}
+                  stroke-width={2.2}
                   aria-hidden="true"
                   class="text-brand shrink-0"
                 />
@@ -205,8 +240,10 @@ import { Check } from "lucide-astro";
           }
         </ul>
       </div>
-      <div class="border-line rounded-2xl border bg-white p-6" data-reveal>
-        <h3 class="text-ink font-semibold">Habla con un asesor →</h3>
+      <div class="border-mist rounded-[16px] border-[1.43px] bg-white p-6" data-reveal>
+        <h3 class="text-graphite text-[15px] leading-[21px] font-semibold">
+          Habla con un asesor →
+        </h3>
         <div class="mt-4">
           <LeadForm
             client:visible
@@ -215,7 +252,7 @@ import { Check } from "lucide-astro";
             submitLabel="Déjanos tus datos"
           />
         </div>
-        <p class="text-caption text-ink-muted mt-3 text-center">
+        <p class="text-steel mt-3 text-center text-xs leading-[18px]">
           🔒 Tus datos están protegidos · Sin spam
         </p>
       </div>
@@ -225,9 +262,12 @@ import { Check } from "lucide-astro";
   {/* 04 Preguntas frecuentes — el asistente va dentro de FaqAccordion */}
   {
     faqs.length > 0 && (
-      <section class="border-line container border-t py-16 md:py-20">
-        <SectionHeading eyebrow="FAQ" title="Preguntas frecuentes" />
-        <div class="mx-auto mt-10 max-w-[760px]">
+      <section class={SECTION}>
+        <div class="text-center" data-reveal>
+          <p class={EYEBROW}>FAQ</p>
+          <h2 class={TITLE}>Preguntas frecuentes</h2>
+        </div>
+        <div class="mx-auto mt-6 max-w-[760px]">
           <FaqAccordion faqs={faqs} initial={5} />
         </div>
       </section>
@@ -235,13 +275,13 @@ import { Check } from "lucide-astro";
   }
 
   {/* 05 CTA final */}
-  <section class="bg-brand-subtle">
-    <div class="container py-16 text-center md:py-20" data-reveal>
-      <h2 class="text-h2 text-ink font-bold">¿Listo para invertir en tu futuro?</h2>
-      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">
-        Un asesor te acompaña en todo el proceso, sin salir de donde estás.
-      </p>
-      <a href="#datos" class="btn btn-primary mt-8">Déjanos tus datos</a>
-    </div>
+  <section class="bg-brand-subtle px-5 py-16 text-center md:px-8" data-reveal>
+    <h2 class="text-graphite text-[26px] leading-[1.2] font-bold md:text-[30px] md:leading-9">
+      ¿Listo para invertir en tu futuro?
+    </h2>
+    <p class="text-iron mx-auto mt-3 max-w-[420px] text-base leading-[25.6px]">
+      Un asesor te acompaña en todo el proceso, sin salir de donde estás.
+    </p>
+    <a href="#datos" class:list={[PRIMARY, "mt-7"]}>Déjanos tus datos</a>
   </section>
 </Base>

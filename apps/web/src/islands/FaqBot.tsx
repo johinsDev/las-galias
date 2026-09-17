@@ -176,14 +176,16 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
   const chips = suggestedQuestions.filter((s) => s !== question);
 
   return (
-    <div className="border-line bg-brand-subtle mx-auto max-w-3xl rounded-2xl border p-6 sm:p-8">
-      <p className="text-h4 text-ink text-center font-semibold">Pregúntale al asistente</p>
-      <p className="text-body-sm text-ink-muted mt-2 text-center">
+    <div className="bg-brand-subtle mx-auto flex max-w-[760px] flex-col gap-4 rounded-[16px] border-[1.5px] border-[#E7EAED] p-5 sm:p-8">
+      <p className="text-graphite text-center text-lg leading-none font-bold">
+        Pregúntale al asistente
+      </p>
+      <p className="text-iron text-center text-sm leading-[1.35]">
         Resuelve tu duda al instante con la información de nuestros proyectos.
       </p>
 
       <form
-        className="mt-5 flex flex-col gap-3 sm:flex-row"
+        className="flex flex-col gap-2.5 sm:flex-row"
         onSubmit={(e) => {
           e.preventDefault();
           void ask(question);
@@ -199,24 +201,24 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
           maxLength={MAX_CHARS}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Escribe tu pregunta"
-          className="border-input field-box text-body text-ink focus:border-ink w-full border bg-white px-3.5 transition-colors outline-none"
+          className="text-graphite focus:border-graphite placeholder:text-steel h-[42px] w-full rounded-[12px] border-[1.4px] border-[#E7EAED] bg-white px-4 text-sm transition-colors outline-none"
         />
         <button
           type="submit"
           disabled={busy || question.trim().length < 3}
-          className="btn btn-primary shrink-0 disabled:opacity-50"
+          className="bg-brand hover:bg-brand-bright h-[42px] shrink-0 cursor-pointer rounded-[12px] px-6 text-sm font-semibold text-white transition-colors disabled:cursor-default disabled:opacity-50"
         >
           {busy ? "Pensando…" : "Preguntar"}
         </button>
       </form>
 
       {!busy && chips.length > 0 && (
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           {chips.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
-              className="border-line text-caption text-ink-muted hover:text-ink hover:border-ink-faint rounded-full border bg-white px-3.5 py-2 transition-colors"
+              className="text-iron hover:text-graphite hover:border-steel h-[26px] cursor-pointer rounded-full border-[1.3px] border-[#E7EAED] bg-white px-3 text-xs leading-none transition-colors"
               onClick={() => void ask(suggestion)}
             >
               {suggestion}
@@ -226,7 +228,7 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
       )}
 
       {(busy || answer) && (
-        <div className="bg-surface mt-4 rounded-xl p-4" aria-live="polite">
+        <div className="rounded-[12px] bg-white p-4" aria-live="polite">
           {answer ? (
             <p className="text-body-sm text-ink whitespace-pre-line">
               {render(answer, busy)}

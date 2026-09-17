@@ -74,17 +74,16 @@ const bedChip = range(beds, "hab");
 
 /**
  * The footer action. The design labels it "WhatsApp" on the home and "Habla con
- * un asesor" on the foreign-buyer page — but a project with no sales-room
- * WhatsApp has nothing to open, so it falls back to the project page rather
- * than promising a conversation that cannot start.
+ * un asesor" on the foreign-buyer page. On the home, a project with no
+ * sales-room WhatsApp has nothing to open, so it falls back to the project
+ * page. The foreign-buyer page has its own lead form (`#datos`), and an advisor
+ * is still one step away through it, so there the label stays and the button
+ * scrolls to the form.
  */
 const whatsappHref = project.salesRoom?.whatsappUrl;
-const ctaLabel = whatsappHref
-  ? cta === "whatsapp"
-    ? "WhatsApp"
-    : "Habla con un asesor"
-  : "Ver proyecto";
-const ctaHref = whatsappHref ?? `/proyectos/${project.slug}`;
+const ctaLabel =
+  cta === "asesor" ? "Habla con un asesor" : whatsappHref ? "WhatsApp" : "Ver proyecto";
+const ctaHref = whatsappHref ?? (cta === "asesor" ? "#datos" : `/proyectos/${project.slug}`);
 import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
 const BADGE =
