@@ -1,0 +1,216 @@
+---
+import { ArrowLeft, ArrowRight } from "lucide-astro";
+
+/**
+ * A row of link chips that scrolls sideways instead of wrapping, with arrow
+ * buttons that page through it — the pattern of cruisebound's scrollable tabs.
+ *
+ * - Each arrow appears only when there is something on that side, and fades in
+ *   and out rather than popping.
+ * - A tap moves ~80% of the visible width, smoothly, clamped to both ends, so
+ *   the movement is always visible and never overshoots.
+ * - On load the active chip is brought into view. The row remembers where it
+ *   was on the previous page (sessionStorage, per `storageKey`), so moving
+ *   between documents glides from the old position to the new chip instead of
+ *   jumping.
+ * - With no JavaScript it is still a plain horizontally scrollable strip.
+ */
+interface Chip {
+  href: string;
+  label: string;
+  active?: boolean;
+}
+
+interface Props {
+  chips: Chip[];
+  ariaLabel: string;
+  /** Key for remembering the scroll position between pages of the same row. */
+  storageKey: string;
+  class?: string;
+}
+
+const { chips, ariaLabel, storageKey, class: className } = Astro.props;
+
+const ARROW =
+  "chip-arrow border-mist text-graphite absolute top-1/2 z-10 flex size-10 items-center justify-center rounded-full border-[1.43px] bg-white shadow-[0_2px_8px_rgba(26,29,33,0.12)] transition-[opacity,transform,background-color] duration-300 ease-out hover:bg-fog";
+---
+
+<nav
+  aria-label={ariaLabel}
+  class:list={["chip-scroller relative", className]}
+  data-chip-scroller
+  data-storage-key={storageKey}
+>
+  <div
+    class="no-scrollbar relative -mx-5 flex gap-3 overflow-x-auto px-5 py-1 md:mx-0 md:px-0"
+    data-chip-viewport
+  >
+    {
+      chips.map((chip) => (
+        <a
+          href={chip.href}
+          aria-current={chip.active ? "page" : undefined}
+          data-chip-active={chip.active ? "" : undefined}
+          class:list={[
+            "inline-flex h-9 shrink-0 items-center rounded-full border-[1.43px] px-4 text-[13px] leading-[19.5px] whitespace-nowrap transition-[background-color,border-color,color,transform] duration-300 ease-out active:scale-[0.97]",
+            chip.active
+              ? "bg-brand border-brand-deep font-bold text-white"
+              : "border-mist text-iron hover:border-steel hover:text-graphite bg-white font-medium",
+          ]}
+        >
+          {chip.label}
+        </a>
+      ))
+    }
+  </div>
+
+  {/* Fades under the arrows, so a chip slides out of sight instead of being cut. */}
+  <div
+    class="chip-fade chip-fade-left pointer-events-none absolute inset-y-0 left-0 w-16 bg-linear-to-r from-white to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="chip-fade chip-fade-right pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-white to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+
+  <button
+    type="button"
+    class:list={[ARROW, "chip-arrow-left left-0"]}
+    aria-label="Ver anteriores"
+    data-chip-prev
+  >
+    <ArrowLeft size={18} stroke-width={1.8} aria-hidden="true" />
+  </button>
+  <button
+    type="button"
+    class:list={[ARROW, "chip-arrow-right right-0"]}
+    aria-label="Ver siguientes"
+    data-chip-next
+  >
+    <ArrowRight size={18} stroke-width={1.8} aria-hidden="true" />
+  </button>
+</nav>
+
+<style>
+  /* Hidden until the script says there is somewhere to go. Scaled down a touch
+     so appearing reads as the button arriving, not just a fade. */
+  .chip-arrow,
+  .chip-fade {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .chip-arrow {
+    transform: translateY(-50%) scale(0.85);
+  }
+  [data-can-left] .chip-arrow-left,
+  [data-can-right] .chip-arrow-right {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1);
+  }
+  [data-can-left] .chip-fade-left,
+  [data-can-right] .chip-fade-right {
+    opacity: 1;
+  }
+  .chip-fade {
+    transition: opacity 0.3s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chip-arrow,
+    .chip-fade {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const STEP = 0.8;
+  const EDGE = 4;
+
+  function setupChipScrollers() {
+    document.querySelectorAll<HTMLElement>("[data-chip-scroller]").forEach((root) => {
+      const viewport = root.querySelector<HTMLElement>("[data-chip-viewport]");
+      if (!viewport || root.dataset.bound) return;
+      root.dataset.bound = "1";
+
+      const key = `chips:${root.dataset.storageKey ?? ""}`;
+      const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const paint = () => {
+        const max = viewport.scrollWidth - viewport.clientWidth;
+        root.toggleAttribute("data-can-left", viewport.scrollLeft > EDGE);
+        root.toggleAttribute("data-can-right", max - viewport.scrollLeft > EDGE);
+      };
+
+      const scrollTo = (left: number, smooth: boolean) => {
+        const max = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+        viewport.scrollTo({
+          left: Math.min(max, Math.max(0, left)),
+          behavior: smooth && !calm ? "smooth" : "auto",
+        });
+      };
+
+      root.querySelector("[data-chip-prev]")?.addEventListener("click", () => {
+        scrollTo(viewport.scrollLeft - viewport.clientWidth * STEP, true);
+      });
+      root.querySelector("[data-chip-next]")?.addEventListener("click", () => {
+        scrollTo(viewport.scrollLeft + viewport.clientWidth * STEP, true);
+      });
+
+      viewport.addEventListener(
+        "scroll",
+        () => {
+          // Two attribute toggles: cheap enough to run on every event, and it
+          // keeps the arrows right even where rAF is throttled.
+          paint();
+          try {
+            sessionStorage.setItem(key, String(viewport.scrollLeft));
+          } catch {
+            // Private mode: the row simply starts from the left next time.
+          }
+        },
+        { passive: true },
+      );
+      new ResizeObserver(paint).observe(viewport);
+
+      // Start where the previous page left the row, then glide to the chip of
+      // this page if it is not fully visible. The arrows' width is kept clear,
+      // so the chip never ends up under one of them.
+      const readStart = () => {
+        try {
+          return Number(sessionStorage.getItem(key)) || 0;
+        } catch {
+          return 0;
+        }
+      };
+      const from = readStart();
+      scrollTo(from, false);
+      paint();
+
+      const active = viewport.querySelector<HTMLElement>("[data-chip-active]");
+      if (active) {
+        const clear = 56;
+        // The viewport is `relative`, so this is the chip's place in the strip,
+        // whatever the strip's current scroll.
+        const left = active.offsetLeft;
+        const right = left + active.offsetWidth;
+        const outOfView =
+          left < viewport.scrollLeft + clear ||
+          right > viewport.scrollLeft + viewport.clientWidth - clear;
+        if (outOfView) {
+          setTimeout(
+            () => scrollTo(left - (viewport.clientWidth - active.offsetWidth) / 2, true),
+            0,
+          );
+        }
+      }
+    });
+  }
+
+  setupChipScrollers();
+  document.addEventListener("astro:page-load", setupChipScrollers);
+</script>

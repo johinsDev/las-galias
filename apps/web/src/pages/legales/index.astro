@@ -1,4 +1,5 @@
 ---
+import ChipScroller from "@/components/ChipScroller.astro";
 import Base from "@/layouts/Base.astro";
 import { formatCalendarDate } from "@/lib/dates";
 import { getLegalDocuments } from "@/lib/strapi";
@@ -10,48 +11,63 @@ const documents = await getLegalDocuments();
   title="Legales — Las Galias"
   description="Términos y condiciones, políticas de privacidad y cartillas de la venta de Constructora Las Galias."
 >
-  <section class="border-line border-b">
-    <div class="container py-10 md:py-14">
-      <p class="eyebrow text-brand">Legales</p>
-      <h1 class="text-h1 text-ink mt-3 font-extrabold">Documentos legales</h1>
-      <p class="text-ink-muted mt-4 max-w-2xl">
+  <section class="mx-auto max-w-[1216px] px-5 pt-10 md:px-8 md:pt-12">
+    <div class="mx-auto max-w-[1152px]">
+      <h1
+        class="text-graphite text-[30px] leading-[1.15] font-extrabold md:text-4xl md:leading-[41.4px]"
+      >
+        Legales
+      </h1>
+      {
+        documents.length > 0 && (
+          <ChipScroller
+            class="mt-5"
+            ariaLabel="Documentos legales"
+            storageKey="legales"
+            chips={documents.map((doc) => ({ href: `/legales/${doc.slug}`, label: doc.title }))}
+          />
+        )
+      }
+      <p class="text-iron mt-7 max-w-2xl text-[14.5px] leading-[25.38px]">
         Las condiciones bajo las que operamos este sitio y vendemos vivienda. Si algo de lo que lees
         aquí contradice un documento contractual firmado, prevalece el contrato.
       </p>
     </div>
   </section>
 
-  <section class="container py-10 md:py-14">
-    {
-      documents.length === 0 ? (
-        <p class="text-ink-muted">
-          Todavía no hay documentos publicados. Escríbenos a{" "}
-          <a class="text-brand underline" href="mailto:sala@lasgalias.com.co">
-            sala@lasgalias.com.co
-          </a>{" "}
-          y te los hacemos llegar.
-        </p>
-      ) : (
-        <ul class="grid gap-4 md:grid-cols-2">
-          {documents.map((doc) => (
-            <li>
-              <a
-                href={`/legales/${doc.slug}`}
-                class="border-line hover:border-brand group flex h-full flex-col rounded-2xl border bg-white p-6 transition-colors"
-                data-reveal
-              >
-                <h2 class="text-h4 text-ink group-hover:text-brand font-semibold transition-colors">
-                  {doc.title}
-                </h2>
-                <p class="text-caption text-ink-faint mt-3">
-                  Última actualización: {formatCalendarDate(doc.effectiveDate)}
-                </p>
-                <span class="text-body-sm text-brand mt-4 font-medium">Leer documento →</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
+  <section class="mx-auto max-w-[1216px] px-5 pt-8 pb-16 md:px-8 md:pb-20">
+    <div class="mx-auto max-w-[1152px]">
+      {
+        documents.length === 0 ? (
+          <p class="text-ink-muted">
+            Todavía no hay documentos publicados. Escríbenos a{" "}
+            <a class="text-brand underline" href="mailto:sala@lasgalias.com.co">
+              sala@lasgalias.com.co
+            </a>{" "}
+            y te los hacemos llegar.
+          </p>
+        ) : (
+          <ul class="grid gap-4 md:grid-cols-2">
+            {documents.map((doc) => (
+              <li>
+                <a
+                  href={`/legales/${doc.slug}`}
+                  class="border-mist hover:border-brand group flex h-full flex-col rounded-[16px] border-[1.43px] bg-white p-6 transition-colors"
+                  data-reveal
+                >
+                  <h2 class="text-graphite group-hover:text-brand text-xl leading-6 font-extrabold transition-colors">
+                    {doc.title}
+                  </h2>
+                  <p class="text-steel mt-3 text-[13px] leading-[20.8px]">
+                    Última actualización: {formatCalendarDate(doc.effectiveDate)}
+                  </p>
+                  <span class="text-body-sm text-brand mt-4 font-medium">Leer documento →</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
   </section>
 </Base>

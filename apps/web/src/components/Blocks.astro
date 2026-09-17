@@ -33,10 +33,13 @@ interface BlockNode {
 interface Props {
   content: unknown;
   /**
-   * Take size and colour from the container instead of the article defaults —
-   * the project description sets its own (14px, the design's body grey).
+   * - `article` (default): the blog and page defaults.
+   * - `inherit`: size and colour come from the container — the project
+   *   description and the FAQ answers set their own.
+   * - `legal`: the legal documents' frame in Figma (node 2742:8381) —
+   *   20px clause titles over 14.5px body.
    */
-  inheritText?: boolean;
+  variant?: "article" | "inherit" | "legal";
 }
 
 /** The article column tops out around 800 px; 1200 covers 1.5x screens. */
@@ -51,7 +54,33 @@ type Rendered =
   | { kind: "ul"; items: string[] }
   | { kind: "img"; url: string; alt: string; width?: number; height?: number };
 
-const { content, inheritText = false } = Astro.props;
+const { content, variant = "article" } = Astro.props;
+
+const styles = {
+  article: {
+    root: "space-y-4",
+    h2: "text-h2 text-ink mt-8 scroll-mt-24 font-bold",
+    h3: "text-h3 text-ink mt-6 font-bold",
+    p: "text-body text-ink",
+    list: "text-body space-y-1 pl-6",
+  },
+  inherit: {
+    root: "space-y-3.5",
+    h2: "text-h2 text-ink mt-8 scroll-mt-24 font-bold",
+    h3: "text-h3 text-ink mt-6 font-bold",
+    p: "",
+    list: "space-y-1 pl-6",
+  },
+  // No `space-y` here: a clause title sits 10px over its text but 32px under
+  // the previous clause, which a single gap cannot say.
+  legal: {
+    root: "text-iron text-[14.5px] leading-[25.38px]",
+    h2: "text-graphite mt-8 scroll-mt-28 text-xl leading-6 font-extrabold first:mt-0",
+    h3: "text-graphite mt-6 text-base leading-6 font-bold first:mt-0",
+    p: "mt-2.5 first:mt-0",
+    list: "mt-2.5 space-y-1 pl-6 first:mt-0",
+  },
+}[variant];
 const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
 
 // Ids come from the same pass the index uses, so duplicate headings are
@@ -93,27 +122,27 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
 });
 ---
 
-<div class:list={[inheritText ? "space-y-3.5" : "space-y-4"]}>
+<div class={styles.root}>
   {
     rendered.map((node) =>
       node.kind === "h2" ? (
-        <h2 id={node.id || undefined} class="text-h2 text-ink mt-8 scroll-mt-24 font-bold">
+        <h2 id={node.id || undefined} class={styles.h2}>
           {node.text}
         </h2>
       ) : node.kind === "h3" ? (
-        <h3 class="text-h3 text-ink mt-6 font-bold">{node.text}</h3>
+        <h3 class={styles.h3}>{node.text}</h3>
       ) : node.kind === "quote" ? (
         <blockquote class="border-ink text-body-lg text-ink-muted border-l-4 pl-4 italic">
           {node.text}
         </blockquote>
       ) : node.kind === "ol" ? (
-        <ol class="text-body list-decimal space-y-1 pl-6">
+        <ol class:list={["list-decimal", styles.list]}>
           {node.items.map((item) => (
             <li>{item}</li>
           ))}
         </ol>
       ) : node.kind === "ul" ? (
-        <ul class="text-body list-disc space-y-1 pl-6">
+        <ul class:list={["list-disc", styles.list]}>
           {node.items.map((item) => (
             <li>{item}</li>
           ))}
@@ -138,7 +167,7 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
           />
         )
       ) : (
-        <p class:list={[!inheritText && "text-body text-ink"]}>{node.text}</p>
+        <p class={styles.p || undefined}>{node.text}</p>
       ),
     )
   }
