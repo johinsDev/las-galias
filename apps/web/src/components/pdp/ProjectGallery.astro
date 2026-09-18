@@ -63,14 +63,11 @@ const desktopHero =
       <div class="container-bleed py-6">
         <div>
           <div class="grid gap-4 md:grid-cols-[1113fr_567fr] md:gap-8">
-            {/* transition:name must stay in sync with ProjectCard.astro — it is what
-                makes the card→PDP hero morph work under View Transitions. */}
             <button
               type="button"
               data-lightbox-open="0"
               aria-label={`Ver las fotos de ${project.name}`}
               class="group bg-cloud relative aspect-[348/232] cursor-zoom-in overflow-hidden rounded-3xl md:aspect-[1113/779] md:rounded-[48px]"
-              transition:name={`project-hero-${project.slug}`}
             >
               <picture>
                 {desktopHero && (

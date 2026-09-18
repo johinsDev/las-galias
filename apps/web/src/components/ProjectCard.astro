@@ -135,10 +135,7 @@ const CHIP =
       images.length > 0 ? (
         <div class="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto" data-card-rail>
           {images.map((media, index) => (
-            <div
-              class="h-full w-full shrink-0 snap-center"
-              transition:name={index === 0 ? `project-hero-${project.slug}` : undefined}
-            >
+            <div class="h-full w-full shrink-0 snap-center">
               <CmsImage
                 src={media.url}
                 alt={media.alternativeText ?? project.name}
