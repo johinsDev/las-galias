@@ -5,6 +5,7 @@ import type { Project } from "@lasgalias/schemas";
 
 import AmenityIcon from "@/components/AmenityIcon.astro";
 import Blocks from "@/components/Blocks.astro";
+import TourFacade from "@/components/pdp/TourFacade.astro";
 import VideoFacade from "@/components/pdp/VideoFacade.astro";
 import TypologySimulator, { type TypologyOption } from "@/islands/TypologySimulator";
 import { mediaUrl } from "@/lib/strapi";
@@ -128,6 +129,8 @@ const SALES_VALUE = "text-graphite mt-1 text-[13.5px] leading-[20.25px] font-bol
 const sections = [
   { id: "descripcion", label: "Descripción", enabled: project.description != null },
   { id: "planos", label: "Planos", enabled: typologies.length > 0 },
+  // Always on: without a tour of its own a project shows the shared model flat.
+  { id: "recorrido", label: "Recorrido 3D", enabled: true },
   { id: "zonas-comunes", label: "Zonas comunes", enabled: amenities.length > 0 },
   { id: "avance", label: "Avance obra", enabled: progress.length > 0 },
   { id: "ubicacion", label: "Ubicación", enabled: Boolean(mapSrc || address) },
@@ -233,6 +236,16 @@ const sections = [
       </section>
     )
   }
+
+  <section id="recorrido" class="scroll-mt-28 pt-9" data-reveal>
+    <h2 class={HEADING}>Recorrido 3D</h2>
+    <p class="text-iron mt-1.5 text-[13.5px] leading-[20.25px]">
+      Realiza un recorrido del apartamento modelo.
+    </p>
+    <div class="mt-3.5">
+      <TourFacade url={project.tour360Url} title={project.name} />
+    </div>
+  </section>
 
   {
     amenities.length > 0 && (

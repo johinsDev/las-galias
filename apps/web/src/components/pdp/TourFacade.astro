@@ -1,0 +1,77 @@
+---
+import { Image } from "astro:assets";
+
+import tourPoster from "@/assets/recorrido-3d.jpg";
+
+/**
+ * The 3D walk-through of the model flat, as a facade: the still from the
+ * current site (the one every project page there uses, "360° · clic aquí"
+ * baked in) and nothing else until someone clicks. A Matterport embed pulls in
+ * over a megabyte of WebGL, so it only exists once asked for.
+ *
+ * `url` is the project's own `tour360Url`; without one, the shared model-flat
+ * walk-through the client handed over stands in for every project.
+ */
+interface Props {
+  url?: string | null;
+  title: string;
+}
+
+const DEFAULT_TOUR_URL = "https://my.matterport.com/show/?m=QVn8cvjQBJ2";
+
+const { url, title } = Astro.props;
+const src = url?.trim() || DEFAULT_TOUR_URL;
+---
+
+<div
+  class="bg-graphite relative aspect-[900/602] overflow-hidden rounded-[14px]"
+  data-tour
+  data-tour-src={src}
+  data-tour-title={`Recorrido 3D · ${title}`}
+>
+  <button
+    type="button"
+    class="group block h-full w-full cursor-pointer"
+    aria-label={`Abrir el recorrido 3D de ${title}`}
+    data-tour-open
+  >
+    <Image
+      src={tourPoster}
+      alt=""
+      width={828}
+      height={554}
+      widths={[640, 828, 1200]}
+      sizes="(min-width: 1024px) 800px, 100vw"
+      quality={75}
+      loading="lazy"
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+    />
+  </button>
+</div>
+
+<script>
+  function setupTourFacades() {
+    document.querySelectorAll<HTMLElement>("[data-tour]").forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>("[data-tour-open]");
+      if (!button || button.dataset.bound) return;
+      button.dataset.bound = "1";
+
+      button.addEventListener("click", () => {
+        const src = root.dataset.tourSrc;
+        if (!src) return;
+        const frame = document.createElement("iframe");
+        // `play=1`: the visitor already clicked once; Matterport would otherwise
+        // ask for a second click on its own start screen.
+        frame.src = src + (src.includes("?") ? "&" : "?") + "play=1";
+        frame.title = root.dataset.tourTitle ?? "Recorrido 3D";
+        frame.allow = "fullscreen; xr-spatial-tracking";
+        frame.allowFullscreen = true;
+        frame.className = "h-full w-full border-0";
+        root.replaceChildren(frame);
+      });
+    });
+  }
+
+  setupTourFacades();
+  document.addEventListener("astro:page-load", setupTourFacades);
+</script>
