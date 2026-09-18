@@ -9,7 +9,13 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancelar solo en ramas de PR. En main un push nuevo cancelaba el run
+  # anterior entero, incluido el despliegue del CMS: dos merges seguidos
+  # dejaban el CMS sin la versión del primero, en silencio (pasó el 18 sep
+  # 2026 con el correo opcional del lead). El job de despliegue tiene su
+  # propio grupo sin cancelación más abajo; esto evita que muera antes de
+  # llegar a él.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   quality:
