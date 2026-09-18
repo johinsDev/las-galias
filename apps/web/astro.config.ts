@@ -1,5 +1,4 @@
 import { defineConfig, fontProviders } from "astro/config";
-import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 import vercel from "@astrojs/vercel";
 import tailwindcss from "@tailwindcss/vite";
@@ -73,13 +72,6 @@ export default defineConfig({
         },
       },
     },
-    // Partytown solo cuando hay GTM que mover a un worker. Sin la variable no
-    // había ningún script que aislar y aun así se inyectaba su cargador en cada
-    // página, que pedía el sandbox de depuración y devolvía un 404 en consola
-    // (lo veía Lighthouse en «Best Practices»).
-    ...(process.env.PUBLIC_GTM_ID
-      ? [partytown({ config: { forward: ["dataLayer.push", "gtag"] } })]
-      : []),
   ],
   image: { remotePatterns },
   vite: {

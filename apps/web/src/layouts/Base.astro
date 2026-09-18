@@ -25,8 +25,19 @@ const {
   chrome = "full",
 } = Astro.props;
 const GTM_ID = import.meta.env.PUBLIC_GTM_ID as string | undefined;
+/**
+ * Google Tag Manager, deferred rather than in a worker. Partytown kept the
+ * main thread clean, but the container loads the Facebook pixel and a push
+ * notifications script, and neither origin answers the worker's CORS fetch:
+ * those tags silently did nothing and Lighthouse counted the errors. So GTM
+ * loads on the main thread, but only after the visitor's first gesture
+ * (pointer, key, touch or scroll) or four seconds after `load`, whichever
+ * comes first — well past the first paint and the LCP. The ClientRouter keeps
+ * the document across navigations, so each later page pushes its own
+ * `page_view` for the tags to pick up.
+ */
 const gtmSnippet = GTM_ID
-  ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`
+  ? `(function(w,d,i){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false;function load(){if(done)return;done=true;var s=d.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id='+i;d.head.appendChild(s);}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){w.addEventListener(e,load,{once:true,passive:true});});w.addEventListener('load',function(){setTimeout(load,4000);});var first=true;d.addEventListener('astro:page-load',function(){if(first){first=false;return;}w.dataLayer.push({event:'page_view',page_location:location.href,page_path:location.pathname,page_title:d.title});});})(window,document,'${GTM_ID}');`
   : null;
 ---
 
@@ -45,12 +56,7 @@ const gtmSnippet = GTM_ID
     <link rel="canonical" href={Astro.url.href} />
     <Font cssVariable="--font-public-sans" preload />
     <ClientRouter />
-    {
-      /* `is:inline` explícito: Astro ya lo trata así por el atributo `type`
-        (Partytown lo necesita para sacar el script del hilo principal), y
-        decirlo aquí evita el aviso de `astro check` en cada corrida. */
-    }
-    {gtmSnippet && <script is:inline type="text/partytown" set:html={gtmSnippet} />}
+    {gtmSnippet && <script is:inline set:html={gtmSnippet} />}
   </head>
   <body class="flex min-h-screen flex-col">
     <Header minimal={chrome === "minimal"} />
