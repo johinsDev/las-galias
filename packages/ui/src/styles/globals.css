@@ -455,6 +455,33 @@
   }
 }
 
+/* The card→project-page hero morph (View Transitions, `transition:name` on the
+   card's first photo and on the hero). Two things made it look broken on the
+   way back: Astro fades the old/new frames in 180ms but the browser moves and
+   resizes the group for its default 250ms, so the card's photo sat fully
+   visible at hero size and kept shrinking for 70ms before snapping into the
+   card; and the frames are stretched to the group's box while it goes from
+   1113:779 to 4:3. Same duration and curve for the group, frames that cover
+   instead of stretch, and a clip with the card's radius. `view-transition-class`
+   is what lets one rule reach every project's name. */
+.vt-hero {
+  view-transition-class: project-hero;
+}
+::view-transition-group(.project-hero) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+}
+::view-transition-image-pair(.project-hero) {
+  overflow: clip;
+  border-radius: 1rem;
+}
+::view-transition-old(.project-hero),
+::view-transition-new(.project-hero) {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
 /* Scroll reveal (scripts/reveal.ts): the script adds `reveal-out` to anything
    below the fold and swaps it for `reveal-in` when it scrolls into view. Plain
    CSS so no animation library ships; the easing is the one `motion` used. */
