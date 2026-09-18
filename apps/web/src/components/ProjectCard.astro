@@ -29,6 +29,12 @@ interface Props {
    */
   priority?: boolean;
   /**
+   * Load the first photo without `lazy` but at normal priority: for the card
+   * that peeks in under the fold on a phone, whose lazy photo otherwise lands
+   * late in the viewport and drags the Speed Index.
+   */
+  eager?: boolean;
+  /**
    * Heading level of the project name. `h3` under a section heading (home,
    * foreign-buyer page, "Proyectos similares"); the listing has nothing but
    * its `h1` above the grid, so there the cards are `h2` or the outline skips.
@@ -49,6 +55,7 @@ const {
   cta = "whatsapp",
   compact = false,
   priority = false,
+  eager = false,
   heading: Heading = "h3",
   deferRender = false,
 } = Astro.props;
@@ -153,8 +160,9 @@ const CHIP =
                 widths={[420, 640, 750]}
                 sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                 quality={70}
-                loading={priority && index === 0 ? "eager" : "lazy"}
+                loading={(priority || eager) && index === 0 ? "eager" : "lazy"}
                 fetchpriority={priority && index === 0 ? "high" : undefined}
+                decoding={priority && index === 0 ? "sync" : "async"}
                 class="h-full w-full object-cover"
               />
             );
