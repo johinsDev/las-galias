@@ -3,6 +3,7 @@ import ImageCarousel from "@/components/ImageCarousel.astro";
 import CityFilter from "@/components/CityFilter.astro";
 import PostCard from "@/components/PostCard.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
+import WhatsAppGate from "@/islands/WhatsAppGate";
 import SectionHeading from "@/components/SectionHeading.astro";
 import StatsBand from "@/components/StatsBand.astro";
 import StepsGrid from "@/components/StepsGrid.astro";
@@ -136,11 +137,16 @@ import { Search } from "lucide-astro";
     />
   </section>
 
-  {/* Proyectos */}
+  {
+    /* Proyectos. pt-12 rather than the section rhythm: Figma sets the title
+       54px under the banner's dots, and the carousel's white shelf already
+       spends a few of those. */
+  }
   {
     featured.length > 0 && (
-      <section class="container py-16 md:py-20">
+      <section class="container pt-12 pb-16 md:pb-20">
         <SectionHeading title="Conoce nuestros proyectos" />
+        <WhatsAppGate client:on="lg:open-whatsapp" />
         <CityFilter cities={cities} target="#projects-grid" />
         <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" id="projects-grid">
           {featured.map((project) => (
