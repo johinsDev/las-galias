@@ -23,14 +23,12 @@ const photos = [hero, ...(project.gallery ?? [])].filter(
 );
 // The mosaic shows the hero plus the next two; every photo opens the viewer.
 const secondary = photos.slice(1, 3);
-const hasTour = Boolean(project.tour360Url);
 const hasMap = Boolean(project.location?.lat && project.location?.lng);
 const brochureUrl = project.brochure?.url ? mediaUrl(project.brochure.url) : null;
 
 // Tabs only earn their place when there is more than one thing to switch to.
 const tabs = [
   { id: "galeria", label: "Galería", enabled: Boolean(hero?.url) },
-  { id: "tour", label: "Recorrido 360°", enabled: hasTour },
   { id: "mapa", label: "Mapa", enabled: hasMap },
 ].filter((tab) => tab.enabled);
 
@@ -119,20 +117,6 @@ const desktopHero =
             )}
           </div>
         </div>
-        {hasTour && (
-          <div data-panel="tour" hidden>
-            <div class="bg-cloud aspect-[16/9] overflow-hidden rounded-3xl md:aspect-[1712/779] md:rounded-[48px]">
-              {/* Igual que el mapa: un iframe escondido se descarga igual. */}
-              <iframe
-                data-src={project.tour360Url!}
-                title={`Recorrido 360° de ${project.name}`}
-                loading="lazy"
-                allowfullscreen
-                class="h-full w-full border-0"
-              />
-            </div>
-          </div>
-        )}
 
         {mapSrc && (
           <div data-panel="mapa" hidden>
