@@ -506,6 +506,14 @@
   }
 }
 
+/* Off-screen content the browser may skip laying out and painting until it
+   nears the viewport. The intrinsic size keeps the scrollbar honest: a project
+   card is ~520px tall on a phone. */
+@utility cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 520px;
+}
+
 @utility card-lift {
   transition:
     box-shadow 0.3s ease,
