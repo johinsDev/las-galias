@@ -1,6 +1,7 @@
 ---
 import type { LeadFormConfig, Project } from "@lasgalias/schemas";
 
+import WhatsAppIcon from "@/components/WhatsAppIcon.astro";
 import LeadForm from "@/islands/LeadForm";
 
 interface Props {
@@ -53,8 +54,9 @@ const ACTION =
                 href={salesRoom.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class:list={[ACTION, "bg-brand hover:bg-brand-bright text-white"]}
+                class:list={[ACTION, "bg-brand hover:bg-brand-bright gap-2 text-white"]}
               >
+                <WhatsAppIcon size={18} />
                 WhatsApp
               </a>
             )}
