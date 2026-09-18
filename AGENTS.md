@@ -58,7 +58,12 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   clic llega antes que el JS, dejan una marca en `<html>` para que el componente
   se abra al montar. (3) Los grises `--steel`, `--ink-faint` y `--ink-muted`
   están en el valor más claro que pasa 4,5:1 sobre blanco, fog, cloud y
-  surface-2; no se pueden aclarar sin perder accesibilidad.
+  surface-2; no se pueden aclarar sin perder accesibilidad. (4) La fuente NO
+  se precarga (`<Font>` sin `preload`): servida desde Vercel, la precarga
+  retenía el primer pintado ~2 s con todo descargado y el hilo libre, y el
+  Speed Index del listado subía a 3,8 s; sin ella baja a 1,1 s. No se
+  reproduce en local, así que cualquier cambio en fuentes se mide en
+  PageSpeed Insights sobre producción o una preview.
 - The catalogue has one prerendered page per city at
   `/proyectos-de-vivienda/<ciudad>` (`ProjectsListing.astro`), sharing the
   dynamic segment with the project pages: `[slug].astro` builds both from
