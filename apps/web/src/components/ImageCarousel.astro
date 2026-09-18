@@ -189,8 +189,12 @@ const leads = (index: number) => reveal && index % items.length === 0;
   .banner {
     /* 348 of a 390-wide mobile frame, per the inspector. */
     --banner-slide: 89vw;
-    /* How far the slide hangs past the red, plus room for the dots. */
-    --banner-shelf: calc(var(--banner-slide) * 0.025 + 2.75rem);
+    /* How far the slide hangs past the red, plus room for the dots (2.75rem).
+       The red band ends at 75% of the slide's height — the client asked for
+       the slide to sit clearly over the white, not flush with the red's edge —
+       so the hang is a quarter of the height, written in terms of the width
+       through the slide's aspect ratio: 242/348 on a phone (below). */
+    --banner-shelf: calc(var(--banner-slide) * 0.174 + 2.75rem);
   }
 
   @media (width >= 48rem) {
@@ -201,6 +205,8 @@ const leads = (index: number) => reveal && index % items.length === 0;
          margin, and the full 176px read as too much of them — this trims the
          peek to about 140 without losing it. */
       --banner-slide: min(86vw, var(--banner-slide-max));
+      /* Same quarter of the height, for the 1424/780 slide. */
+      --banner-shelf: calc(var(--banner-slide) * 0.137 + 2.75rem);
     }
   }
 
