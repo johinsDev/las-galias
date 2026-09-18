@@ -141,8 +141,9 @@ const CHIP =
                 alt={media.alternativeText ?? project.name}
                 width={640}
                 height={480}
-                widths={[420, 640, 828]}
+                widths={[420, 640, 750]}
                 sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                quality={70}
                 loading={priority && index === 0 ? "eager" : "lazy"}
                 fetchpriority={priority && index === 0 ? "high" : undefined}
                 class="h-full w-full object-cover"
@@ -395,30 +396,41 @@ const CHIP =
   /* ---------------------------------------------------------------- images */
 
   function setupCardCarousels() {
-    document.querySelectorAll<HTMLElement>("[data-card-carousel]").forEach((root) => {
-      const rail = root.querySelector<HTMLElement>("[data-card-rail]");
-      if (!rail) return;
-      const dots = [...root.querySelectorAll<HTMLElement>("[data-card-dot]")];
-      if (dots.length < 2) return;
+    const carousels = [...document.querySelectorAll<HTMLElement>("[data-card-carousel]")]
+      .map((root) => ({
+        root,
+        rail: root.querySelector<HTMLElement>("[data-card-rail]"),
+        dots: [...root.querySelectorAll<HTMLElement>("[data-card-dot]")],
+      }))
+      .filter((c): c is { root: HTMLElement; rail: HTMLElement; dots: HTMLElement[] } =>
+        Boolean(c.rail && c.dots.length > 1),
+      );
 
-      // Active dot is a short bar, the rest are 4px dots.
-      const paint = () => {
-        const index = Math.round(rail.scrollLeft / rail.clientWidth);
-        dots.forEach((dot, i) => {
-          const on = i === index;
-          dot.style.width = on ? "14px" : "4px";
-          dot.style.backgroundColor = on ? "#fff" : "rgba(255,255,255,0.5)";
-        });
-      };
+    // Active dot is a short bar, the rest are 4px dots. `index` is passed in
+    // rather than read here so the first paint of thirty cards can read all
+    // the rails first and write all the dots after — reading one rail after
+    // styling the previous card's dots forced a layout per card (PageSpeed
+    // flagged it as a forced reflow on the listing).
+    const paint = (dots: HTMLElement[], index: number) => {
+      dots.forEach((dot, i) => {
+        const on = i === index;
+        dot.style.width = on ? "14px" : "4px";
+        dot.style.backgroundColor = on ? "#fff" : "rgba(255,255,255,0.5)";
+      });
+    };
+    const indexOf = (rail: HTMLElement) => Math.round(rail.scrollLeft / rail.clientWidth);
+
+    const indices = carousels.map(({ rail }) => indexOf(rail));
+    carousels.forEach(({ dots }, i) => paint(dots, indices[i]!));
+
+    carousels.forEach(({ root, rail, dots }) => {
       const go = (step: number) => {
-        const index = Math.round(rail.scrollLeft / rail.clientWidth) + step;
+        const index = indexOf(rail) + step;
         rail.scrollTo({
           left: Math.max(0, Math.min(dots.length - 1, index)) * rail.clientWidth,
           behavior: "smooth",
         });
       };
-
-      paint();
 
       // `astro:page-load` also fires on the FIRST load, so without this guard
       // every listener is attached twice and one click advances two images.
@@ -431,7 +443,7 @@ const CHIP =
       let frame = 0;
       rail.addEventListener("scroll", () => {
         cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(paint);
+        frame = requestAnimationFrame(() => paint(dots, indexOf(rail)));
       });
     });
   }

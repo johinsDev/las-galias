@@ -30,13 +30,18 @@ export function initReveals(): void {
     { threshold: 0.2 },
   );
 
-  pending.forEach((el) => {
-    el.dataset.revealBound = "true";
-
+  // Measure everything first, then write: a read after a class change forces
+  // the browser to lay the page out again for every single element (PageSpeed
+  // reported it as a forced reflow on the 30-card listing).
+  const viewport = window.innerHeight;
+  const offScreen = pending.map((el) => {
     const box = el.getBoundingClientRect();
-    const onScreen = box.top < window.innerHeight && box.bottom > 0;
-    if (onScreen) return;
+    return !(box.top < viewport && box.bottom > 0);
+  });
 
+  pending.forEach((el, i) => {
+    el.dataset.revealBound = "true";
+    if (!offScreen[i]) return;
     el.classList.add("reveal-out");
     observer.observe(el);
   });
