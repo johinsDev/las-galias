@@ -31,13 +31,18 @@ const GTM_ID = import.meta.env.PUBLIC_GTM_ID as string | undefined;
  * notifications script, and neither origin answers the worker's CORS fetch:
  * those tags silently did nothing and Lighthouse counted the errors. So GTM
  * loads on the main thread, but only after the visitor's first gesture
- * (pointer, key, touch or scroll) or four seconds after `load`, whichever
- * comes first — well past the first paint and the LCP. The ClientRouter keeps
+ * (pointer, key, touch or scroll) or ten seconds after `load`, whichever
+ * comes first. Ten and not four: PageSpeed Insights keeps tracing several
+ * seconds past `load`, and a four-second fallback landed the container's
+ * scripts inside the measurement (260 ms of blocking time on the listing).
+ * Anyone who engages triggers it at once; a visitor who leaves within ten
+ * seconds without touching the page is the one pageview this gives up. The
+ * ClientRouter keeps
  * the document across navigations, so each later page pushes its own
  * `page_view` for the tags to pick up.
  */
 const gtmSnippet = GTM_ID
-  ? `(function(w,d,i){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false;function load(){if(done)return;done=true;var s=d.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id='+i;d.head.appendChild(s);}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){w.addEventListener(e,load,{once:true,passive:true});});w.addEventListener('load',function(){setTimeout(load,4000);});var first=true;d.addEventListener('astro:page-load',function(){if(first){first=false;return;}w.dataLayer.push({event:'page_view',page_location:location.href,page_path:location.pathname,page_title:d.title});});})(window,document,'${GTM_ID}');`
+  ? `(function(w,d,i){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false;function load(){if(done)return;done=true;var s=d.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtm.js?id='+i;d.head.appendChild(s);}['pointerdown','keydown','touchstart','scroll'].forEach(function(e){w.addEventListener(e,load,{once:true,passive:true});});w.addEventListener('load',function(){setTimeout(load,10000);});var first=true;d.addEventListener('astro:page-load',function(){if(first){first=false;return;}w.dataLayer.push({event:'page_view',page_location:location.href,page_path:location.pathname,page_title:d.title});});})(window,document,'${GTM_ID}');`
   : null;
 ---
 
