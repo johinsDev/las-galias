@@ -14,6 +14,18 @@ import { URL } from "node:url";
 const file = new URL("../.vercel/output/config.json", import.meta.url);
 const config = JSON.parse(await readFile(file, "utf8"));
 
+// While here: the hashed font files under /_astro/fonts/ come out with
+// `max-age=0, must-revalidate` (Vercel only marks /_astro/*.js|css immutable),
+// so every visit re-fetched the font. The name carries the hash: cache it hard.
+config.routes ??= [];
+if (!config.routes.some((route) => route.src === "^/_astro/fonts/(.*)$")) {
+  config.routes.unshift({
+    src: "^/_astro/fonts/(.*)$",
+    headers: { "cache-control": "public, max-age=31536000, immutable" },
+    continue: true,
+  });
+}
+
 let patched = 0;
 for (const route of config.routes ?? []) {
   const isRedirect = route.headers?.Location && [301, 302, 307, 308].includes(route.status);

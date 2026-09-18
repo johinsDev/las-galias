@@ -59,7 +59,14 @@ const gtmSnippet = GTM_ID
     <meta property="og:description" content={description} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     <link rel="canonical" href={Astro.url.href} />
-    <Font cssVariable="--font-public-sans" preload />
+    {
+      /* Sin `preload`. Con la fuente precargada, Chrome retenía el primer
+        pintado de producción ~2 s con todo ya descargado y el hilo libre
+        (bloqueando la fuente en Lighthouse, el pintado bajaba de 2,3 s a
+        0,27 s). Sin precarga la fuente llega igual de rápido: la CSS va
+        inlinada y `@font-face` la pide nada más parsear el head. */
+    }
+    <Font cssVariable="--font-public-sans" />
     <ClientRouter />
     {gtmSnippet && <script is:inline set:html={gtmSnippet} />}
   </head>
