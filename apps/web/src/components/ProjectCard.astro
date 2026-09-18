@@ -20,9 +20,9 @@ interface Props {
    */
   compact?: boolean;
   /**
-   * Fetch the first photo eagerly. Only for cards that sit above the fold on a
-   * phone (the first two of the listing); everywhere else every photo is lazy,
-   * so a grid of eight cards no longer downloads eight photos on load.
+   * This card's first photo is the page's LCP (the first card of the listing):
+   * eager and high priority. Everywhere else every photo is lazy, so a grid of
+   * eight cards no longer downloads eight photos on load.
    */
   priority?: boolean;
   /**
@@ -142,6 +142,7 @@ const CHIP =
                 widths={[420, 640, 828]}
                 sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                 loading={priority && index === 0 ? "eager" : "lazy"}
+                fetchpriority={priority && index === 0 ? "high" : undefined}
                 class="h-full w-full object-cover"
               />
             </div>
