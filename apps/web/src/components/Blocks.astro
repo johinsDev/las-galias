@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 
+import CmsImage from "@/components/CmsImage.astro";
 import { extractHeadings, textOf } from "@/lib/blocks";
 import { mediaUrl } from "@/lib/strapi";
 
@@ -149,11 +150,13 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
         </ul>
       ) : node.kind === "img" ? (
         node.width && node.height ? (
-          <Image
-            src={mediaUrl(node.url)}
+          <CmsImage
+            src={node.url}
             alt={node.alt}
             width={node.width}
             height={node.height}
+            widths={[640, 828, 1080, 1200]}
+            sizes="(min-width: 1024px) 800px, 100vw"
             loading="lazy"
             class="h-auto w-full rounded-xl"
           />
@@ -162,6 +165,7 @@ const rendered: Rendered[] = blocks.flatMap((block): Rendered[] => {
             src={mediaUrl(node.url)}
             alt={node.alt}
             inferSize
+            quality={75}
             loading="lazy"
             class="h-auto w-full rounded-xl"
           />

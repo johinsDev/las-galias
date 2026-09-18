@@ -1,9 +1,8 @@
 ---
-import { Image } from "astro:assets";
-
+import CmsImage from "@/components/CmsImage.astro";
 import Blocks from "@/components/Blocks.astro";
 import Base from "@/layouts/Base.astro";
-import { getMacroprojects, mediaUrl } from "@/lib/strapi";
+import { getMacroprojects } from "@/lib/strapi";
 
 export async function getStaticPaths() {
   const macroprojects = await getMacroprojects();
@@ -29,12 +28,15 @@ const categories: Record<string, string> = {
 
     {
       macro.gallery?.[0]?.url && (
-        <Image
-          src={mediaUrl(macro.gallery[0].url)}
+        <CmsImage
+          src={macro.gallery[0].url}
           alt={macro.name}
-          width={1400}
-          height={700}
+          width={1600}
+          height={800}
+          widths={[640, 828, 1080, 1200, 1600, 1920]}
+          sizes="(min-width: 1280px) 1200px, 100vw"
           loading="eager"
+          fetchpriority="high"
           class="mt-8 max-h-[55vh] w-full rounded-xl object-cover"
         />
       )

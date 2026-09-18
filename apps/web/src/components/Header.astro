@@ -53,7 +53,12 @@ const searchableProjects = (await getProjects()).map((project) => ({
 }));
 ---
 
-<ProjectSearch client:load projects={searchableProjects} />
+{
+  /* `client:search` (src/directives/search.ts): the palette paints nothing until
+     opened, so it hydrates on ⌘K or the first click of a trigger instead of
+     dragging React into every page's first paint. */
+}
+<ProjectSearch client:search projects={searchableProjects} />
 
 {
   /* `relative` so the mobile sheet can hang off the bar and overlay the page

@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
 import { CalendarDays, Clock, User } from "lucide-astro";
 
+import CmsImage from "@/components/CmsImage.astro";
 import Blocks from "@/components/Blocks.astro";
 import { ShareMenu } from "@lasgalias/ui/components/share-menu";
 
@@ -116,7 +116,7 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
             {readingMinutes(post)} min de lectura
           </span>
 
-          <ShareMenu client:idle title={post.title} />
+          <ShareMenu client:interact title={post.title} />
         </div>
       </header>
 
@@ -125,12 +125,15 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
         post.cover?.url && (
           <figure class="mt-10">
             <div class="bg-surface aspect-[16/9] overflow-hidden rounded-[20px]">
-              <Image
-                src={mediaUrl(post.cover.url)}
+              <CmsImage
+                src={post.cover.url}
                 alt={post.cover.alternativeText ?? post.title}
-                width={1280}
-                height={720}
+                width={1200}
+                height={675}
+                widths={[640, 828, 1080, 1200, 1600]}
+                sizes="(min-width: 1024px) 800px, 100vw"
                 loading="eager"
+                fetchpriority="high"
                 class="h-full w-full object-cover"
               />
             </div>
@@ -195,11 +198,13 @@ const title = post.seo?.metaTitle ?? `${post.title} — Blog Las Galias`;
                       >
                         <span class="bg-surface size-16 shrink-0 overflow-hidden rounded-xl">
                           {item.cover?.url && (
-                            <Image
-                              src={mediaUrl(item.cover.url)}
+                            <CmsImage
+                              src={item.cover.url}
                               alt=""
                               width={128}
                               height={128}
+                              widths={[64, 128, 256]}
+                              sizes="64px"
                               class="h-full w-full object-cover"
                             />
                           )}

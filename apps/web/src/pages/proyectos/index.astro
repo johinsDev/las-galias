@@ -32,8 +32,8 @@ const cities = [
           class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           id="projects-grid"
         >
-          {projects.map((project) => (
-            <ProjectCard project={project} />
+          {projects.map((project, index) => (
+            <ProjectCard project={project} priority={index < 2} heading="h2" />
           ))}
         </div>
       ) : (

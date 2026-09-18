@@ -1,9 +1,9 @@
 ---
-import { Image } from "astro:assets";
 import { Award, Heart, ShieldCheck, Sprout, SquareArrowOutUpRight, Users, Zap } from "lucide-astro";
 
+import CmsImage from "@/components/CmsImage.astro";
 import Base from "@/layouts/Base.astro";
-import { getProjects, mediaUrl } from "@/lib/strapi";
+import { getProjects } from "@/lib/strapi";
 
 // The design's photo is a stand-in ("Equipo Las Galias") nobody has sent yet,
 // so the hero shows a real project render until there is one.
@@ -112,13 +112,15 @@ const GRAY_BUTTON =
       </p>
       {
         heroImage?.url && (
-          <Image
-            src={mediaUrl(heroImage.url)}
+          <CmsImage
+            src={heroImage.url}
             alt="Proyecto de Las Galias Constructora"
-            width={1152}
-            height={384}
-            densities={[1, 2]}
+            width={1200}
+            height={400}
+            widths={[640, 828, 1080, 1200, 1600, 1920]}
+            sizes="(min-width: 1280px) 1152px, 100vw"
             loading="eager"
+            fetchpriority="high"
             class="bg-cloud mt-6 aspect-[3/2] w-full rounded-[16px] object-cover md:aspect-[3/1]"
           />
         )

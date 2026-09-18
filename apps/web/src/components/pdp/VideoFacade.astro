@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import CmsImage from "@/components/CmsImage.astro";
 
 interface Props {
   src: string;
@@ -26,11 +26,13 @@ const { src, title, poster } = Astro.props;
 >
   {
     poster && (
-      <Image
+      <CmsImage
         src={poster}
         alt=""
         width={1200}
         height={675}
+        widths={[640, 828, 1080, 1200]}
+        sizes="(min-width: 1024px) 800px, 100vw"
         loading="lazy"
         class="h-full w-full object-cover"
       />

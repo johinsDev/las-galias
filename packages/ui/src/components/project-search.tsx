@@ -135,6 +135,14 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
+    // Hidratado bajo demanda (`client:search`): la directiva deja esta marca
+    // cuando lo que disparó la hidratación fue una petición de abrir, así que
+    // se abre nada más montar.
+    if (document.documentElement.dataset.lgOpenSearch) {
+      delete document.documentElement.dataset.lgOpenSearch;
+      setOpen(true);
+    }
+
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();

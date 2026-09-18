@@ -1,9 +1,8 @@
 ---
-import { Image } from "astro:assets";
 import type { Post } from "@lasgalias/schemas";
 
+import CmsImage from "@/components/CmsImage.astro";
 import { categoryLabel, formatPostDate, readingMinutes } from "@/lib/blog";
-import { mediaUrl } from "@/lib/strapi";
 
 /**
  * Blog card. Lived inline in the home page until the redesign asked for the
@@ -32,11 +31,13 @@ const label = categoryLabel(post.category);
     >
       {
         post.cover?.url && (
-          <Image
-            src={mediaUrl(post.cover.url)}
+          <CmsImage
+            src={post.cover.url}
             alt={post.cover.alternativeText ?? post.title}
             width={640}
             height={400}
+            widths={[420, 640, 828]}
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         )

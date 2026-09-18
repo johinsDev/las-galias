@@ -1,7 +1,5 @@
 ---
-import { Image } from "astro:assets";
-
-import { mediaUrl } from "@/lib/strapi";
+import CmsImage from "@/components/CmsImage.astro";
 
 /**
  * "Comprar es muy fácil" — three steps, each led by a photo. The number comes
@@ -26,11 +24,13 @@ const { steps } = Astro.props;
       <div data-reveal>
         {step.image?.url && (
           <div class="bg-surface aspect-[16/10] overflow-hidden rounded-2xl">
-            <Image
-              src={mediaUrl(step.image.url)}
+            <CmsImage
+              src={step.image.url}
               alt={step.image.alternativeText ?? ""}
-              width={560}
-              height={350}
+              width={640}
+              height={400}
+              widths={[420, 640, 828]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
               class="h-full w-full object-cover"
             />
           </div>

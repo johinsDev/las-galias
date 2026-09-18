@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
 import { ArrowRight, User } from "lucide-astro";
 
+import CmsImage from "@/components/CmsImage.astro";
 import PostCard from "@/components/PostCard.astro";
 import Base from "@/layouts/Base.astro";
 import {
@@ -13,7 +13,7 @@ import {
   readingMinutes,
   sortPosts,
 } from "@/lib/blog";
-import { getPosts, mediaUrl } from "@/lib/strapi";
+import { getPosts } from "@/lib/strapi";
 
 const posts = sortPosts(await getPosts());
 const featured = featuredPost(posts);
@@ -79,12 +79,15 @@ const featuredMeta = featured
         >
           <div class="bg-surface aspect-[16/10] overflow-hidden md:aspect-auto md:h-full">
             {featured.cover?.url && (
-              <Image
-                src={mediaUrl(featured.cover.url)}
+              <CmsImage
+                src={featured.cover.url}
                 alt={featured.cover.alternativeText ?? featured.title}
-                width={960}
-                height={720}
+                width={1080}
+                height={810}
+                widths={[640, 828, 1080, 1200]}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 loading="eager"
+                fetchpriority="high"
                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               />
             )}

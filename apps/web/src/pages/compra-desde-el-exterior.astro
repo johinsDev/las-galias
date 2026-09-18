@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
 import { Check } from "lucide-astro";
 
+import CmsImage from "@/components/CmsImage.astro";
 import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
@@ -139,12 +139,13 @@ const PRIMARY =
       page?.heroImage?.url && (
         <div class="px-5 pb-14 md:px-8">
           <div class="bg-cloud mx-auto aspect-[348/232] w-full max-w-[1712px] overflow-hidden rounded-[24px] md:aspect-[1712/652] md:rounded-[56px]">
-            <Image
-              src={mediaUrl(page.heroImage.url)}
+            <CmsImage
+              src={page.heroImage.url}
               alt={page.heroImage.alternativeText ?? ""}
-              width={1712}
-              height={652}
-              densities={[1, 2]}
+              width={1600}
+              height={609}
+              widths={[640, 828, 1080, 1200, 1600, 1920]}
+              sizes="(min-width: 1280px) 1712px, 100vw"
               loading="eager"
               fetchpriority="high"
               class="h-full w-full object-cover"

@@ -1,9 +1,10 @@
 ---
-import { Image } from "astro:assets";
+import { getImage } from "astro:assets";
 import type { Project } from "@lasgalias/schemas";
 
 import { X } from "lucide-astro";
 
+import CmsImage from "@/components/CmsImage.astro";
 import ImageCarousel from "@/components/ImageCarousel.astro";
 import { mediaUrl } from "@/lib/strapi";
 
@@ -36,6 +37,21 @@ const tabs = [
 const mapSrc = hasMap
   ? `https://www.google.com/maps?q=${project.location!.lat},${project.location!.lng}&z=15&output=embed`
   : null;
+
+// The desktop hero is a different photo (art direction), so it goes through the
+// optimizer by hand: `<Image>` cannot emit a `<source media>`. It used to point
+// at the raw S3 original — several megabytes on a desktop first paint.
+const desktopHero =
+  project.heroDesktop?.url && project.heroDesktop.url !== hero?.url
+    ? await getImage({
+        src: mediaUrl(project.heroDesktop.url),
+        width: 1200,
+        height: 840,
+        widths: [828, 1080, 1200, 1600, 1920],
+        sizes: "(min-width: 768px) 60vw",
+        quality: 75,
+      })
+    : null;
 ---
 
 {
@@ -54,15 +70,24 @@ const mapSrc = hasMap
               transition:name={`project-hero-${project.slug}`}
             >
               <picture>
-                {project.heroDesktop?.url && (
-                  <source media="(min-width: 768px)" srcset={mediaUrl(project.heroDesktop.url)} />
+                {desktopHero && (
+                  <source
+                    media="(min-width: 768px)"
+                    srcset={desktopHero.srcSet.attribute}
+                    sizes="(min-width: 768px) 60vw"
+                  />
                 )}
-                <Image
-                  src={mediaUrl(hero.url)}
+                {/* The page's LCP: eager and high priority so the browser fetches
+                    it before the scripts and the fonts. */}
+                <CmsImage
+                  src={hero.url}
                   alt={hero.alternativeText ?? project.name}
                   width={1200}
                   height={840}
+                  widths={[420, 640, 750, 828, 1080, 1200]}
+                  sizes="(min-width: 768px) 60vw, 100vw"
                   loading="eager"
+                  fetchpriority="high"
                   class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               </picture>
@@ -79,11 +104,13 @@ const mapSrc = hasMap
                     aria-label={`Ver la foto ${i + 2} de ${project.name}`}
                     class="group bg-cloud min-h-0 cursor-zoom-in overflow-hidden rounded-[48px]"
                   >
-                    <Image
-                      src={mediaUrl(img.url)}
+                    <CmsImage
+                      src={img.url}
                       alt={img.alternativeText ?? project.name}
                       width={640}
                       height={430}
+                      widths={[420, 640, 828]}
+                      sizes="(min-width: 768px) 30vw, 100vw"
                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
                   </button>
@@ -150,6 +177,8 @@ const mapSrc = hasMap
             frameClass="bg-ink-800 aspect-[348/232] rounded-2xl md:aspect-[16/10] md:rounded-[28px]"
             imageWidth={1600}
             imageHeight={1000}
+            imageWidths={[828, 1200, 1600, 1920]}
+            imageSizes="100vw"
             slideMax="min(1400px, 130vh)"
             reveal={false}
           />

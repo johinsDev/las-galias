@@ -1,0 +1,51 @@
+---
+import { Image } from "astro:assets";
+import type { HTMLAttributes } from "astro/types";
+
+import { fitWidth } from "@/lib/image-sizes";
+import { mediaUrl } from "@/lib/strapi";
+
+/**
+ * Every CMS photo goes through here rather than straight to `<Image>`.
+ *
+ * Two things the adapter gets wrong on its own: it renders at quality 100 unless
+ * told otherwise (a 372px-wide phone hero came out at 126 KB), and it emits a
+ * single fixed-width file with no `srcset`, so the phone downloads the desktop
+ * variant. This asks for a real `srcset` + `sizes` pair at quality 75 by
+ * default, and keeps every width on the optimizer's allow-list — see
+ * `lib/image-sizes.ts` for why that matters.
+ */
+interface Props extends Omit<
+  HTMLAttributes<"img">,
+  "src" | "width" | "height" | "srcset" | "sizes"
+> {
+  /** CMS media url, relative or absolute; resolved with `mediaUrl`. */
+  src: string;
+  alt: string;
+  /** Intrinsic size the layout reserves (aspect ratio); snapped to the allow-list. */
+  width: number;
+  height: number;
+  /** Candidate widths for the `srcset`, in pixels. */
+  widths: number[];
+  /** The `sizes` attribute: how wide the image is drawn at each breakpoint. */
+  sizes: string;
+  /** 75 is visually lossless for photos; logos and floor plans use 80. */
+  quality?: number;
+}
+
+const { src, width, height, widths, sizes, quality = 75, ...rest } = Astro.props;
+
+const fitted = fitWidth(width);
+const fittedHeight = Math.round(height * (fitted / width));
+const candidates = [...new Set(widths.map(fitWidth))].sort((a, b) => a - b);
+---
+
+<Image
+  src={mediaUrl(src)}
+  width={fitted}
+  height={fittedHeight}
+  widths={candidates}
+  sizes={sizes}
+  quality={quality}
+  {...rest}
+/>
