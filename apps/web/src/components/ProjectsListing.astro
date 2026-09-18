@@ -60,7 +60,8 @@ const intro = city
             <ProjectCard
               project={project}
               priority={index === 0}
-              deferRender={index > 0}
+              eager={index === 1}
+              deferRender={index > 1}
               heading="h2"
             />
           ))}
