@@ -35,6 +35,18 @@
       "type": "string",
       "description": "Ciudad de residencia declarada"
     },
+    "interestCity": {
+      "type": "string",
+      "description": "Ciudad donde quiere comprar (landing de lanzamiento)"
+    },
+    "referralSource": {
+      "type": "string",
+      "description": "Cómo conoció el proyecto (landing de lanzamiento)"
+    },
+    "budgetRange": {
+      "type": "string",
+      "description": "Presupuesto aproximado declarado (landing de lanzamiento)"
+    },
     "severance": {
       "type": "string",
       "description": "Respuesta a «¿Tienes cesantías?»"

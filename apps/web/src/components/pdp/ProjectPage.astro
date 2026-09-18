@@ -6,6 +6,7 @@ import AdviceBand from "@/components/pdp/AdviceBand.astro";
 import MobilePriceBar from "@/components/pdp/MobilePriceBar.astro";
 import ProjectSidebar from "@/components/pdp/ProjectSidebar.astro";
 import RecommendedProjects from "@/components/pdp/RecommendedProjects.astro";
+import LaunchPage from "@/components/pdp/LaunchPage.astro";
 import Base from "@/layouts/Base.astro";
 import type { LeadFormConfig } from "@lasgalias/schemas";
 
@@ -93,36 +94,45 @@ const rates =
 
 const title = project.seo?.metaTitle ?? `${project.name} — Las Galias`;
 const description = project.seo?.metaDescription ?? undefined;
+
+/**
+ * A project in expectation is a launch, not a listing yet: same URL, but the
+ * page is the pre-sale landing (banner, copy, interest form, no way out) until
+ * the editor flips the stage to `sale` and the full page takes over.
+ */
+const isLaunch = project.stage === "expectation";
 ---
 
-<Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
-  <!-- 01 Encabezado -->
-  <ProjectHeader project={project} rates={rates} />
+{isLaunch && <LaunchPage project={project} leadForm={leadFormConfig} />}
 
-  <!-- 02 Galería -->
-  <ProjectGallery project={project} />
+{
+  !isLaunch && (
+    <Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
+      {/* 01 Encabezado */}
+      <ProjectHeader project={project} rates={rates} />
 
-  <!-- 03 Contenido + formulario -->
-  <section class="container-bleed pt-2 pb-[60px]">
-    <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <ProjectContent project={project} terms={terms} />
-      <ProjectSidebar project={project} leadForm={leadFormConfig} />
-    </div>
-  </section>
+      {/* 02 Galería */}
+      <ProjectGallery project={project} />
 
-  <!-- 04 Proyectos similares -->
-  <RecommendedProjects project={project} />
+      {/* 03 Contenido + formulario */}
+      <section class="container-bleed pt-2 pb-[60px]">
+        <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <ProjectContent project={project} terms={terms} />
+          <ProjectSidebar project={project} leadForm={leadFormConfig} />
+        </div>
+      </section>
 
-  <!-- 05 Asesoría personalizada -->
-  <AdviceBand config={leadFormConfig} />
+      {/* 04 Proyectos similares */}
+      <RecommendedProjects project={project} />
 
-  {
-    /* La barra de precio del móvil va al final del documento: es `fixed`, y
-       dejarla dentro de una sección con `transform` la anclaría a esa sección. */
-  }
-  {
-    project.stage !== "expectation" && project.priceFromCOP && (
-      <MobilePriceBar priceCOP={Number(project.priceFromCOP)} />
-    )
-  }
-</Base>
+      {/* 05 Asesoría personalizada */}
+      <AdviceBand config={leadFormConfig} />
+
+      {/* La barra de precio del móvil va al final del documento: es `fixed`, y
+       dejarla dentro de una sección con `transform` la anclaría a esa sección. */}
+      {project.stage !== "expectation" && project.priceFromCOP && (
+        <MobilePriceBar priceCOP={Number(project.priceFromCOP)} />
+      )}
+    </Base>
+  )
+}

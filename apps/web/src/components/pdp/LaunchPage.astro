@@ -1,0 +1,161 @@
+---
+import { getImage } from "astro:assets";
+import type { LeadFormConfig, Project } from "@lasgalias/schemas";
+
+import Blocks from "@/components/Blocks.astro";
+import CmsImage from "@/components/CmsImage.astro";
+import LaunchLeadForm from "@/islands/LaunchLeadForm";
+import Base from "@/layouts/Base.astro";
+import { mediaUrl } from "@/lib/strapi";
+
+/**
+ * The pre-sale landing a project shows while `stage` is `expectation` (Figma
+ * "PDP ↳ Landing expectativa", 3068:18965): the mobile and desktop banners the
+ * editor uploaded, the project's copy OUTSIDE the photo (the client asked for
+ * that explicitly), a row of facts and the interest form. Logo-only header,
+ * no footer links: the only exit is the form.
+ */
+interface Props {
+  project: Project;
+  leadForm: LeadFormConfig;
+}
+
+const { project, leadForm } = Astro.props;
+
+const mobile = project.heroMobile ?? project.heroDesktop;
+const desktop =
+  project.heroDesktop?.url && project.heroDesktop.url !== mobile?.url
+    ? await getImage({
+        src: mediaUrl(project.heroDesktop.url),
+        width: 1200,
+        height: 675,
+        widths: [828, 1080, 1200, 1600],
+        sizes: "(min-width: 1024px) 60vw, 100vw",
+        quality: 75,
+      })
+    : null;
+
+const locationTrail = [project.city?.name, project.zone?.name ?? project.city?.department]
+  .filter(Boolean)
+  .join(" · ");
+
+// The facts row: bedrooms, price from, status and place — whichever exist.
+const beds = (project.unitTypes ?? [])
+  .map((u) => u.bedrooms)
+  .filter((n): n is number => typeof n === "number");
+const bedsChip =
+  beds.length === 0
+    ? null
+    : Math.min(...beds) === Math.max(...beds)
+      ? `${Math.min(...beds)} habitaciones`
+      : `${Math.min(...beds)} y ${Math.max(...beds)} habitaciones`;
+const priceChip = project.priceFromCOP
+  ? `Desde $${Math.round(Number(project.priceFromCOP) / 1_000_000)}M`
+  : null;
+const statusLabels: Record<string, string> = {
+  launch: "Lanzamiento",
+  presale: "Preventa activa",
+  construction: "En construcción",
+  "immediate-delivery": "Entrega inmediata",
+};
+const statusChip = project.constructionStatus ? statusLabels[project.constructionStatus] : null;
+const chips = [bedsChip, priceChip, statusChip, locationTrail || null].filter(
+  (chip): chip is string => Boolean(chip),
+);
+
+const title = project.seo?.metaTitle ?? `${project.name} · Preventa exclusiva — Las Galias`;
+const description =
+  project.seo?.metaDescription ??
+  `Regístrate antes del lanzamiento de ${project.name} y asegura tu precio de preventa.`;
+---
+
+<Base
+  title={title}
+  description={description}
+  ogImage={mediaUrl(project.seo?.ogImage?.url ?? project.heroDesktop?.url)}
+  chrome="minimal"
+>
+  <div class="container-bleed pt-10 pb-16 md:pt-14 md:pb-24">
+    <h1 class="text-h1 text-ink font-extrabold">Preventa exclusiva</h1>
+    <p class="text-body-lg text-ink-muted mt-2">
+      Regístrate antes del lanzamiento y asegura tu precio de preventa.
+    </p>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start">
+      <div>
+        {
+          mobile?.url && (
+            <div class="bg-cloud aspect-[4/3] overflow-hidden rounded-3xl md:aspect-[16/9]">
+              <picture>
+                {desktop && (
+                  <source
+                    media="(min-width: 768px)"
+                    srcset={desktop.srcSet.attribute}
+                    sizes="(min-width: 1024px) 60vw, 100vw"
+                  />
+                )}
+                <CmsImage
+                  src={mobile.url}
+                  alt={mobile.alternativeText ?? project.name}
+                  width={828}
+                  height={621}
+                  widths={[420, 640, 750, 828, 1080]}
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="h-full w-full object-cover"
+                />
+              </picture>
+            </div>
+          )
+        }
+
+        {/* The copy sits under the photo, never over it: the client wants the banner clean. */}
+        <div class="mt-6">
+          <span
+            class="bg-brand inline-flex rounded-full px-3 py-1.5 text-[11px] leading-none font-bold tracking-[0.5px] text-white uppercase"
+          >
+            Próximo lanzamiento
+          </span>
+          {
+            locationTrail && (
+              <p class="text-ink-muted mt-3 text-xs font-semibold tracking-[1px] uppercase">
+                {locationTrail}
+              </p>
+            )
+          }
+          <h2 class="text-h2 text-ink mt-2 font-bold">{project.name}</h2>
+          {
+            project.description && (
+              <div class="text-body text-ink-muted mt-3 max-w-2xl">
+                <Blocks content={project.description} variant="inherit" />
+              </div>
+            )
+          }
+        </div>
+
+        {
+          chips.length > 0 && (
+            <ul class="mt-5 flex flex-wrap gap-2">
+              {chips.map((chip) => (
+                <li class="pdp-pill">{chip}</li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      <aside class="border-line rounded-2xl border bg-white p-6 shadow-xs lg:sticky lg:top-24">
+        <p class="text-ink text-lg font-bold">Registra tu interés →</p>
+        <p class="text-body-sm text-ink-muted mt-1">Un asesor te contacta en menos de 24 h.</p>
+        <div class="mt-5">
+          <LaunchLeadForm
+            client:visible
+            projectDocumentId={project.documentId}
+            cities={(leadForm.residenceCities ?? []).map((c) => c.text).filter(Boolean)}
+          />
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>
