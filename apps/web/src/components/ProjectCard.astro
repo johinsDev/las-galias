@@ -34,6 +34,13 @@ interface Props {
    * its `h1` above the grid, so there the cards are `h2` or the outline skips.
    */
   heading?: "h2" | "h3";
+  /**
+   * Skip layout and paint until the card nears the viewport
+   * (`content-visibility: auto`). The listing sets it on every card but the
+   * first: maquetar 30 cards with 136 images before the first frame is what
+   * held the listing's first paint back on a phone.
+   */
+  deferRender?: boolean;
 }
 
 const {
@@ -43,6 +50,7 @@ const {
   compact = false,
   priority = false,
   heading: Heading = "h3",
+  deferRender = false,
 } = Astro.props;
 const isExpectation = project.stage === "expectation";
 
@@ -118,6 +126,7 @@ const CHIP =
 <article
   class:list={[
     "group card-lift hover:shadow-card-lg relative flex flex-col overflow-hidden bg-white",
+    deferRender && "cv-auto",
     compact
       ? "border-mist rounded-[16px] border-[0.71px]"
       : "border-line rounded-2xl border shadow-xs",
