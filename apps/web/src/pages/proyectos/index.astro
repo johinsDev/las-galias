@@ -33,7 +33,7 @@ const cities = [
           id="projects-grid"
         >
           {projects.map((project, index) => (
-            <ProjectCard project={project} priority={index < 2} heading="h2" />
+            <ProjectCard project={project} priority={index === 0} heading="h2" />
           ))}
         </div>
       ) : (
