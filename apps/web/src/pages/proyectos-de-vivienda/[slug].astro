@@ -1,130 +1,65 @@
 ---
-import ProjectContent from "@/components/pdp/ProjectContent.astro";
-import ProjectGallery from "@/components/pdp/ProjectGallery.astro";
-import ProjectHeader from "@/components/pdp/ProjectHeader.astro";
-import AdviceBand from "@/components/pdp/AdviceBand.astro";
-import MobilePriceBar from "@/components/pdp/MobilePriceBar.astro";
-import ProjectSidebar from "@/components/pdp/ProjectSidebar.astro";
-import RecommendedProjects from "@/components/pdp/RecommendedProjects.astro";
-import Base from "@/layouts/Base.astro";
-import type { LeadFormConfig } from "@lasgalias/schemas";
+import type { City } from "@lasgalias/schemas";
 
-import type { QuoteTerms } from "@/lib/mortgage";
-import {
-  getCalculatorConfig,
-  getExchangeRate,
-  getLeadFormConfig,
-  getProject,
-  getProjects,
-  mediaUrl,
-} from "@/lib/strapi";
+import ProjectPage from "@/components/pdp/ProjectPage.astro";
+import ProjectsListing from "@/components/ProjectsListing.astro";
+import { getFaqs, getProjects } from "@/lib/strapi";
 
+/**
+ * /proyectos-de-vivienda/<algo> is either a project (its slug) or a city
+ * (/proyectos-de-vivienda/bogota, the catalogue filtered to it). Both live in
+ * the same segment on purpose — the client wants the city pages at that depth
+ * — and Astro allows one dynamic route per level, so this one tells them apart
+ * by the `kind` it was built with. A project whose slug equals a city's would
+ * shadow that city page, hence the check.
+ */
 export async function getStaticPaths() {
   const projects = await getProjects();
-  return projects.map((p) => ({ params: { slug: p.slug } }));
+  const cities = [
+    ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
+  ];
+  const taken = new Set(projects.map((p) => p.slug));
+  const clash = cities.find((c) => taken.has(c.slug));
+  if (clash) {
+    throw new Error(
+      `El proyecto «${clash.slug}» tiene el mismo slug que la ciudad ${clash.name}: cambia uno de los dos.`,
+    );
+  }
+  return [
+    ...projects.map((p) => ({ params: { slug: p.slug }, props: { kind: "project" as const } })),
+    ...cities.map((c) => ({ params: { slug: c.slug }, props: { kind: "city" as const, city: c } })),
+  ];
+}
+
+interface Props {
+  kind: "project" | "city";
+  city?: City;
 }
 
 const { slug } = Astro.params;
-const [project, calculator, exchangeRate, leadForm] = await Promise.all([
-  getProject(slug!),
-  getCalculatorConfig(),
-  getExchangeRate(),
-  getLeadFormConfig(),
-]);
+const { kind, city } = Astro.props;
 
-/**
- * Las opciones de los desplegables, con los valores del diseño de reserva.
- *
- * Mismo criterio que el home y la página de exterior: la ficha tiene que
- * renderizarse antes de que nadie rellene el single type. Sin esto, un CMS
- * recién desplegado deja el formulario sin los campos de calificación y la
- * banda de asesoría sin dibujar, y no hay nada que lo explique.
- */
-const leadFormConfig: LeadFormConfig = {
-  ...leadForm,
-  incomeRanges: leadForm?.incomeRanges?.length
-    ? leadForm.incomeRanges
-    : [
-        "Menos de $2.000.000",
-        "$2.000.000 – $4.000.000",
-        "$4.000.000 – $8.000.000",
-        "Más de $8.000.000",
-      ].map((text) => ({ text })),
-  savingsRanges: leadForm?.savingsRanges?.length
-    ? leadForm.savingsRanges
-    : [
-        "Menos de $10.000.000",
-        "$10.000.000 – $30.000.000",
-        "$30.000.000 – $60.000.000",
-        "Más de $60.000.000",
-      ].map((text) => ({ text })),
-  severanceOptions: leadForm?.severanceOptions?.length
-    ? leadForm.severanceOptions
-    : ["Sí", "No", "No estoy seguro"].map((text) => ({ text })),
-  residenceCities: leadForm?.residenceCities?.length
-    ? leadForm.residenceCities
-    : ["Bogotá", "Manizales", "Pereira", "Cali", "Madrid"].map((text) => ({ text })),
-};
-
-if (!project) {
-  return Astro.redirect("/proyectos-de-vivienda");
-}
-
-/**
- * Financing terms: the project overrides the global `calculator-config` field
- * by field, so an editor only fills in what differs for that project.
- */
-const financing = project.financing;
-const terms: QuoteTerms = {
-  annualRatePct: financing?.annualRatePct ?? calculator?.annualInterestRate ?? 13.95,
-  termYears: financing?.termYears ?? calculator?.maxTermYears ?? 15,
-  downPaymentPct:
-    financing?.downPaymentPct ??
-    (calculator?.maxFinancingPercent != null ? 100 - calculator.maxFinancingPercent : 30),
-  builderInstallmentMonths: financing?.builderInstallmentMonths ?? 36,
-};
-
-/**
- * The COP/USD/EUR control beside the price only renders when both rates are in:
- * a selector offering currencies it cannot convert is worse than pesos alone.
- */
-const rates =
-  exchangeRate?.copPerUsd && exchangeRate?.copPerEur
-    ? { copPerUsd: exchangeRate.copPerUsd, copPerEur: exchangeRate.copPerEur }
+const listing =
+  kind === "city"
+    ? await Promise.all([getProjects(), getFaqs("general")]).then(([projects, faqs]) => ({
+        projects,
+        faqs,
+        cities: [
+          ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
+        ],
+      }))
     : null;
-
-const title = project.seo?.metaTitle ?? `${project.name} — Las Galias`;
-const description = project.seo?.metaDescription ?? undefined;
 ---
 
-<Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
-  <!-- 01 Encabezado -->
-  <ProjectHeader project={project} rates={rates} />
-
-  <!-- 02 Galería -->
-  <ProjectGallery project={project} />
-
-  <!-- 03 Contenido + formulario -->
-  <section class="container-bleed pt-2 pb-[60px]">
-    <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <ProjectContent project={project} terms={terms} />
-      <ProjectSidebar project={project} leadForm={leadFormConfig} />
-    </div>
-  </section>
-
-  <!-- 04 Proyectos similares -->
-  <RecommendedProjects project={project} />
-
-  <!-- 05 Asesoría personalizada -->
-  <AdviceBand config={leadFormConfig} />
-
-  {
-    /* La barra de precio del móvil va al final del documento: es `fixed`, y
-       dejarla dentro de una sección con `transform` la anclaría a esa sección. */
-  }
-  {
-    project.stage !== "expectation" && project.priceFromCOP && (
-      <MobilePriceBar priceCOP={Number(project.priceFromCOP)} />
-    )
-  }
-</Base>
+{
+  listing && city ? (
+    <ProjectsListing
+      projects={listing.projects}
+      cities={listing.cities}
+      faqs={listing.faqs}
+      city={city}
+    />
+  ) : (
+    <ProjectPage slug={slug!} />
+  )
+}
