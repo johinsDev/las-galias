@@ -43,6 +43,12 @@ import { ChevronDown, ChevronRight, Menu, Search, X } from "lucide-astro";
 
 // El catálogo para la paleta de búsqueda. `getProjects` está memoizado, así que
 // esto no repite la consulta una vez por página.
+interface Props {
+  /** Logo only: no navigation, no search, no actions. For the launch landing. */
+  minimal?: boolean;
+}
+const { minimal = false } = Astro.props;
+
 const searchableProjects = (await getProjects()).map((project) => ({
   slug: project.slug,
   name: project.name,
@@ -58,170 +64,182 @@ const searchableProjects = (await getProjects()).map((project) => ({
      opened, so it hydrates on ⌘K or the first click of a trigger instead of
      dragging React into every page's first paint. */
 }
-<ProjectSearch client:search projects={searchableProjects} />
+{!minimal && <ProjectSearch client:search projects={searchableProjects} />}
+
+{
+  minimal && (
+    <header transition:animate="none" class="bg-brand sticky top-0 z-50 text-white">
+      <div class="container-bleed flex h-[72px] items-center">
+        <a href="/" class="flex items-center" aria-label="Las Galias Constructora — inicio">
+          <Logo variant="light" height={30} />
+        </a>
+      </div>
+    </header>
+  )
+}
 
 {
   /* `relative` so the mobile sheet can hang off the bar and overlay the page
    instead of pushing the hero down when it opens. */
 }
-<header
-  transition:animate="none"
-  class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
-  data-nav-open="false"
->
-  <div class="container-bleed flex h-[72px] items-center justify-between gap-6">
-    {/* Logo and nav travel together on the left; only the actions go right. */}
-    <div class="flex items-center gap-10">
-      <a href="/" class="flex items-center gap-2.5" aria-label="Las Galias Constructora — inicio">
-        <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
-        {
-          /* On a white bar the white artwork would vanish, so the open menu
-            shows the same wordmark in brand red. */
-        }
-        <Logo variant="brand" height={30} class="hidden group-data-[nav-open=true]/header:block" />
-      </a>
-
-      <nav aria-label="principal" class="hidden xl:block">
-        <ul class="flex items-center gap-6">
-          {
-            links.map((link) => (
-              <li class="group/nav relative">
-                <a
-                  href={link.href}
-                  class:list={[
-                    "text-body-sm flex items-center gap-1 py-6 font-medium whitespace-nowrap transition-colors",
-                    isActive(link.href) ? "text-white" : "text-white/95 hover:text-white",
-                  ]}
-                  aria-current={isActive(link.href) ? "page" : undefined}
-                >
-                  {link.label}
-                  {link.children && <ChevronDown size={14} stroke-width={2} aria-hidden="true" />}
-                </a>
-
-                {/* Hover/focus panel, CSS only — a menu that needs JavaScript to
-                  open is a menu that is missing while the island hydrates. */}
-                {link.children && (
-                  <div class="shadow-card-lg border-line invisible absolute top-full left-0 min-w-56 -translate-y-1 rounded-xl border bg-white p-2 opacity-0 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100">
-                    {link.children.map((child) => (
-                      <a
-                        href={child.href}
-                        class="text-body-sm text-ink hover:bg-surface block rounded-lg px-3 py-2 font-medium transition-colors"
-                      >
-                        {child.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <button
-        type="button"
-        data-open-search
-        class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
-        aria-label="Buscar proyectos"
-      >
-        <Search size={18} stroke-width={2.2} aria-hidden="true" />
-      </button>
-      <a
-        href="/servicio-al-cliente"
-        class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
-      >
-        Zona clientes
-      </a>
-
-      <!-- Mobile menu toggle. The nav is hidden below xl, so without this the
-           whole navigation is unreachable on a phone. -->
-      <button
-        type="button"
-        id="nav-toggle"
-        class="group/toggle text-brand group-data-[nav-open=true]/header:border-line group-data-[nav-open=true]/header:text-ink inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors group-data-[nav-open=true]/header:border hover:bg-white/90 xl:hidden"
-        aria-label="Abrir menú"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-      >
-        <span class="relative block size-5">
-          <Menu
-            size={20}
-            stroke-width={2}
-            aria-hidden="true"
-            class="absolute inset-0 transition-all duration-200 group-aria-expanded/toggle:rotate-90 group-aria-expanded/toggle:opacity-0"
-          />
-          <X
-            size={20}
-            stroke-width={2}
-            aria-hidden="true"
-            class="absolute inset-0 -rotate-90 opacity-0 transition-all duration-200 group-aria-expanded/toggle:rotate-0 group-aria-expanded/toggle:opacity-100"
-          />
-        </span>
-      </button>
-    </div>
-  </div>
-
-  {
-    /* Mobile sheet. White, not red: the design switches ground colour once the
-      menu takes over the screen, so the rows read as a list and not as chrome. */
-  }
-  {
-    /* Animated with grid-template-rows 0fr -> 1fr: it eases open to whatever
-      height the content happens to be, with no magic max-height to keep in sync
-      and nothing to recompute when a link is added. */
-  }
-  <nav
-    id="mobile-nav"
-    aria-label="principal móvil"
-    data-open="false"
-    class="group/sheet border-line text-ink shadow-card-lg absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
-  >
-    <div
-      class="max-h-[calc(100dvh-72px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100"
+{
+  !minimal && (
+    <header
+      transition:animate="none"
+      class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
+      data-nav-open="false"
     >
-      <div class="container-bleed py-5">
-        {
-          /* En el móvil, el mismo buscador pero como botón: escribir aquí y otra
-            vez dentro de la ventana sería teclear dos veces. */
-        }
-        <button
-          type="button"
-          data-open-search
-          class="border-line-strong text-ink-faint flex w-full items-center gap-2 rounded-full border px-4 py-3 text-left"
-        >
-          <Search size={18} stroke-width={2.2} aria-hidden="true" />
-          <span class="text-body-sm">Busca por ciudad o proyecto…</span>
-        </button>
+      <div class="container-bleed flex h-[72px] items-center justify-between gap-6">
+        {/* Logo and nav travel together on the left; only the actions go right. */}
+        <div class="flex items-center gap-10">
+          <a
+            href="/"
+            class="flex items-center gap-2.5"
+            aria-label="Las Galias Constructora — inicio"
+          >
+            <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
+            {/* On a white bar the white artwork would vanish, so the open menu
+            shows the same wordmark in brand red. */}
+            <Logo
+              variant="brand"
+              height={30}
+              class="hidden group-data-[nav-open=true]/header:block"
+            />
+          </a>
 
-        <ul class="mt-2">
-          {
-            links.map((link) => (
-              <li class="border-line border-b last:border-b-0">
-                <a
-                  href={link.href}
-                  class="flex items-center justify-between py-4 font-medium"
-                  aria-current={isActive(link.href) ? "page" : undefined}
-                >
-                  {link.label}
-                  <ChevronRight
-                    size={18}
-                    stroke-width={2}
-                    aria-hidden="true"
-                    class="text-ink-faint"
-                  />
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+          <nav aria-label="principal" class="hidden xl:block">
+            <ul class="flex items-center gap-6">
+              {links.map((link) => (
+                <li class="group/nav relative">
+                  <a
+                    href={link.href}
+                    class:list={[
+                      "text-body-sm flex items-center gap-1 py-6 font-medium whitespace-nowrap transition-colors",
+                      isActive(link.href) ? "text-white" : "text-white/95 hover:text-white",
+                    ]}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                  >
+                    {link.label}
+                    {link.children && <ChevronDown size={14} stroke-width={2} aria-hidden="true" />}
+                  </a>
 
-        <a href="/servicio-al-cliente" class="btn btn-primary mt-5 w-full py-3.5">Zona clientes</a>
+                  {/* Hover/focus panel, CSS only — a menu that needs JavaScript to
+                  open is a menu that is missing while the island hydrates. */}
+                  {link.children && (
+                    <div class="shadow-card-lg border-line invisible absolute top-full left-0 min-w-56 -translate-y-1 rounded-xl border bg-white p-2 opacity-0 transition-[opacity,transform,visibility] duration-200 ease-out group-focus-within/nav:visible group-focus-within/nav:translate-y-0 group-focus-within/nav:opacity-100 group-hover/nav:visible group-hover/nav:translate-y-0 group-hover/nav:opacity-100">
+                      {link.children.map((child) => (
+                        <a
+                          href={child.href}
+                          class="text-body-sm text-ink hover:bg-surface block rounded-lg px-3 py-2 font-medium transition-colors"
+                        >
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            data-open-search
+            class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
+            aria-label="Buscar proyectos"
+          >
+            <Search size={18} stroke-width={2.2} aria-hidden="true" />
+          </button>
+          <a
+            href="/servicio-al-cliente"
+            class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
+          >
+            Zona clientes
+          </a>
+
+          {/* Mobile menu toggle. The nav is hidden below xl, so without this the
+          whole navigation is unreachable on a phone. */}
+          <button
+            type="button"
+            id="nav-toggle"
+            class="group/toggle text-brand group-data-[nav-open=true]/header:border-line group-data-[nav-open=true]/header:text-ink inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors group-data-[nav-open=true]/header:border hover:bg-white/90 xl:hidden"
+            aria-label="Abrir menú"
+            aria-expanded="false"
+            aria-controls="mobile-nav"
+          >
+            <span class="relative block size-5">
+              <Menu
+                size={20}
+                stroke-width={2}
+                aria-hidden="true"
+                class="absolute inset-0 transition-all duration-200 group-aria-expanded/toggle:rotate-90 group-aria-expanded/toggle:opacity-0"
+              />
+              <X
+                size={20}
+                stroke-width={2}
+                aria-hidden="true"
+                class="absolute inset-0 -rotate-90 opacity-0 transition-all duration-200 group-aria-expanded/toggle:rotate-0 group-aria-expanded/toggle:opacity-100"
+              />
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
-  </nav>
-</header>
+
+      {/* Mobile sheet. White, not red: the design switches ground colour once the
+      menu takes over the screen, so the rows read as a list and not as chrome. */}
+      {/* Animated with grid-template-rows 0fr -> 1fr: it eases open to whatever
+      height the content happens to be, with no magic max-height to keep in sync
+      and nothing to recompute when a link is added. */}
+      <nav
+        id="mobile-nav"
+        aria-label="principal móvil"
+        data-open="false"
+        class="group/sheet border-line text-ink shadow-card-lg absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
+      >
+        <div class="max-h-[calc(100dvh-72px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
+          <div class="container-bleed py-5">
+            {/* En el móvil, el mismo buscador pero como botón: escribir aquí y otra
+            vez dentro de la ventana sería teclear dos veces. */}
+            <button
+              type="button"
+              data-open-search
+              class="border-line-strong text-ink-faint flex w-full items-center gap-2 rounded-full border px-4 py-3 text-left"
+            >
+              <Search size={18} stroke-width={2.2} aria-hidden="true" />
+              <span class="text-body-sm">Busca por ciudad o proyecto…</span>
+            </button>
+
+            <ul class="mt-2">
+              {links.map((link) => (
+                <li class="border-line border-b last:border-b-0">
+                  <a
+                    href={link.href}
+                    class="flex items-center justify-between py-4 font-medium"
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                  >
+                    {link.label}
+                    <ChevronRight
+                      size={18}
+                      stroke-width={2}
+                      aria-hidden="true"
+                      class="text-ink-faint"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a href="/servicio-al-cliente" class="btn btn-primary mt-5 w-full py-3.5">
+              Zona clientes
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+  )
+}
 
 <style>
   /* Menu open: the bar turns white, so everything on it has to flip with it. */

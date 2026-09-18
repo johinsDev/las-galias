@@ -132,6 +132,12 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 
 - `project` has `stage: expectation | sale`. Expectation publishes with fewer
   fields (the validation lives in a document-service middleware on publish).
+  An expectation project IS the launch: its URL renders the pre-sale landing
+  (`components/pdp/LaunchPage.astro` — the two banners, the copy outside the
+  photo, the interest form, logo-only header and a footer without links) until
+  the editor flips the stage to `sale`, when the same URL becomes the full
+  project page. The form stores a `lead` with `source: lanzamiento` and the
+  landing-only fields `interestCity`, `referralSource`, `budgetRange`.
 - A project's `recommended` list must belong to the **same city** (middleware).
 - Unpublishing a project creates an automatic `redirect` to `/proyectos-de-vivienda`.
 - `point-of-interest` entries belong to a `macroproject`; `amenity` entries are
@@ -165,6 +171,10 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   on top of edited content.
 - A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the
   request path — `crmStatus` records the outcome and a cron retries.
+- The footer's "Documentos" column lists the sales booklets and policies by
+  slug (`Footer.astro`), but only those the CMS has published: "Tips para
+  comprar" is in `LEGAL_DOCUMENTS` and appears the day an editor creates that
+  legal document with slug `tips-para-comprar`.
 - The FAQ assistant (`POST /api/faq-bot/ask`) answers one question at a time —
   no chat, no history — streaming SSE from the CMS. It answers ONLY from a
   context built out of published FAQs, published projects and

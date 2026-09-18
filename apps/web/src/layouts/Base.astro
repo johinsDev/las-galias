@@ -10,12 +10,19 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  /**
+   * `minimal`: logo-only header and a footer without link columns — the
+   * launch landing (Figma "PDP ↳ Landing expectativa") removes every way out
+   * of the page except the form.
+   */
+  chrome?: "full" | "minimal";
 }
 
 const {
   title,
   description = "Las Galias — constructora. Proyectos de vivienda en Colombia.",
   ogImage,
+  chrome = "full",
 } = Astro.props;
 const GTM_ID = import.meta.env.PUBLIC_GTM_ID as string | undefined;
 const gtmSnippet = GTM_ID
@@ -46,11 +53,11 @@ const gtmSnippet = GTM_ID
     {gtmSnippet && <script is:inline type="text/partytown" set:html={gtmSnippet} />}
   </head>
   <body class="flex min-h-screen flex-col">
-    <Header />
+    <Header minimal={chrome === "minimal"} />
     <main class="flex-1">
       <slot />
     </main>
-    <Footer />
+    <Footer minimal={chrome === "minimal"} />
     <script>
       import { initReveals } from "@/scripts/reveal";
 

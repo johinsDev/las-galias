@@ -125,6 +125,9 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     residenceCountry: { label: "País de residencia" },
     incomeRange: { label: "Rango de ingresos" },
     residenceCity: { label: "Ciudad de residencia" },
+    interestCity: { label: "Ciudad de interés", description: "La pide la landing de lanzamiento." },
+    referralSource: { label: "¿Cómo nos conoció?" },
+    budgetRange: { label: "Presupuesto aproximado" },
     severance: { label: "Cesantías" },
     savingsRange: { label: "Ahorros disponibles" },
     firstHome: {

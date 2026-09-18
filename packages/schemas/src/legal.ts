@@ -31,6 +31,7 @@ export const LEGAL_DOCUMENTS: readonly LegalDocumentRef[] = [
     slug: "politicas-de-manejo-de-informacion-y-privacidad",
     title: "Políticas de manejo de información y privacidad",
   },
+  { slug: "tips-para-comprar", title: "Tips para comprar" },
 ] as const;
 
 /** The document the data-policy checkbox on every form must link to. */

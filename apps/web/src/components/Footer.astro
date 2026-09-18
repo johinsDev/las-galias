@@ -1,7 +1,13 @@
 ---
 import Logo from "@/components/Logo.astro";
 import { LEGAL_DOCUMENTS } from "@lasgalias/schemas";
-import { getProjects } from "@/lib/strapi";
+import { getLegalDocuments, getProjects } from "@/lib/strapi";
+
+interface Props {
+  /** Brand block and bottom bar only, no link columns. For the launch landing. */
+  minimal?: boolean;
+}
+const { minimal = false } = Astro.props;
 
 const year = new Date().getFullYear();
 
@@ -20,6 +26,24 @@ const projects = await getProjects();
 const cities = [
   ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
 ].slice(0, 4);
+
+/**
+ * The "Documentos" column: the sales booklets and policies the client asked to
+ * have one click away, in their order. Titles come from the shared list; a
+ * document only gets a link once the CMS actually publishes it (the seed does
+ * not create "Tips para comprar" yet), so nothing here can 404.
+ */
+const DOCUMENT_SLUGS = [
+  "tips-para-comprar",
+  "cartilla-explicativa-venta-en-salarios-minimos",
+  "cartilla-informativa-de-la-venta",
+  "politicas-de-devolucion-saldos-de-escrituracion",
+  "politicas-de-manejo-de-informacion-y-privacidad",
+];
+const published = new Set((await getLegalDocuments()).map((doc) => doc.slug));
+const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc.slug === slug))
+  .filter((doc): doc is (typeof LEGAL_DOCUMENTS)[number] => doc !== undefined)
+  .filter((doc) => published.has(doc.slug));
 ---
 
 {
@@ -27,7 +51,12 @@ const cities = [
     old white/55 fell under the 4.5:1 contrast ratio. */
 }
 <footer transition:animate="none" class="bg-brand text-white">
-  <div class="container-bleed grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+  <div
+    class:list={[
+      "container-bleed grid gap-10 py-16",
+      !minimal && "md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1.4fr_1fr]",
+    ]}
+  >
     <div>
       <Logo variant="light" height={28} />
       <p class="text-body-sm mt-5 max-w-xs text-white/95">
@@ -86,72 +115,95 @@ const cities = [
       </div>
     </div>
 
-    <nav aria-label="Proyectos">
-      <p class="eyebrow text-white">Proyectos</p>
-      <ul class="mt-5 space-y-3">
-        {
-          cities.map((city) => (
-            <li>
-              <a
-                href={`/proyectos-de-vivienda/${city.slug}`}
-                class="text-body-sm text-white transition-all hover:underline"
-              >
-                {city.name}
-              </a>
-            </li>
-          ))
-        }
-        <li>
-          <a
-            href="/proyectos-de-vivienda"
-            class="text-body-sm text-white transition-all hover:underline"
-          >
-            Ver todos
-          </a>
-        </li>
-      </ul>
-    </nav>
+    {
+      !minimal && (
+        <>
+          <nav aria-label="Proyectos">
+            <p class="eyebrow text-white">Proyectos</p>
+            <ul class="mt-5 space-y-3">
+              {cities.map((city) => (
+                <li>
+                  <a
+                    href={`/proyectos-de-vivienda/${city.slug}`}
+                    class="text-body-sm text-white transition-all hover:underline"
+                  >
+                    {city.name}
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a
+                  href="/proyectos-de-vivienda"
+                  class="text-body-sm text-white transition-all hover:underline"
+                >
+                  Ver todos
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-    <nav aria-label="Empresa">
-      <p class="eyebrow text-white">Empresa</p>
-      <ul class="mt-5 space-y-3">
-        <li>
-          <a href="/nosotros" class="text-body-sm text-white transition-all hover:underline">
-            Nosotros
-          </a>
-        </li>
-        <li>
-          <a href="/blog" class="text-body-sm text-white transition-all hover:underline"> Blog </a>
-        </li>
-        <li>
-          <a
-            href="/servicio-al-cliente"
-            class="text-body-sm text-white transition-all hover:underline"
-          >
-            Servicio al cliente
-          </a>
-        </li>
-      </ul>
-    </nav>
+          <nav aria-label="Empresa">
+            <p class="eyebrow text-white">Empresa</p>
+            <ul class="mt-5 space-y-3">
+              <li>
+                <a href="/nosotros" class="text-body-sm text-white transition-all hover:underline">
+                  Nosotros
+                </a>
+              </li>
+              <li>
+                <a href="/blog" class="text-body-sm text-white transition-all hover:underline">
+                  {" "}
+                  Blog{" "}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/servicio-al-cliente"
+                  class="text-body-sm text-white transition-all hover:underline"
+                >
+                  Servicio al cliente
+                </a>
+              </li>
+            </ul>
+          </nav>
 
-    <div>
-      {
-        /* The design's phone line is still the placeholder "300 000 0000", so it
-          is left out rather than shipped as a number nobody answers. */
-      }
-      <p class="eyebrow text-white">Contacto</p>
-      <ul class="mt-5 space-y-3">
-        <li>
-          <a
-            href="mailto:sala@lasgalias.com.co"
-            class="text-body-sm text-white transition-all hover:underline"
-          >
-            sala@lasgalias.com.co
-          </a>
-        </li>
-        <li class="text-body-sm text-white/95">Bogotá, Colombia</li>
-      </ul>
-    </div>
+          {documents.length > 0 && (
+            <nav aria-label="Documentos">
+              <p class="eyebrow text-white">Documentos</p>
+              <ul class="mt-5 space-y-3">
+                {documents.map((doc) => (
+                  <li>
+                    <a
+                      href={`/legales/${doc.slug}`}
+                      class="text-body-sm text-white transition-all hover:underline"
+                    >
+                      {doc.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          <div>
+            {/* The design's phone line is still the placeholder "300 000 0000", so it
+          is left out rather than shipped as a number nobody answers. */}
+            <p class="eyebrow text-white">Contacto</p>
+            <ul class="mt-5 space-y-3">
+              <li>
+                <a
+                  href="mailto:sala@lasgalias.com.co"
+                  class="text-body-sm text-white transition-all hover:underline"
+                >
+                  sala@lasgalias.com.co
+                </a>
+              </li>
+              <li class="text-body-sm text-white/95">Bogotá, Colombia</li>
+            </ul>
+          </div>
+        </>
+      )
+    }
   </div>
 
   <div class="border-t border-white/25">

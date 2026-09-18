@@ -69,6 +69,8 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     // antes de llamar.
     ["incomeRange", "savingsRange", "severance"],
     ["residenceCity", "firstHome"],
+    // Lo que deja la landing de lanzamiento (stage=expectation).
+    ["interestCity", "referralSource", "budgetRange"],
     ["message:12"],
     // Los permisos juntos: se leen como un bloque cuando alguien reclama.
     ["acceptsDataPolicy", "acceptsWhatsApp", "acceptsCall"],
