@@ -402,6 +402,28 @@ export async function getCustomerServicePage(): Promise<CustomerServicePage | nu
   });
 }
 
+/**
+ * The company's WhatsApp as the customer-service page states it: the explicit
+ * URL, or one built from the number (a Colombian mobile gets its `57`).
+ */
+export function customerWhatsappUrl(page: CustomerServicePage | null): string | null {
+  if (page?.whatsappUrl) return page.whatsappUrl;
+  if (!page?.whatsappNumber) return null;
+  return `https://wa.me/${page.whatsappNumber.replace(/\D/g, "").replace(/^(?=3)/, "57")}`;
+}
+
+let companyWhatsapp: Promise<string | null> | undefined;
+
+/**
+ * The WhatsApp a project card falls back to when its sales room has none —
+ * in practice all of them, since the sheet the projects are loaded from has
+ * no per-project number. Fetched once per build, however many cards ask.
+ */
+export function getCompanyWhatsappUrl(): Promise<string | null> {
+  companyWhatsapp ??= getCustomerServicePage().then(customerWhatsappUrl);
+  return companyWhatsapp;
+}
+
 export async function getForeignBuyerPage(): Promise<ForeignBuyerPage | null> {
   return strapiFetch<ForeignBuyerPage>("foreign-buyer-page", {
     "populate[heroImage]": "true",

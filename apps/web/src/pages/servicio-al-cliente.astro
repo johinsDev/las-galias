@@ -4,7 +4,7 @@ import { Clock, House, Mail, MapPin, Phone, SquareArrowOutUpRight } from "lucide
 import CmsImage from "@/components/CmsImage.astro";
 import WhatsAppIcon from "@/components/WhatsAppIcon.astro";
 import Base from "@/layouts/Base.astro";
-import { getCustomerServicePage, mediaUrl } from "@/lib/strapi";
+import { customerWhatsappUrl, getCustomerServicePage, mediaUrl } from "@/lib/strapi";
 
 const page = await getCustomerServicePage();
 
@@ -31,11 +31,7 @@ const postSaleExternal = Boolean(page?.postSaleUrl);
 const offices = (page?.offices ?? []).filter((office) => office.city);
 
 const digits = (value: string) => value.replace(/\D/g, "");
-const whatsappHref =
-  page?.whatsappUrl ||
-  (page?.whatsappNumber
-    ? `https://wa.me/${digits(page.whatsappNumber).replace(/^(?=3)/, "57")}`
-    : null);
+const whatsappHref = customerWhatsappUrl(page);
 
 const channels = [
   page?.whatsappNumber && {

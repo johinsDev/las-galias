@@ -6,7 +6,7 @@ import { getImage } from "astro:assets";
 import CmsImage from "@/components/CmsImage.astro";
 import Price from "@/components/Price.astro";
 import PriceSwitcher from "@/components/PriceSwitcher.astro";
-import { mediaUrl } from "@/lib/strapi";
+import { getCompanyWhatsappUrl, mediaUrl } from "@/lib/strapi";
 
 interface Props {
   project: Project;
@@ -109,13 +109,15 @@ const bedChip = range(beds, "hab");
  * The footer: "Ver proyecto" beside "WhatsApp" — a plain button, glyph and
  * word, that announces the project on `document` and lets the WhatsAppGate
  * island (mounted once per page, hydrated on demand) ask for a name and a phone
- * before opening the chat. A project with no sales-room WhatsApp has nothing to
- * open, so it only shows "Ver proyecto". The label is the brand name and not a
- * sentence: two actions share one row, and "Habla con un asesor" wrapped or
+ * before opening the chat. The chat is the sales room's WhatsApp, or the
+ * company's (customer-service page) when the project has none — which is every
+ * project loaded from the sheet, so without the fallback no card had a second
+ * button. Neither set, and it only shows "Ver proyecto". The label is the brand
+ * name and not a sentence: two actions share one row, and "Habla con un asesor"
  * squeezed "Ver proyecto" out of it.
  */
 const projectHref = `/proyectos-de-vivienda/${project.slug}`;
-const whatsappHref = project.salesRoom?.whatsappUrl ?? null;
+const whatsappHref = project.salesRoom?.whatsappUrl || (await getCompanyWhatsappUrl());
 const whatsappLogo = project.logo?.url
   ? (await getImage({ src: mediaUrl(project.logo.url), width: 128, height: 128, quality: 80 })).src
   : null;
