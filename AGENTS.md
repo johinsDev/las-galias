@@ -3,7 +3,11 @@
 Website for the Las Galias construction company. Turborepo + bun workspaces.
 
 - `apps/web` — public site. **Astro** (static SSG) + Tailwind CSS v4 (via
-  `@tailwindcss/vite`) + Partytown for third-party scripts. Deployed to Vercel with
+  `@tailwindcss/vite`). Google Tag Manager (`PUBLIC_GTM_ID`, set in Vercel) is
+  injected by `Base.astro` deferred to the first gesture or 4 s after load, NOT
+  through Partytown: the container loads the Facebook pixel and a push script
+  whose origins reject the worker's CORS fetch, so in a worker they never ran.
+  Deployed to Vercel with
   `@astrojs/vercel` (needed even though the site is static: it emits the CMS
   redirects as real 301s and enables Vercel Image Optimization). Near-zero JS: the
   React islands (`src/islands/`, `client:visible`) are LeadForm, the three
