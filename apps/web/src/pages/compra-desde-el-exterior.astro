@@ -6,6 +6,7 @@ import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import LeadForm from "@/islands/LeadForm";
+import WhatsAppGate from "@/islands/WhatsAppGate";
 import Base from "@/layouts/Base.astro";
 import { getExchangeRate, getFaqs, getForeignBuyerPage, getProjects, mediaUrl } from "@/lib/strapi";
 
@@ -192,9 +193,10 @@ const PRIMARY =
             id="exterior-grid"
           >
             {featured.map((project) => (
-              <ProjectCard project={project} rates={rates} cta="asesor" />
+              <ProjectCard project={project} rates={rates} />
             ))}
           </div>
+          <WhatsAppGate client:on="lg:open-whatsapp" />
           <p class="text-steel mx-auto mt-7 max-w-[760px] text-center text-xs leading-[18px]">
             {priceDisclaimer}
           </p>

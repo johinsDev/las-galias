@@ -15,8 +15,6 @@ interface Props {
    * landing asks for it — the home prices in pesos, full stop.
    */
   rates?: { copPerUsd: number; copPerEur: number } | null;
-  /** WhatsApp on the home, "Habla con un asesor" on the foreign-buyer page. */
-  cta?: "whatsapp" | "asesor";
   /**
    * "Proyectos similares" on the project page: no action button, the project
    * logo on the photo and that frame's smaller type (Figma node 2710:5505).
@@ -52,7 +50,6 @@ interface Props {
 const {
   project,
   rates = null,
-  cta = "whatsapp",
   compact = false,
   priority = false,
   eager = false,
@@ -109,13 +106,13 @@ const areaChip = range(areas, "m²", compact ? 2 : undefined);
 const bedChip = range(beds, "hab");
 
 /**
- * The footer: "Ver proyecto" beside the contact action. On the home the action
- * is "WhatsApp" — a plain button that announces the project on `document` and
- * lets the WhatsAppGate island (mounted once per page, hydrated on demand) ask
- * for a name and a phone before opening the chat. A project with no sales-room
- * WhatsApp has nothing to open, so it only shows "Ver proyecto". The
- * foreign-buyer page has its own lead form (`#datos`) and an advisor is one
- * step away through it, so there the action scrolls to the form instead.
+ * The footer: "Ver proyecto" beside "WhatsApp" — a plain button, glyph and
+ * word, that announces the project on `document` and lets the WhatsAppGate
+ * island (mounted once per page, hydrated on demand) ask for a name and a phone
+ * before opening the chat. A project with no sales-room WhatsApp has nothing to
+ * open, so it only shows "Ver proyecto". The label is the brand name and not a
+ * sentence: two actions share one row, and "Habla con un asesor" wrapped or
+ * squeezed "Ver proyecto" out of it.
  */
 const projectHref = `/proyectos-de-vivienda/${project.slug}`;
 const whatsappHref = project.salesRoom?.whatsappUrl ?? null;
@@ -123,6 +120,8 @@ const whatsappLogo = project.logo?.url
   ? (await getImage({ src: mediaUrl(project.logo.url), width: 128, height: 128, quality: 80 })).src
   : null;
 import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
+
+import WhatsAppIcon from "@/components/WhatsAppIcon.astro";
 
 const BADGE =
   "rounded-[6px] px-2.5 py-[5px] text-[11px] leading-[16.5px] font-bold tracking-[0.33px] uppercase";
@@ -382,24 +381,19 @@ const CHIP =
           <a href={projectHref} class="btn btn-outline relative z-10 flex-1 py-2.5 text-sm">
             Ver proyecto
           </a>
-          {cta === "asesor" ? (
-            <a href="#datos" class="btn btn-primary relative z-10 flex-1 py-2.5 text-sm">
-              Habla con un asesor
-            </a>
-          ) : (
-            whatsappHref && (
-              <button
-                type="button"
-                class="btn btn-primary relative z-10 flex-1 py-2.5 text-sm"
-                data-whatsapp-open
-                data-project-name={project.name}
-                data-project-id={project.documentId}
-                data-whatsapp-url={whatsappHref}
-                data-project-logo={whatsappLogo}
-              >
-                WhatsApp
-              </button>
-            )
+          {whatsappHref && (
+            <button
+              type="button"
+              class="btn btn-primary relative z-10 flex-1 py-2.5 text-sm"
+              data-whatsapp-open
+              data-project-name={project.name}
+              data-project-id={project.documentId}
+              data-whatsapp-url={whatsappHref}
+              data-project-logo={whatsappLogo}
+            >
+              <WhatsAppIcon size={18} />
+              WhatsApp
+            </button>
           )}
         </div>
       </div>
