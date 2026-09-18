@@ -134,11 +134,8 @@ const CHIP =
     {
       images.length > 0 ? (
         <div class="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto" data-card-rail>
-          {images.map((media, index) => (
-            <div
-              class:list={["h-full w-full shrink-0 snap-center", index === 0 && "vt-hero"]}
-              transition:name={index === 0 ? `project-hero-${project.slug}` : undefined}
-            >
+          {images.map((media, index) => {
+            const photo = (
               <CmsImage
                 src={media.url}
                 alt={media.alternativeText ?? project.name}
@@ -150,8 +147,24 @@ const CHIP =
                 fetchpriority={priority && index === 0 ? "high" : undefined}
                 class="h-full w-full object-cover"
               />
-            </div>
-          ))}
+            );
+            /* Only the first photo of a full card morphs into the project page's
+               hero. Two separate branches on purpose: `transition:name={undefined}`
+               still gives the element an auto name, and with one every photo of
+               every card flew across the screen on the way back. Compact cards
+               ("Proyectos similares" on the project page) get no name either —
+               they would morph into the listing's cards behind the hero. */
+            return index === 0 && !compact ? (
+              <div
+                class="vt-hero h-full w-full shrink-0 snap-center"
+                transition:name={`project-hero-${project.slug}`}
+              >
+                {photo}
+              </div>
+            ) : (
+              <div class="h-full w-full shrink-0 snap-center">{photo}</div>
+            );
+          })}
         </div>
       ) : (
         <div class="text-ink-faint flex h-full w-full flex-col items-center justify-center gap-2">
