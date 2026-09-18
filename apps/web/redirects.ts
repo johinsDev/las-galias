@@ -28,6 +28,11 @@ type AstroRedirects = Record<string, { destination: string; status: 301 | 302 }>
 const ROUTE_REDIRECTS: AstroRedirects = {
   "/calculadoras": { destination: "/simuladores", status: 301 },
   "/contacto": { destination: "/servicio-al-cliente", status: 301 },
+  // The catalogue moved to /proyectos-de-vivienda (the keyword the client
+  // wants ranked). The `[slug]` pattern makes Astro emit one 301 per project
+  // page, so links shared before the rename keep landing on the right flat.
+  "/proyectos": { destination: "/proyectos-de-vivienda", status: 301 },
+  "/proyectos/[slug]": { destination: "/proyectos-de-vivienda/[slug]", status: 301 },
 };
 
 export async function fetchRedirects(): Promise<AstroRedirects> {

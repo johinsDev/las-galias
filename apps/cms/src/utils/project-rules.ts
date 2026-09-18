@@ -7,7 +7,7 @@ import { extractRelationIds } from "./relations";
 
 export const PROJECT_UID = "api::project.project";
 const REDIRECT_UID = "api::redirect.redirect";
-const PROJECTS_HOME = "/proyectos";
+const PROJECTS_HOME = "/proyectos-de-vivienda";
 
 interface DocParams {
   documentId?: string;

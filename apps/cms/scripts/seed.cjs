@@ -342,9 +342,9 @@ async function main() {
 
     /* home banners */
     for (const [i, spec] of [
-      { title: "Vive donde florece la ciudad", link: "/proyectos", palette: "forest" },
-      { title: "Entrega inmediata en Medellín", link: "/proyectos/balcones-de-provenza", palette: "clay" },
-      { title: "Nuevo lanzamiento en Bogotá", link: "/proyectos/mirador-del-parque", palette: "sky" },
+      { title: "Vive donde florece la ciudad", link: "/proyectos-de-vivienda", palette: "forest" },
+      { title: "Entrega inmediata en Medellín", link: "/proyectos-de-vivienda/balcones-de-provenza", palette: "clay" },
+      { title: "Nuevo lanzamiento en Bogotá", link: "/proyectos-de-vivienda/mirador-del-parque", palette: "sky" },
     ].entries()) {
       const desktopImage = await uploadSvg(`banner-${i + 1}-desktop`, {
         width: 1920,
@@ -521,7 +521,7 @@ async function main() {
     }
     log("Blog posts");
 
-    /* faqs — the accordion on /proyectos (general) and on the foreign-buyer
+    /* faqs — the accordion on /proyectos-de-vivienda (general) and on the foreign-buyer
        landing (exterior). Same content type, scoped by `audience`. */
     // El tercer valor es el tema: agrupa las preguntas en las pestañas de la
     // página de PQR. Las de exterior no lo llevan, que ahí no hay pestañas.

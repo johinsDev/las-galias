@@ -10,7 +10,7 @@
  *   node scripts/purge-demo.cjs --yes      # borra de verdad
  *
  * OJO: borrar un proyecto dispara el middleware que crea un `redirect`
- * automático hacia /proyectos. Después de correr esto, revisa «Redirecciones»
+ * automático hacia /proyectos-de-vivienda. Después de correr esto, revisa «Redirecciones»
  * y borra las que apunten a slugs de demo.
  */
 const path = require("node:path");

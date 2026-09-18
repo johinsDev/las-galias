@@ -229,7 +229,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     active: { label: "Activo" },
   },
   "api::redirect.redirect": {
-    from: { label: "Desde", description: "Ruta vieja, por ejemplo /proyectos/nombre-anterior." },
+    from: {
+      label: "Desde",
+      description: "Ruta vieja, por ejemplo /proyectos-de-vivienda/nombre-anterior.",
+    },
     to: { label: "Hacia" },
     permanent: { label: "Permanente (301)" },
     enabled: { label: "Activa" },
@@ -393,7 +396,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     sectionHero: {
       label: "Portada",
       description:
-        "La franja roja de arriba. El buscador manda a /proyectos; aquí solo se escribe lo que dice.",
+        "La franja roja de arriba. El buscador manda a /proyectos-de-vivienda; aquí solo se escribe lo que dice.",
     },
     heroEyebrow: { label: "Antetítulo" },
     heroTitle: { label: "Título principal" },

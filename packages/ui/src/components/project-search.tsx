@@ -120,7 +120,7 @@ function Key({ children }: { children: React.ReactNode }) {
  * Command palette for the header's magnifier: type anything and jump to a
  * project.
  *
- * The button used to be a link to /proyectos, which meant "search" was really
+ * The button used to be a link to /proyectos-de-vivienda, which meant "search" was really
  * "go to the list and filter there". This searches the whole catalogue in place,
  * opens with ⌘K / Ctrl+K, and navigating is a plain link so it works before this
  * island hydrates too.
@@ -181,7 +181,7 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
               // Navegación explícita: Base UI se queda con el clic del enlace
               // para cerrar el panel, así que el href por sí solo no bastaba —
               // y con el teclado nunca hubo enlace que seguir.
-              if (project) window.location.assign(`/proyectos/${project.slug}`);
+              if (project) window.location.assign(`/proyectos-de-vivienda/${project.slug}`);
             }}
           >
             <div className="flex items-center gap-2 p-3">
@@ -241,7 +241,7 @@ export function ProjectSearch({ projects }: ProjectSearchProps) {
                       // de verdad movería el texto dos píxeles al resaltar.
                       "before:bg-brand before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:opacity-0 data-highlighted:before:opacity-100",
                     )}
-                    render={<a href={`/proyectos/${project.slug}`} />}
+                    render={<a href={`/proyectos-de-vivienda/${project.slug}`} />}
                   >
                     <span className="min-w-0">
                       <span className="text-body-sm text-ink block truncate font-semibold">

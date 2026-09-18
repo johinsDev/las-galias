@@ -59,7 +59,7 @@ Enforced three times: lefthook pre-commit, a Claude Code pre-push hook, and CI.
 | `amenity`                            | Reusable across projects (m2m)                                                               |
 | `post`, `home-banner`                | Blog + home banners with separate desktop/mobile images                                      |
 | `lead`                               | Form submissions from PDPs/contact (public create-only)                                      |
-| `redirect`                           | Admin-only; auto-created on project unpublish (→ `/proyectos`)                               |
+| `redirect`                           | Admin-only; auto-created on project unpublish (→ `/proyectos-de-vivienda`)                   |
 | `calculator-config`, `exchange-rate` | Singles, admin-only; rates refreshed daily by cron (TRM + ECB)                               |
 
 Business rules live as document-service middlewares in `apps/cms/src/index.ts`:

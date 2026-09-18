@@ -74,10 +74,13 @@ const action =
       <a href="/" class="hover:text-graphite">Home</a>
       <span aria-hidden="true">›</span>
       {
-        /* Con la ciudad puesta: el filtro de /proyectos ya lee `?ciudad=`, así que
+        /* Con la ciudad puesta: el filtro de /proyectos-de-vivienda ya lee `?ciudad=`, así que
           la migaja lleva a los proyectos de esa ciudad y no a la lista entera. */
       }
-      <a href={`/proyectos?ciudad=${project.city?.slug ?? ""}`} class="hover:text-graphite">
+      <a
+        href={`/proyectos-de-vivienda?ciudad=${project.city?.slug ?? ""}`}
+        class="hover:text-graphite"
+      >
         {project.city?.name}
       </a>
       <span aria-hidden="true">›</span>

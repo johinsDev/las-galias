@@ -101,7 +101,8 @@ const bedChip = range(beds, "hab");
 const whatsappHref = project.salesRoom?.whatsappUrl;
 const ctaLabel =
   cta === "asesor" ? "Habla con un asesor" : whatsappHref ? "WhatsApp" : "Ver proyecto";
-const ctaHref = whatsappHref ?? (cta === "asesor" ? "#datos" : `/proyectos/${project.slug}`);
+const ctaHref =
+  whatsappHref ?? (cta === "asesor" ? "#datos" : `/proyectos-de-vivienda/${project.slug}`);
 import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
 const BADGE =
@@ -254,7 +255,7 @@ const CHIP =
     compact ? (
       <div class="relative flex flex-1 flex-col p-3.5">
         <a
-          href={`/proyectos/${project.slug}`}
+          href={`/proyectos-de-vivienda/${project.slug}`}
           class="absolute inset-0 z-0"
           aria-label={`Ver ${project.name}`}
         />
@@ -295,7 +296,7 @@ const CHIP =
     ) : (
       <div class="relative flex flex-1 flex-col p-[18px]">
         <a
-          href={`/proyectos/${project.slug}`}
+          href={`/proyectos-de-vivienda/${project.slug}`}
           class="absolute inset-0 z-0"
           aria-label={`Ver ${project.name}`}
         />

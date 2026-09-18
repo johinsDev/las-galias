@@ -12,7 +12,8 @@
         "src/pages/**/*.{astro,ts}",
         "src/scripts/**/*.ts",
         "src/islands/**/*.tsx",
-        "src/directives/*.ts"
+        "src/directives/*.ts",
+        "scripts/*.mjs"
       ],
       "project": ["src/**/*.{astro,ts,tsx}"],
       "ignoreDependencies": ["tailwindcss"]

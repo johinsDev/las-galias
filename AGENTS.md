@@ -55,6 +55,12 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   se abra al montar. (3) Los grises `--steel`, `--ink-faint` y `--ink-muted`
   están en el valor más claro que pasa 4,5:1 sobre blanco, fog, cloud y
   surface-2; no se pueden aclarar sin perder accesibilidad.
+- Route renames live in `ROUTE_REDIRECTS` (`apps/web/redirects.ts`), never only
+  in the CMS. The catalogue is `/proyectos-de-vivienda` (+ `/[slug]`); the old
+  `/proyectos` URLs 301 there. The Vercel adapter emits each redirect as a regex
+  that rejects a trailing slash, and the site's canonicals carry one, so the web
+  `build` script runs `scripts/vercel-redirect-slashes.mjs` right after
+  `astro build` to loosen them — without it `/proyectos/<slug>/` is a 404.
 - Git hooks: **lefthook** (pre-commit: prettier + eslint on staged files;
   commit-msg: commitlint / Conventional Commits). Installed on `bun install`.
 - Design tokens live only in `packages/ui/src/styles/globals.css` (Tailwind v4
@@ -121,7 +127,7 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - `project` has `stage: expectation | sale`. Expectation publishes with fewer
   fields (the validation lives in a document-service middleware on publish).
 - A project's `recommended` list must belong to the **same city** (middleware).
-- Unpublishing a project creates an automatic `redirect` to `/proyectos`.
+- Unpublishing a project creates an automatic `redirect` to `/proyectos-de-vivienda`.
 - `point-of-interest` entries belong to a `macroproject`; `amenity` entries are
   reusable across projects (m2m).
 - Publishing/unpublishing public content triggers (debounced) the Vercel Deploy
