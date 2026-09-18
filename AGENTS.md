@@ -55,6 +55,12 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   se abra al montar. (3) Los grises `--steel`, `--ink-faint` y `--ink-muted`
   están en el valor más claro que pasa 4,5:1 sobre blanco, fog, cloud y
   surface-2; no se pueden aclarar sin perder accesibilidad.
+- The catalogue has one prerendered page per city at
+  `/proyectos-de-vivienda/<ciudad>` (`ProjectsListing.astro`), sharing the
+  dynamic segment with the project pages: `[slug].astro` builds both from
+  `getStaticPaths` and tells them apart by the `kind` prop, and fails the build
+  if a project slug collides with a city slug. On the catalogue the city pills
+  are links between those pages; on the home they still filter in place.
 - Route renames live in `ROUTE_REDIRECTS` (`apps/web/redirects.ts`), never only
   in the CMS. The catalogue is `/proyectos-de-vivienda` (+ `/[slug]`); the old
   `/proyectos` URLs 301 there. The Vercel adapter emits each redirect as a regex

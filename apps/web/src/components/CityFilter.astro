@@ -2,26 +2,55 @@
 import type { City } from "@lasgalias/schemas";
 
 /**
- * The city pills above a project grid. Lived twice — once in the home, once in
- * /proyectos-de-vivienda — with two slightly different implementations; the redesign gave
- * them the same look, so they became one component.
+ * The city pills above a project grid, in two flavours.
  *
- * Filtering is client-side because every project is already in the HTML: the
- * site is static, so a server round trip would only fetch a page it already
- * has. `?ciudad=<slug>` preselects one, which is what makes the footer's city
- * links land somewhere useful.
+ * On the home they filter in place (`target`): every project is already in the
+ * HTML, so a round trip would only fetch a page the browser has. On the
+ * catalogue they are links (`hrefBase`): each city is its own prerendered page
+ * at /proyectos-de-vivienda/<ciudad>, so the URL changes with the pill and the
+ * page can be ranked and shared. The old `?ciudad=<slug>` still lands on the
+ * right page: the script forwards it.
  */
 interface Props {
   cities: City[];
-  /** Selector of the grid holding the `[data-city]` cards. */
-  target: string;
+  /** In-place mode: selector of the grid holding the `[data-city]` cards. */
+  target?: string;
+  /** Link mode: the pills go to `${hrefBase}/<slug>`, "Todos" to `hrefBase`. */
+  hrefBase?: string;
+  /** Link mode: the city this page is filtered to. */
+  active?: string | null;
 }
 
-const { cities, target } = Astro.props;
+const { cities, target, hrefBase, active = null } = Astro.props;
+const pill = (on: boolean) => ["pill", on ? "pill-on" : "pill-off"];
 ---
 
 {
-  cities.length > 1 && (
+  cities.length > 1 && hrefBase && (
+    <nav
+      class="mt-8 flex flex-wrap justify-center gap-2"
+      aria-label="Proyectos por ciudad"
+      data-city-links={hrefBase}
+      data-reveal
+    >
+      <a href={hrefBase} class:list={pill(!active)} aria-current={!active ? "page" : undefined}>
+        Todos
+      </a>
+      {cities.map((city) => (
+        <a
+          href={`${hrefBase}/${city.slug}`}
+          class:list={pill(active === city.slug)}
+          aria-current={active === city.slug ? "page" : undefined}
+        >
+          {city.name}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+{
+  cities.length > 1 && !hrefBase && (
     <div
       class="mt-8 flex flex-wrap justify-center gap-2"
       data-city-filter
@@ -56,7 +85,19 @@ const { cities, target } = Astro.props;
     });
   }
 
+  /** Links shared before the city pages existed: /…?ciudad=cali → /…/cali. */
+  function forwardLegacyQuery() {
+    const nav = document.querySelector<HTMLElement>("[data-city-links]");
+    const wanted = new URLSearchParams(location.search).get("ciudad");
+    if (!nav || !wanted) return;
+    const link = nav.querySelector<HTMLAnchorElement>(
+      `a[href="${nav.dataset.cityLinks}/${wanted}"]`,
+    );
+    if (link) location.replace(link.href);
+  }
+
   function setupCityFilter() {
+    forwardLegacyQuery();
     document.querySelectorAll<HTMLElement>("[data-city-filter]").forEach((bar) => {
       // A city that has no pill would hide every card and leave the grid empty
       // with "Todos" still lit, so an unknown value falls back to no filter.
