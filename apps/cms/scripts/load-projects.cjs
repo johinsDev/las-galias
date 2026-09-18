@@ -486,13 +486,13 @@ async function upsertCities() {
 }
 
 /**
- * Borrar un proyecto deja una redirección automática de su slug a /proyectos,
+ * Borrar un proyecto deja una redirección automática de su slug a /proyectos-de-vivienda,
  * y el middleware solo la apaga en la acción «publish», que la API REST no
  * dispara. Sin esto, recargar dejaría cada ficha nueva tapada por su propia
  * redirección.
  */
 async function enableSlug(slug) {
-  const from = encodeURIComponent(`/proyectos/${slug}`);
+  const from = encodeURIComponent(`/proyectos-de-vivienda/${slug}`);
   const json = await api(
     `redirects?filters[from][$eq]=${from}&filters[source][$eq]=auto-unpublish&filters[enabled][$eq]=true`,
   );

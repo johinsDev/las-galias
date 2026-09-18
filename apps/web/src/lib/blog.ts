@@ -116,7 +116,7 @@ const CTAS: Record<PostCategory, SidebarCta> = {
     title: "Mira los proyectos disponibles",
     body: "Vivienda nueva en Bogotá, Cali, Manizales y Pereira.",
     label: "Ver proyectos",
-    href: "/proyectos",
+    href: "/proyectos-de-vivienda",
   },
   inversion: {
     title: "Invierte desde donde estés",
@@ -128,13 +128,13 @@ const CTAS: Record<PostCategory, SidebarCta> = {
     title: "Conoce el proyecto por dentro",
     body: "Planos, zonas comunes y avance de obra, en cada ficha.",
     label: "Ver proyectos",
-    href: "/proyectos",
+    href: "/proyectos-de-vivienda",
   },
   decoracion: {
     title: "Encuentra tu próximo hogar",
     body: "Explora las tipologías y los planos de cada proyecto.",
     label: "Ver proyectos",
-    href: "/proyectos",
+    href: "/proyectos-de-vivienda",
   },
 };
 

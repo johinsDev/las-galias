@@ -235,7 +235,7 @@ export async function buildContext(strapi: Core.Strapi, config: FaqBotConfig): P
         project.specSheet?.deliveryYear ? `entrega ${project.specSheet.deliveryYear}` : null,
       ].filter(Boolean);
 
-      return `- ${project.name} (/proyectos/${project.slug}): ${facts.join(" · ")}`;
+      return `- ${project.name} (/proyectos-de-vivienda/${project.slug}): ${facts.join(" · ")}`;
     });
     parts.push(
       `## Proyectos publicados hoy\n${lines.join("\n")}\n` +

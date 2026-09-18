@@ -93,7 +93,7 @@ const cities = [
           cities.map((city) => (
             <li>
               <a
-                href={`/proyectos?ciudad=${city.slug}`}
+                href={`/proyectos-de-vivienda?ciudad=${city.slug}`}
                 class="text-body-sm text-white transition-all hover:underline"
               >
                 {city.name}
@@ -102,7 +102,10 @@ const cities = [
           ))
         }
         <li>
-          <a href="/proyectos" class="text-body-sm text-white transition-all hover:underline">
+          <a
+            href="/proyectos-de-vivienda"
+            class="text-body-sm text-white transition-all hover:underline"
+          >
             Ver todos
           </a>
         </li>

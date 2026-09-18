@@ -11,10 +11,10 @@ import { SIMULATORS } from "@/lib/simulator-pages";
  */
 const links: { href: string; label: string; children?: { href: string; label: string }[] }[] = [
   {
-    href: "/proyectos",
+    href: "/proyectos-de-vivienda",
     label: "Proyectos",
     children: [
-      { href: "/proyectos", label: "Todos los proyectos" },
+      { href: "/proyectos-de-vivienda", label: "Todos los proyectos" },
       { href: "/macroproyectos", label: "Macroproyectos" },
     ],
   },
@@ -35,7 +35,7 @@ const links: { href: string; label: string; children?: { href: string; label: st
 const current = Astro.url.pathname;
 
 /**
- * Segment-boundary match. A plain `startsWith` marked /proyectos as active on
+ * Segment-boundary match. A plain `startsWith` marked /proyectos-de-vivienda as active on
  * /proyectos-algo, and would light up every link if "/" were ever in the list.
  */
 const isActive = (href: string) => current === href || current.startsWith(`${href}/`);
