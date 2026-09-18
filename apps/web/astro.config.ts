@@ -69,6 +69,7 @@ export default defineConfig({
         "astro:config:setup": ({ addClientDirective }) => {
           addClientDirective({ name: "search", entrypoint: "./src/directives/search.ts" });
           addClientDirective({ name: "interact", entrypoint: "./src/directives/interact.ts" });
+          addClientDirective({ name: "on", entrypoint: "./src/directives/on.ts" });
         },
       },
     },

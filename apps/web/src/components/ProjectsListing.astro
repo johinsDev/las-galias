@@ -5,6 +5,7 @@ import CityFilter from "@/components/CityFilter.astro";
 import FaqAccordion from "@/components/FaqAccordion.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import LeadForm from "@/islands/LeadForm";
+import WhatsAppGate from "@/islands/WhatsAppGate";
 import Base from "@/layouts/Base.astro";
 
 /**
@@ -47,6 +48,7 @@ const intro = city
 
   <section class="container py-10 md:py-14">
     <CityFilter cities={cities} hrefBase="/proyectos-de-vivienda" active={city?.slug} />
+    <WhatsAppGate client:on="lg:open-whatsapp" />
 
     {
       projects.length > 0 ? (
