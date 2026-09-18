@@ -23,18 +23,23 @@ const photos = [hero, ...(project.gallery ?? [])].filter(
 );
 // The mosaic shows the hero plus the next two; every photo opens the viewer.
 const secondary = photos.slice(1, 3);
-const hasMap = Boolean(project.location?.lat && project.location?.lng);
+const hasLocation = Boolean(
+  (project.location?.lat && project.location?.lng) || project.location?.address,
+);
 const brochureUrl = project.brochure?.url ? mediaUrl(project.brochure.url) : null;
 
-// Tabs only earn their place when there is more than one thing to switch to.
-const tabs = [
-  { id: "galeria", label: "Galería", enabled: Boolean(hero?.url) },
-  { id: "mapa", label: "Mapa", enabled: hasMap },
-].filter((tab) => tab.enabled);
-
-const mapSrc = hasMap
-  ? `https://www.google.com/maps?q=${project.location!.lat},${project.location!.lng}&z=15&output=embed`
-  : null;
+/**
+ * The chips under the photos are anchors into the page (Figma 2710:4758), not
+ * tabs: they used to swap the map into the hero, so "Mapa" hid the photos and
+ * loaded Google's embed up here while the page already had its own map lower
+ * down. Now each one glides to its section — the 3D walk-through and the
+ * location block live in ProjectContent — and the section ids are the contract.
+ */
+const chips = [
+  { href: "#galeria", label: "Galería", enabled: Boolean(hero?.url) },
+  { href: "#recorrido", label: "Recorrido 3D", enabled: true },
+  { href: "#ubicacion", label: "Mapa", enabled: hasLocation },
+].filter((chip) => chip.enabled);
 
 // The desktop hero is a different photo (art direction), so it goes through the
 // optimizer by hand: `<Image>` cannot emit a `<source media>`. It used to point
@@ -54,9 +59,9 @@ const desktopHero =
 
 {
   hero?.url && (
-    <section data-gallery>
+    <section id="galeria" class="scroll-mt-28" data-gallery>
       <div class="container-bleed py-6">
-        <div data-panel="galeria">
+        <div>
           <div class="grid gap-4 md:grid-cols-[1113fr_567fr] md:gap-8">
             {/* transition:name must stay in sync with ProjectCard.astro — it is what
                 makes the card→PDP hero morph work under View Transitions. */}
@@ -117,22 +122,6 @@ const desktopHero =
             )}
           </div>
         </div>
-
-        {mapSrc && (
-          <div data-panel="mapa" hidden>
-            <div class="bg-cloud aspect-[16/9] overflow-hidden rounded-3xl md:aspect-[1712/779] md:rounded-[48px]">
-              {/* `data-src`, not `src`: this panel starts hidden, and a hidden
-                iframe still downloads Google's whole map bundle. It is swapped
-                in the first time the tab is opened. */}
-              <iframe
-                data-src={mapSrc}
-                title={`Ubicación de ${project.name}`}
-                loading="lazy"
-                class="h-full w-full border-0"
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* The viewer: the home's carousel, full screen, opening on the photo that
@@ -169,24 +158,20 @@ const desktopHero =
         </div>
       </dialog>
 
-      {(tabs.length > 1 || brochureUrl) && (
+      {(chips.length > 1 || brochureUrl) && (
         <div class="container-bleed pb-6">
-          <div class="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0">
-            <div class="flex gap-2" role="tablist" aria-label="Medios del proyecto">
-              {tabs.map((tab, i) => (
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={i === 0 ? "true" : "false"}
-                  data-tab={tab.id}
-                  class:list={["pdp-pill", i === 0 && "pdp-pill-on"]}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            {/* The brochure is a download, not a panel: it never becomes the
-                selected tab, it just sits in the same row as the design draws it. */}
+          <nav
+            class="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0"
+            aria-label="Medios del proyecto"
+            data-media-nav
+          >
+            {chips.map((chip, i) => (
+              <a href={chip.href} class:list={["pdp-pill shrink-0", i === 0 && "pdp-pill-on"]}>
+                {chip.label}
+              </a>
+            ))}
+            {/* The brochure is a download, not a place on the page: it opens in a
+                new tab but sits in the same row as the design draws it. */}
             {brochureUrl && (
               <a
                 href={brochureUrl}
@@ -197,7 +182,7 @@ const desktopHero =
                 Brochure
               </a>
             )}
-          </div>
+          </nav>
         </div>
       )}
     </section>
@@ -211,38 +196,7 @@ const desktopHero =
 </style>
 
 <script>
-  // Plain DOM: the panels are static markup, so an island here would ship React
-  // just to toggle `hidden`.
-  function setupGalleryTabs() {
-    document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((root) => {
-      const buttons = root.querySelectorAll<HTMLButtonElement>("[data-tab]");
-      buttons.forEach((button) => {
-        // `astro:page-load` also fires on first load — guard against double binding.
-        if (button.dataset.bound) return;
-        button.dataset.bound = "1";
-
-        button.addEventListener("click", () => {
-          const target = button.dataset.tab;
-          buttons.forEach((b) => {
-            const on = b === button;
-            b.setAttribute("aria-selected", String(on));
-            b.classList.toggle("pdp-pill-on", on);
-          });
-          root.querySelectorAll<HTMLElement>("[data-panel]").forEach((panel) => {
-            const on = panel.dataset.panel === target;
-            panel.hidden = !on;
-            if (!on) return;
-            // First reveal pays for the embed; afterwards `src` is already set.
-            panel.querySelectorAll<HTMLIFrameElement>("iframe[data-src]").forEach((frame) => {
-              frame.src = frame.dataset.src!;
-              delete frame.dataset.src;
-            });
-          });
-        });
-      });
-    });
-  }
-
+  // Plain DOM: an island here would ship React just to open a <dialog>.
   /** Photo viewer: open on the clicked photo, close on ✕, Esc or the backdrop. */
   function setupLightbox() {
     document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((root) => {
@@ -279,7 +233,6 @@ const desktopHero =
   }
 
   function setupGallery() {
-    setupGalleryTabs();
     setupLightbox();
   }
 
