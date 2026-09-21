@@ -21,8 +21,12 @@ const ACTION =
   "inline-flex h-[43.6px] flex-1 items-center justify-center rounded-full px-5 text-[13px] leading-[19px] font-semibold transition-colors";
 ---
 
-{/* Sin `sticky`: acompañar el scroll varias pantallas cansaba más que ayudaba. */}
-<aside>
+{
+  /* Sticky desde `lg`. La card del formulario es más alta que lo que un portátil
+     deja libre bajo el header, así que `scripts/sticky-aside` mueve el `top`
+     con el scroll para que el botón de enviar llegue a verse. */
+}
+<aside data-sticky-aside class="lg:sticky lg:top-24 lg:self-start xl:top-28">
   <div class="space-y-4">
     <div class:list={[CARD, "scroll-mt-28"]} id="lead">
       <h2 class={TITLE}>¿Te interesa este proyecto?</h2>
@@ -66,3 +70,10 @@ const ACTION =
     }
   </div>
 </aside>
+
+<script>
+  import { initStickyAside } from "@/scripts/sticky-aside";
+
+  initStickyAside();
+  document.addEventListener("astro:page-load", initStickyAside);
+</script>
