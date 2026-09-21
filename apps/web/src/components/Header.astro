@@ -5,7 +5,7 @@ import { getProjects } from "@/lib/strapi";
 import { SIMULATORS } from "@/lib/simulator-pages";
 
 /**
- * The six items of the approved menu, in order. Two of them open a panel; the
+ * The seven items of the approved menu, in order. Two of them open a panel; the
  * currency selector that used to sit on the right is gone — design comment #114
  * moved it next to the price, which is where ProjectCard renders it now.
  */
@@ -26,6 +26,7 @@ const links: { href: string; label: string; children?: { href: string; label: st
       ...SIMULATORS.map((s) => ({ href: `/simuladores/${s.slug}`, label: s.short })),
     ],
   },
+  { href: "/locales", label: "Locales" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/blog", label: "Blog" },
   { href: "/servicio-al-cliente", label: "Servicio al cliente" },
@@ -69,9 +70,9 @@ const searchableProjects = (await getProjects()).map((project) => ({
 {
   minimal && (
     <header transition:animate="none" class="bg-brand sticky top-0 z-50 text-white">
-      <div class="container-bleed flex h-[72px] items-center">
+      <div class="container-bleed flex h-[68px] items-center xl:h-24">
         <a href="/" class="flex items-center" aria-label="Las Galias Constructora — inicio">
-          <Logo variant="light" height={30} />
+          <Logo variant="light" height={32} heightXl={43} />
         </a>
       </div>
     </header>
@@ -89,20 +90,28 @@ const searchableProjects = (await getProjects()).map((project) => ({
       class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
       data-nav-open="false"
     >
-      <div class="container-bleed flex h-[72px] items-center justify-between gap-6">
+      {/* Figma node 3286:1285: the bar is 68px on a phone and 96px with the full
+      nav, and the wordmark 32px and 43px tall. */}
+      <div class="container-bleed flex h-[68px] items-center justify-between gap-6 xl:h-24">
         {/* Logo and nav travel together on the left; only the actions go right. */}
-        <div class="flex items-center gap-10">
+        <div class="flex items-center gap-7">
           <a
             href="/"
             class="flex items-center gap-2.5"
             aria-label="Las Galias Constructora — inicio"
           >
-            <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
+            <Logo
+              variant="light"
+              height={32}
+              heightXl={43}
+              class="group-data-[nav-open=true]/header:hidden"
+            />
             {/* On a white bar the white artwork would vanish, so the open menu
             shows the same wordmark in brand red. */}
             <Logo
               variant="brand"
-              height={30}
+              height={32}
+              heightXl={43}
               class="hidden group-data-[nav-open=true]/header:block"
             />
           </a>
@@ -114,7 +123,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
                   <a
                     href={link.href}
                     class:list={[
-                      "text-body-sm flex items-center gap-1 py-6 font-medium whitespace-nowrap transition-colors",
+                      "text-body-sm flex items-center gap-1 py-9 font-medium whitespace-nowrap transition-colors",
                       isActive(link.href) ? "text-white" : "text-white/95 hover:text-white",
                     ]}
                     aria-current={isActive(link.href) ? "page" : undefined}
@@ -198,7 +207,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
         data-open="false"
         class="group/sheet border-line text-ink shadow-card-lg absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
       >
-        <div class="max-h-[calc(100dvh-72px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
+        <div class="max-h-[calc(100dvh-68px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
           <div class="container-bleed py-5">
             {/* En el móvil, el mismo buscador pero como botón: escribir aquí y otra
             vez dentro de la ventana sería teclear dos veces. */}

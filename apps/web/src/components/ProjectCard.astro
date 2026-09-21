@@ -104,6 +104,9 @@ function range(nums: number[], unit: string, decimals?: number): string | null {
 }
 const areaChip = range(areas, "m²", compact ? 2 : undefined);
 const bedChip = range(beds, "hab");
+// "1 baño", "2 baños", "1 – 2 baños": the noun follows the larger figure.
+const baths = units.map((u) => u.bathrooms).filter((n): n is number => typeof n === "number");
+const bathChip = range(baths, Math.max(...baths) === 1 ? "baño" : "baños");
 
 /**
  * The footer: "Ver proyecto" beside "WhatsApp" — a plain button, glyph and
@@ -121,7 +124,7 @@ const whatsappHref = project.salesRoom?.whatsappUrl || (await getCompanyWhatsapp
 const whatsappLogo = project.logo?.url
   ? (await getImage({ src: mediaUrl(project.logo.url), width: 128, height: 128, quality: 80 })).src
   : null;
-import { Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
+import { Bath, Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
 import WhatsAppIcon from "@/components/WhatsAppIcon.astro";
 
@@ -312,7 +315,7 @@ const CHIP =
         ) : (
           <p class="text-iron mt-1.5 text-xs">Precios de lanzamiento muy pronto</p>
         )}
-        {(areaChip || bedChip) && (
+        {(areaChip || bedChip || bathChip) && (
           <div class="mt-2 flex flex-wrap gap-2">
             {areaChip && (
               <span class={CHIP}>
@@ -324,6 +327,12 @@ const CHIP =
               <span class={CHIP}>
                 <Bed size={13} stroke-width={1.8} aria-hidden="true" />
                 {bedChip}
+              </span>
+            )}
+            {bathChip && (
+              <span class={CHIP}>
+                <Bath size={13} stroke-width={1.8} aria-hidden="true" />
+                {bathChip}
               </span>
             )}
           </div>
@@ -360,7 +369,7 @@ const CHIP =
             <p class="text-body-sm text-ink-muted mt-3">Precios de lanzamiento muy pronto</p>
           )}
 
-          {(areaChip || bedChip) && (
+          {(areaChip || bedChip || bathChip) && (
             <div class="mt-3.5 flex flex-wrap gap-2">
               {areaChip && (
                 <span class="chip py-1.5">
@@ -372,6 +381,12 @@ const CHIP =
                 <span class="chip py-1.5">
                   <Bed size={14} stroke-width={1.8} aria-hidden="true" />
                   {bedChip}
+                </span>
+              )}
+              {bathChip && (
+                <span class="chip py-1.5">
+                  <Bath size={14} stroke-width={1.8} aria-hidden="true" />
+                  {bathChip}
                 </span>
               )}
             </div>

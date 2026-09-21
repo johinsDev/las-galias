@@ -18,14 +18,24 @@ interface Props {
    * different logo.
    */
   variant?: "dark" | "light" | "brand";
-  /** Rendered height in px. The artwork is 212.17×60, so width follows. */
+  /**
+   * Rendered height in px, and width follows. Both files are cropped to the
+   * artwork (147.96×33.8): the originals carried a fifth of the box as empty
+   * margin, so a 30px logo drew 17px of wordmark, 15px in from its column.
+   */
   height?: number;
+  /** Height from `xl` up, where the header bar grows. Defaults to `height`. */
+  heightXl?: number;
   class?: string;
 }
 
-const { variant = "dark", height = 30, class: className } = Astro.props;
+const { variant = "dark", height = 17, heightXl = height, class: className } = Astro.props;
 
-const ASPECT = 212.17 / 60;
+const ASPECT = 147.96 / 33.8;
+// Heights travel as custom properties so the breakpoint stays in a class: an
+// inline `height` would beat every media query.
+const size = `--logo-h:${height}px;--logo-h-xl:${heightXl}px`;
+const SIZE = "h-(--logo-h) xl:h-(--logo-h-xl)";
 ---
 
 {
@@ -38,17 +48,17 @@ const ASPECT = 212.17 / 60;
     <span
       role="img"
       aria-label="Las Galias Constructora"
-      class:list={["block", className]}
-      style={`height:${height}px;width:${Math.round(height * ASPECT)}px;background-color:var(--brand);-webkit-mask:url(/logo-white.svg) no-repeat center/contain;mask:url(/logo-white.svg) no-repeat center/contain`}
+      class:list={["block", SIZE, className]}
+      style={`${size};aspect-ratio:${ASPECT.toFixed(4)};background-color:var(--brand);-webkit-mask:url(/logo-white.svg) no-repeat center/contain;mask:url(/logo-white.svg) no-repeat center/contain`}
     />
   ) : (
     <img
       src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
       alt="Las Galias Constructora"
-      width={Math.round(height * ASPECT)}
-      height={height}
-      class:list={["w-auto", className]}
-      style={`height:${height}px`}
+      width={Math.round(heightXl * ASPECT)}
+      height={heightXl}
+      class:list={["w-auto", SIZE, className]}
+      style={size}
       loading="eager"
       decoding="async"
     />

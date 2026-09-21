@@ -70,6 +70,11 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `getStaticPaths` and tells them apart by the `kind` prop, and fails the build
   if a project slug collides with a city slug. On the catalogue the city pills
   are links between those pages; on the home they still filter in place.
+- The header bar is 68px below `xl` and 96px from `xl` up (Figma node
+  3286:1285). Anything that has to clear it assumes 112px: sticky asides use
+  `lg:top-24 xl:top-28` and anchor targets `scroll-mt-28`. Both logo SVGs are
+  cropped to the artwork, so `Logo`'s `height` is the height of the wordmark
+  itself — the files from galias.com.co carried a fifth of the box as margin.
 - Route renames live in `ROUTE_REDIRECTS` (`apps/web/redirects.ts`), never only
   in the CMS. The catalogue is `/proyectos-de-vivienda` (+ `/[slug]`); the old
   `/proyectos` URLs 301 there. The Vercel adapter emits each redirect as a regex

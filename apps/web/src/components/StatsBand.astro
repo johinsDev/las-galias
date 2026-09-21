@@ -2,12 +2,31 @@
 /**
  * The indicators band. The design paints it as a pale pink card floating on
  * white, not as the full-bleed dark strip the first build shipped.
+ *
+ * The figures count up the first time the band scrolls into view. The HTML
+ * always carries the final value: the script only rewinds a figure that is
+ * still off screen, so without JavaScript — or with reduced motion — the band
+ * reads exactly as the editor wrote it.
  */
 interface Props {
   stats: { value: string; label: string }[];
 }
 
 const { stats } = Astro.props;
+
+/**
+ * Split "+30.000" / "30 años" into what stays and the integer that counts.
+ * "#1" is left alone (0 → 1 is not a count), and so is anything with decimals.
+ */
+function parts(value: string) {
+  const match = /\d{1,3}(?:\.\d{3})+|\d+/.exec(value);
+  if (!match) return null;
+  const after = value.slice(match.index + match[0].length);
+  if (/^,\d/.test(after)) return null;
+  const target = Number(match[0].replaceAll(".", ""));
+  if (target < 2) return null;
+  return { before: value.slice(0, match.index), number: match[0], after, target };
+}
 ---
 
 {
@@ -17,18 +36,90 @@ const { stats } = Astro.props;
         class="bg-brand-subtle grid grid-cols-2 gap-8 rounded-3xl px-6 py-12 text-center lg:grid-cols-4"
         data-reveal
       >
-        {stats.map((stat) => (
-          <div>
-            <p
-              class="text-ink font-extrabold tracking-tight"
-              style="font-size:clamp(2rem,3.5vw,3.5rem);line-height:1.05"
-            >
-              {stat.value}
-            </p>
-            <p class="text-body-sm text-ink-muted mt-1">{stat.label}</p>
-          </div>
-        ))}
+        {stats.map((stat) => {
+          const count = parts(stat.value);
+          return (
+            <div>
+              <p
+                class="text-ink font-extrabold tracking-tight tabular-nums"
+                style="font-size:clamp(2rem,3.5vw,3.5rem);line-height:1.05"
+              >
+                {count ? (
+                  <>
+                    {/* A screen reader gets the figure once, not every frame. */}
+                    <span class="sr-only">{stat.value}</span>
+                    <span aria-hidden="true">
+                      {count.before}
+                      <span data-count-to={count.target}>{count.number}</span>
+                      {count.after}
+                    </span>
+                  </>
+                ) : (
+                  stat.value
+                )}
+              </p>
+              <p class="text-body-sm text-ink-muted mt-1">{stat.label}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   )
 }
+
+<script>
+  const DURATION = 1600;
+  const format = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 });
+
+  function countUp(el: HTMLElement, target: number) {
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / DURATION);
+      // easeOutCubic: fast at first, settling into the final figure.
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = format.format(Math.round(target * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function setupCounters() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const pending = [
+      ...document.querySelectorAll<HTMLElement>("[data-count-to]:not([data-count-bound])"),
+    ];
+    if (pending.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          observer.unobserve(el);
+          countUp(el, Number(el.dataset.countTo));
+        });
+      },
+      { threshold: 0.2 },
+    );
+
+    // Same rule as scripts/reveal.ts: read every box first, write after, and
+    // leave alone whatever is already on screen — rewinding a painted figure
+    // to zero would be a visible flash.
+    const viewport = window.innerHeight;
+    const offScreen = pending.map((el) => {
+      const box = el.getBoundingClientRect();
+      return !(box.top < viewport && box.bottom > 0);
+    });
+
+    pending.forEach((el, i) => {
+      el.dataset.countBound = "true";
+      if (!offScreen[i]) return;
+      el.textContent = "0";
+      observer.observe(el);
+    });
+  }
+
+  setupCounters();
+  document.addEventListener("astro:page-load", setupCounters);
+</script>
