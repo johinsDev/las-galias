@@ -392,7 +392,8 @@
         "updatedAt": "2026-08-06T00:41:30.615Z",
         "publishedAt": "2026-08-06T00:41:30.615Z"
       },
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
     },
     {
       "id": 14,
@@ -594,7 +595,8 @@
           "publishedAt": "2026-07-15T01:47:09.740Z"
         }
       ],
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
     },
     {
       "id": 4,
@@ -796,7 +798,8 @@
           "publishedAt": "2026-07-15T01:47:09.333Z"
         }
       ],
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
     },
     {
       "id": 12,
@@ -998,7 +1001,8 @@
           "publishedAt": "2026-07-15T01:47:10.112Z"
         }
       ],
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
     },
     {
       "id": 13,
@@ -1200,7 +1204,8 @@
           "publishedAt": "2026-07-15T01:47:09.052Z"
         }
       ],
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
     },
     {
       "id": 10,
@@ -1300,7 +1305,193 @@
         "updatedAt": "2026-08-06T00:41:30.615Z",
         "publishedAt": "2026-08-06T00:41:30.615Z"
       },
-      "brochure": null
+      "brochure": null,
+      "productType": "housing"
+    },
+    {
+      "id": 9001,
+      "documentId": "demo-lot-la-pradera",
+      "name": "Lotes La Pradera",
+      "slug": "lotes-la-pradera",
+      "stage": "sale",
+      "syncFromSinco": false,
+      "constructionStatus": null,
+      "description": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "Lotes desde 120 m² con servicios y vías pavimentadas."
+            }
+          ]
+        }
+      ],
+      "priceFromCOP": "180000000",
+      "video": null,
+      "createdAt": "2026-07-15T01:47:09.752Z",
+      "updatedAt": "2026-07-15T01:47:10.174Z",
+      "publishedAt": "2026-07-15T01:47:10.223Z",
+      "priceLocked": null,
+      "priceFromSincoCOP": null,
+      "appliesSubsidy": null,
+      "lastUnits": null,
+      "hasDiscount": null,
+      "tour360Url": null,
+      "neighborhood": "La Pradera",
+      "city": {
+        "id": 4,
+        "documentId": "vkmbl3cyolh62yjlfrybppke",
+        "name": "Medellín",
+        "slug": "medellin",
+        "department": "Antioquia",
+        "createdAt": "2026-07-15T01:47:08.580Z",
+        "updatedAt": "2026-07-15T01:47:08.580Z",
+        "publishedAt": "2026-07-15T01:47:08.583Z"
+      },
+      "heroDesktop": {
+        "id": 14,
+        "documentId": "d1q1wu2iyzcsalcpajrxbiqk",
+        "name": "balcones-de-provenza-hero-desktop",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 1600,
+        "height": 700,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_desktop_19a7af4a57",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_desktop_19a7af4a57.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.559Z",
+        "updatedAt": "2026-07-15T01:47:09.559Z",
+        "publishedAt": "2026-07-15T01:47:09.559Z"
+      },
+      "heroMobile": {
+        "id": 15,
+        "documentId": "jkwa7lvrhp6lpzlp0q9ttvnm",
+        "name": "balcones-de-provenza-hero-mobile",
+        "alternativeText": "Balcones de Provenza",
+        "caption": null,
+        "focalPoint": null,
+        "width": 800,
+        "height": 1000,
+        "formats": null,
+        "hash": "balcones_de_provenza_hero_mobile_6112f0c6ea",
+        "ext": ".svg",
+        "mime": "image/svg+xml",
+        "size": 0.52,
+        "url": "/uploads/balcones_de_provenza_hero_mobile_6112f0c6ea.svg",
+        "previewUrl": null,
+        "provider": "local",
+        "provider_metadata": null,
+        "createdAt": "2026-07-15T01:47:09.598Z",
+        "updatedAt": "2026-07-15T01:47:09.598Z",
+        "publishedAt": "2026-07-15T01:47:09.598Z"
+      },
+      "unitTypes": [
+        {
+          "id": 9002,
+          "name": "Lote",
+          "builtAreaM2": 120,
+          "bedrooms": null,
+          "bathrooms": null,
+          "priceCOP": "180000000",
+          "privateAreaM2": null
+        }
+      ],
+      "logo": null,
+      "specSheet": null,
+      "salesRoom": {
+        "id": 900,
+        "schedule": "Lun a Dom · 9:00 a.m. – 5:00 p.m.",
+        "phone": "300 000 0000",
+        "whatsappUrl": "https://wa.me/573000000000",
+        "email": "sala@lasgalias.com.co"
+      },
+      "zone": {
+        "id": 1,
+        "documentId": "zonedemonorte00000000000",
+        "name": "Norte",
+        "slug": "norte",
+        "createdAt": "2026-08-06T00:41:30.615Z",
+        "updatedAt": "2026-08-06T00:41:30.615Z",
+        "publishedAt": "2026-08-06T00:41:30.615Z"
+      },
+      "gallery": [
+        {
+          "id": 16,
+          "documentId": "ibatk2swps3pbwsnoaan03v9",
+          "name": "balcones-de-provenza-gallery-1",
+          "alternativeText": "Balcones de Provenza · 1",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_1_6c25c50f9c",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_1_6c25c50f9c.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.644Z",
+          "updatedAt": "2026-07-15T01:47:09.644Z",
+          "publishedAt": "2026-07-15T01:47:09.644Z"
+        },
+        {
+          "id": 17,
+          "documentId": "xw94tt7k4e0qb8ufeynaktxw",
+          "name": "balcones-de-provenza-gallery-2",
+          "alternativeText": "Balcones de Provenza · 2",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_2_0ce8d56dc0",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_2_0ce8d56dc0.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.691Z",
+          "updatedAt": "2026-07-15T01:47:09.691Z",
+          "publishedAt": "2026-07-15T01:47:09.691Z"
+        },
+        {
+          "id": 18,
+          "documentId": "ekw7xk8bwri7glsnl27jf1db",
+          "name": "balcones-de-provenza-gallery-3",
+          "alternativeText": "Balcones de Provenza · 3",
+          "caption": null,
+          "focalPoint": null,
+          "width": 1200,
+          "height": 800,
+          "formats": null,
+          "hash": "balcones_de_provenza_gallery_3_a728c39b9b",
+          "ext": ".svg",
+          "mime": "image/svg+xml",
+          "size": 0.53,
+          "url": "/uploads/balcones_de_provenza_gallery_3_a728c39b9b.svg",
+          "previewUrl": null,
+          "provider": "local",
+          "provider_metadata": null,
+          "createdAt": "2026-07-15T01:47:09.740Z",
+          "updatedAt": "2026-07-15T01:47:09.740Z",
+          "publishedAt": "2026-07-15T01:47:09.740Z"
+        }
+      ],
+      "brochure": null,
+      "productType": "lot"
     }
   ],
   "posts?filters%5Bslug%5D%5B%24eq%5D=asi-avanza-ciudad-verde-norte&populate%5Bcover%5D=true&populate%5Bhighlights%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5Btags%5D=true": [

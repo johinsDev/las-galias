@@ -30,7 +30,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
   "api::project.project": [
     // Sin cabecera: lo que identifica al proyecto se ve siempre.
     ["name", "slug"],
-    ["stage", "constructionStatus"],
+    ["stage", "productType", "constructionStatus"],
     ["appliesSubsidy", "lastUnits", "hasDiscount"],
     // El rastro ciudad · zona · barrio, y luego el mapa.
     ["sectionLocation"],

@@ -233,13 +233,29 @@ const PROJECT_CARD_POPULATE: Query = {
  */
 let projectsPromise: Promise<Project[]> | null = null;
 
-export async function getProjects(): Promise<Project[]> {
+async function getAllProjects(): Promise<Project[]> {
   projectsPromise ??= strapiFetch<Project[]>("projects", {
     ...PROJECT_CARD_POPULATE,
     "pagination[pageSize]": "100",
     sort: "name:asc",
   }).then((projects) => projects ?? []);
   return projectsPromise;
+}
+
+/**
+ * The homes: every caller that says "projects" — catalogue, home, search,
+ * footer, PDP routes — means these. Lots are split off here rather than with
+ * a `filters[productType]` on the request, so a CMS that has not deployed the
+ * field yet still answers (Strapi rejects filters on unknown attributes) and
+ * simply has no lots.
+ */
+export async function getProjects(): Promise<Project[]> {
+  return (await getAllProjects()).filter((p) => p.productType !== "lot");
+}
+
+/** The lots (/lotes): same card, no page of their own. */
+export async function getLots(): Promise<Project[]> {
+  return (await getAllProjects()).filter((p) => p.productType === "lot");
 }
 
 export async function getProject(slug: string): Promise<Project | null> {

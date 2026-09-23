@@ -226,6 +226,18 @@ async function main() {
         palette: "dusk",
         blurb: "Lanzamiento exclusivo: apartamentos de lujo con club house privado en El Poblado.",
       },
+      {
+        // A lot: lists on /lotes only, no page, the card goes to WhatsApp.
+        name: "Lotes La Pradera",
+        slug: "lotes-la-pradera",
+        productType: "lot",
+        location: { lat: 4.8320, lng: -74.0510, address: "Vereda La Pradera, Chía" },
+        stage: "sale",
+        priceFromCOP: "180000000",
+        city: bogota,
+        palette: "sand",
+        blurb: "Lotes desde 120 m² con servicios y vías pavimentadas, a 20 minutos del norte de Bogotá.",
+      },
     ];
 
     const projects = {};
@@ -244,9 +256,13 @@ async function main() {
       });
 
       const isSale = spec.stage === "sale";
+      const isLot = spec.productType === "lot";
       const gallery = [];
       const unitTypes = [];
-      if (isSale) {
+      if (isLot) {
+        // Area only: a lot has no rooms, and the card's chips follow the data.
+        unitTypes.push({ name: "Lote", areaM2: 120, priceCOP: spec.priceFromCOP });
+      } else if (isSale) {
         for (let i = 1; i <= 3; i++) {
           const img = await uploadSvg(`${spec.slug}-gallery-${i}`, {
             width: 1200,
@@ -280,6 +296,7 @@ async function main() {
         name: spec.name,
         slug: spec.slug,
         stage: spec.stage,
+        productType: spec.productType ?? "housing",
         constructionStatus: spec.constructionStatus,
         priceFromCOP: spec.priceFromCOP,
         city: spec.city.documentId,

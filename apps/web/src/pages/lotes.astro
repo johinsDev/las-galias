@@ -1,0 +1,12 @@
+---
+import ProjectsListing from "@/components/ProjectsListing.astro";
+import { getFaqs, getLots } from "@/lib/strapi";
+
+/**
+ * "Lotes" in the menu: the catalogue page again, over the projects the CMS
+ * marks as lots. A lot has no page, so its card is only a way to WhatsApp.
+ */
+const [lots, faqs] = await Promise.all([getLots(), getFaqs("general")]);
+---
+
+<ProjectsListing kind="lots" projects={lots} cities={[]} faqs={faqs} />
