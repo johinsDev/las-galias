@@ -19,7 +19,7 @@ const { rates, compact = false, class: className } = Astro.props;
   class:list={[
     "seg-group relative z-10",
     compact &&
-      "bg-fog [&_.seg]:text-steel [&_.seg[aria-pressed=true]]:bg-graphite gap-0.5 p-0.5 [&_.seg]:px-2 [&_.seg]:py-1 [&_.seg]:text-[10px] [&_.seg]:leading-[1.2] [&_.seg]:tracking-normal [&_.seg[aria-pressed=true]]:font-bold [&_.seg[aria-pressed=true]]:text-white",
+      "bg-fog [&_.seg]:text-steel [&_.seg[aria-pressed=true]]:bg-graphite [&_.seg-thumb]:bg-graphite gap-0.5 p-0.5 [&_.seg]:px-2 [&_.seg]:py-1 [&_.seg]:text-[10px] [&_.seg]:leading-[1.2] [&_.seg]:tracking-normal [&_.seg-thumb]:top-0.5 [&_.seg-thumb]:bottom-0.5 [&_.seg[aria-pressed=true]]:font-bold [&_.seg[aria-pressed=true]]:text-white [&.seg-group-thumbed_.seg[aria-pressed=true]]:bg-transparent",
     className,
   ]}
   role="group"
@@ -28,9 +28,17 @@ const { rates, compact = false, class: className } = Astro.props;
   data-cop-per-usd={rates.copPerUsd}
   data-cop-per-eur={rates.copPerEur}
 >
-  <button type="button" class="seg" data-currency="COP" aria-pressed="false">COP</button>
-  <button type="button" class="seg" data-currency="USD" aria-pressed="false">USD</button>
-  <button type="button" class="seg" data-currency="EUR" aria-pressed="false">EUR</button>
+  {/* The pill that glides between the currencies; the script places it. */}
+  <span class="seg-thumb" data-price-thumb aria-hidden="true" hidden></span>
+  <button type="button" class="seg relative z-10" data-currency="COP" aria-pressed="false">
+    COP
+  </button>
+  <button type="button" class="seg relative z-10" data-currency="USD" aria-pressed="false">
+    USD
+  </button>
+  <button type="button" class="seg relative z-10" data-currency="EUR" aria-pressed="false">
+    EUR
+  </button>
 </div>
 
 <script>
@@ -98,6 +106,25 @@ const { rates, compact = false, class: className } = Astro.props;
     group.querySelectorAll<HTMLElement>("[data-currency]").forEach((button) => {
       button.setAttribute("aria-pressed", String(button.dataset.currency === next));
     });
+    placeThumb(group);
+  }
+
+  /**
+   * Slide the black pill under the pressed button. Until the first measurement
+   * the pressed button paints its own background (the server render), so
+   * there is no flash; from then on the thumb is the only background and it
+   * glides (see `seg-thumb` in globals.css).
+   */
+  function placeThumb(group: HTMLElement) {
+    const thumb = group.querySelector<HTMLElement>("[data-price-thumb]");
+    const pressed = group.querySelector<HTMLElement>('[data-currency][aria-pressed="true"]');
+    if (!thumb || !pressed) return;
+    // Sub-pixel: `offsetWidth` rounds, and half a pixel shows on a pill edge.
+    const box = pressed.getBoundingClientRect();
+    thumb.style.transform = `translateX(${box.left - group.getBoundingClientRect().left}px)`;
+    thumb.style.width = `${box.width}px`;
+    thumb.hidden = false;
+    group.classList.add("seg-group-thumbed");
   }
 
   function setupCurrency() {
@@ -116,6 +143,8 @@ const { rates, compact = false, class: className } = Astro.props;
       // every listener is attached twice.
       if (group.dataset.bound) return;
       group.dataset.bound = "1";
+      // The buttons move when the web font lands or the card changes width.
+      new ResizeObserver(() => placeThumb(group)).observe(group);
       group.addEventListener("click", (event) => {
         const button = (event.target as HTMLElement).closest<HTMLElement>("[data-currency]");
         const next = button?.dataset.currency as Currency | undefined;

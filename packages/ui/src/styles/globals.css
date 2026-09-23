@@ -300,6 +300,33 @@
   backdrop-filter: blur(4px);
 }
 
+/* The black pill that GLIDES between the options of a segmented control
+   instead of jumping (the VIS / No VIS switch). The group measures the pressed
+   button and moves this thumb under it; until that first measurement the
+   pressed button keeps its own background, so the server render shows the
+   right state with no flash. */
+@utility seg-thumb {
+  position: absolute;
+  top: --spacing(1);
+  bottom: --spacing(1);
+  left: 0;
+  border-radius: 9999px;
+  background: var(--ink);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+@utility seg-group-thumbed {
+  & .seg[aria-pressed="true"] {
+    background: transparent;
+  }
+}
+
 /* Spec chip / pill (m², rooms, tags) */
 @utility chip {
   display: inline-flex;
@@ -418,9 +445,6 @@
   letter-spacing: 0.02em;
   line-height: 1.2;
   color: var(--ink-muted);
-  transition:
-    background-color 0.2s,
-    color 0.2s;
   &:hover {
     color: var(--ink);
   }

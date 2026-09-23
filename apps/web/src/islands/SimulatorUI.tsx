@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { Select } from "@lasgalias/ui/components/select";
 
@@ -155,7 +155,14 @@ export function SelectField({
   );
 }
 
-/** Two-state segmented control — the design's VIS / No VIS switch. */
+/**
+ * Two-state segmented control — the design's VIS / No VIS switch. The black
+ * pill slides from one option to the other: it is a single thumb positioned
+ * under whichever button is pressed, measured after every change and whenever
+ * the group is resized (a font swap moves the buttons). Before the first
+ * measurement the pressed button paints its own background, so the server
+ * render already shows the right state.
+ */
 export function ToggleField({
   label,
   value,
@@ -167,10 +174,41 @@ export function ToggleField({
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
 }) {
+  const group = useRef<HTMLDivElement>(null);
+  const [thumb, setThumb] = useState<{ left: number; width: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const root = group.current;
+    if (!root) return;
+    const measure = () => {
+      const pressed = root.querySelector<HTMLElement>('[aria-pressed="true"]');
+      if (!pressed) return;
+      // Sub-pixel: `offsetWidth` rounds, and half a pixel shows on a pill edge.
+      const box = pressed.getBoundingClientRect();
+      setThumb({ left: box.left - root.getBoundingClientRect().left, width: box.width });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [value]);
+
   return (
     <div>
       <p className={LABEL}>{label}</p>
-      <div className="seg-group" role="group" aria-label={label}>
+      <div
+        ref={group}
+        className={`seg-group relative ${thumb ? "seg-group-thumbed" : ""}`}
+        role="group"
+        aria-label={label}
+      >
+        {thumb && (
+          <span
+            aria-hidden="true"
+            className="seg-thumb"
+            style={{ transform: `translateX(${thumb.left}px)`, width: thumb.width }}
+          />
+        )}
         {options.map((option) => {
           const active = option.value === value;
           return (
@@ -179,7 +217,7 @@ export function ToggleField({
               type="button"
               aria-pressed={active}
               onClick={() => onChange(option.value)}
-              className="seg px-4"
+              className="seg relative z-10 px-4"
             >
               {option.label}
             </button>
