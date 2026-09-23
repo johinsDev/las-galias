@@ -623,6 +623,7 @@ async function main() {
         visFinancingPercent: 80,
         maxIncomeRatioPercent: 40,
         paymentIncomeRatioPercent: 30,
+        smmlvCOP: 1750905,
       },
     });
 

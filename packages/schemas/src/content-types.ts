@@ -322,6 +322,8 @@ export interface CalculatorConfig {
   maxIncomeRatioPercent?: number | null;
   /** Share of the disposable income recommended as an instalment. */
   paymentIncomeRatioPercent?: number | null;
+  /** This year's minimum wage in pesos: the subsidies are quoted in SMMLV. */
+  smmlvCOP?: number | null;
 }
 
 /**

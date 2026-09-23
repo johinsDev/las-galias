@@ -42,6 +42,11 @@
       "type": "decimal",
       "default": 30,
       "description": "Share of the DISPOSABLE income the affordability simulator recommends as instalment"
+    },
+    "smmlvCOP": {
+      "type": "integer",
+      "default": 1750905,
+      "description": "Minimum monthly wage (SMMLV) in COP for the current year. The down payment simulator prices the Mi Casa Ya subsidy (20/30 SMMLV) with it"
     }
   }
 }

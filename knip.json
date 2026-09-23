@@ -13,7 +13,8 @@
         "src/scripts/**/*.ts",
         "src/islands/**/*.tsx",
         "src/directives/*.ts",
-        "scripts/*.mjs"
+        "scripts/*.mjs",
+        "src/**/*.test.ts"
       ],
       "project": ["src/**/*.{astro,ts,tsx}"],
       "ignoreDependencies": ["tailwindcss"]

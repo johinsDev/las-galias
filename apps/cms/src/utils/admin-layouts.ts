@@ -150,6 +150,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["annualInterestRate", "maxTermYears", "maxFinancingPercent"],
     ["leasingFinancingPercent", "visFinancingPercent"],
     ["maxIncomeRatioPercent", "paymentIncomeRatioPercent"],
+    ["smmlvCOP"],
   ],
   "api::pqr-page.pqr-page": [
     ["heroTitle:12"],

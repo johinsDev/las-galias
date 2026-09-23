@@ -40,6 +40,8 @@
   --brand-subtle: #fdf9fa; /* pale bands: steps, stats, final CTA — from the design */
   --brand-tint: #fdeef1; /* one step pinker: number pills and icon squares */
   --brand-soft: #e85a6b; /* outline of the red secondary button ("Ya soy cliente") */
+  --success: #1f7a48; /* the chosen subsidy tier in the simulator (Figma 2728:4495) */
+  --success-subtle: #eef8f1;
   --brand-deep: #a81e2f; /* its label */
 
   /* The project page's own greys, read off its Figma frame node by node. The
@@ -96,6 +98,8 @@
   --color-brand-subtle: var(--brand-subtle);
   --color-brand-tint: var(--brand-tint);
   --color-brand-soft: var(--brand-soft);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
   --color-brand-deep: var(--brand-deep);
   --color-graphite: var(--graphite);
   --color-iron: var(--iron);

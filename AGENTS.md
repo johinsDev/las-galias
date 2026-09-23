@@ -16,7 +16,10 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   The three simulators on `/simuladores` (cuota inicial, crédito hipotecario,
   capacidad de pago) share `lib/simulators.ts` for the math and
   `islands/SimulatorUI.tsx` for the skin; all their knobs live in
-  `calculator-config`.
+  `calculator-config` — including `smmlvCOP`, the year's minimum wage, which
+  prices the Mi Casa Ya tiers (20/30 SMMLV) the down payment simulator takes
+  off the cuota inicial. `lib/simulators.test.ts` runs with
+  `node --test apps/web/src/lib/simulators.test.ts`.
 - `apps/cms` — **Strapi v5** (always Postgres, never SQLite). Self-hosted on AWS
   (Fargate + RDS + S3) via **SST v3** (`sst.config.ts` at the repo root). Content
   types and business rules live as code (schema JSONs + document-service

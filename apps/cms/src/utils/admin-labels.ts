@@ -261,6 +261,11 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "% del ingreso disponible para la cuota",
       description: "Regla general con la que el simulador recomienda la cuota máxima.",
     },
+    smmlvCOP: {
+      label: "Salario mínimo vigente (COP)",
+      description:
+        "Cambia cada enero. El simulador de cuota inicial calcula con él el subsidio Mi Casa Ya (20 o 30 SMMLV).",
+    },
   },
   "api::pqr-page.pqr-page": {
     heroImage: {

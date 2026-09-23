@@ -190,6 +190,72 @@ export function ToggleField({
   );
 }
 
+/**
+ * Cards to choose one of a few (the subsidy tiers): a bold label with a
+ * figure under it, the chosen one outlined in green like the design. A
+ * segmented pill has no room for the second line, which is the whole point
+ * here — «20 SMMLV» means nothing until it says «$ 35.018.100» beneath.
+ */
+export function ChoiceField({
+  label,
+  badge,
+  value,
+  options,
+  help,
+  onChange,
+}: {
+  label: string;
+  /** Small pill after the label, «Nuevo» while the field is fresh. */
+  badge?: string;
+  value: string;
+  options: { value: string; label: string; hint: string }[];
+  /** Reads under the cards: what the choice means and where to learn more. */
+  help?: ReactNode;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <p className={`${LABEL} flex items-center gap-2`}>
+        {label}
+        {badge && <span className="badge badge-brand px-2 py-0.5 tracking-normal">{badge}</span>}
+      </p>
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
+        role="group"
+        aria-label={label}
+      >
+        {options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={active}
+              onClick={() => onChange(option.value)}
+              className={`rounded-[10px] border px-3.5 py-2.5 text-left transition-colors ${
+                active
+                  ? "border-success bg-success-subtle"
+                  : "border-input hover:border-ink bg-white"
+              }`}
+            >
+              <span
+                className={`text-body-sm block font-bold ${active ? "text-success" : "text-ink"}`}
+              >
+                {option.label}
+              </span>
+              <span className={`text-caption block ${active ? "text-success" : "text-ink-muted"}`}>
+                {option.hint}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {help && <p className="text-caption text-ink-muted mt-2">{help}</p>}
+    </div>
+  );
+}
+
 export interface ResultsProps {
   rows: { label: string; value: string }[];
   highlight: { label: string; value: string; suffix?: string; sub?: string };

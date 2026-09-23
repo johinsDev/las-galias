@@ -1,7 +1,15 @@
 import { useMemo, useState } from "react";
 
 import { formatMoney } from "@/lib/currency";
-import { MoneyField, NumberField, Results, SelectField, SimulatorLayout } from "./SimulatorUI";
+import { downPaymentPlan, SUBSIDY_TIERS_SMMLV, subsidyInCOP } from "@/lib/simulators";
+import {
+  ChoiceField,
+  MoneyField,
+  NumberField,
+  Results,
+  SelectField,
+  SimulatorLayout,
+} from "./SimulatorUI";
 
 interface Props {
   defaultPriceCOP: number;
@@ -9,6 +17,8 @@ interface Props {
   maxFinancingPercent: number;
   /** Same for leasing habitacional, which usually covers more (CMS). */
   leasingFinancingPercent: number;
+  /** This year's minimum wage, so the subsidy tiers can be shown in pesos (CMS). */
+  smmlvCOP: number;
 }
 
 const CREDIT_TYPES = [
@@ -18,36 +28,63 @@ const CREDIT_TYPES = [
 
 /**
  * "Simulador de Cuota Inicial": how much has to be saved, and at what monthly
- * pace, to cover the down payment of a given home.
+ * pace, to cover the down payment of a given home — with the Mi Casa Ya
+ * subsidy taken off first when the household qualifies for one.
  */
 export default function DownPaymentSimulator({
   defaultPriceCOP,
   maxFinancingPercent,
   leasingFinancingPercent,
+  smmlvCOP,
 }: Props) {
   const [price, setPrice] = useState(defaultPriceCOP);
   const [downPct, setDownPct] = useState(30);
   const [creditType, setCreditType] = useState("hipotecario");
   const [savings, setSavings] = useState(20_000_000);
+  const [subsidyTier, setSubsidyTier] = useState("0");
   const [months, setMonths] = useState(36);
 
-  const result = useMemo(() => {
-    const downPayment = price * (downPct / 100);
-    const pending = Math.max(0, downPayment - savings);
-    const financingPct = creditType === "leasing" ? leasingFinancingPercent : maxFinancingPercent;
+  // «20 SMMLV» on its own says nothing; each tier carries this year's pesos.
+  const subsidyOptions = useMemo(
+    () =>
+      SUBSIDY_TIERS_SMMLV.map((tier) =>
+        tier === 0
+          ? { value: "0", label: "No aplico", hint: "Sin subsidio" }
+          : {
+              value: String(tier),
+              label: `${tier} SMMLV`,
+              hint: formatMoney(subsidyInCOP(tier, smmlvCOP), "COP"),
+            },
+      ),
+    [smmlvCOP],
+  );
 
-    return {
-      downPayment,
-      financed: Math.max(0, price - downPayment),
-      pending,
-      monthlySaving: pending / Math.max(1, months),
-      /** What the chosen product forces you to put in yourself. */
-      minDownPct: Math.max(0, 100 - financingPct),
-    };
-  }, [price, downPct, creditType, savings, months, maxFinancingPercent, leasingFinancingPercent]);
+  const result = useMemo(
+    () =>
+      downPaymentPlan({
+        price,
+        downPct,
+        savings,
+        subsidy: subsidyInCOP(Number(subsidyTier), smmlvCOP),
+        months,
+        financingPct: creditType === "leasing" ? leasingFinancingPercent : maxFinancingPercent,
+      }),
+    [
+      price,
+      downPct,
+      savings,
+      subsidyTier,
+      smmlvCOP,
+      months,
+      creditType,
+      leasingFinancingPercent,
+      maxFinancingPercent,
+    ],
+  );
 
   const creditLabel = CREDIT_TYPES.find((c) => c.value === creditType)!.label.toLowerCase();
   const covered = result.pending === 0;
+  const withSubsidy = result.subsidy > 0;
 
   return (
     <SimulatorLayout
@@ -81,6 +118,27 @@ export default function DownPaymentSimulator({
             value={savings}
             onChange={setSavings}
           />
+          <ChoiceField
+            label="¿Aplicas a subsidio de vivienda?"
+            badge="Nuevo"
+            value={subsidyTier}
+            options={subsidyOptions}
+            onChange={setSubsidyTier}
+            help={
+              <>
+                El subsidio se resta de la cuota inicial, así que baja el ahorro mensual.{" "}
+                <strong className="text-ink font-semibold">30 SMMLV</strong> si el hogar gana menos
+                de 2 salarios mínimos; <strong className="text-ink font-semibold">20 SMMLV</strong>{" "}
+                entre 2 y 4. Aplica solo a vivienda nueva VIS.{" "}
+                <a
+                  href="/simuladores#subsidio"
+                  className="text-brand font-semibold hover:underline"
+                >
+                  Ver subsidios →
+                </a>
+              </>
+            }
+          />
           <NumberField
             id="down-months"
             label="Plazo cuota inicial (meses)"
@@ -96,6 +154,14 @@ export default function DownPaymentSimulator({
         <Results
           rows={[
             { label: "Cuota inicial", value: formatMoney(result.downPayment, "COP") },
+            ...(withSubsidy
+              ? [
+                  {
+                    label: "Subsidio de vivienda",
+                    value: `− ${formatMoney(result.subsidy, "COP")}`,
+                  },
+                ]
+              : []),
             { label: "Monto a financiar", value: formatMoney(result.financed, "COP") },
           ]}
           highlight={{
@@ -103,7 +169,9 @@ export default function DownPaymentSimulator({
             value: formatMoney(result.monthlySaving, "COP"),
             suffix: covered ? undefined : "/mes",
             sub: covered
-              ? "Tus ahorros ya cubren la cuota inicial de este precio."
+              ? withSubsidy
+                ? "Tus ahorros y el subsidio ya cubren la cuota inicial de este precio."
+                : "Tus ahorros ya cubren la cuota inicial de este precio."
               : `Faltan ${formatMoney(result.pending, "COP")} en ${months} meses`,
           }}
           note={

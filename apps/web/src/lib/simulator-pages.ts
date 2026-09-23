@@ -14,9 +14,9 @@ export const SIMULATORS = [
     short: "Cuota inicial",
     eyebrow: "Simulador · Cuota inicial",
     title: "Simulador de Cuota Inicial",
-    body: "Calcula cuánto necesitas ahorrar para la cuota inicial de tu vivienda.",
+    body: "Calcula cuánto necesitas ahorrar para la cuota inicial de tu vivienda, con o sin subsidio.",
     seoDescription:
-      "Calcula cuánto necesitas ahorrar para la cuota inicial de tu vivienda, con crédito hipotecario o leasing habitacional.",
+      "Calcula cuánto necesitas ahorrar para la cuota inicial de tu vivienda, con crédito hipotecario o leasing habitacional y con o sin subsidio Mi Casa Ya.",
   },
   {
     slug: "credito-hipotecario",
@@ -46,6 +46,8 @@ export interface SimulatorSettings {
   visFinancingPercent: number;
   maxIncomeRatioPercent: number;
   paymentIncomeRatioPercent: number;
+  /** This year's minimum wage: the Mi Casa Ya subsidy is 20 or 30 of these. */
+  smmlvCOP: number;
   /** Cheapest project actually on sale, so the simulators open on a real figure. */
   startingPrice: number;
 }
@@ -73,6 +75,8 @@ export async function getSimulatorSettings(): Promise<SimulatorSettings> {
     visFinancingPercent: calculator?.visFinancingPercent ?? 80,
     maxIncomeRatioPercent: calculator?.maxIncomeRatioPercent ?? 40,
     paymentIncomeRatioPercent: calculator?.paymentIncomeRatioPercent ?? 30,
+    // 2026 (Decreto 1469 de 2025).
+    smmlvCOP: calculator?.smmlvCOP ?? 1_750_905,
     startingPrice: prices.length > 0 ? Math.min(...prices) : 300_000_000,
   };
 }
