@@ -198,7 +198,7 @@ const desktopHero =
 
 <script>
   // Plain DOM: an island here would ship React just to open a <dialog>.
-  /** Photo viewer: open on the clicked photo, close on ✕, Esc or the backdrop. */
+  /** Photo viewer: open on the clicked photo; ✕, Esc or the backdrop close it, ← → move. */
   function setupLightbox() {
     document.querySelectorAll<HTMLElement>("[data-gallery]").forEach((root) => {
       const dialog = root.querySelector<HTMLDialogElement>("[data-lightbox]");
@@ -211,6 +211,18 @@ const desktopHero =
         document.documentElement.style.overflow = "";
       });
       dialog.querySelector("[data-lightbox-close]")?.addEventListener("click", close);
+      // Keyboard: ← → move through the photos, Esc closes. A native <dialog>
+      // already closes on Esc, but only while it holds the focus; handling the
+      // key here keeps it working after a click on the stage took it away.
+      const step = (selector: string) =>
+        carousel.querySelector<HTMLButtonElement>(selector)?.click();
+      dialog.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") step("[data-banner-prev]");
+        else if (event.key === "ArrowRight") step("[data-banner-next]");
+        else if (event.key === "Escape") close();
+        else return;
+        event.preventDefault();
+      });
       // A click that lands on the dark stage rather than on a photo or control.
       dialog.addEventListener("click", (event) => {
         const target = event.target as HTMLElement;
