@@ -122,6 +122,7 @@ export default function WhatsAppGate() {
           name: `${lead.firstName} ${lead.lastName}`,
           phone: lead.phone,
           ...(lead.email ? { email: lead.email } : {}),
+          form: "whatsapp",
           source: "whatsapp",
           project: request.documentId,
           acceptsDataPolicy: true,

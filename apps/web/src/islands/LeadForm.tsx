@@ -1,7 +1,7 @@
 import { useEffect, useState, type ComponentProps } from "react";
 import { Field, Form, setInput, useForm } from "@formisch/react";
 
-import type { LeadFormConfig } from "@lasgalias/schemas";
+import type { LeadFormConfig, LeadFormId } from "@lasgalias/schemas";
 import { DATA_POLICY_SLUG, ForeignLeadSchema, LeadSchema } from "@lasgalias/schemas";
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
@@ -14,6 +14,11 @@ import { QUALIFICATION_EVENT, type QualificationDetail } from "@/lib/qualificati
 
 interface LeadFormProps {
   projectDocumentId?: string;
+  /**
+   * Which form this is, from the closed list the CMS filters by. `source` is
+   * the free-text detail next to it (`pdp:<slug>`); this one never varies.
+   */
+  form: LeadFormId;
   source: string;
   /**
    * Foreign-buyer mode: adds "País de residencia" and accepts any country's
@@ -71,6 +76,7 @@ function readUtm(): { utmSource?: string; utmMedium?: string; utmCampaign?: stri
  */
 export default function LeadForm({
   projectDocumentId,
+  form: formId,
   source,
   international = false,
   submitLabel,
@@ -93,6 +99,9 @@ export default function LeadForm({
   const fieldLabel = compact ? COMPACT_LABEL : LABEL;
   const chevronSide = columns === 2 ? "left" : "right";
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
+  // Honeypot: a field no person sees. The CMS answers a filled one with a
+  // success and stores nothing, so a bot learns nothing either.
+  const [website, setWebsite] = useState("");
 
   const form = useForm({
     schema: international ? ForeignLeadSchema : LeadSchema,
@@ -153,6 +162,8 @@ export default function LeadForm({
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
               data: {
+                form: formId,
+                website,
                 name: output.name,
                 email: output.email,
                 phone: output.phone,
@@ -186,6 +197,16 @@ export default function LeadForm({
       }}
       className={compact ? "form-compact space-y-4" : "space-y-4"}
     >
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={website}
+        onChange={(event) => setWebsite(event.target.value)}
+        className="hidden"
+      />
       {/* Four fields, two per row, in the design's reading order:
           nombre / país, then whatsapp / correo. */}
       <div className={international ? "grid gap-4 sm:grid-cols-2" : "space-y-4"}>

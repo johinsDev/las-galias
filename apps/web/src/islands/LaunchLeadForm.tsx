@@ -96,6 +96,7 @@ export default function LaunchLeadForm({ projectDocumentId, cities }: LaunchLead
             interestCity: lead.interestCity,
             referralSource: lead.referralSource,
             budgetRange: lead.budgetRange,
+            form: "lanzamiento",
             source: "lanzamiento",
             project: projectDocumentId,
             acceptsDataPolicy: true,

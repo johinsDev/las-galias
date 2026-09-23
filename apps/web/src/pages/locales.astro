@@ -66,7 +66,12 @@ const reasons = [
     <div class="border-line rounded-2xl border bg-white p-6 shadow-xs" data-reveal>
       <p class="text-ink font-semibold">Habla con un asesor →</p>
       <div class="mt-4">
-        <LeadForm client:visible source="locales" submitLabel="Quiero información de locales" />
+        <LeadForm
+          client:visible
+          form="locales"
+          source="locales"
+          submitLabel="Quiero información de locales"
+        />
       </div>
       <p class="text-caption text-ink-faint mt-3 text-center">
         🔒 Tus datos están protegidos · Sin spam

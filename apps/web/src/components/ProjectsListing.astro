@@ -123,6 +123,7 @@ const empty = lots
         <div class="mt-4">
           <LeadForm
             client:visible
+            form={lots ? "lotes" : "listado"}
             source={lots ? "lotes" : "proyectos"}
             submitLabel="Déjanos tus datos"
           />
