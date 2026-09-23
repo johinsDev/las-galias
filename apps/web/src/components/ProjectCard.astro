@@ -3,6 +3,8 @@ import type { Media, Project } from "@lasgalias/schemas";
 
 import { getImage } from "astro:assets";
 
+import { ShareMenu } from "@lasgalias/ui/components/share-menu";
+
 import CmsImage from "@/components/CmsImage.astro";
 import Price from "@/components/Price.astro";
 import PriceSwitcher from "@/components/PriceSwitcher.astro";
@@ -57,6 +59,12 @@ const {
   deferRender = false,
 } = Astro.props;
 const isExpectation = project.stage === "expectation";
+/**
+ * A lot has no page of its own: the whole card is "talk to us", so it loses
+ * the overlay link, "Ver proyecto", the share button and the hero morph, and
+ * WhatsApp takes the full footer.
+ */
+const isLot = project.productType === "lot";
 
 /**
  * The card is a small carousel now. The hero leads and the gallery follows,
@@ -176,7 +184,7 @@ const CHIP =
                every card flew across the screen on the way back. Compact cards
                ("Proyectos similares" on the project page) get no name either —
                they would morph into the listing's cards behind the hero. */
-            return index === 0 && !compact ? (
+            return index === 0 && !compact && !isLot ? (
               <div
                 class="vt-hero h-full w-full shrink-0 snap-center"
                 transition:name={`project-hero-${project.slug}`}
@@ -208,8 +216,11 @@ const CHIP =
       )
     }
 
-    {/* Status + commercial badges, top-left, stacked in the design's order. */}
-    <div class="pointer-events-none absolute top-3 left-3 flex flex-wrap gap-1.5 pr-6">
+    {
+      /* Status + commercial badges, top-left, stacked in the design's order.
+        The right padding keeps them clear of the share button. */
+    }
+    <div class="pointer-events-none absolute top-3 left-3 flex flex-wrap gap-1.5 pr-12">
       {
         compact ? (
           <>
@@ -236,6 +247,24 @@ const CHIP =
     </div>
 
     {
+      /* Share, top-right (Figma 2098:5012). It shares the PROJECT's URL, not the
+        page's, and hydrates on hover/touch like the one on the project page. */
+    }
+    {
+      !isLot && (
+        <div class="absolute top-3 right-3 z-10">
+          <ShareMenu
+            client:interact
+            variant="icon"
+            align="end"
+            title={project.name}
+            url={projectHref}
+          />
+        </div>
+      )
+    }
+
+    {
       compact && project.logo?.url && (
         <span class="border-mist pointer-events-none absolute right-3 bottom-3 flex size-[34px] items-center justify-center overflow-hidden rounded-[10px] border-[0.71px] bg-white p-1">
           <CmsImage
@@ -255,7 +284,9 @@ const CHIP =
     {
       images.length > 1 && (
         <>
-          {/* Scrim so the dots stay legible over a bright photo. */}
+          {/* Scrim so the dots stay legible over a bright photo. The arrows sit
+              on their own dark discs for the same reason: bare white chevrons
+              vanished over a rendering of a sunny courtyard. */}
           {!compact && (
             <div class="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/45 to-transparent" />
           )}
@@ -263,7 +294,7 @@ const CHIP =
             type="button"
             data-card-prev
             aria-label="Imagen anterior"
-            class="absolute top-1/2 left-1 inline-flex size-8 -translate-y-1/2 items-center justify-center text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
+            class="absolute top-1/2 left-2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 backdrop-blur-[2px] transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:bg-black/65"
           >
             <ChevronLeft size={20} stroke-width={2} aria-hidden="true" />
           </button>
@@ -271,7 +302,7 @@ const CHIP =
             type="button"
             data-card-next
             aria-label="Imagen siguiente"
-            class="absolute top-1/2 right-1 inline-flex size-8 -translate-y-1/2 items-center justify-center text-white/85 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:text-white"
+            class="absolute top-1/2 right-2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 backdrop-blur-[2px] transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:bg-black/65"
           >
             <ChevronRight size={20} stroke-width={2} aria-hidden="true" />
           </button>
@@ -293,11 +324,13 @@ const CHIP =
   {
     compact ? (
       <div class="relative flex flex-1 flex-col p-3.5">
-        <a
-          href={`/proyectos-de-vivienda/${project.slug}`}
-          class="absolute inset-0 z-0"
-          aria-label={`Ver ${project.name}`}
-        />
+        {!isLot && (
+          <a
+            href={`/proyectos-de-vivienda/${project.slug}`}
+            class="absolute inset-0 z-0"
+            aria-label={`Ver ${project.name}`}
+          />
+        )}
         <p class="text-steel flex items-center gap-1.5 text-xs leading-[18px] font-medium">
           <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
           {locationTrail}
@@ -340,11 +373,13 @@ const CHIP =
       </div>
     ) : (
       <div class="relative flex flex-1 flex-col p-[18px]">
-        <a
-          href={`/proyectos-de-vivienda/${project.slug}`}
-          class="absolute inset-0 z-0"
-          aria-label={`Ver ${project.name}`}
-        />
+        {!isLot && (
+          <a
+            href={`/proyectos-de-vivienda/${project.slug}`}
+            class="absolute inset-0 z-0"
+            aria-label={`Ver ${project.name}`}
+          />
+        )}
         <div class="flex flex-1 flex-col">
           <p class="text-caption text-ink-muted flex items-center gap-1.5">
             <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
@@ -393,11 +428,14 @@ const CHIP =
           )}
         </div>
 
-        {/* Two actions across the card's footer, above a hairline divider. */}
+        {/* Two actions across the card's footer, above a hairline divider —
+            one, WhatsApp, on a lot. */}
         <div class="border-line mt-4 flex gap-2 border-t pt-4">
-          <a href={projectHref} class="btn btn-outline relative z-10 flex-1 py-2.5 text-sm">
-            Ver proyecto
-          </a>
+          {!isLot && (
+            <a href={projectHref} class="btn btn-outline relative z-10 flex-1 py-2.5 text-sm">
+              Ver proyecto
+            </a>
+          )}
           {whatsappHref && (
             <button
               type="button"

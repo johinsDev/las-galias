@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
 
 import { cn } from "@lasgalias/ui/lib/utils";
@@ -8,8 +8,21 @@ import { cn } from "@lasgalias/ui/lib/utils";
 interface ShareMenuProps {
   /** Lo que se comparte junto al enlace. */
   title: string;
+  /**
+   * Qué enlace se comparte. Sin él, la página en la que está el botón; una card
+   * del listado lo pasa porque comparte SU proyecto, no el listado. Puede ser
+   * relativo al sitio: se resuelve en el navegador al abrir.
+   */
+  url?: string;
   /** Texto del disparador; el icono lo pone el componente. */
   label?: string;
+  /**
+   * `button` es el de la ficha, con borde y palabra; `icon` el círculo blanco
+   * sobre la foto de la card (Figma ShareButton-MASTER, 32 px), solo el icono.
+   */
+  variant?: "button" | "icon";
+  /** De qué lado del disparador cuelga el menú. */
+  align?: "start" | "end";
   className?: string;
 }
 
@@ -132,22 +145,33 @@ function Row({
  * estático y la URL con la que se construyó no siempre es la que el visitante
  * tiene delante (una campaña añade su `utm_`, por ejemplo).
  */
-export function ShareMenu({ title, label = "Compartir", className }: ShareMenuProps) {
+export function ShareMenu({
+  title,
+  url: shared,
+  label = "Compartir",
+  variant = "button",
+  align = "start",
+  className,
+}: ShareMenuProps) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
   const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    setUrl(window.location.href);
+    setUrl(shared ? new URL(shared, window.location.href).href : window.location.href);
     setCanShare(typeof navigator !== "undefined" && Boolean(navigator.share));
     // Hidratado bajo demanda (`client:interact`): si el visitante pulsó antes
-    // de que llegara el JS, la directiva deja esta marca y el menú se abre solo.
-    if (document.documentElement.dataset.lgOpenShare) {
-      delete document.documentElement.dataset.lgOpenShare;
+    // de que llegara el JS, la directiva deja esta marca en SU isla y el menú
+    // se abre solo. En la isla y no en <html>: un listado tiene treinta de
+    // estos y una marca global abriría el primero que terminara de hidratar.
+    const island = trigger.current?.closest<HTMLElement>("astro-island");
+    if (island?.dataset.lgOpenShare) {
+      delete island.dataset.lgOpenShare;
       setOpen(true);
     }
-  }, []);
+  }, [shared]);
 
   const encodedUrl = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
@@ -165,15 +189,21 @@ export function ShareMenu({ title, label = "Compartir", className }: ShareMenuPr
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
-        className={cn("btn btn-outline gap-2 px-5 py-2.5 text-sm", className)}
+        ref={trigger}
+        className={cn(
+          variant === "icon"
+            ? "text-ink shadow-card hover:bg-fog inline-flex size-8 items-center justify-center rounded-full bg-white transition-colors"
+            : "btn btn-outline gap-2 px-5 py-2.5 text-sm",
+          className,
+        )}
         aria-label={`Compartir: ${title}`}
       >
         <ShareIcon />
-        {label}
+        {variant === "button" && label}
       </Popover.Trigger>
 
       <Popover.Portal>
-        <Popover.Positioner sideOffset={8} align="start" className="z-50 outline-none">
+        <Popover.Positioner sideOffset={8} align={align} className="z-50 outline-none">
           <Popover.Popup className="border-line shadow-card-lg w-60 rounded-2xl border bg-white p-2">
             <Popover.Title className="eyebrow text-ink-muted px-3 pt-1 pb-2">
               Compartir

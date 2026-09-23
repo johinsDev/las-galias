@@ -6,7 +6,11 @@ import type { ClientDirective } from "astro";
  * arrives before the JS has, remember it so the component opens itself on mount.
  *
  * Used by the share menu: a button that is above the fold on every project page
- * and would otherwise drag React + Base UI in with `client:idle`.
+ * — and once per card on the listing — and would otherwise drag React + Base UI
+ * in with `client:idle`.
+ *
+ * The click mark goes on the island, not on `<html>`: with thirty cards on a
+ * page a global mark would open whichever menu finished hydrating first.
  */
 const interact: ClientDirective = (load, _options, element) => {
   const WARM = ["pointerenter", "focusin", "touchstart"] as const;
@@ -25,7 +29,7 @@ const interact: ClientDirective = (load, _options, element) => {
     (event) => {
       if (element.hasAttribute("ssr") === false) return; // already hydrated
       event.preventDefault();
-      document.documentElement.dataset.lgOpenShare = "1";
+      element.dataset.lgOpenShare = "1";
       void hydrate();
     },
     { capture: true },
