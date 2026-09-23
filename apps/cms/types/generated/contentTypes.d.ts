@@ -1315,7 +1315,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     priceFromCOP: Schema.Attribute.BigInteger;
     priceFromSincoCOP: Schema.Attribute.BigInteger;
     priceLocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    productType: Schema.Attribute.Enumeration<["housing", "lot"]> &
+    productType: Schema.Attribute.Enumeration<["housing", "lot", "local"]> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<"housing">;
     publishedAt: Schema.Attribute.DateTime;

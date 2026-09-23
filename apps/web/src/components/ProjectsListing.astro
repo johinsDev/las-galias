@@ -21,54 +21,80 @@ interface Props {
   /** The city this page is filtered to; none for the full catalogue. */
   city?: City | null;
   /**
-   * `lots` is /lotes: the same page and the same card, but the cards only
-   * offer WhatsApp (a lot has no page of its own) and there are no city pages
-   * to link between, so the pills stay out.
+   * `lots` is /lotes and `locales` is /locales: the same page and the same
+   * card, but the cards only offer WhatsApp (neither has a page of its own)
+   * and there are no city pages to link between, so the pills stay out.
    */
-  kind?: "housing" | "lots";
+  kind?: "housing" | "lots" | "locales";
 }
 
 const { projects: all, cities, faqs, city = null, kind = "housing" } = Astro.props;
 const projects = city ? all.filter((p) => p.city?.slug === city.slug) : all;
-const lots = kind === "lots";
+const pageless = kind !== "housing";
 
-const title = lots
-  ? "Lotes — Las Galias"
-  : city
-    ? `Proyectos de vivienda en ${city.name} — Las Galias`
-    : "Proyectos de vivienda — Las Galias";
-const description = lots
-  ? "Lotes de Las Galias en venta: escríbenos por WhatsApp y un asesor te cuenta ubicación, área y precio."
-  : city
-    ? `Vivienda nueva de Las Galias en ${city.name}: apartamentos y casas en venta con crédito y subsidio.`
-    : "Todos los proyectos de vivienda de Las Galias.";
-const eyebrow = lots ? "Lotes" : "Proyectos";
-const heading = lots
-  ? "Conoce nuestros lotes"
-  : city
-    ? `Proyectos de vivienda en ${city.name}`
-    : "Conoce nuestros proyectos";
-const intro = lots
-  ? "Lotes en venta en los mismos lugares donde construimos vivienda. Escríbenos y un asesor te acompaña."
-  : city
-    ? `Vivienda nueva en ${city.name}. Elige un proyecto y encuentra tu hogar.`
-    : "Vivienda nueva en las principales ciudades del país. Filtra por ciudad y encuentra tu hogar.";
-const empty = lots
-  ? "Muy pronto publicaremos nuestros lotes. Vuelve pronto."
-  : "Muy pronto publicaremos nuestros proyectos. Vuelve pronto.";
+/** The words that change with the kind; everything else on the page is shared. */
+const COPY = {
+  lots: {
+    title: "Lotes — Las Galias",
+    description:
+      "Lotes de Las Galias en venta: escríbenos por WhatsApp y un asesor te cuenta ubicación, área y precio.",
+    eyebrow: "Lotes",
+    heading: "Conoce nuestros lotes",
+    intro:
+      "Lotes en venta en los mismos lugares donde construimos vivienda. Escríbenos y un asesor te acompaña.",
+    empty: "Muy pronto publicaremos nuestros lotes. Vuelve pronto.",
+    noun: "el lote",
+    form: "lotes" as const,
+    source: "lotes",
+  },
+  locales: {
+    title: "Locales comerciales — Las Galias",
+    description:
+      "Locales comerciales de Las Galias en venta: escríbenos por WhatsApp y un asesor te cuenta área, ubicación y precio.",
+    eyebrow: "Locales comerciales",
+    heading: "Conoce nuestros locales",
+    intro:
+      "Locales en los mismos conjuntos y macroproyectos donde construimos vivienda. Escríbenos y un asesor te acompaña.",
+    empty: "Muy pronto publicaremos nuestros locales. Vuelve pronto.",
+    noun: "el local",
+    form: "locales" as const,
+    source: "locales",
+  },
+  housing: {
+    title: city
+      ? `Proyectos de vivienda en ${city.name} — Las Galias`
+      : "Proyectos de vivienda — Las Galias",
+    description: city
+      ? `Vivienda nueva de Las Galias en ${city.name}: apartamentos y casas en venta con crédito y subsidio.`
+      : "Todos los proyectos de vivienda de Las Galias.",
+    eyebrow: "Proyectos",
+    heading: city ? `Proyectos de vivienda en ${city.name}` : "Conoce nuestros proyectos",
+    intro: city
+      ? `Vivienda nueva en ${city.name}. Elige un proyecto y encuentra tu hogar.`
+      : "Vivienda nueva en las principales ciudades del país. Filtra por ciudad y encuentra tu hogar.",
+    empty: "Muy pronto publicaremos nuestros proyectos. Vuelve pronto.",
+    noun: "el proyecto",
+    form: "listado" as const,
+    source: "proyectos",
+  },
+}[kind];
 ---
 
-<Base title={title} description={description}>
+<Base title={COPY.title} description={COPY.description}>
   <section class="border-line border-b">
     <div class="container py-12 text-center md:py-16">
-      <p class="eyebrow">{eyebrow}</p>
-      <h1 class="text-h1 text-ink mt-2 font-extrabold">{heading}</h1>
-      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">{intro}</p>
+      <p class="eyebrow">{COPY.eyebrow}</p>
+      <h1 class="text-h1 text-ink mt-2 font-extrabold">{COPY.heading}</h1>
+      <p class="text-body-lg text-ink-muted mx-auto mt-3 max-w-xl">{COPY.intro}</p>
     </div>
   </section>
 
   <section class="container py-10 md:py-14">
-    {!lots && <CityFilter cities={cities} hrefBase="/proyectos-de-vivienda" active={city?.slug} />}
+    {
+      !pageless && (
+        <CityFilter cities={cities} hrefBase="/proyectos-de-vivienda" active={city?.slug} />
+      )
+    }
     <WhatsAppGate client:on="lg:open-whatsapp" />
 
     {
@@ -88,7 +114,7 @@ const empty = lots
           ))}
         </div>
       ) : (
-        <p class="text-body text-ink-muted mt-8 text-center">{empty}</p>
+        <p class="text-body text-ink-muted mt-8 text-center">{COPY.empty}</p>
       )
     }
 
@@ -109,7 +135,7 @@ const empty = lots
         <h2 class="text-h2 text-ink font-bold">¿Listo para dar el primer paso?</h2>
         <p class="text-ink-muted mt-4">
           Déjanos tus datos y uno de nuestros asesores te contactará en menos de 24 horas para
-          resolver tus dudas sobre {lots ? "el lote" : "el proyecto"} que te interesa.
+          resolver tus dudas sobre {COPY.noun} que te interesa.
         </p>
         <ul class="text-body-sm text-ink-muted mt-6 space-y-2">
           <li>✓ Sin costo · Sin compromiso</li>
@@ -123,8 +149,8 @@ const empty = lots
         <div class="mt-4">
           <LeadForm
             client:visible
-            form={lots ? "lotes" : "listado"}
-            source={lots ? "lotes" : "proyectos"}
+            form={COPY.form}
+            source={COPY.source}
             submitLabel="Déjanos tus datos"
           />
         </div>

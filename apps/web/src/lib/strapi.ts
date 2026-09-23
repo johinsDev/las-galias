@@ -250,12 +250,20 @@ async function getAllProjects(): Promise<Project[]> {
  * simply has no lots.
  */
 export async function getProjects(): Promise<Project[]> {
-  return (await getAllProjects()).filter((p) => p.productType !== "lot");
+  return (await getAllProjects()).filter((p) => !PAGELESS.has(p.productType ?? "housing"));
 }
+
+/** Product types that list on a page of their own and have no project page. */
+const PAGELESS = new Set(["lot", "local"]);
 
 /** The lots (/lotes): same card, no page of their own. */
 export async function getLots(): Promise<Project[]> {
   return (await getAllProjects()).filter((p) => p.productType === "lot");
+}
+
+/** The commercial premises (/locales): same arrangement as the lots. */
+export async function getLocales(): Promise<Project[]> {
+  return (await getAllProjects()).filter((p) => p.productType === "local");
 }
 
 export async function getProject(slug: string): Promise<Project | null> {

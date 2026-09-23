@@ -1,81 +1,14 @@
 ---
-import { Building2, Handshake, MapPin } from "lucide-astro";
-
-import Base from "@/layouts/Base.astro";
-import LeadForm from "@/islands/LeadForm";
+import ProjectsListing from "@/components/ProjectsListing.astro";
+import { getFaqs, getLocales } from "@/lib/strapi";
 
 /**
- * "Locales" in the menu (Figma node 3286:1285). The design adds the link but
- * draws no page for it and the CMS has no content type for premises, so this is
- * a contact page and nothing else: it promises no inventory, prices or cities,
- * only that an advisor answers. The lead travels with `source: locales` so the
- * sales team can tell it from a housing enquiry.
+ * "Locales" in the menu: the catalogue page again, over the projects the CMS
+ * marks as commercial premises. Like a lot, a premise has no page of its own,
+ * so its card is only a way to WhatsApp. It used to be a contact-only landing
+ * while the CMS had no way to list premises; the product type gave it one.
  */
-const title = "Locales comerciales | Las Galias Constructora";
-const description =
-  "¿Buscas un local comercial en un proyecto de Las Galias? Déjanos tus datos y un asesor te cuenta qué hay disponible.";
-
-const reasons = [
-  {
-    icon: MapPin,
-    title: "Dentro de nuestros proyectos",
-    body: "Locales en los mismos conjuntos y macroproyectos donde construimos vivienda.",
-  },
-  {
-    icon: Building2,
-    title: "Para comprar o invertir",
-    body: "Cuéntanos qué tipo de negocio tienes en mente y el área que necesitas.",
-  },
-  {
-    icon: Handshake,
-    title: "Asesoría directa",
-    body: "Un asesor comercial te contacta con la disponibilidad y las condiciones vigentes.",
-  },
-];
+const [locales, faqs] = await Promise.all([getLocales(), getFaqs("general")]);
 ---
 
-<Base title={title} description={description}>
-  <section class="bg-brand text-white">
-    <div class="container pt-6 pb-14 text-center md:pb-16">
-      <p class="eyebrow text-white/95">Locales comerciales</p>
-      <h1 class="text-h1 mx-auto mt-3 max-w-3xl font-bold">Un local para tu negocio</h1>
-      <p class="mx-auto mt-4 max-w-2xl text-white/95">
-        Si te interesa un local comercial en alguno de nuestros proyectos, escríbenos y te contamos
-        qué hay disponible.
-      </p>
-    </div>
-  </section>
-
-  <section class="container grid items-start gap-10 py-16 md:py-20 lg:grid-cols-2">
-    <ul class="space-y-6" data-reveal>
-      {
-        reasons.map(({ icon: Icon, title, body }) => (
-          <li class="flex gap-4">
-            <span class="bg-brand-subtle text-brand flex size-11 shrink-0 items-center justify-center rounded-xl">
-              <Icon size={20} stroke-width={1.8} aria-hidden="true" />
-            </span>
-            <div>
-              <h2 class="text-ink font-semibold">{title}</h2>
-              <p class="text-body-sm text-ink-muted mt-1">{body}</p>
-            </div>
-          </li>
-        ))
-      }
-    </ul>
-
-    <div class="border-line rounded-2xl border bg-white p-6 shadow-xs" data-reveal>
-      <p class="text-ink font-semibold">Habla con un asesor →</p>
-      <div class="mt-4">
-        <LeadForm
-          client:visible
-          form="locales"
-          source="locales"
-          submitLabel="Quiero información de locales"
-        />
-      </div>
-      <p class="text-caption text-ink-faint mt-3 text-center">
-        🔒 Tus datos están protegidos · Sin spam
-      </p>
-    </div>
-  </section>
-</Base>
+<ProjectsListing kind="locales" projects={locales} cities={[]} faqs={faqs} />

@@ -151,13 +151,15 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 
 ## Domain (CMS business rules)
 
-- `project.productType` is `housing | lot`. Homes list in the catalogue and
-  have a page; lots list only on `/lotes` (`pages/lotes.astro`, the same
-  `ProjectsListing` with `kind="lots"`) and have NO page: the card drops the
-  overlay link, "Ver proyecto" and the share button, and WhatsApp takes the
-  footer. The split happens in `lib/strapi.ts` (`getProjects` vs `getLots`)
-  on the fetched rows, not with a `filters[productType]` on the request, so a
-  CMS that has not deployed the field yet still answers.
+- `project.productType` is `housing | lot | local`. Homes list in the catalogue
+  and have a page; lots list only on `/lotes` and commercial premises only on
+  `/locales` (`pages/lotes.astro`, `pages/locales.astro`: the same
+  `ProjectsListing` with `kind="lots"` / `"locales"`) and have NO page: the
+  card drops the overlay link, "Ver proyecto" and the share button, and
+  WhatsApp takes the footer. The split happens in `lib/strapi.ts`
+  (`getProjects` vs `getLots` / `getLocales`) on the fetched rows, not with a
+  `filters[productType]` on the request, so a CMS that has not deployed the
+  field yet still answers.
 - `project` has `stage: expectation | sale`. Expectation publishes with fewer
   fields (the validation lives in a document-service middleware on publish).
   An expectation project IS the launch: its URL renders the pre-sale landing

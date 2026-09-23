@@ -54,7 +54,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     productType: {
       label: "Tipo de producto",
       description:
-        "«housing» es vivienda: sale en el catálogo y tiene ficha. «lot» es un lote: solo sale en /lotes, sin ficha, y su card lleva directo a WhatsApp.",
+        "«housing» es vivienda: sale en el catálogo y tiene ficha. «lot» es un lote (solo en /lotes) y «local» un local comercial (solo en /locales): sin ficha, su card lleva directo a WhatsApp.",
     },
     syncFromSinco: {
       label: "Sincronizar desde Sinco",

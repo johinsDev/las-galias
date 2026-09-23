@@ -60,11 +60,11 @@ const {
 } = Astro.props;
 const isExpectation = project.stage === "expectation";
 /**
- * A lot has no page of its own: the whole card is "talk to us", so it loses
- * the overlay link, "Ver proyecto", the share button and the hero morph, and
- * WhatsApp takes the full footer.
+ * A lot or a commercial premise has no page of its own: the whole card is
+ * "talk to us", so it loses the overlay link, "Ver proyecto", the share button
+ * and the hero morph, and WhatsApp takes the full footer.
  */
-const isLot = project.productType === "lot";
+const isLot = project.productType === "lot" || project.productType === "local";
 
 /**
  * The card is a small carousel now. The hero leads and the gallery follows,

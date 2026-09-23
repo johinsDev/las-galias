@@ -238,6 +238,19 @@ async function main() {
         palette: "sand",
         blurb: "Lotes desde 120 m² con servicios y vías pavimentadas, a 20 minutos del norte de Bogotá.",
       },
+      {
+        // A commercial premise: same arrangement as a lot, on /locales.
+        name: "Locales Plaza Alisos",
+        slug: "locales-plaza-alisos",
+        productType: "local",
+        location: { lat: 4.7601, lng: -74.0465, address: "Calle 175 N° 22 – 10, Bogotá" },
+        stage: "sale",
+        priceFromCOP: "260000000",
+        city: bogota,
+        macroproject: macro.documentId,
+        palette: "clay",
+        blurb: "Locales de 45 a 90 m² sobre la vía principal del conjunto, con parqueadero para clientes.",
+      },
     ];
 
     const projects = {};
@@ -257,11 +270,17 @@ async function main() {
 
       const isSale = spec.stage === "sale";
       const isLot = spec.productType === "lot";
+      const isLocal = spec.productType === "local";
       const gallery = [];
       const unitTypes = [];
       if (isLot) {
         // Area only: a lot has no rooms, and the card's chips follow the data.
         unitTypes.push({ name: "Lote", areaM2: 120, priceCOP: spec.priceFromCOP });
+      } else if (isLocal) {
+        unitTypes.push(
+          { name: "Local pequeño", areaM2: 45, priceCOP: spec.priceFromCOP },
+          { name: "Local grande", areaM2: 90, priceCOP: String(Number(spec.priceFromCOP) * 2) },
+        );
       } else if (isSale) {
         for (let i = 1; i <= 3; i++) {
           const img = await uploadSvg(`${spec.slug}-gallery-${i}`, {

@@ -152,10 +152,11 @@ export interface Project {
   slug: string;
   stage: Stage;
   /**
-   * A home lists in the catalogue and has a page; a lot only lists on /lotes.
+   * A home lists in the catalogue and has a page; a lot only lists on /lotes
+   * and a commercial premise only on /locales, neither with a page of its own.
    * Missing on a CMS that predates the field, which means housing.
    */
-  productType?: "housing" | "lot" | null;
+  productType?: "housing" | "lot" | "local" | null;
   /** Second and third level of the location trail: Bogotá · Norte · San Antonio. */
   zone?: Zone | null;
   neighborhood?: string | null;
