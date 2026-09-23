@@ -93,3 +93,99 @@ export const ForeignLeadSchema = v.object({
 });
 
 export type ForeignLead = v.InferOutput<typeof ForeignLeadSchema>;
+
+/* ------------------------------------------------------------- formularios */
+
+/**
+ * Which form on the site a lead came from. The closed list the admin filters
+ * by; `source` keeps the free-text detail (`pdp:<slug>`, a campaign...).
+ *
+ * `manual` is the default in the CMS: a lead an advisor typed in by hand, or a
+ * historical row whose `source` predates this list.
+ */
+export const LEAD_FORMS = [
+  "pdp",
+  "listado",
+  "lotes",
+  "locales",
+  "exterior",
+  "lanzamiento",
+  "whatsapp",
+  "manual",
+] as const;
+
+export type LeadFormId = (typeof LEAD_FORMS)[number];
+
+export const LEAD_FORM_LABELS: Record<LeadFormId, string> = {
+  pdp: "Ficha de proyecto",
+  listado: "Listado de proyectos",
+  lotes: "Lotes",
+  locales: "Locales",
+  exterior: "Compra desde el exterior",
+  lanzamiento: "Lanzamiento",
+  whatsapp: "WhatsApp",
+  manual: "Manual u otro",
+};
+
+/**
+ * The form a `source` value implies, for rows that arrived before the site
+ * sent `form` — and for the site itself during the minutes between the CMS
+ * deploy and the web deploy that follows it. The backfill migration repeats
+ * this table in SQL; keep the two in step.
+ */
+export function inferLeadForm(source?: string | null): LeadFormId {
+  if (!source) return "manual";
+  if (/^pdp(?:-expectation|-asesoria)?:/.test(source)) return "pdp";
+  if (source === "proyectos") return "listado";
+  if ((LEAD_FORMS as readonly string[]).includes(source) && source !== "manual") {
+    return source as LeadFormId;
+  }
+  return "manual";
+}
+
+/**
+ * What the CMS accepts on `POST /api/leads` — the body the islands send, not
+ * the shape of the form on screen (`LeadSchema` above, which insists on an
+ * email the WhatsApp gate never has).
+ *
+ * `v.object` is deliberately NOT strict: unknown keys are dropped from the
+ * output, which is how the CRM bookkeeping fields (`crmStatus`, `crmAttempts`,
+ * ...) can never be set from the outside. The messages are not shown to
+ * anyone — the islands validate before sending — so they stay in English.
+ */
+export const LeadSubmissionSchema = v.object({
+  form: v.optional(v.picklist(LEAD_FORMS)),
+  name: LeadSchema.entries.name,
+  email: v.optional(v.pipe(v.string(), v.trim(), v.email())),
+  phone: LeadSchema.entries.phone,
+  message: v.optional(v.pipe(v.string(), v.maxLength(1000))),
+  /** The project's documentId, as the document service takes a relation. */
+  project: v.optional(v.string()),
+  source: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  acceptsDataPolicy: v.literal(true),
+  acceptsEmail: v.optional(v.boolean()),
+  acceptsSms: v.optional(v.boolean()),
+  acceptsWhatsApp: v.optional(v.boolean()),
+  acceptsCall: v.optional(v.boolean()),
+  incomeRange: v.optional(v.string()),
+  residenceCity: v.optional(v.string()),
+  severance: v.optional(v.string()),
+  savingsRange: v.optional(v.string()),
+  firstHome: v.optional(v.boolean()),
+  interestCity: v.optional(v.string()),
+  referralSource: v.optional(v.string()),
+  budgetRange: v.optional(v.string()),
+  residenceCountry: v.optional(v.string()),
+  utmSource: v.optional(v.string()),
+  utmMedium: v.optional(v.string()),
+  utmCampaign: v.optional(v.string()),
+});
+
+export type LeadSubmission = v.InferOutput<typeof LeadSubmissionSchema>;
+
+/** Same, for the foreign-buyer form: any country's phone, and the country itself. */
+export const ForeignLeadSubmissionSchema = v.object({
+  ...LeadSubmissionSchema.entries,
+  phone: ForeignLeadSchema.entries.phone,
+  residenceCountry: ForeignLeadSchema.entries.residenceCountry,
+});

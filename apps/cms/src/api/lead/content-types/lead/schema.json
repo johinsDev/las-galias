@@ -5,7 +5,7 @@
     "singularName": "lead",
     "pluralName": "leads",
     "displayName": "Lead",
-    "description": "Form submissions saved from PDPs (especially expectation-stage projects) and pushed to the Sinco CRM"
+    "description": "Every contact form on the site, one row each, kept here whatever the CRM does with it. `form` says which form; `source` keeps the detail"
   },
   "options": {
     "draftAndPublish": false
@@ -70,6 +70,22 @@
     "source": {
       "type": "string"
     },
+    "form": {
+      "type": "enumeration",
+      "enum": [
+        "pdp",
+        "listado",
+        "lotes",
+        "locales",
+        "exterior",
+        "lanzamiento",
+        "whatsapp",
+        "manual"
+      ],
+      "required": true,
+      "default": "manual",
+      "description": "Which form on the site created it — the closed list the admin filters by. `source` keeps the free-text detail (pdp:<slug>, campaign). Mirrors LEAD_FORMS in @lasgalias/schemas"
+    },
     "acceptsDataPolicy": {
       "type": "boolean",
       "required": true
@@ -101,8 +117,9 @@
     },
     "crmStatus": {
       "type": "enumeration",
-      "enum": ["pending", "sent", "duplicate", "failed", "skipped"],
-      "default": "pending"
+      "enum": ["pending", "sent", "duplicate", "failed", "skipped", "unrouted"],
+      "default": "pending",
+      "description": "unrouted: no project and no default Sinco project configured for its form (Configuración · CRM). Retried once one is set"
     },
     "crmVisitId": {
       "type": "string"

@@ -124,6 +124,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     lastSyncedAt: { label: "Última sincronización" },
   },
   "api::lead.lead": {
+    createdAt: { label: "Fecha" },
     name: { label: "Nombre" },
     email: { label: "Correo" },
     phone: { label: "Celular" },
@@ -140,8 +141,16 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       description: "Vacío significa que no lo respondió, que no es lo mismo que un no.",
     },
     message: { label: "Mensaje" },
+    form: {
+      label: "Formulario",
+      description:
+        "Desde qué formulario del sitio llegó. Es por lo que se filtra; «Origen» guarda el detalle.",
+    },
     project: { label: "Proyecto" },
-    source: { label: "Origen" },
+    source: {
+      label: "Origen",
+      description: "Detalle libre: pdp:<slug>, una campaña… Se envía a Sinco como fuenteReg.",
+    },
     acceptsDataPolicy: { label: "Acepta política de datos" },
     acceptsEmail: { label: "Autoriza correo" },
     acceptsSms: { label: "Autoriza SMS" },
@@ -149,15 +158,44 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     acceptsCall: { label: "Autoriza llamada" },
     crmStatus: {
       label: "Estado en el CRM",
-      description: "pendiente · enviado · duplicado · falló · omitido (sin proyecto).",
+      description:
+        "pending: por enviar · sent: enviado · duplicate: Sinco ya lo conocía · failed: falló · skipped: CRM en modo manual · unrouted: sin proyecto de Sinco (elige uno por defecto en Configuración · CRM). Se cambia con «Reenviar al CRM».",
     },
     crmVisitId: { label: "ID de visita en Sinco" },
     crmAttempts: { label: "Intentos de envío" },
     crmLastError: { label: "Último error" },
   },
   "api::newsletter-subscriber.newsletter-subscriber": {
+    createdAt: { label: "Fecha" },
     email: { label: "Correo" },
     source: { label: "Origen", description: "El artículo desde el que se suscribió." },
+  },
+  "api::crm-config.crm-config": {
+    sectionRouting: {
+      label: "Proyecto de Sinco por defecto",
+      description:
+        "Sinco no acepta una visita sin proyecto. Los leads que llegan sin uno (listado, lotes, locales, exterior, WhatsApp) van al proyecto elegido para su formulario; si no hay, al general. Sin ninguno quedan «sin proyecto» hasta que se configure.",
+    },
+    defaultProject: {
+      label: "General",
+      description: "Para cualquier formulario sin proyecto propio.",
+    },
+    projectListado: { label: "Formulario: listado de proyectos" },
+    projectLotes: { label: "Formulario: lotes" },
+    projectLocales: { label: "Formulario: locales" },
+    projectExterior: { label: "Formulario: compra desde el exterior" },
+    projectWhatsapp: {
+      label: "Formulario: WhatsApp",
+      description: "Solo si el proyecto de la card no tiene entrada en Sinco.",
+    },
+    sectionAlerts: {
+      label: "Alertas",
+      description: "A quién avisar cuando un lead se queda sin proyecto o falla su último intento.",
+    },
+    alertEmail: {
+      label: "Correo de alertas",
+      description: "Vacío usa CRM_ALERT_EMAIL del servidor; sin ninguno no se avisa a nadie.",
+    },
   },
   "api::zone.zone": {
     name: { label: "Nombre" },
@@ -513,6 +551,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     seo: { label: "SEO" },
   },
   "api::pqr.pqr": {
+    createdAt: { label: "Fecha" },
     sectionTicket: {
       label: "Radicación",
       description: "Lo asigna el sistema al recibir la solicitud.",
@@ -631,10 +670,17 @@ function mergeLabels(config: StoredConfig, labels: FieldLabels): boolean {
   for (const [field, { label, description }] of Object.entries(labels)) {
     const meta = config.metadatas[field];
     if (!meta) continue;
-    if (meta.edit && meta.edit.label !== label) {
-      meta.edit.label = label;
-      if (description !== undefined) meta.edit.description = description;
-      changed = true;
+    if (meta.edit) {
+      if (meta.edit.label !== label) {
+        meta.edit.label = label;
+        changed = true;
+      }
+      // Compared on its own: a help text that changes under the same label
+      // used to stay stale forever.
+      if (description !== undefined && meta.edit.description !== description) {
+        meta.edit.description = description;
+        changed = true;
+      }
     }
     if (meta.list && meta.list.label !== label) {
       meta.list.label = label;

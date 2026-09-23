@@ -25,7 +25,8 @@
         "src/admin/app.tsx",
         "src/api/**/*.ts",
         "config/*.ts",
-        "scripts/*.cjs"
+        "scripts/*.cjs",
+        "src/**/*.test.ts"
       ],
       "project": ["src/**/*.{ts,tsx}", "config/**/*.ts", "scripts/*.cjs"],
       "ignoreDependencies": [

@@ -474,6 +474,7 @@ export interface ApiCalculatorConfigCalculatorConfig extends Struct.SingleTypeSc
     maxTermYears: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<20>;
     paymentIncomeRatioPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<30>;
     publishedAt: Schema.Attribute.DateTime;
+    smmlvCOP: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1750905>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     visFinancingPercent: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<80>;
@@ -503,6 +504,42 @@ export interface ApiCityCity extends Struct.CollectionTypeSchema {
     projects: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCrmConfigCrmConfig extends Struct.SingleTypeSchema {
+  collectionName: "crm_config";
+  info: {
+    description: "Where leads that arrive without a project go in Sinco, per form and as a general fallback, plus who is told when one cannot be routed. Never read by the site; Super Admin only";
+    displayName: "Configuraci\u00F3n \u00B7 CRM";
+    pluralName: "crm-configs";
+    singularName: "crm-config";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    alertEmail: Schema.Attribute.Email;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    defaultProject: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::crm-config.crm-config"> &
+      Schema.Attribute.Private;
+    projectExterior: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    projectListado: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    projectLocales: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    projectLotes: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    projectWhatsapp: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    publishedAt: Schema.Attribute.DateTime;
+    sectionAlerts: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionRouting: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -923,7 +960,7 @@ export interface ApiLeadFormConfigLeadFormConfig extends Struct.SingleTypeSchema
 export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   collectionName: "leads";
   info: {
-    description: "Form submissions saved from PDPs (especially expectation-stage projects) and pushed to the Sinco CRM";
+    description: "Every contact form on the site, one row each, kept here whatever the CRM does with it. `form` says which form; `source` keeps the detail";
     displayName: "Lead";
     pluralName: "leads";
     singularName: "lead";
@@ -937,16 +974,25 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     acceptsEmail: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     acceptsSms: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     acceptsWhatsApp: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    budgetRange: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     crmAttempts: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     crmLastError: Schema.Attribute.Text;
-    crmStatus: Schema.Attribute.Enumeration<["pending", "sent", "duplicate", "failed", "skipped"]> &
+    crmStatus: Schema.Attribute.Enumeration<
+      ["pending", "sent", "duplicate", "failed", "skipped", "unrouted"]
+    > &
       Schema.Attribute.DefaultTo<"pending">;
     crmVisitId: Schema.Attribute.String;
-    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    email: Schema.Attribute.Email;
     firstHome: Schema.Attribute.Boolean;
+    form: Schema.Attribute.Enumeration<
+      ["pdp", "listado", "lotes", "locales", "exterior", "lanzamiento", "whatsapp", "manual"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"manual">;
     incomeRange: Schema.Attribute.String;
+    interestCity: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::lead.lead"> &
       Schema.Attribute.Private;
@@ -955,6 +1001,7 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
     phone: Schema.Attribute.String & Schema.Attribute.Required;
     project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
+    referralSource: Schema.Attribute.String;
     residenceCity: Schema.Attribute.String;
     residenceCountry: Schema.Attribute.String;
     savingsRange: Schema.Attribute.String;
@@ -1268,6 +1315,9 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     priceFromCOP: Schema.Attribute.BigInteger;
     priceFromSincoCOP: Schema.Attribute.BigInteger;
     priceLocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    productType: Schema.Attribute.Enumeration<["housing", "lot"]> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"housing">;
     publishedAt: Schema.Attribute.DateTime;
     recommended: Schema.Attribute.Relation<"oneToMany", "api::project.project">;
     salesRoom: Schema.Attribute.Component<"project.sales-room", false>;
@@ -1819,6 +1869,7 @@ declare module "@strapi/strapi" {
       "api::amenity.amenity": ApiAmenityAmenity;
       "api::calculator-config.calculator-config": ApiCalculatorConfigCalculatorConfig;
       "api::city.city": ApiCityCity;
+      "api::crm-config.crm-config": ApiCrmConfigCrmConfig;
       "api::customer-service-page.customer-service-page": ApiCustomerServicePageCustomerServicePage;
       "api::exchange-rate.exchange-rate": ApiExchangeRateExchangeRate;
       "api::faq-bot-config.faq-bot-config": ApiFaqBotConfigFaqBotConfig;

@@ -1,6 +1,11 @@
 import type { Core } from "@strapi/strapi";
 
-import { contentTypeKey, type StoredConfig, updateStoredConfig } from "./admin-store";
+import {
+  contentTypeKey,
+  type ListSettings,
+  type StoredConfig,
+  updateStoredConfig,
+} from "./admin-store";
 
 /**
  * Edit-view layouts as code.
@@ -64,7 +69,8 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
   "api::lead.lead": [
     ["name", "email"],
     ["phone", "residenceCountry"],
-    ["project", "source"],
+    // Which form, which project, and the free-text detail of the origin.
+    ["form", "project", "source"],
     // La calificación que dejó el formulario, junta: es lo que mira el asesor
     // antes de llamar.
     ["incomeRange", "savingsRange", "severance"],
@@ -85,6 +91,15 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["name", "sincoId"],
     ["macroName", "macroSincoId"],
     ["lastSyncedAt:12"],
+  ],
+  "api::crm-config.crm-config": [
+    ["sectionRouting"],
+    ["defaultProject:12"],
+    ["projectListado", "projectLotes"],
+    ["projectLocales", "projectExterior"],
+    ["projectWhatsapp:6"],
+    ["sectionAlerts"],
+    ["alertEmail:6"],
   ],
   "api::post.post": [
     ["title", "slug"],
@@ -258,7 +273,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
 
 const LIST_LAYOUTS: Record<string, string[]> = {
   "api::project.project": ["name", "city", "stage", "constructionStatus", "priceFromCOP"],
-  "api::lead.lead": ["name", "phone", "project", "crmStatus", "createdAt"],
+  "api::lead.lead": ["createdAt", "form", "name", "phone", "email", "project", "crmStatus"],
   "api::sinco-project.sinco-project": ["label", "sincoId", "macroName", "lastSyncedAt"],
   "api::post.post": ["title", "category", "publishedOn", "featured"],
   "api::macroproject.macroproject": ["name", "city", "slug"],
@@ -270,9 +285,48 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::home-banner.home-banner": ["title", "active", "order"],
   "api::redirect.redirect": ["from", "to", "enabled", "source"],
   "api::job-run.job-run": ["task", "status", "ranAt", "durationMs"],
-  "api::faq-bot-question.faq-bot-question": ["question", "wasCached", "model", "askedAt"],
+  "api::faq-bot-question.faq-bot-question": ["askedAt", "question", "wasCached", "model"],
+  "api::newsletter-subscriber.newsletter-subscriber": ["createdAt", "email", "source"],
   "api::legal-document.legal-document": ["title", "slug", "effectiveDate", "order"],
-  "api::pqr.pqr": ["radicado", "type", "subject", "status", "responseDueAt"],
+  "api::pqr.pqr": ["createdAt", "radicado", "type", "name", "project", "status", "responseDueAt"],
+};
+
+/**
+ * How each list opens: newest first for everything the site receives, and a
+ * page long enough that a week of leads fits on one screen. Filters and the
+ * search box are on by default in Strapi; declared anyway so a "Configure the
+ * view" click cannot switch them off for good.
+ */
+const LIST_SETTINGS: Record<string, ListSettings> = {
+  "api::lead.lead": {
+    defaultSortBy: "createdAt",
+    defaultSortOrder: "DESC",
+    pageSize: 50,
+    filterable: true,
+    searchable: true,
+  },
+  "api::pqr.pqr": {
+    defaultSortBy: "createdAt",
+    defaultSortOrder: "DESC",
+    pageSize: 50,
+    filterable: true,
+    searchable: true,
+  },
+  "api::newsletter-subscriber.newsletter-subscriber": {
+    defaultSortBy: "createdAt",
+    defaultSortOrder: "DESC",
+    pageSize: 100,
+    filterable: true,
+    searchable: true,
+  },
+  "api::faq-bot-question.faq-bot-question": {
+    defaultSortBy: "askedAt",
+    defaultSortOrder: "DESC",
+    pageSize: 50,
+    filterable: true,
+    searchable: true,
+  },
+  "api::job-run.job-run": { defaultSortBy: "ranAt", defaultSortOrder: "DESC", pageSize: 50 },
 };
 
 /**
@@ -284,7 +338,9 @@ const LIST_LAYOUTS: Record<string, string[]> = {
  */
 const READ_ONLY: Record<string, string[] | "*"> = {
   "api::project.project": ["priceFromSincoCOP"],
-  "api::lead.lead": ["crmVisitId", "crmAttempts", "crmLastError"],
+  // The CRM bookkeeping. `crmStatus` too: «Reenviar al CRM» is the one way to
+  // change it, and a hand-edited "sent" would hide a lead Sinco never got.
+  "api::lead.lead": ["crmStatus", "crmVisitId", "crmAttempts", "crmLastError"],
   "api::sinco-project.sinco-project": "*",
   "api::job-run.job-run": "*",
   "api::faq-bot-question.faq-bot-question": "*",
@@ -431,6 +487,46 @@ function mergeReadOnly(config: StoredConfig, fields: string[] | "*"): boolean {
   return changed;
 }
 
+/** Types the Content Manager refuses to sort by; asking would be reverted on the next sync. */
+const NOT_SORTABLE_TYPES = new Set([
+  "component",
+  "dynamiczone",
+  "json",
+  "media",
+  "richtext",
+  "blocks",
+  "password",
+]);
+
+/** Timestamps are not schema attributes, but the Content Manager always sorts by them. */
+const TIMESTAMPS = new Set(["createdAt", "updatedAt", "publishedAt"]);
+
+function mergeListSettings(
+  strapi: Core.Strapi,
+  uid: string,
+  config: StoredConfig,
+  wanted: ListSettings,
+): boolean {
+  const schema = schemaOf(strapi, uid);
+  const settings = (config.settings ??= {});
+  let changed = false;
+
+  for (const [key, value] of Object.entries(wanted) as [keyof ListSettings, unknown][]) {
+    if (key === "defaultSortBy" && typeof value === "string" && !TIMESTAMPS.has(value)) {
+      const attribute = schema?.attributes[value];
+      if (!attribute || NOT_SORTABLE_TYPES.has(attribute.type)) {
+        strapi.log.warn(`Admin list settings for ${uid}: cannot sort by "${value}", skipped`);
+        continue;
+      }
+    }
+    if (settings[key] !== value) {
+      (settings as Record<string, unknown>)[key] = value;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 /**
  * Idempotent: it compares before writing, so a boot that changes nothing does no
  * database work. Never throws — a form that is laid out badly is a nuisance, a
@@ -442,6 +538,7 @@ export async function applyAdminLayouts(strapi: Core.Strapi): Promise<void> {
       ...Object.keys(EDIT_LAYOUTS),
       ...Object.keys(LIST_LAYOUTS),
       ...Object.keys(READ_ONLY),
+      ...Object.keys(LIST_SETTINGS),
     ]);
 
     let updated = 0;
@@ -449,6 +546,7 @@ export async function applyAdminLayouts(strapi: Core.Strapi): Promise<void> {
       const rows = EDIT_LAYOUTS[uid];
       const columns = LIST_LAYOUTS[uid];
       const readOnly = READ_ONLY[uid];
+      const settings = LIST_SETTINGS[uid];
 
       const edit = rows ? buildEditLayout(strapi, uid, rows) : undefined;
       const list = columns ? buildListLayout(strapi, uid, columns) : undefined;
@@ -464,6 +562,7 @@ export async function applyAdminLayouts(strapi: Core.Strapi): Promise<void> {
           config.layouts.list = list;
           dirty = true;
         }
+        if (settings && mergeListSettings(strapi, uid, config, settings)) dirty = true;
         return dirty;
       });
       if (changed) updated += 1;

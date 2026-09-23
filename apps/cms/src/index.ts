@@ -4,7 +4,14 @@ import { applySpanishAdminLabels } from "./utils/admin-labels";
 import { applyAdminLayouts } from "./utils/admin-layouts";
 import { scheduleDeploy } from "./utils/deploy-hook";
 import { ensureConfig, invalidateContext } from "./utils/faq-bot-context";
-import { LEAD_UID, schedulePushLeadToCrm } from "./utils/lead-rules";
+import {
+  CRM_CONFIG_UID,
+  LEAD_UID,
+  reclassifyLegacyUnrouted,
+  requeueProjectLeads,
+  requeueUnroutedLeads,
+  schedulePushLeadToCrm,
+} from "./utils/lead-rules";
 import { PQR_UID, scheduleNotifyPqr, stampPqr } from "./utils/pqr-rules";
 import {
   createAutoRedirect,
@@ -19,6 +26,7 @@ import {
   SINCO_PROJECT_UID,
   syncSincoCatalogIfIncomplete,
 } from "./utils/sinco-catalog";
+import { extractRelationIds } from "./utils/relations";
 import { applyUploadLimits } from "./utils/upload-limits";
 
 /**
@@ -107,6 +115,32 @@ export default {
           config: { policies: [] },
           info: { pluginName: "admin", type: "admin" },
         },
+        // «Reenviar al CRM»: the bulk route first, so `resend-crm` is never
+        // read as a documentId. Admin JWT only, like the sync above — and no
+        // content-api route points at these handlers, so a public-role tick in
+        // users-permissions could not expose them either.
+        {
+          method: "POST",
+          path: "/leads/resend-crm",
+          handler: "api::lead.lead.resendFailedCrm",
+          config: { policies: ["admin::isAuthenticatedAdmin"] },
+          info: { pluginName: "admin", type: "admin" },
+        },
+        {
+          method: "POST",
+          path: "/leads/:documentId/resend-crm",
+          handler: "api::lead.lead.resendCrm",
+          config: { policies: ["admin::isAuthenticatedAdmin"] },
+          info: { pluginName: "admin", type: "admin" },
+        },
+        // «Exportar CSV» on the submissions lists, with the list's own filters.
+        {
+          method: "GET",
+          path: "/exports/:collection",
+          handler: "api::export.export.csv",
+          config: { policies: ["admin::isAuthenticatedAdmin"] },
+          info: { pluginName: "admin", type: "admin" },
+        },
       ],
     });
 
@@ -127,6 +161,12 @@ export default {
       if (uid === PQR_UID && action === "create") {
         await stampPqr(strapi, params);
       }
+
+      // Read before next(): the data is the only place the new relation shows.
+      const sincoEntryChanged =
+        uid === PROJECT_UID &&
+        action === "update" &&
+        extractRelationIds(params.data?.sincoProject).length > 0;
 
       if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {
@@ -154,6 +194,16 @@ export default {
       if (uid === LEAD_UID && action === "create") {
         const documentId = (result as { documentId?: string } | undefined)?.documentId;
         if (documentId) schedulePushLeadToCrm(strapi, documentId);
+      }
+
+      // A project that just got (or changed) its Sinco entry can carry leads
+      // that failed for lack of one; same when the CRM defaults are saved.
+      // Re-queued, not pushed: saving never waits on the ERP, the cron does it.
+      if (sincoEntryChanged && params.documentId) {
+        requeueProjectLeads(strapi, params.documentId);
+      }
+      if (uid === CRM_CONFIG_UID && (action === "create" || action === "update")) {
+        requeueUnroutedLeads(strapi);
       }
 
       // Same shape as the lead push, same reason: the person filing a complaint
@@ -252,6 +302,10 @@ export default {
     // escriben la misma fila del store, y así la segunda lee lo que dejó la
     // primera en vez de pisarla.
     await applyAdminLayouts(strapi);
+
+    // Leads that failed for lack of a Sinco project before `unrouted` existed
+    // get the honest status, so a configured default picks them up.
+    await reclassifyLegacyUnrouted(strapi);
 
     // Only the towers on sale stay in the picker. A database-only pass, so it
     // runs before the sync and does not need Sinco to be up.

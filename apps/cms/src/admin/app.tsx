@@ -1,4 +1,7 @@
 import DemoContentBanner from "./components/DemoContentBanner";
+import ExportCsvButton from "./components/ExportCsvButton";
+import ResendFailedLeadsButton from "./components/ResendFailedLeadsButton";
+import ResendToCrmButton from "./components/ResendToCrmButton";
 import SyncFromSincoButton from "./components/SyncFromSincoButton";
 
 /**
@@ -59,6 +62,21 @@ export default {
     app.getPlugin("content-manager").injectComponent("editView", "right-links", {
       name: "sync-from-sinco",
       Component: SyncFromSincoButton,
+    });
+    app.getPlugin("content-manager").injectComponent("editView", "right-links", {
+      name: "resend-to-crm",
+      Component: ResendToCrmButton,
+    });
+
+    // The lists of what the site receives: export what is on screen, and
+    // push the leads Sinco has not taken.
+    app.getPlugin("content-manager").injectComponent("listView", "actions", {
+      name: "export-csv",
+      Component: ExportCsvButton,
+    });
+    app.getPlugin("content-manager").injectComponent("listView", "actions", {
+      name: "resend-failed-leads",
+      Component: ResendFailedLeadsButton,
     });
 
     // En la lista, donde un editor ve los proyectos y no puede ignorar que los

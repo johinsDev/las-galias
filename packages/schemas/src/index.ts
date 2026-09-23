@@ -1,4 +1,16 @@
-export { ForeignLeadSchema, LeadSchema, type ForeignLead, type Lead } from "./lead";
+export {
+  ForeignLeadSchema,
+  ForeignLeadSubmissionSchema,
+  inferLeadForm,
+  LEAD_FORM_LABELS,
+  LEAD_FORMS,
+  LeadSchema,
+  LeadSubmissionSchema,
+  type ForeignLead,
+  type Lead,
+  type LeadFormId,
+  type LeadSubmission,
+} from "./lead";
 export { DATA_POLICY_SLUG, LEGAL_DOCUMENTS, type LegalDocumentRef } from "./legal";
 export { PQR_TYPE_LABELS, PQR_TYPES, PqrSchema, type Pqr, type PqrType } from "./pqr";
 export type {

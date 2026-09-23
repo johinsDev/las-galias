@@ -27,6 +27,7 @@ COPY --from=install /app/packages ./packages
 COPY package.json bun.lock bunfig.toml turbo.json ./
 COPY packages ./packages
 COPY apps/cms ./apps/cms
+RUN cd packages/schemas && bun run build
 RUN cd packages/providers && bun run build
 # V8 sizes its heap from the host's RAM: on a 2 GB box that lands around 1 GB,
 # which the Strapi admin build overruns — it aborts with SIGABRT (exit 134) and

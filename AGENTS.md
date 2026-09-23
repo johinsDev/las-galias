@@ -172,7 +172,7 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   reusable across projects (m2m).
 - Publishing/unpublishing public content triggers (debounced) the Vercel Deploy
   Hook → static site rebuild.
-- Only the Super Admin touches `redirect`, `calculator-config` and `exchange-rate`.
+- Only the Super Admin touches `redirect`, `calculator-config`, `crm-config` and `exchange-rate`.
 - `lead-form-config` holds the qualification dropdowns (ingresos, ciudad,
   cesantías, ahorros) shared by the PDP sidebar form and the "Recibe una asesoría
   personalizada" band, plus that band's copy. An empty list hides its select
@@ -197,8 +197,35 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `node scripts/load-projects.cjs [--yes]` (data in `apps/cms/data/proyectos.csv`, the sheet downloaded as CSV).
   It REPLACES every project, macroproject, zone and amenity — run it once, not
   on top of edited content.
-- A `lead` is stored in Strapi first and pushed to the CRM afterwards, never in the
-  request path — `crmStatus` records the outcome and a cron retries.
+- Everything the site receives is stored in Strapi first, whatever happens next:
+  `lead` (every contact form), `pqr`, `newsletter-subscriber` and
+  `faq-bot-question`. Their lists open newest first with filters and a search
+  box, and each has an «Exportar CSV» button (`GET /exports/:collection` on the
+  admin router, `src/utils/csv-export.ts`) that exports exactly the rows the
+  list's filters show.
+- `lead.form` is the closed list of forms (`LEAD_FORMS` in `@lasgalias/schemas`:
+  pdp, listado, lotes, locales, exterior, lanzamiento, whatsapp, manual) and is
+  what the admin filters by; `source` keeps the free-text detail. The public
+  `POST /api/leads` (`api/lead/controllers/lead.ts`) re-shapes the body through
+  the shared valibot schema, so the CRM fields can never be set from outside,
+  and infers `form` from `source` when the body has none — which is why the CMS
+  must deploy BEFORE the web starts sending `form`: Strapi answers 400 to an
+  unknown field. `packages/schemas` is built with tsup for the CMS (CommonJS),
+  like providers; the web keeps reading its source.
+- A `lead` is pushed to the CRM afterwards, never in the request path —
+  `crmStatus` records the outcome and a cron retries. Sinco refuses a visit
+  without a project AND a macroproject, so a lead is routed: its own
+  `project.sincoProject`, else the default for its form, else the general
+  default — both in the `crm-config` single type («Configuración · CRM», Super
+  Admin only, never public, not a deploy trigger). Nothing to route to means
+  `crmStatus: unrouted` (no attempt burnt) until a default is saved, which
+  re-queues them; so does setting a project's Sinco entry. «Reenviar al CRM»
+  on a lead and «Reenviar fallidos / sin proyecto» on the list re-push on
+  demand (admin routes `POST /leads/:documentId/resend-crm`,
+  `POST /leads/resend-crm?status=`). The routing decision is pure
+  (`src/utils/lead-routing.ts`, `node --test apps/cms/src/utils/lead-routing.test.ts`).
+  A lead that ends unrouted, or fails its last attempt, emails
+  `crm-config.alertEmail` (fallback `CRM_ALERT_EMAIL`) when `SMTP_HOST` is set.
 - The footer's "Documentos" column lists the sales booklets and policies by
   slug (`Footer.astro`), but only those the CMS has published: "Tips para
   comprar" is in `LEGAL_DOCUMENTS` and appears the day an editor creates that

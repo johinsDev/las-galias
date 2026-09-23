@@ -30,6 +30,7 @@
       "dependencies": {
         "@ai-sdk/anthropic": "^4.0.38",
         "@lasgalias/providers": "workspace:*",
+        "@lasgalias/schemas": "workspace:*",
         "@strapi/design-system": "2.2.1",
         "@strapi/icons": "2.2.1",
         "@strapi/plugin-users-permissions": "5.50.1",
@@ -44,6 +45,7 @@
         "react-dom": "^18.0.0",
         "react-router-dom": "^6.0.0",
         "styled-components": "^6.0.0",
+        "valibot": "^1.1.0",
       },
       "devDependencies": {
         "@types/node": "^20",
@@ -96,6 +98,7 @@
       },
       "devDependencies": {
         "@lasgalias/typescript-config": "workspace:*",
+        "tsup": "^8.5.0",
         "typescript": "^6",
       },
     },

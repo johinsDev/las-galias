@@ -95,18 +95,32 @@ deduplicación, bug de consentimientos) en
 
 **`crmStatus` en el `lead`:**
 
-| Valor       | Significa                                                           |
-| ----------- | ------------------------------------------------------------------- |
-| `pending`   | Aún no se ha intentado (o el intento no terminó)                    |
-| `sent`      | Visita nueva creada en el CRM; `crmVisitId` tiene el id             |
-| `duplicate` | La persona ya existía; el CRM devolvió su visita previa (ver abajo) |
-| `failed`    | Falló; `crmLastError` tiene el motivo. El cron reintenta            |
-| `skipped`   | `LEAD_PROVIDER=manual` — el lead se queda en Strapi a propósito     |
+| Valor       | Significa                                                                                                                                |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `pending`   | Aún no se ha intentado (o el intento no terminó)                                                                                         |
+| `sent`      | Visita nueva creada en el CRM; `crmVisitId` tiene el id                                                                                  |
+| `duplicate` | La persona ya existía; el CRM devolvió su visita previa (ver abajo)                                                                      |
+| `failed`    | Falló; `crmLastError` tiene el motivo. El cron reintenta                                                                                 |
+| `skipped`   | `LEAD_PROVIDER=manual` — el lead se queda en Strapi a propósito                                                                          |
+| `unrouted`  | Sin proyecto de Sinco al que ir (ver «Requisitos de datos»). No gasta intentos; se reintenta cuando se configura un proyecto por defecto |
 
 **Requisitos de datos.** El push necesita el `idProyecto` y el `idMacroProyecto`.
 Los dos salen de **un solo campo** del CMS: el selector `sincoProject` del
-proyecto (ver abajo). Sin él, el lead queda en `failed` con un mensaje explícito —
-nunca se pierde, pero tampoco llega al CRM.
+proyecto (ver abajo). Un lead se enruta en este orden
+(`apps/cms/src/utils/lead-routing.ts`):
+
+1. El `sincoProject` de su propio proyecto (formularios de ficha, lanzamiento y
+   WhatsApp).
+2. El proyecto por defecto **de su formulario** en «Configuración · CRM»
+   (`crm-config`: listado, lotes, locales, exterior, WhatsApp).
+3. El proyecto por defecto **general** de esa misma configuración.
+
+Sin ninguno, el lead queda en `unrouted` — nunca se pierde, pero tampoco llega
+al CRM — y vuelve a la cola en cuanto alguien guarda un proyecto por defecto o
+le pone entrada de Sinco a su proyecto. En el admin, «Reenviar al CRM» (ficha
+del lead) y «Reenviar fallidos / sin proyecto» (lista) lo empujan al momento.
+Todo lo que Sinco no tiene columna para guardar (formulario, cualificación,
+autorización de WhatsApp y llamada) viaja en `observacion`.
 
 ### El selector de proyecto de Sinco
 

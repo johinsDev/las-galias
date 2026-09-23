@@ -1,0 +1,61 @@
+{
+  "kind": "singleType",
+  "collectionName": "crm_config",
+  "info": {
+    "singularName": "crm-config",
+    "pluralName": "crm-configs",
+    "displayName": "Configuración · CRM",
+    "description": "Where leads that arrive without a project go in Sinco, per form and as a general fallback, plus who is told when one cannot be routed. Never read by the site; Super Admin only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sectionRouting": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "defaultProject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project",
+      "description": "General fallback: any lead with no project and no per-form default lands here"
+    },
+    "projectListado": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project"
+    },
+    "projectLotes": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project"
+    },
+    "projectLocales": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project"
+    },
+    "projectExterior": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project"
+    },
+    "projectWhatsapp": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project",
+      "description": "Only for a WhatsApp lead whose project has no Sinco entry; normally the card's project routes it"
+    },
+    "sectionAlerts": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "alertEmail": {
+      "type": "email",
+      "description": "Told when a lead ends up unrouted or fails its last attempt. Empty means CRM_ALERT_EMAIL, then nobody"
+    }
+  }
+}

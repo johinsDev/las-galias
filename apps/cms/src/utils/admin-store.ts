@@ -12,9 +12,20 @@ import type { Core } from "@strapi/strapi";
  * (labels and help text) and `admin-layouts.ts` (field order and grouping).
  */
 
+export interface ListSettings {
+  bulkable?: boolean;
+  filterable?: boolean;
+  searchable?: boolean;
+  pageSize?: number;
+  mainField?: string;
+  defaultSortBy?: string;
+  defaultSortOrder?: "ASC" | "DESC";
+}
+
 export interface StoredConfig {
   metadatas?: Record<string, { edit?: Record<string, unknown>; list?: Record<string, unknown> }>;
   layouts?: { edit?: { name: string; size: number }[][]; list?: string[] };
+  settings?: ListSettings;
   [key: string]: unknown;
 }
 
