@@ -184,17 +184,18 @@ const leads = (index: number) => reveal && index % items.length === 0;
      scroll-snap sprang it back to the first. Deriving the padding instead makes
      every slide's centre an exactly reachable scroll offset.
 
-     1424 x 780 with a 48px radius is what the inspector reports for the slide
-     in the 1776-wide design frame. */
+     1424 x 480 with a 48px radius is what the inspector reports for the slide
+     in the 1776-wide design frame (Figma 2824:17126; it was 780 tall until the
+     team shortened it so the whole hero fits a 1920×1080 screen). */
   .banner {
     /* 348 of a 390-wide mobile frame, per the inspector. */
     --banner-slide: 89vw;
     /* How far the slide hangs past the red, plus room for the dots (2.75rem).
-       The red band ends at 75% of the slide's height — the client asked for
-       the slide to sit clearly over the white, not flush with the red's edge —
-       so the hang is a quarter of the height, written in terms of the width
-       through the slide's aspect ratio: 242/348 on a phone (below). */
-    --banner-shelf: calc(var(--banner-slide) * 0.174 + 2.75rem);
+       The red band ends at about 84% of the slide's height on both frames —
+       the mobile slide is 348×211 and hangs 34px, the desktop one 1424×480
+       and hangs 75px — so the hang is written in terms of the width through
+       each slide's aspect ratio: 34/348 here, 75/1424 below. */
+    --banner-shelf: calc(var(--banner-slide) * 0.098 + 2.75rem);
   }
 
   @media (width >= 48rem) {
@@ -205,8 +206,8 @@ const leads = (index: number) => reveal && index % items.length === 0;
          margin, and the full 176px read as too much of them — this trims the
          peek to about 140 without losing it. */
       --banner-slide: min(86vw, var(--banner-slide-max));
-      /* Same quarter of the height, for the 1424/780 slide. */
-      --banner-shelf: calc(var(--banner-slide) * 0.137 + 2.75rem);
+      /* 75px of a 1424-wide slide. */
+      --banner-shelf: calc(var(--banner-slide) * 0.053 + 2.75rem);
     }
   }
 
