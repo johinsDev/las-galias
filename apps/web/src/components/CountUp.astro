@@ -1,0 +1,40 @@
+---
+/**
+ * A stat figure ("+30.000", "30 años", "#1") with its integer marked for
+ * `scripts/count-up.ts`. The page that renders it has to run `initCounters()`.
+ *
+ * Anything with decimals is left alone. "#1" has nothing to count up from, so
+ * it climbs the ranking instead: the script starts it at 10 and lands on 1.
+ */
+interface Props {
+  value: string;
+}
+
+const { value } = Astro.props;
+
+const match = /\d{1,3}(?:\.\d{3})+|\d+/.exec(value);
+const after = match ? value.slice(match.index + match[0].length) : "";
+const target = match && !/^,\d/.test(after) ? Number(match[0].replaceAll(".", "")) : null;
+const count =
+  match && target !== null
+    ? { before: value.slice(0, match.index), number: match[0], after, target }
+    : null;
+---
+
+{
+  count ? (
+    <>
+      {/* A screen reader gets the figure once, not every frame. */}
+      <span class="sr-only">{value}</span>
+      <span aria-hidden="true">
+        {count.before}
+        <span data-count-to={count.target} data-count-from={count.target < 2 ? 10 : 0}>
+          {count.number}
+        </span>
+        {count.after}
+      </span>
+    </>
+  ) : (
+    value
+  )
+}

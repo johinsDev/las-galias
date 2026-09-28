@@ -7,6 +7,7 @@ import { DATA_POLICY_SLUG, LeadSchema } from "@lasgalias/schemas";
 import { Input } from "@lasgalias/ui/components/input";
 import { PhoneField } from "@lasgalias/ui/components/phone-field";
 import { Select } from "@lasgalias/ui/components/select";
+import { track } from "@/lib/analytics";
 
 interface LaunchLeadFormProps {
   projectDocumentId: string;
@@ -112,6 +113,7 @@ export default function LaunchLeadForm({ projectDocumentId, cities }: LaunchLead
         }),
       });
       setStatus(res.ok ? "ok" : "error");
+      if (res.ok) track("lead", "Lead", { form: "lanzamiento", project: projectDocumentId });
     } catch {
       setStatus("error");
     }

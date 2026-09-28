@@ -11,6 +11,7 @@ import {
 import { Button } from "@lasgalias/ui/components/button";
 import { Input } from "@lasgalias/ui/components/input";
 import { Textarea } from "@lasgalias/ui/components/textarea";
+import { track } from "@/lib/analytics";
 
 export interface PqrProjectOption {
   documentId: string;
@@ -121,6 +122,7 @@ export default function PqrForm({ projects, documentNumber, lockedProjectId }: P
           const body = (await res.json()) as { data?: { radicado?: string } };
           setRadicado(body.data?.radicado ?? null);
           setStatus("ok");
+          track("pqr", "Contact", { form: "pqr" });
         } catch {
           setStatus("error");
         }

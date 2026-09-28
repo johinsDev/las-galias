@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
@@ -38,6 +39,7 @@ export default function NewsletterForm({ source }: NewsletterFormProps) {
             body: JSON.stringify({ data: { email, source } }),
           });
           setStatus(res.ok ? "ok" : "error");
+          if (res.ok) track("newsletter", "Subscribe", { source });
         } catch {
           setStatus("error");
         }

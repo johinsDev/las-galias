@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { track } from "@/lib/analytics";
 
 interface FaqBotProps {
   suggestedQuestions: string[];
@@ -108,6 +109,7 @@ export default function FaqBot({ suggestedQuestions }: FaqBotProps) {
     setQuestion(asked);
     setAnswer("");
     setStatus("asking");
+    track("faq_question", "Search", { search_string: asked });
 
     try {
       const res = await fetch(`${STRAPI_URL}/api/faq-bot/ask`, {

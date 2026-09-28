@@ -108,6 +108,15 @@ const isLaunch = project.stage === "expectation";
 {
   !isLaunch && (
     <Base title={title} description={description} ogImage={mediaUrl(project.seo?.ogImage?.url)}>
+      {/* Meta's ViewContent for the project, pushed with the page (lib/analytics). */}
+      <span
+        hidden
+        data-track-view
+        data-track-name={project.name}
+        data-track-id={project.slug}
+        data-track-city={project.city?.name}
+      />
+
       {/* 01 Encabezado */}
       <ProjectHeader project={project} rates={rates} />
 
@@ -138,3 +147,22 @@ const isLaunch = project.stage === "expectation";
     </Base>
   )
 }
+
+<script>
+  import { track } from "@/lib/analytics";
+
+  function trackView() {
+    const el = document.querySelector<HTMLElement>("[data-track-view]:not([data-tracked])");
+    if (!el) return;
+    el.dataset.tracked = "true";
+    track("view_project", "ViewContent", {
+      content_type: "product",
+      content_name: el.dataset.trackName,
+      content_ids: el.dataset.trackId,
+      content_category: el.dataset.trackCity,
+    });
+  }
+
+  trackView();
+  document.addEventListener("astro:page-load", trackView);
+</script>

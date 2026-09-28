@@ -40,18 +40,15 @@ const steps = page?.steps?.length
   : [
       {
         title: "Elige tu proyecto",
-        body: "Filtra por ciudad, precio y área. Agenda visita virtual o presencial sin costo.",
-        image: null,
+        body: "Elige el proyecto donde quieres comenzar tu nueva historia o hacer una gran inversión.",
       },
       {
         title: "Aparta y financia",
-        body: "Aparta con cuota inicial desde el 20%. Te asesoramos en crédito y subsidios VIS.",
-        image: null,
+        body: "Regístrate en nuestros formularios o visítanos en la sala de ventas. ¡Tú eliges la forma más fácil para ti!",
       },
       {
         title: "Recibe tu hogar",
-        body: "Entrega con estándares de alta calidad y acompañamiento postventa incluido.",
-        image: null,
+        body: "Nuestros asesores te brindarán una cotización personalizada y te ayudarán a separar tu apartamento.",
       },
     ];
 
@@ -184,7 +181,7 @@ import { Search } from "lucide-astro";
     <div class="container py-16 md:py-20">
       <SectionHeading
         eyebrow={page?.stepsEyebrow ?? "Paso a paso"}
-        title={page?.stepsTitle ?? "Comprar es muy fácil"}
+        title={page?.stepsTitle ?? "Comprar es muy fácil, sólo sigue estos pasos"}
       />
       <div class="mx-auto max-w-[1120px]">
         <StepsGrid steps={steps} />

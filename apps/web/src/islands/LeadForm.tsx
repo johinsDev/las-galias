@@ -11,6 +11,7 @@ import { Select } from "@lasgalias/ui/components/select";
 import { cn } from "@lasgalias/ui/lib/utils";
 
 import { QUALIFICATION_EVENT, type QualificationDetail } from "@/lib/qualification";
+import { track } from "@/lib/analytics";
 
 interface LeadFormProps {
   projectDocumentId?: string;
@@ -191,6 +192,7 @@ export default function LeadForm({
             }),
           });
           setStatus(res.ok ? "ok" : "error");
+          if (res.ok) track("lead", "Lead", { form: formId, source: output.source });
         } catch {
           setStatus("error");
         }

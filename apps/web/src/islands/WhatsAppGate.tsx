@@ -7,6 +7,7 @@ import * as v from "valibot";
 import { DATA_POLICY_SLUG, LeadSchema } from "@lasgalias/schemas";
 import { Input } from "@lasgalias/ui/components/input";
 import { PhoneField } from "@lasgalias/ui/components/phone-field";
+import { track } from "@/lib/analytics";
 
 /** What a card's WhatsApp button announces on `document`. */
 export interface WhatsAppRequest {
@@ -136,6 +137,7 @@ export default function WhatsAppGate() {
       // The chat is already opening; a lost lead must not stop it.
     });
 
+    track("whatsapp", "Contact", { form: "whatsapp", project: request.documentId });
     window.open(chatUrl(request.whatsappUrl, request.name), "_blank", "noopener");
     setRequest(null);
   };

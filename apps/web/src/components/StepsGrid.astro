@@ -1,14 +1,17 @@
 ---
-import CmsImage from "@/components/CmsImage.astro";
+import { Building2, HandCoins, HouseHeart } from "lucide-astro";
 
 /**
- * "Comprar es muy fácil" — three steps, each led by a photo. The number comes
- * from the position, so an editor reordering the list renumbers it for free.
+ * "Comprar es muy fácil, sólo sigue estos pasos" — three steps as the Home
+ * design draws them (Figma 12:359): a red numbered badge over a pale circle
+ * with an icon, the title in brand red and the body in grey, all centred.
+ * The number comes from the position, so an editor reordering the list
+ * renumbers it for free; the icons are one per position too, which is why the
+ * editor's step photo is no longer drawn.
  */
 interface Step {
   title: string;
   body: string;
-  image?: { url: string; alternativeText?: string | null } | null;
 }
 
 interface Props {
@@ -16,31 +19,28 @@ interface Props {
 }
 
 const { steps } = Astro.props;
+
+const ICONS = [Building2, HandCoins, HouseHeart];
 ---
 
-<div class="mt-10 grid gap-8 md:grid-cols-3">
+<div class="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
   {
-    steps.map((step, index) => (
-      <div data-reveal>
-        {step.image?.url && (
-          <div class="bg-surface aspect-[16/10] overflow-hidden rounded-2xl">
-            <CmsImage
-              src={step.image.url}
-              alt={step.image.alternativeText ?? ""}
-              width={640}
-              height={400}
-              widths={[420, 640, 828]}
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              class="h-full w-full object-cover"
-            />
+    steps.map((step, index) => {
+      const Icon = ICONS[index % ICONS.length];
+      return (
+        <div class="mx-auto max-w-[355px] text-center" data-reveal>
+          <div class="relative mx-auto size-20">
+            <span class="text-ink flex size-20 items-center justify-center rounded-full bg-[#f6f7f8]">
+              <Icon size={36} stroke-width={2.5} aria-hidden="true" />
+            </span>
+            <span class="bg-brand absolute -top-1 -left-1 flex size-7 items-center justify-center rounded-full text-[13px] font-extrabold text-white">
+              {index + 1}
+            </span>
           </div>
-        )}
-        <span class="text-brand mt-6 inline-flex size-12 items-center justify-center rounded-full bg-[#fdf9fa] text-lg font-bold">
-          {index + 1}
-        </span>
-        <h3 class="text-h4 text-ink mt-6 font-semibold">{step.title}</h3>
-        <p class="text-body-sm text-ink-muted mt-2">{step.body}</p>
-      </div>
-    ))
+          <h3 class="text-brand mt-5 text-lg leading-[25px] font-semibold">{step.title}</h3>
+          <p class="text-iron mt-2 text-sm leading-[22px]">{step.body}</p>
+        </div>
+      );
+    })
   }
 </div>
