@@ -60,7 +60,6 @@ export interface DownPaymentInput {
   price: number;
   /** Down payment as a percentage of the price. */
   downPct: number;
-  savings: number;
   /** Subsidy in pesos, already resolved from its tier. */
   subsidy: number;
   /** Months left to pay the down payment to the builder. */
@@ -74,7 +73,7 @@ export interface DownPaymentPlan {
   subsidy: number;
   /** What the mortgage or leasing has to cover. */
   financed: number;
-  /** Down payment still unfunded after savings and subsidy. */
+  /** Down payment still unfunded after the subsidy. */
   pending: number;
   monthlySaving: number;
   /** What the chosen product forces you to put in yourself. */
@@ -82,21 +81,27 @@ export interface DownPaymentPlan {
 }
 
 /**
- * The subsidy goes to the builder as part of the down payment, so it comes off
- * what the household still has to save. When it is larger than the down
- * payment itself the rest lowers the loan instead — that is how a 30 SMMLV
- * subsidy lands on a cheap VIS home.
+ * The client's formula, as they wrote it out:
+ *
+ *   ahorro mensual    = (P × %CI − S) ÷ n
+ *   cuota inicial     = P × %CI
+ *   monto a financiar = P × (1 − %CI)
+ *
+ * with P the price, %CI the down payment share, S the subsidy in pesos
+ * (SMMLV × 30, 20 or 0) and n the months to pay the builder. Their check:
+ * (157.582.000 × 0,30 − 20.000.000) ÷ 36 = 757.628. The subsidy goes to the
+ * builder as part of the down payment, so it only ever lowers what has to be
+ * saved — never the loan, which is always the share the credit covers.
  */
 export function downPaymentPlan(input: DownPaymentInput): DownPaymentPlan {
   const downPayment = input.price * (input.downPct / 100);
   const subsidy = Math.max(0, input.subsidy);
-  const pending = Math.max(0, downPayment - input.savings - subsidy);
-  const overflow = Math.max(0, subsidy - downPayment);
+  const pending = Math.max(0, downPayment - subsidy);
 
   return {
     downPayment,
     subsidy,
-    financed: Math.max(0, input.price - downPayment - overflow),
+    financed: Math.max(0, input.price - downPayment),
     pending,
     monthlySaving: pending / Math.max(1, input.months),
     minDownPct: Math.max(0, 100 - input.financingPct),

@@ -75,7 +75,8 @@ const description =
   ogImage={mediaUrl(project.seo?.ogImage?.url ?? project.heroDesktop?.url)}
   chrome="minimal"
 >
-  <div class="container-bleed pt-10 pb-16 md:pt-14 md:pb-24">
+  {/* Figma 3063:18963 draws the landing in a 1152px column, not edge to edge. */}
+  <div class="mx-auto max-w-[1216px] px-5 pt-10 pb-16 md:px-8 md:pt-14 md:pb-24">
     <h1 class="text-h1 text-ink font-extrabold">Preventa exclusiva</h1>
     <p class="text-body-lg text-ink-muted mt-2">
       Regístrate antes del lanzamiento y asegura tu precio de preventa.

@@ -29,7 +29,8 @@ const CREDIT_TYPES = [
 /**
  * "Simulador de Cuota Inicial": how much has to be saved, and at what monthly
  * pace, to cover the down payment of a given home — with the Mi Casa Ya
- * subsidy taken off first when the household qualifies for one.
+ * subsidy taken off first when the household qualifies for one. The maths is
+ * the client's formula in lib/simulators.ts: (P × %CI − S) ÷ n.
  */
 export default function DownPaymentSimulator({
   defaultPriceCOP,
@@ -40,7 +41,6 @@ export default function DownPaymentSimulator({
   const [price, setPrice] = useState(defaultPriceCOP);
   const [downPct, setDownPct] = useState(30);
   const [creditType, setCreditType] = useState("hipotecario");
-  const [savings, setSavings] = useState(20_000_000);
   const [subsidyTier, setSubsidyTier] = useState("0");
   const [months, setMonths] = useState(36);
 
@@ -64,7 +64,6 @@ export default function DownPaymentSimulator({
       downPaymentPlan({
         price,
         downPct,
-        savings,
         subsidy: subsidyInCOP(Number(subsidyTier), smmlvCOP),
         months,
         financingPct: creditType === "leasing" ? leasingFinancingPercent : maxFinancingPercent,
@@ -72,7 +71,6 @@ export default function DownPaymentSimulator({
     [
       price,
       downPct,
-      savings,
       subsidyTier,
       smmlvCOP,
       months,
@@ -111,12 +109,6 @@ export default function DownPaymentSimulator({
             value={creditType}
             options={CREDIT_TYPES}
             onChange={setCreditType}
-          />
-          <MoneyField
-            id="down-savings"
-            label="Ahorros para cuota inicial"
-            value={savings}
-            onChange={setSavings}
           />
           <ChoiceField
             label="¿Aplicas a subsidio de vivienda?"
@@ -169,9 +161,7 @@ export default function DownPaymentSimulator({
             value: formatMoney(result.monthlySaving, "COP"),
             suffix: covered ? undefined : "/mes",
             sub: covered
-              ? withSubsidy
-                ? "Tus ahorros y el subsidio ya cubren la cuota inicial de este precio."
-                : "Tus ahorros ya cubren la cuota inicial de este precio."
+              ? "El subsidio ya cubre la cuota inicial de este precio."
               : `Faltan ${formatMoney(result.pending, "COP")} en ${months} meses`,
           }}
           note={
