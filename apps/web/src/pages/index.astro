@@ -130,11 +130,12 @@ import { Search } from "lucide-astro";
 
     {
       /* Figma draws the banner 75px into its red block (115 from the search box
-         once the block above's padding is counted); the thread on that node
-         asks to pull it up "un poco", so 48 here — 88 in all — and 20 on a
-         phone, where the design measures 47. */
+         once the block above's padding is counted), but Johan asked twice for
+         it higher — first "un poco" on the Figma thread, then again with 88 on
+         the site — so on desktop the banner sits right on the block's own 40px
+         of padding. The phone keeps 20 here: the design measures 47 there. */
     }
-    <div class="pt-5 md:pt-12">
+    <div class="pt-5 md:pt-0">
       <ImageCarousel
         slides={banners.map((banner) => ({
           url: banner.desktopImage.url,
