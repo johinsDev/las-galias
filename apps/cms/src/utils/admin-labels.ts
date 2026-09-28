@@ -71,6 +71,23 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     appliesSubsidy: { label: "Aplica subsidio" },
     lastUnits: { label: "Últimas unidades" },
     hasDiscount: { label: "Tiene descuento" },
+    certifiedEdge: {
+      label: "Certificación EDGE",
+      description:
+        "Dibuja el sello EDGE sobre la foto de la card. Los logos van en el código del sitio.",
+    },
+    certifiedCasa: { label: "Certificación CASA Colombia" },
+    certifiedLeed: { label: "Certificación LEED" },
+    certificationStage: {
+      label: "Estado de la certificación",
+      description:
+        "«precertified» muestra «Proyecto precertificado»; «certified», «Proyecto certificado». Aplica a todos los sellos marcados.",
+    },
+    expectationRedirect: {
+      label: "Redirigir la landing de expectativa a",
+      description:
+        "Solo en etapa «expectation». Con una URL aquí, la dirección del proyecto en el sitio redirige allí (302) en vez de mostrar la landing de expectativa. Vacío = landing normal.",
+    },
     logo: { label: "Logo del proyecto" },
     description: { label: "Descripción" },
     priceFromCOP: {

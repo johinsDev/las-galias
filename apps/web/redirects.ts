@@ -35,6 +35,45 @@ const ROUTE_REDIRECTS: AstroRedirects = {
   "/proyectos/[slug]": { destination: "/proyectos-de-vivienda/[slug]", status: 301 },
 };
 
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, {
+    headers: { accept: "application/json" },
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!res.ok) throw new Error(`Strapi responded ${res.status}`);
+  return (await res.json()) as T;
+}
+
+/**
+ * An expectation project with `expectationRedirect` set does not render its
+ * launch landing: its address 302s to that URL (a campaign page elsewhere,
+ * say) until the editor clears the field or flips the stage. Temporary on
+ * purpose — the landing comes back to the same address. The page itself is
+ * skipped by `[slug].astro`, so the redirect never shadows a built file.
+ *
+ * On a CMS that predates the field the filter is a 400, which degrades to
+ * "no such redirects" instead of failing the build.
+ */
+async function fetchExpectationRedirects(strapiUrl: string): Promise<AstroRedirects> {
+  const url =
+    `${strapiUrl}/api/projects?filters[stage][$eq]=expectation` +
+    `&filters[expectationRedirect][$notNull]=true&pagination[pageSize]=200` +
+    `&fields[0]=slug&fields[1]=expectationRedirect`;
+  try {
+    const body = await fetchJson<{ data?: { slug: string; expectationRedirect: string }[] }>(url);
+    const redirects: AstroRedirects = {};
+    for (const row of body.data ?? []) {
+      const to = row.expectationRedirect?.trim();
+      if (!row.slug || !to) continue;
+      redirects[`/proyectos-de-vivienda/${row.slug}`] = { destination: to, status: 302 };
+    }
+    return redirects;
+  } catch (err) {
+    console.warn(`[redirects] expectation landings not redirected: ${String(err)}`);
+    return {};
+  }
+}
+
 export async function fetchRedirects(): Promise<AstroRedirects> {
   const strapiUrl = process.env.STRAPI_URL ?? "http://localhost:1337";
   const url =
@@ -42,12 +81,7 @@ export async function fetchRedirects(): Promise<AstroRedirects> {
     `?filters[enabled][$eq]=true&pagination[pageSize]=200&fields[0]=from&fields[1]=to&fields[2]=permanent`;
 
   try {
-    const res = await fetch(url, {
-      headers: { accept: "application/json" },
-      signal: AbortSignal.timeout(10_000),
-    });
-    if (!res.ok) throw new Error(`Strapi responded ${res.status}`);
-    const body = (await res.json()) as { data?: RedirectRow[] };
+    const body = await fetchJson<{ data?: RedirectRow[] }>(url);
 
     const redirects: AstroRedirects = {};
     for (const row of body.data ?? []) {
@@ -57,8 +91,11 @@ export async function fetchRedirects(): Promise<AstroRedirects> {
         status: row.permanent ? 301 : 302,
       };
     }
-    console.log(`[redirects] ${Object.keys(redirects).length} redirects from the CMS`);
-    return { ...redirects, ...ROUTE_REDIRECTS };
+    const landings = await fetchExpectationRedirects(strapiUrl);
+    console.log(
+      `[redirects] ${Object.keys(redirects).length} redirects from the CMS, ${Object.keys(landings).length} expectation landings`,
+    );
+    return { ...redirects, ...landings, ...ROUTE_REDIRECTS };
   } catch (err) {
     console.warn(`[redirects] CMS unavailable, building with route redirects only: ${String(err)}`);
     return { ...ROUTE_REDIRECTS };

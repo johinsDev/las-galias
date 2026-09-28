@@ -164,6 +164,17 @@ export interface Project {
   appliesSubsidy?: boolean;
   lastUnits?: boolean;
   hasDiscount?: boolean;
+  /** Sustainability seals drawn over the card photo; the logos live in the web's code. */
+  certifiedEdge?: boolean;
+  certifiedCasa?: boolean;
+  certifiedLeed?: boolean;
+  /** Whether the seals read "precertificado" or "certificado". */
+  certificationStage?: "precertified" | "certified" | null;
+  /**
+   * Expectation only: with a URL here the project's address redirects there
+   * (302, emitted at build time) instead of rendering the launch landing.
+   */
+  expectationRedirect?: string | null;
   logo?: Media | null;
   description?: unknown;
   priceFromCOP?: number | null;

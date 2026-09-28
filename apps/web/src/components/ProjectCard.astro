@@ -128,6 +128,17 @@ const bathChip = range(baths, Math.max(...baths) === 1 ? "baño" : "baños");
  * squeezed "Ver proyecto" out of it.
  */
 const projectHref = `/proyectos-de-vivienda/${project.slug}`;
+// The seals the editor ticked, in the order the Galias file lists them.
+const seals = [
+  project.certifiedCasa && { name: "CASA Colombia", image: sealCasa },
+  project.certifiedEdge && { name: "EDGE", image: sealEdge },
+  project.certifiedLeed && { name: "LEED", image: sealLeed },
+].filter((seal): seal is { name: string; image: ImageMetadata } => Boolean(seal));
+const sealLabel =
+  project.certificationStage === "precertified"
+    ? "Proyecto precertificado"
+    : "Proyecto certificado";
+
 const whatsappHref = project.salesRoom?.whatsappUrl || (await getCompanyWhatsappUrl());
 const whatsappLogo = project.logo?.url
   ? (await getImage({ src: mediaUrl(project.logo.url), width: 128, height: 128, quality: 80 })).src
@@ -135,6 +146,11 @@ const whatsappLogo = project.logo?.url
 import { Bath, Bed, ChevronLeft, ChevronRight, MapPin, Ruler } from "lucide-astro";
 
 import WhatsAppIcon from "@/components/WhatsAppIcon.astro";
+import { Image } from "astro:assets";
+
+import sealCasa from "@/assets/certifications/casa-colombia.png";
+import sealEdge from "@/assets/certifications/edge.png";
+import sealLeed from "@/assets/certifications/leed.png";
 
 const BADGE =
   "rounded-[6px] px-2.5 py-[5px] text-[11px] leading-[16.5px] font-bold tracking-[0.33px] uppercase";
@@ -245,6 +261,37 @@ const CHIP =
         )
       }
     </div>
+
+    {
+      /* Sustainability seals, floating over the bottom-right of the photo
+        (Galias file 390:2, "puede ser flotante"): one white circle per
+        certification the editor ticked, the artwork from src/assets. The
+        top-left already belongs to the status badges. */
+    }
+    {
+      seals.length > 0 && (
+        <ul
+          class="pointer-events-none absolute right-3 bottom-3 z-10 flex gap-1.5"
+          aria-label="Certificaciones"
+        >
+          {seals.map((seal) => (
+            <li
+              class="size-11 overflow-hidden rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.18)]"
+              title={`${sealLabel} ${seal.name}`}
+            >
+              <Image
+                src={seal.image}
+                alt={`${sealLabel} ${seal.name}`}
+                width={88}
+                height={88}
+                quality={75}
+                class="size-full"
+              />
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
     {
       /* Share, top-right (Figma 2098:5012). It shares the PROJECT's URL, not the

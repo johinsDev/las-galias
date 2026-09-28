@@ -14,6 +14,7 @@ import type {
   PqrPage,
   Project,
 } from "@lasgalias/schemas";
+import { TIPS_PARA_COMPRAR } from "@/lib/tips-para-comprar";
 
 /**
  * Strapi REST client for BUILD TIME (SSG). Every function degrades to
@@ -353,8 +354,19 @@ export async function getLegalDocuments(): Promise<LegalDocument[]> {
   legalDocumentsPromise ??= strapiFetch<LegalDocument[]>("legal-documents", {
     sort: "order:asc",
     "populate[seo][populate][ogImage]": "true",
-  }).then((docs) => docs ?? []);
+  }).then((docs) => withBuiltInDocuments(docs ?? []));
   return legalDocumentsPromise;
+}
+
+/**
+ * «Tips para comprar» ships with the code until the CMS publishes its own
+ * (same slug): the footer link, the /legales chips and the page all come
+ * from this list, so adding it here is what makes it exist everywhere.
+ */
+function withBuiltInDocuments(docs: LegalDocument[]): LegalDocument[] {
+  return docs.some((doc) => doc.slug === TIPS_PARA_COMPRAR.slug)
+    ? docs
+    : [...docs, TIPS_PARA_COMPRAR];
 }
 
 /**

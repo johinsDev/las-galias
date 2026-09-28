@@ -14,7 +14,11 @@ import { getFaqs, getProjects } from "@/lib/strapi";
  * shadow that city page, hence the check.
  */
 export async function getStaticPaths() {
-  const projects = await getProjects();
+  // A landing with a redirect is served by the redirect (redirects.ts), so no
+  // page is built for it — Astro would otherwise refuse the clash.
+  const projects = (await getProjects()).filter(
+    (p) => !(p.stage === "expectation" && p.expectationRedirect?.trim()),
+  );
   const cities = [
     ...new Map(projects.filter((p) => p.city).map((p) => [p.city.slug, p.city])).values(),
   ];

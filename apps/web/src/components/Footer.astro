@@ -30,8 +30,9 @@ const cities = [
 /**
  * The "Documentos" column: the sales booklets and policies the client asked to
  * have one click away, in their order. Titles come from the shared list; a
- * document only gets a link once the CMS actually publishes it (the seed does
- * not create "Tips para comprar" yet), so nothing here can 404.
+ * document only gets a link once it exists — published in the CMS, or shipped
+ * with the code like "Tips para comprar" (lib/tips-para-comprar.ts) — so
+ * nothing here can 404.
  */
 const DOCUMENT_SLUGS = [
   "tips-para-comprar",

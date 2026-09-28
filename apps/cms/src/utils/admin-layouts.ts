@@ -36,7 +36,10 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     // Sin cabecera: lo que identifica al proyecto se ve siempre.
     ["name", "slug"],
     ["stage", "productType", "constructionStatus"],
+    ["expectationRedirect:8"],
     ["appliesSubsidy", "lastUnits", "hasDiscount"],
+    ["certifiedEdge", "certifiedCasa", "certifiedLeed"],
+    ["certificationStage:6"],
     // El rastro ciudad · zona · barrio, y luego el mapa.
     ["sectionLocation"],
     ["city", "zone", "neighborhood"],
