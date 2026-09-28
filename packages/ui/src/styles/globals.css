@@ -180,16 +180,19 @@
 
 /* Centered page container (max ~1200px) with responsive gutters */
 /* Page content column.
-   93.75rem = 1500px, which is the widest block the Figma draws: the four
-   project cards are 356.66 wide with 24 gaps, so the grid measures 1498.64.
-   It used to be 75rem, which squeezed that grid to four narrow cards and, on a
-   wide monitor, left the whole page floating in a column down the middle.
-   Sections whose text should stay narrower say so themselves (the design uses
-   1120 for the step grids, 1000 for the lead form and 760 for the FAQ). */
+   93.75rem = 1500px of CONTENT, which is the widest block the Figma draws: the
+   four project cards are 356.66 wide with 24 gaps, so the grid measures
+   1498.64, and the project page's columns add up to 1496 inside 140px margins
+   on the 1776 frame. The max-width counts the gutters on top, or the box-sizing
+   would eat 64px of it and leave every grid 4% narrower than drawn. It used to
+   be 75rem, which squeezed that grid to four narrow cards and, on a wide
+   monitor, left the whole page floating in a column down the middle. Sections
+   whose text should stay narrower say so themselves (the design uses 1120 for
+   the step grids, 1000 for the lead form and 760 for the FAQ). */
 @utility container {
   margin-inline: auto;
   width: 100%;
-  max-width: 93.75rem;
+  max-width: calc(93.75rem + 2 * --spacing(8));
   padding-inline: --spacing(5);
   @media (width >= 48rem) {
     padding-inline: --spacing(8);

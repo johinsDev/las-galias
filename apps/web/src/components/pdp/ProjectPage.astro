@@ -114,9 +114,11 @@ const isLaunch = project.stage === "expectation";
       {/* 02 Galería */}
       <ProjectGallery project={project} />
 
-      {/* 03 Contenido + formulario */}
-      <section class="container-bleed pt-2 pb-[60px]">
-        <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_340px]">
+      {/* 03 Contenido + formulario. The page sits in the 1500px content column
+          like the rest of the site — the design gives it 140px margins on the
+          1776 frame, not the header's 32 — with a 379px aside 36px away. */}
+      <section class="container pt-2 pb-[60px]">
+        <div class="grid grid-cols-[minmax(0,1fr)] gap-9 lg:grid-cols-[minmax(0,1fr)_379px]">
           <ProjectContent project={project} terms={terms} />
           <ProjectSidebar project={project} leadForm={leadFormConfig} />
         </div>
