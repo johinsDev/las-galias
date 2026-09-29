@@ -392,15 +392,20 @@ const leads = (index: number) => reveal && index % items.length === 0;
       };
 
       /**
-       * Keep the viewer inside the middle copy. Jumping a whole copy's width
-       * with no animation is invisible: the slide under the centre is identical
-       * and lands on the same pixel.
+       * Keep the viewer inside the middle copy. Shifting the rail by exactly
+       * one copy's width, with no animation, is invisible: the slide under the
+       * centre is identical and lands on the same pixel. It is a RELATIVE
+       * shift, not a jump to the centred offset — on a phone this used to run
+       * while the swipe's momentum was still carrying the slide past the snap
+       * point, and forcing the centred position there yanked it back 70px in
+       * one frame (the "rebote" the client filmed).
        */
       const recentre = () => {
         if (!looping) return;
         const index = currentIndex();
         if (index >= count && index < count * 2) return;
         const target = (index % count) + count;
+        const shift = offsetFor(target) - offsetFor(index);
         const boxes = slides
           .map((slide) => slide.firstElementChild as HTMLElement | null)
           .filter((box): box is HTMLElement => box !== null);
@@ -411,7 +416,7 @@ const leads = (index: number) => reveal && index % items.length === 0;
 
         const behavior = rail.style.scrollBehavior;
         rail.style.scrollBehavior = "auto";
-        rail.scrollLeft = offsetFor(target);
+        rail.scrollLeft += shift;
         rail.style.scrollBehavior = behavior;
         paintScale();
 
@@ -421,6 +426,9 @@ const leads = (index: number) => reveal && index % items.length === 0;
         void rail.offsetWidth;
         boxes.forEach((box) => (box.style.transition = ""));
       };
+
+      /** True once the rail rests on a snap point: nothing left to settle. */
+      const settled = () => Math.abs(rail.scrollLeft - offsetFor(currentIndex())) < 2;
 
       const goTo = (index: number) => {
         const clamped = looping ? index : Math.max(0, Math.min(slides.length - 1, index));
@@ -460,17 +468,47 @@ const leads = (index: number) => reveal && index % items.length === 0;
 
       let frame = 0;
       let idle: ReturnType<typeof setTimeout>;
+      let touching = false;
+      let retries = 0;
+      /**
+       * Rewind only once the swipe is over: finger up AND the rail resting on a
+       * snap point. iOS goes quiet on `scroll` events for a moment between the
+       * drag and the momentum phase, so "no event for 160ms" alone is not
+       * "stopped" — that is when the old code recentred mid-flight. Setting
+       * scrollLeft during momentum also kills the momentum, so we wait it out
+       * and re-arm; the cap is only so a rail that never settles (a sub-pixel
+       * layout) still rewinds — invisibly, since the shift is relative.
+       */
+      const scheduleRecentre = () => {
+        clearTimeout(idle);
+        idle = setTimeout(() => {
+          if ((touching || !settled()) && retries < 12) {
+            retries += 1;
+            scheduleRecentre();
+            return;
+          }
+          retries = 0;
+          recentre();
+        }, 160);
+      };
       rail.addEventListener("scroll", () => {
         cancelAnimationFrame(frame);
         frame = requestAnimationFrame(() => {
           paintScale();
           paintDots();
         });
-        // Only rewind once the scroll has stopped: doing it mid-gesture fights
-        // the smooth scroll and stutters.
-        clearTimeout(idle);
-        idle = setTimeout(recentre, 160);
+        scheduleRecentre();
       });
+      rail.addEventListener("touchstart", () => (touching = true), { passive: true });
+      rail.addEventListener(
+        "touchend",
+        () => {
+          touching = false;
+          scheduleRecentre();
+        },
+        { passive: true },
+      );
+      rail.addEventListener("touchcancel", () => (touching = false), { passive: true });
 
       window.addEventListener("resize", () => {
         paintScale();
