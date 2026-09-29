@@ -469,19 +469,22 @@ const leads = (index: number) => reveal && index % items.length === 0;
       let frame = 0;
       let idle: ReturnType<typeof setTimeout>;
       let touching = false;
+      let touchDevice = false;
       let retries = 0;
       /**
-       * Rewind only once the swipe is really over. `scrollend` is the only
-       * reliable signal: on iOS, `scrollLeft` already reports the snap
-       * destination while the momentum animation is still drawing, so any
-       * "has it settled?" check passes early, and a programmatic scrollLeft
-       * write at that moment kills the momentum and makes WebKit re-snap in a
-       * single frame — the 80px jump the client filmed, twice. So where the
-       * browser has `scrollend` (iOS 26, Chrome, Firefox) the timer below is
-       * never armed; it only backs up browsers without the event, and even
-       * then it waits for a long silence, no finger, and a rail resting on a
-       * snap point. The shift itself is relative, so it is invisible when it
-       * lands where it should.
+       * WHEN to rewind is the whole problem. Any programmatic scrollLeft while
+       * iOS is still animating a swipe (momentum or snap) kills the animation
+       * and makes WebKit re-snap in one frame — an 80px jump the client filmed
+       * three times, with three different "is it finished?" heuristics:
+       * `scrollLeft` reports the snap destination before the animation ends,
+       * and even `scrollend` came early. So on a touch device the rewind never
+       * follows a scroll at all: it runs on the NEXT touchstart, when the rail
+       * is at rest and the finger has not moved yet — shifting by exactly one
+       * copy there is invisible, and the drag simply starts from the twin
+       * slide. Three copies leave a whole copy of room in each direction, more
+       * than one gesture can cover. Mouse and trackpad keep `scrollend`, which
+       * those browsers fire once the scroll is really over; the timer only
+       * backs up browsers without the event.
        */
       const supportsScrollEnd = "onscrollend" in window;
       const scheduleRecentre = () => {
@@ -503,26 +506,28 @@ const leads = (index: number) => reveal && index % items.length === 0;
           paintScale();
           paintDots();
         });
-        if (!supportsScrollEnd) scheduleRecentre();
+        if (!supportsScrollEnd && !touchDevice) scheduleRecentre();
       });
       rail.addEventListener("scrollend", () => {
-        if (!touching) recentre();
+        if (!touching && !touchDevice) recentre();
       });
-      rail.addEventListener(
+      // On the root, not the rail: a tap on an arrow or a dot must rewind
+      // first too, or a run of taps could walk off the end of the outer copy.
+      root.addEventListener(
         "touchstart",
         () => {
+          touchDevice = true;
           touching = true;
           clearTimeout(idle);
+          recentre();
         },
         { passive: true },
       );
       const fingerUp = () => {
         touching = false;
-        retries = 0;
-        if (!supportsScrollEnd) scheduleRecentre();
       };
-      rail.addEventListener("touchend", fingerUp, { passive: true });
-      rail.addEventListener("touchcancel", fingerUp, { passive: true });
+      root.addEventListener("touchend", fingerUp, { passive: true });
+      root.addEventListener("touchcancel", fingerUp, { passive: true });
 
       window.addEventListener("resize", () => {
         paintScale();
