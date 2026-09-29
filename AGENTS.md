@@ -73,8 +73,9 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `getStaticPaths` and tells them apart by the `kind` prop, and fails the build
   if a project slug collides with a city slug. On the catalogue the city pills
   are links between those pages; on the home they still filter in place.
-- The header bar is 68px below `xl` and 96px from `xl` up (Figma node
-  3286:1285). Anything that has to clear it assumes 112px: sticky asides use
+- The header bar is 88px below `xl` and 78px from `xl` up, with a 30px
+  wordmark on both (Figma 2710:5989, after the team shrank the logo in
+  Sept 2026). Anything that has to clear it assumes 112px: sticky asides use
   `lg:top-24 xl:top-28` and anchor targets `scroll-mt-28`. The project page's
   lead form is taller than a laptop viewport, so its aside adds
   `data-sticky-aside`: `scripts/sticky-aside.ts` moves the sticky `top` with

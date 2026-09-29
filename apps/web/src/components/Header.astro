@@ -70,11 +70,10 @@ const searchableProjects = (await getProjects()).map((project) => ({
 {
   minimal && (
     <header transition:animate="none" class="bg-brand sticky top-0 z-50 text-white">
-      <div class="container-bleed flex h-[68px] items-center xl:h-24">
+      <div class="container-bleed flex h-[88px] items-center xl:h-[78px]">
         <a href="/" class="flex items-center" aria-label="Las Galias Constructora — inicio">
-          {/* The landing's logo is 44px tall on every screen (Figma 3063:18963),
-              a size up from the site header's 32 on a phone. */}
-          <Logo variant="light" height={44} />
+          {/* Same bar and wordmark as the site header (Figma 2710:5989). */}
+          <Logo variant="light" height={30} />
         </a>
       </div>
     </header>
@@ -92,9 +91,10 @@ const searchableProjects = (await getProjects()).map((project) => ({
       class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
       data-nav-open="false"
     >
-      {/* Figma node 3286:1285: the bar is 68px on a phone and 96px with the full
-      nav, and the wordmark 32px and 43px tall. */}
-      <div class="container-bleed flex h-[68px] items-center justify-between gap-6 xl:h-24">
+      {/* Figma 2710:5989 (Menu dk / mb, after the team shrank the logo): the
+      bar is 88px on a phone and 78px with the full nav, and the wordmark is
+      30px tall on both. */}
+      <div class="container-bleed flex h-[88px] items-center justify-between gap-6 xl:h-[78px]">
         {/* Logo and nav travel together on the left; only the actions go right. */}
         <div class="flex items-center gap-7">
           <a
@@ -102,18 +102,12 @@ const searchableProjects = (await getProjects()).map((project) => ({
             class="flex items-center gap-2.5"
             aria-label="Las Galias Constructora — inicio"
           >
-            <Logo
-              variant="light"
-              height={32}
-              heightXl={43}
-              class="group-data-[nav-open=true]/header:hidden"
-            />
+            <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
             {/* On a white bar the white artwork would vanish, so the open menu
             shows the same wordmark in brand red. */}
             <Logo
               variant="brand"
-              height={32}
-              heightXl={43}
+              height={30}
               class="hidden group-data-[nav-open=true]/header:block"
             />
           </a>
@@ -209,7 +203,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
         data-open="false"
         class="group/sheet border-line text-ink shadow-card-lg absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
       >
-        <div class="max-h-[calc(100dvh-68px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
+        <div class="max-h-[calc(100dvh-88px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
           <div class="container-bleed py-5">
             {/* En el móvil, el mismo buscador pero como botón: escribir aquí y otra
             vez dentro de la ventana sería teclear dos veces. */}
