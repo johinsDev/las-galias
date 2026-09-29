@@ -474,15 +474,20 @@ const leads = (index: number) => reveal && index % items.length === 0;
        * Rewind only once the swipe is over: finger up AND the rail resting on a
        * snap point. iOS goes quiet on `scroll` events for a moment between the
        * drag and the momentum phase, so "no event for 160ms" alone is not
-       * "stopped" — that is when the old code recentred mid-flight. Setting
-       * scrollLeft during momentum also kills the momentum, so we wait it out
-       * and re-arm; the cap is only so a rail that never settles (a sub-pixel
-       * layout) still rewinds — invisibly, since the shift is relative.
+       * "stopped" — that is when the old code recentred mid-flight. While a
+       * finger is down nothing happens at all (touchend re-arms the timer): a
+       * programmatic scrollLeft under a live touch makes WebKit re-snap in one
+       * frame, which is the jump the client filmed. Setting scrollLeft during
+       * momentum also kills the momentum, so after the finger lifts we wait for
+       * the rail to settle; the cap only covers a rail that never settles (a
+       * sub-pixel layout) and still rewinds invisibly, since the shift is
+       * relative.
        */
       const scheduleRecentre = () => {
         clearTimeout(idle);
         idle = setTimeout(() => {
-          if ((touching || !settled()) && retries < 12) {
+          if (touching) return;
+          if (!settled() && retries < 12) {
             retries += 1;
             scheduleRecentre();
             return;
@@ -499,16 +504,35 @@ const leads = (index: number) => reveal && index % items.length === 0;
         });
         scheduleRecentre();
       });
-      rail.addEventListener("touchstart", () => (touching = true), { passive: true });
+      // Where the browser says when a scroll (momentum and snap included) is
+      // really over, use it: it beats guessing from the silence.
+      rail.addEventListener("scrollend", scheduleRecentre);
+      rail.addEventListener(
+        "touchstart",
+        () => {
+          touching = true;
+          clearTimeout(idle);
+        },
+        { passive: true },
+      );
       rail.addEventListener(
         "touchend",
         () => {
           touching = false;
+          retries = 0;
           scheduleRecentre();
         },
         { passive: true },
       );
-      rail.addEventListener("touchcancel", () => (touching = false), { passive: true });
+      rail.addEventListener(
+        "touchcancel",
+        () => {
+          touching = false;
+          retries = 0;
+          scheduleRecentre();
+        },
+        { passive: true },
+      );
 
       window.addEventListener("resize", () => {
         paintScale();
