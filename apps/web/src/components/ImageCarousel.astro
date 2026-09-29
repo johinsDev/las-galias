@@ -24,7 +24,7 @@ interface CarouselSlide {
   alt: string;
   /**
    * A separate artwork for phones (the home banners come as a 1424×480 desktop
-   * piece and a 1080×655 mobile piece); below `md` it replaces `url`.
+   * piece and a 1080×1300 portrait mobile piece); below `md` it replaces `url`.
    */
   mobileUrl?: string | null;
   href?: string | null;
@@ -80,7 +80,7 @@ const mobileSets = new Map(
         const image = await getImage({
           src: mediaUrl(item.mobileUrl!),
           width: 1080,
-          height: 655,
+          height: 1300,
           widths: [640, 828, 1080],
           sizes: "89vw",
           quality: 75,
@@ -225,10 +225,11 @@ const leads = (index: number) => reveal && index % items.length === 0;
     --banner-slide: 89vw;
     /* How far the slide hangs past the red, plus room for the dots (2.75rem).
        The red band ends at about 84% of the slide's height on both frames —
-       the mobile slide is 348×211 and hangs 34px, the desktop one 1424×480
-       and hangs 75px — so the hang is written in terms of the width through
-       each slide's aspect ratio: 34/348 here, 75/1424 below. */
-    --banner-shelf: calc(var(--banner-slide) * 0.098 + 2.75rem);
+       the mobile slide is a 348×419 portrait (the 1080×1300 mobile artwork)
+       and hangs 67px, the desktop one 1424×480 and hangs 75px — so the hang
+       is written in terms of the width through each slide's aspect ratio:
+       67/348 here, 75/1424 below. */
+    --banner-shelf: calc(var(--banner-slide) * 0.193 + 2.75rem);
   }
 
   @media (width >= 48rem) {
