@@ -285,11 +285,14 @@ const leads = (index: number) => reveal && index % items.length === 0;
   }
 
   /* The neighbours sit smaller than the centre one, as the design draws them.
-     The script writes the exact scale from the distance to the centre; this is
-     just the easing and the starting value for a no-JS render. */
+     The script writes the exact scale from the distance to the centre on every
+     scroll frame; this is just the starting value for a no-JS render and a
+     short smoothing between frames. It was 0.45s: after a fast swipe the rail
+     had already stopped while the zoom was still arriving for half a second,
+     which read as a bounce on a phone. */
   .banner-scale {
     transform: scale(0.82);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.12s ease-out;
     will-change: transform;
   }
 
