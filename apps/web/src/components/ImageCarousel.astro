@@ -286,13 +286,18 @@ const leads = (index: number) => reveal && index % items.length === 0;
 
   /* The neighbours sit smaller than the centre one, as the design draws them.
      The script writes the exact scale from the distance to the centre on every
-     scroll frame; this is just the starting value for a no-JS render and a
-     short smoothing between frames. It was 0.45s: after a fast swipe the rail
-     had already stopped while the zoom was still arriving for half a second,
-     which read as a bounce on a phone. */
+     scroll frame; this is only the starting value for a no-JS render.
+
+     No transition, on purpose. The shrink is anchored to the slide's inner
+     edge, so the visual centre sits (1 − scale) × width / 2 off the layout
+     centre; any lag between the two — 0.45s at first, then 0.12s — meant the
+     rail stopped on the snap point while the zoom was still catching up, and
+     the slide overshot the centre by ~28px and eased back: the bounce the
+     client filmed three times. With the transform a pure function of the
+     scroll position the overshoot cannot happen (visual = 0.91 × layout
+     offset, monotonic). */
   .banner-scale {
     transform: scale(0.82);
-    transition: transform 0.12s ease-out;
     will-change: transform;
   }
 
@@ -321,7 +326,6 @@ const leads = (index: number) => reveal && index % items.length === 0;
   @media (prefers-reduced-motion: reduce) {
     .banner-scale {
       transform: none;
-      transition: none;
     }
   }
 </style>
