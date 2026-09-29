@@ -358,9 +358,20 @@ const leads = (index: number) => reveal && index % items.length === 0;
       const offsetFor = (index: number) => centreOf(slides[index]) - rail.clientWidth / 2;
 
       /**
-       * Scale by distance from the centre: 1 at the middle, 0.88 a full slide
+       * Scale by distance from the centre: 1 at the middle, 0.82 a full slide
        * away. Written on every frame of the scroll so dragging feels continuous
        * rather than snapping between two states.
+       *
+       * A neighbour shrinks toward the middle of the rail — with a plain
+       * centre origin it would pull away from the centre slide and its peek
+       * all but disappear. That used to be done by flipping `transform-origin`
+       * to the inner edge, and the flip is what the client filmed as a
+       * "rebote" on the phone: the origin switches the instant the slide
+       * crosses the centre, but the scale is still animating a few frames
+       * behind the scroll, so the box visibly lurches by (1 − scale) × width/2
+       * and then settles. Now the same effect is a translate that is exactly
+       * zero when the scale is one, so the target is continuous through the
+       * centre and the transition has nothing to jump over.
        */
       const paintScale = () => {
         const centre = railCentre();
@@ -369,12 +380,9 @@ const leads = (index: number) => reveal && index % items.length === 0;
           if (!box) return;
           const delta = centreOf(slide) - centre;
           const away = Math.min(1, Math.abs(delta) / slide.offsetWidth);
-          // Shrink toward the middle of the rail: with the default centre
-          // origin a neighbour pulls away from the centre slide as it scales
-          // and its peek all but disappears.
-          box.style.transformOrigin =
-            delta < -1 ? "right center" : delta > 1 ? "left center" : "center";
-          box.style.transform = `scale(${(1 - 0.18 * away).toFixed(4)})`;
+          const scale = 1 - 0.18 * away;
+          const shift = (-Math.sign(delta) * ((1 - scale) * slide.offsetWidth)) / 2;
+          box.style.transform = `translateX(${shift.toFixed(2)}px) scale(${scale.toFixed(4)})`;
         });
       };
 
