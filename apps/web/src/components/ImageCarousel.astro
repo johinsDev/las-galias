@@ -471,18 +471,19 @@ const leads = (index: number) => reveal && index % items.length === 0;
       let touching = false;
       let retries = 0;
       /**
-       * Rewind only once the swipe is over: finger up AND the rail resting on a
-       * snap point. iOS goes quiet on `scroll` events for a moment between the
-       * drag and the momentum phase, so "no event for 160ms" alone is not
-       * "stopped" — that is when the old code recentred mid-flight. While a
-       * finger is down nothing happens at all (touchend re-arms the timer): a
-       * programmatic scrollLeft under a live touch makes WebKit re-snap in one
-       * frame, which is the jump the client filmed. Setting scrollLeft during
-       * momentum also kills the momentum, so after the finger lifts we wait for
-       * the rail to settle; the cap only covers a rail that never settles (a
-       * sub-pixel layout) and still rewinds invisibly, since the shift is
-       * relative.
+       * Rewind only once the swipe is really over. `scrollend` is the only
+       * reliable signal: on iOS, `scrollLeft` already reports the snap
+       * destination while the momentum animation is still drawing, so any
+       * "has it settled?" check passes early, and a programmatic scrollLeft
+       * write at that moment kills the momentum and makes WebKit re-snap in a
+       * single frame — the 80px jump the client filmed, twice. So where the
+       * browser has `scrollend` (iOS 26, Chrome, Firefox) the timer below is
+       * never armed; it only backs up browsers without the event, and even
+       * then it waits for a long silence, no finger, and a rail resting on a
+       * snap point. The shift itself is relative, so it is invisible when it
+       * lands where it should.
        */
+      const supportsScrollEnd = "onscrollend" in window;
       const scheduleRecentre = () => {
         clearTimeout(idle);
         idle = setTimeout(() => {
@@ -494,7 +495,7 @@ const leads = (index: number) => reveal && index % items.length === 0;
           }
           retries = 0;
           recentre();
-        }, 160);
+        }, 400);
       };
       rail.addEventListener("scroll", () => {
         cancelAnimationFrame(frame);
@@ -502,11 +503,11 @@ const leads = (index: number) => reveal && index % items.length === 0;
           paintScale();
           paintDots();
         });
-        scheduleRecentre();
+        if (!supportsScrollEnd) scheduleRecentre();
       });
-      // Where the browser says when a scroll (momentum and snap included) is
-      // really over, use it: it beats guessing from the silence.
-      rail.addEventListener("scrollend", scheduleRecentre);
+      rail.addEventListener("scrollend", () => {
+        if (!touching) recentre();
+      });
       rail.addEventListener(
         "touchstart",
         () => {
@@ -515,24 +516,13 @@ const leads = (index: number) => reveal && index % items.length === 0;
         },
         { passive: true },
       );
-      rail.addEventListener(
-        "touchend",
-        () => {
-          touching = false;
-          retries = 0;
-          scheduleRecentre();
-        },
-        { passive: true },
-      );
-      rail.addEventListener(
-        "touchcancel",
-        () => {
-          touching = false;
-          retries = 0;
-          scheduleRecentre();
-        },
-        { passive: true },
-      );
+      const fingerUp = () => {
+        touching = false;
+        retries = 0;
+        if (!supportsScrollEnd) scheduleRecentre();
+      };
+      rail.addEventListener("touchend", fingerUp, { passive: true });
+      rail.addEventListener("touchcancel", fingerUp, { passive: true });
 
       window.addEventListener("resize", () => {
         paintScale();
