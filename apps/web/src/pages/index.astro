@@ -136,6 +136,7 @@ import { Search } from "lucide-astro";
       <ImageCarousel
         slides={banners.map((banner) => ({
           url: banner.desktopImage.url,
+          mobileUrl: banner.mobileImage?.url,
           alt: banner.desktopImage.alternativeText ?? banner.title ?? "",
           href: banner.link,
           cta: banner.ctaLabel,
