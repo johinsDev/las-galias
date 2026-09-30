@@ -49,7 +49,7 @@ const desktopHero =
     ? await getImage({
         src: mediaUrl(project.heroDesktop.url),
         width: 1200,
-        height: 840,
+        height: 586,
         widths: [828, 1080, 1200, 1600, 1920],
         sizes: "(min-width: 768px) 60vw",
         quality: 75,
@@ -63,7 +63,9 @@ const desktopHero =
       <div class="container py-6">
         <div>
           {/* 983 + 32 + 481 inside the 1496 the design leaves between its 140px
-              margins (PDP dk, Figma 2692:3160). */}
+              margins (PDP dk, Figma 2692:3160). The hero is 983 × 480 since the
+              Sept 2026 revision — a wide banner, not the 983 × 688 block it was —
+              and the two side photos share that height. */}
           <div class="grid gap-4 md:grid-cols-[983fr_481fr] md:gap-8">
             {/* transition:name must stay in sync with ProjectCard.astro — it is what
                 makes the card→PDP hero morph work under View Transitions; the
@@ -72,7 +74,7 @@ const desktopHero =
               type="button"
               data-lightbox-open="0"
               aria-label={`Ver las fotos de ${project.name}`}
-              class="group bg-cloud vt-hero relative aspect-[348/232] cursor-zoom-in overflow-hidden rounded-3xl md:aspect-[1113/779] md:rounded-[48px]"
+              class="group bg-cloud vt-hero relative aspect-[348/240] cursor-zoom-in overflow-hidden rounded-3xl md:aspect-[983/480] md:rounded-[48px]"
               transition:name={`project-hero-${project.slug}`}
             >
               <picture>
@@ -89,7 +91,7 @@ const desktopHero =
                   src={hero.url}
                   alt={hero.alternativeText ?? project.name}
                   width={1200}
-                  height={840}
+                  height={828}
                   widths={[420, 640, 750, 828, 1080, 1200]}
                   sizes="(min-width: 1564px) 983px, (min-width: 768px) 62vw, 100vw"
                   loading="eager"
@@ -114,7 +116,7 @@ const desktopHero =
                       src={img.url}
                       alt={img.alternativeText ?? project.name}
                       width={640}
-                      height={430}
+                      height={303}
                       widths={[420, 640, 828]}
                       sizes="(min-width: 1564px) 481px, (min-width: 768px) 31vw, 100vw"
                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
