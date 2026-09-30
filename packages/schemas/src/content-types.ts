@@ -170,6 +170,7 @@ export interface Project {
   location?: Geo | null;
   video?: string | null;
   tour360Url?: string | null;
+  tour360External?: boolean | null;
   brochure?: Media | null;
   constructionProgress?: ConstructionProgress[];
   specSheet?: SpecSheet | null;

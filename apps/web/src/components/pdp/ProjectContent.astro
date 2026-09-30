@@ -226,7 +226,11 @@ const sections = [
       Realiza un recorrido del apartamento modelo.
     </p>
     <div class="mt-3.5">
-      <TourFacade url={project.tour360Url} title={project.name} />
+      <TourFacade
+        url={project.tour360Url}
+        external={project.tour360External}
+        title={project.name}
+      />
     </div>
   </section>
 

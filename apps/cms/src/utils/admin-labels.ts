@@ -118,7 +118,16 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "Brochure",
       description: "PDF descargable. Sale como pestaña propia en la galería.",
     },
-    tour360Url: { label: "Recorrido 360°", description: "URL para incrustar." },
+    tour360Url: {
+      label: "Recorrido 360°",
+      description:
+        "URL del recorrido. Se incrusta en la ficha (Matterport y similares) salvo que marques «abrir en ventana nueva».",
+    },
+    tour360External: {
+      label: "Abrir el recorrido en una ventana nueva",
+      description:
+        "Para recorridos que no se pueden incrustar, como los 360 de galias.com.co: la foto del apartamento modelo se vuelve un enlace que abre el recorrido aparte.",
+    },
     constructionProgress: { label: "Avance de obra", description: "Un video por mes." },
     specSheet: { label: "Ficha técnica" },
     financing: { label: "Financiación y fiducia" },

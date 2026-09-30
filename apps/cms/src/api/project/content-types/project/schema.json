@@ -158,7 +158,12 @@
     },
     "tour360Url": {
       "type": "string",
-      "description": "360° virtual tour, shown as its own tab in the PDP gallery"
+      "description": "360° virtual tour: embedded in the PDP, or opened in a new window when tour360External is on"
+    },
+    "tour360External": {
+      "type": "boolean",
+      "default": false,
+      "description": "Open tour360Url in a new window instead of embedding it (the galias.com.co 360 pages do not embed)"
     },
     "brochure": {
       "type": "media",

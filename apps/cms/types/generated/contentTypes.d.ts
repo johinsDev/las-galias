@@ -1282,6 +1282,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<"expectation">;
     syncFromSinco: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tour360External: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     tour360Url: Schema.Attribute.String;
     unitTypes: Schema.Attribute.Component<"project.unit-type", true>;
     updatedAt: Schema.Attribute.DateTime;
