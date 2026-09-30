@@ -236,12 +236,7 @@ const CHIP =
       /* Status + commercial badges, top-left, stacked in the design's order.
         The right padding keeps them clear of the share button. */
     }
-    <div
-      class:list={[
-        "pointer-events-none absolute top-3 flex flex-wrap gap-1.5 pr-12",
-        seals.length > 0 ? "left-[92px]" : "left-3",
-      ]}
-    >
+    <div class="pointer-events-none absolute top-3 left-3 flex flex-wrap gap-1.5 pr-12">
       {
         compact ? (
           <>
@@ -268,30 +263,30 @@ const CHIP =
     </div>
 
     {
-      /* Sustainability seals, the way galias.com.co draws them on its own
-        cards: a dark ribbon hanging from the top-left corner of the photo,
-        «Proyecto precertificado» and one seal per certification the editor
-        ticked (artwork in src/assets, from the Galias Figma file 390:2). The
-        status badges move right to make room for it. */
+      /* Sustainability seals: one round seal per certification the editor
+        ticked (artwork in src/assets, from the Galias Figma file 390:2), in the
+        bottom-left corner of the photo. They used to hang from the top-left as
+        a dark ribbon with «Proyecto precertificado» written on it; the client
+        asked for plain circles down here (Sept 2026), so the stage now lives
+        in the tooltip and the accessible name. */
     }
     {
       seals.length > 0 && (
         <div
-          class="pointer-events-none absolute top-0 left-3 z-10 flex w-[68px] flex-col items-center gap-1.5 rounded-b-xl bg-[#2b2b2b]/90 px-1.5 pt-2 pb-2 text-center text-white"
+          class="pointer-events-none absolute bottom-3 left-3 z-10 flex items-center gap-1.5"
+          role="img"
           aria-label={`${sealLabel}: ${seals.map((seal) => seal.name).join(", ")}`}
         >
-          <span class="text-[9px] leading-[11px] font-semibold">
-            Proyecto
-            <br />
-            {project.certificationStage === "precertified" ? "precertificado" : "certificado"}
-          </span>
           {seals.map((seal) => (
-            <span class="size-10 overflow-hidden rounded-full bg-white" title={seal.name}>
+            <span
+              class="size-11 overflow-hidden rounded-full bg-white shadow-md ring-2 ring-white"
+              title={`${sealLabel} · ${seal.name}`}
+            >
               <Image
                 src={seal.image}
-                alt={seal.name}
-                width={80}
-                height={80}
+                alt=""
+                width={88}
+                height={88}
                 quality={75}
                 class="size-full"
               />
