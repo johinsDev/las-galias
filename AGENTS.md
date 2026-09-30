@@ -83,6 +83,13 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   below the fold for good). Both logo SVGs are
   cropped to the artwork, so `Logo`'s `height` is the height of the wordmark
   itself — the files from galias.com.co carried a fifth of the box as margin.
+- Any URL with `?campana=1` renders in campaign mode: the header keeps only
+  the (unlinked) logo and the footer only the brand block, the documents and
+  the legal links, so a paid campaign has no exit but the page. The site is
+  static, so it is a client flag (`scripts/campaign-mode.ts` sets
+  `html[data-campana]` before first paint and after each View Transitions
+  swap, and appends the parameter to internal links) and the chrome hides
+  with the `campana:` Tailwind variant declared in the ui `globals.css`.
 - Route renames live in `ROUTE_REDIRECTS` (`apps/web/redirects.ts`), never only
   in the CMS. The catalogue is `/proyectos-de-vivienda` (+ `/[slug]`); the old
   `/proyectos` URLs 301 there. The Vercel adapter emits each redirect as a regex

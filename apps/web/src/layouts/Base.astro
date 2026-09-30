@@ -68,6 +68,14 @@ const gtmSnippet = GTM_ID
     }
     <Font cssVariable="--font-public-sans" />
     <ClientRouter />
+    {
+      /* `?campana=1` hides the chrome (scripts/campaign-mode.ts). Inline and
+        before the body so the full header never flashes on a campaign URL. */
+    }
+    <script is:inline>
+      if (new URLSearchParams(location.search).has("campana"))
+        document.documentElement.setAttribute("data-campana", "");
+    </script>
     {gtmSnippet && <script is:inline set:html={gtmSnippet} />}
   </head>
   <body class="flex min-h-screen flex-col">
@@ -77,10 +85,18 @@ const gtmSnippet = GTM_ID
     </main>
     <Footer minimal={chrome === "minimal"} />
     <script>
+      import { applyCampaignFlag, initCampaignMode } from "@/scripts/campaign-mode";
       import { initReveals } from "@/scripts/reveal";
 
       initReveals();
-      document.addEventListener("astro:page-load", initReveals);
+      initCampaignMode();
+      document.addEventListener("astro:page-load", () => {
+        initReveals();
+        initCampaignMode();
+      });
+      // The swap replaces <html>'s attributes with the new page's, so the flag
+      // is re-applied before the new page paints.
+      document.addEventListener("astro:after-swap", applyCampaignFlag);
     </script>
   </body>
 </html>

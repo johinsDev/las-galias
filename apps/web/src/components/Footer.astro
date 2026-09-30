@@ -55,7 +55,9 @@ const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc
   <div
     class:list={[
       "container-bleed grid gap-10 py-16",
-      !minimal && "md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1.4fr_1fr]",
+      // Campaign mode keeps the brand block and, when published, the documents.
+      !minimal &&
+        "campana:lg:grid-cols-[1.3fr_1.4fr]! md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1.4fr_1fr]",
     ]}
   >
     <div>
@@ -63,7 +65,7 @@ const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc
       <p class="text-body-sm mt-5 max-w-xs text-white/95">
         Constructora colombiana con más de 30 años de experiencia entregando vivienda de calidad.
       </p>
-      <div class="mt-6 flex gap-3">
+      <div class="campana:hidden! mt-6 flex gap-3">
         <a
           href="https://www.instagram.com/lasgaliasc/"
           target="_blank"
@@ -145,7 +147,7 @@ const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc
     {
       !minimal && (
         <>
-          <nav aria-label="Proyectos">
+          <nav aria-label="Proyectos" class="campana:hidden!">
             <p class="eyebrow text-white">Proyectos</p>
             <ul class="mt-5 space-y-3">
               {cities.map((city) => (
@@ -169,7 +171,7 @@ const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc
             </ul>
           </nav>
 
-          <nav aria-label="Empresa">
+          <nav aria-label="Empresa" class="campana:hidden!">
             <p class="eyebrow text-white">Empresa</p>
             <ul class="mt-5 space-y-3">
               <li>
@@ -212,7 +214,7 @@ const documents = DOCUMENT_SLUGS.map((slug) => LEGAL_DOCUMENTS.find((doc) => doc
             </nav>
           )}
 
-          <div>
+          <div class="campana:hidden!">
             {/* The design's phone line is still the placeholder "300 000 0000", so it
           is left out rather than shipped as a number nobody answers. */}
             <p class="eyebrow text-white">Contacto</p>

@@ -7,6 +7,10 @@
 @source "../../../../apps/web/src/**/*.{astro,html,js,jsx,ts,tsx,mdx}";
 
 @custom-variant dark (&:is(.dark *));
+/* `?campana=1` on any URL: the site's chrome shrinks to logo + legal links so a
+   paid campaign has no exit but the page itself (scripts/campaign-mode.ts sets
+   the attribute before first paint). */
+@custom-variant campana (&:where(html[data-campana] *));
 
 /* ------------------------------------------------------------------------- */
 /* Las Galias — near-black ink, white surfaces, soft grays, dark bands for     */

@@ -94,7 +94,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
         <div class="flex items-center gap-7">
           <a
             href="/"
-            class="flex items-center gap-2.5"
+            class="campana:pointer-events-none flex items-center gap-2.5"
             aria-label="Las Galias Constructora — inicio"
           >
             <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
@@ -107,7 +107,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
             />
           </a>
 
-          <nav aria-label="principal" class="hidden xl:block">
+          <nav aria-label="principal" class="campana:hidden! hidden xl:block">
             <ul class="flex items-center gap-6">
               {links.map((link) => (
                 <li class="group/nav relative">
@@ -147,14 +147,14 @@ const searchableProjects = (await getProjects()).map((project) => ({
           <button
             type="button"
             data-open-search
-            class="text-brand hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
+            class="text-brand campana:hidden! hidden size-10 items-center justify-center rounded-full bg-white transition-colors hover:bg-white/90 xl:inline-flex"
             aria-label="Buscar proyectos"
           >
             <Search size={18} stroke-width={2.2} aria-hidden="true" />
           </button>
           <a
             href="/servicio-al-cliente"
-            class="text-brand hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
+            class="text-brand campana:hidden! hidden rounded-full bg-white px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors hover:bg-white/90 xl:inline-flex"
           >
             Zona clientes
           </a>
@@ -164,7 +164,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
           <button
             type="button"
             id="nav-toggle"
-            class="group/toggle text-brand group-data-[nav-open=true]/header:border-line group-data-[nav-open=true]/header:text-ink inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors group-data-[nav-open=true]/header:border hover:bg-white/90 xl:hidden"
+            class="group/toggle text-brand campana:hidden! group-data-[nav-open=true]/header:border-line group-data-[nav-open=true]/header:text-ink inline-flex size-10 items-center justify-center rounded-xl bg-white transition-colors group-data-[nav-open=true]/header:border hover:bg-white/90 xl:hidden"
             aria-label="Abrir menú"
             aria-expanded="false"
             aria-controls="mobile-nav"
@@ -196,7 +196,7 @@ const searchableProjects = (await getProjects()).map((project) => ({
         id="mobile-nav"
         aria-label="principal móvil"
         data-open="false"
-        class="group/sheet border-line text-ink shadow-card-lg absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
+        class="group/sheet border-line text-ink shadow-card-lg campana:hidden! absolute inset-x-0 top-full grid grid-rows-[0fr] bg-white transition-[grid-template-rows] duration-300 ease-out data-[open=true]:grid-rows-[1fr] data-[open=true]:border-t xl:hidden"
       >
         <div class="max-h-[calc(100dvh-88px)] overflow-hidden opacity-0 transition-opacity duration-200 group-data-[open=true]/sheet:overflow-y-auto group-data-[open=true]/sheet:opacity-100">
           <div class="container-bleed py-5">
