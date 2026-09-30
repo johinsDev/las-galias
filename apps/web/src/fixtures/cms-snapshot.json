@@ -179,120 +179,6 @@
       "readingMinutes": 9
     }
   ],
-  "macroprojects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5Bgallery%5D=true&populate%5Blocation%5D=true&populate%5BpointsOfInterest%5D=true": [
-    {
-      "id": 2,
-      "documentId": "jzrkass0ijwrv0wj5igsoazs",
-      "name": "Ciudad Verde Norte",
-      "slug": "ciudad-verde-norte",
-      "description": [
-        {
-          "type": "paragraph",
-          "children": [
-            {
-              "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-              "type": "text"
-            }
-          ]
-        }
-      ],
-      "createdAt": "2026-07-15T01:47:08.802Z",
-      "updatedAt": "2026-07-15T01:47:08.802Z",
-      "publishedAt": "2026-07-15T01:47:08.811Z",
-      "city": {
-        "id": 2,
-        "documentId": "tlwq8dibh033cbs9t4gy0mw4",
-        "name": "Bogotá",
-        "slug": "bogota",
-        "department": "Cundinamarca",
-        "createdAt": "2026-07-15T01:47:08.568Z",
-        "updatedAt": "2026-07-15T01:47:08.568Z",
-        "publishedAt": "2026-07-15T01:47:08.575Z"
-      },
-      "gallery": [
-        {
-          "id": 1,
-          "documentId": "ge3yactow7g6nx7odaqfbkcq",
-          "name": "macro-ciudad-verde",
-          "alternativeText": "Ciudad Verde Norte",
-          "caption": null,
-          "focalPoint": null,
-          "width": 1600,
-          "height": 1000,
-          "formats": null,
-          "hash": "macro_ciudad_verde_5678733335",
-          "ext": ".svg",
-          "mime": "image/svg+xml",
-          "size": 0.53,
-          "url": "/uploads/macro_ciudad_verde_5678733335.svg",
-          "previewUrl": null,
-          "provider": "local",
-          "provider_metadata": null,
-          "createdAt": "2026-07-15T01:47:08.794Z",
-          "updatedAt": "2026-07-15T01:47:08.794Z",
-          "publishedAt": "2026-07-15T01:47:08.794Z"
-        }
-      ],
-      "location": {
-        "id": 2,
-        "lat": 4.7601,
-        "lng": -74.0465,
-        "address": "Autopista Norte km 21, Bogotá"
-      },
-      "pointsOfInterest": [
-        {
-          "id": 1,
-          "documentId": "isx999b166x0vg43ciiylr15",
-          "name": "Centro Comercial Verde Plaza",
-          "category": "commerce",
-          "distanceText": "5 min",
-          "createdAt": "2026-07-15T01:47:08.822Z",
-          "updatedAt": "2026-07-15T01:47:08.822Z",
-          "publishedAt": "2026-07-15T01:47:08.820Z"
-        },
-        {
-          "id": 2,
-          "documentId": "mtx12a6atciqa2ekdepqg2ki",
-          "name": "Clínica del Norte",
-          "category": "health",
-          "distanceText": "10 min",
-          "createdAt": "2026-07-15T01:47:08.827Z",
-          "updatedAt": "2026-07-15T01:47:08.827Z",
-          "publishedAt": "2026-07-15T01:47:08.825Z"
-        },
-        {
-          "id": 3,
-          "documentId": "qpws7v9pcoevrhm59x41nqkg",
-          "name": "Colegio Nueva Granada Norte",
-          "category": "education",
-          "distanceText": "8 min",
-          "createdAt": "2026-07-15T01:47:08.831Z",
-          "updatedAt": "2026-07-15T01:47:08.831Z",
-          "publishedAt": "2026-07-15T01:47:08.829Z"
-        },
-        {
-          "id": 4,
-          "documentId": "t0u2ts0q4k82y6325jgmfuu2",
-          "name": "Estación TransMilenio Terminal",
-          "category": "transport",
-          "distanceText": "12 min",
-          "createdAt": "2026-07-15T01:47:08.834Z",
-          "updatedAt": "2026-07-15T01:47:08.834Z",
-          "publishedAt": "2026-07-15T01:47:08.832Z"
-        },
-        {
-          "id": 5,
-          "documentId": "tivhldx7ueyf4hunl5qgb4ff",
-          "name": "Parque Metropolitano",
-          "category": "recreation",
-          "distanceText": "3 min",
-          "createdAt": "2026-07-15T01:47:08.838Z",
-          "updatedAt": "2026-07-15T01:47:08.838Z",
-          "publishedAt": "2026-07-15T01:47:08.836Z"
-        }
-      ]
-    }
-  ],
   "projects?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blogo%5D=true&populate%5BsalesRoom%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D=true&populate%5Bzone%5D=true&sort=name%3Aasc": [
     {
       "id": 6,
@@ -2085,7 +1971,7 @@
       "order": 5
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=altos-de-la-sabana&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 6,
       "documentId": "n6dgxeu9ib9nqb0u3ae0jrci",
@@ -2175,7 +2061,6 @@
       "location": null,
       "unitTypes": [],
       "amenities": [],
-      "macroproject": null,
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -2200,7 +2085,7 @@
       "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=balcones-de-provenza&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 14,
       "documentId": "m7yi0bt025kvwmyuwyj451aj",
@@ -2359,7 +2244,6 @@
         "lng": -75.57,
         "address": "Carrera 43A N° 5 – 15, Medellín"
       },
-      "macroproject": null,
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -2524,7 +2408,7 @@
       "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=mirador-del-parque&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 4,
       "documentId": "xgq1gkv616o17gctywpqgpas",
@@ -2801,82 +2685,10 @@
           "iconKey": "zona-infantil"
         }
       ],
-      "macroproject": {
-        "id": 2,
-        "documentId": "jzrkass0ijwrv0wj5igsoazs",
-        "name": "Ciudad Verde Norte",
-        "slug": "ciudad-verde-norte",
-        "description": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-                "type": "text"
-              }
-            ]
-          }
-        ],
-        "createdAt": "2026-07-15T01:47:08.802Z",
-        "updatedAt": "2026-07-15T01:47:08.802Z",
-        "publishedAt": "2026-07-15T01:47:08.811Z",
-        "pointsOfInterest": [
-          {
-            "id": 1,
-            "documentId": "isx999b166x0vg43ciiylr15",
-            "name": "Centro Comercial Verde Plaza",
-            "category": "commerce",
-            "distanceText": "5 min",
-            "createdAt": "2026-07-15T01:47:08.822Z",
-            "updatedAt": "2026-07-15T01:47:08.822Z",
-            "publishedAt": "2026-07-15T01:47:08.820Z"
-          },
-          {
-            "id": 2,
-            "documentId": "mtx12a6atciqa2ekdepqg2ki",
-            "name": "Clínica del Norte",
-            "category": "health",
-            "distanceText": "10 min",
-            "createdAt": "2026-07-15T01:47:08.827Z",
-            "updatedAt": "2026-07-15T01:47:08.827Z",
-            "publishedAt": "2026-07-15T01:47:08.825Z"
-          },
-          {
-            "id": 3,
-            "documentId": "qpws7v9pcoevrhm59x41nqkg",
-            "name": "Colegio Nueva Granada Norte",
-            "category": "education",
-            "distanceText": "8 min",
-            "createdAt": "2026-07-15T01:47:08.831Z",
-            "updatedAt": "2026-07-15T01:47:08.831Z",
-            "publishedAt": "2026-07-15T01:47:08.829Z"
-          },
-          {
-            "id": 4,
-            "documentId": "t0u2ts0q4k82y6325jgmfuu2",
-            "name": "Estación TransMilenio Terminal",
-            "category": "transport",
-            "distanceText": "12 min",
-            "createdAt": "2026-07-15T01:47:08.834Z",
-            "updatedAt": "2026-07-15T01:47:08.834Z",
-            "publishedAt": "2026-07-15T01:47:08.832Z"
-          },
-          {
-            "id": 5,
-            "documentId": "tivhldx7ueyf4hunl5qgb4ff",
-            "name": "Parque Metropolitano",
-            "category": "recreation",
-            "distanceText": "3 min",
-            "createdAt": "2026-07-15T01:47:08.838Z",
-            "updatedAt": "2026-07-15T01:47:08.838Z",
-            "publishedAt": "2026-07-15T01:47:08.836Z"
-          }
-        ]
-      },
       "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=portal-del-poblado&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 12,
       "documentId": "t667t7mp8ez7ciokzf7q2blu",
@@ -3035,7 +2847,6 @@
         "lng": -75.568,
         "address": "Carrera 35 N° 8 – 24, Medellín"
       },
-      "macroproject": null,
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",
@@ -3157,7 +2968,7 @@
       "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=reserva-de-los-alisos&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 13,
       "documentId": "fyms43ocvurmb4hr9a2i0yjk",
@@ -3433,78 +3244,6 @@
           "iconKey": "zona-infantil"
         }
       ],
-      "macroproject": {
-        "id": 2,
-        "documentId": "jzrkass0ijwrv0wj5igsoazs",
-        "name": "Ciudad Verde Norte",
-        "slug": "ciudad-verde-norte",
-        "description": [
-          {
-            "type": "paragraph",
-            "children": [
-              {
-                "text": "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-                "type": "text"
-              }
-            ]
-          }
-        ],
-        "createdAt": "2026-07-15T01:47:08.802Z",
-        "updatedAt": "2026-07-15T01:47:08.802Z",
-        "publishedAt": "2026-07-15T01:47:08.811Z",
-        "pointsOfInterest": [
-          {
-            "id": 1,
-            "documentId": "isx999b166x0vg43ciiylr15",
-            "name": "Centro Comercial Verde Plaza",
-            "category": "commerce",
-            "distanceText": "5 min",
-            "createdAt": "2026-07-15T01:47:08.822Z",
-            "updatedAt": "2026-07-15T01:47:08.822Z",
-            "publishedAt": "2026-07-15T01:47:08.820Z"
-          },
-          {
-            "id": 2,
-            "documentId": "mtx12a6atciqa2ekdepqg2ki",
-            "name": "Clínica del Norte",
-            "category": "health",
-            "distanceText": "10 min",
-            "createdAt": "2026-07-15T01:47:08.827Z",
-            "updatedAt": "2026-07-15T01:47:08.827Z",
-            "publishedAt": "2026-07-15T01:47:08.825Z"
-          },
-          {
-            "id": 3,
-            "documentId": "qpws7v9pcoevrhm59x41nqkg",
-            "name": "Colegio Nueva Granada Norte",
-            "category": "education",
-            "distanceText": "8 min",
-            "createdAt": "2026-07-15T01:47:08.831Z",
-            "updatedAt": "2026-07-15T01:47:08.831Z",
-            "publishedAt": "2026-07-15T01:47:08.829Z"
-          },
-          {
-            "id": 4,
-            "documentId": "t0u2ts0q4k82y6325jgmfuu2",
-            "name": "Estación TransMilenio Terminal",
-            "category": "transport",
-            "distanceText": "12 min",
-            "createdAt": "2026-07-15T01:47:08.834Z",
-            "updatedAt": "2026-07-15T01:47:08.834Z",
-            "publishedAt": "2026-07-15T01:47:08.832Z"
-          },
-          {
-            "id": 5,
-            "documentId": "tivhldx7ueyf4hunl5qgb4ff",
-            "name": "Parque Metropolitano",
-            "category": "recreation",
-            "distanceText": "3 min",
-            "createdAt": "2026-07-15T01:47:08.838Z",
-            "updatedAt": "2026-07-15T01:47:08.838Z",
-            "publishedAt": "2026-07-15T01:47:08.836Z"
-          }
-        ]
-      },
       "recommended": [
         {
           "id": 4,
@@ -3552,7 +3291,7 @@
       "brochure": null
     }
   ],
-  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Bmacroproject%5D%5Bpopulate%5D%5BpointsOfInterest%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
+  "projects?filters%5Bslug%5D%5B%24eq%5D=sendero-del-rio&populate%5Bamenities%5D%5Bpopulate%5D%5Bicon%5D=true&populate%5Bbrochure%5D=true&populate%5Bcity%5D=true&populate%5BconstructionProgress%5D=true&populate%5Bfinancing%5D=true&populate%5Bgallery%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Blocation%5D=true&populate%5Blogo%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bcity%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5Bgallery%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroDesktop%5D=true&populate%5Brecommended%5D%5Bpopulate%5D%5BheroMobile%5D=true&populate%5BsalesRoom%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true&populate%5BspecSheet%5D=true&populate%5BunitTypes%5D%5Bpopulate%5D%5BfloorPlan%5D=true&populate%5Bzone%5D=true": [
     {
       "id": 10,
       "documentId": "u6f2h266w0ybzpg06rioc28t",
@@ -3642,7 +3381,6 @@
       "location": null,
       "unitTypes": [],
       "amenities": [],
-      "macroproject": null,
       "zone": {
         "id": 1,
         "documentId": "zonedemonorte00000000000",

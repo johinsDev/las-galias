@@ -43,7 +43,6 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     // El rastro ciudad · zona · barrio, y luego el mapa.
     ["sectionLocation"],
     ["city", "zone", "neighborhood"],
-    ["macroproject:6"],
     ["location"],
     // El precio, pegado a lo que puede sobreescribirlo.
     ["sectionPricing"],
@@ -115,18 +114,6 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["highlights"],
     ["tags"],
     ["seo"],
-  ],
-  "api::macroproject.macroproject": [
-    ["name", "slug"],
-    ["city:6"],
-    ["description"],
-    ["location"],
-    ["gallery:12"],
-    ["pointsOfInterest:12"],
-  ],
-  "api::point-of-interest.point-of-interest": [
-    ["name", "category"],
-    ["macroproject", "distanceText"],
   ],
   "api::city.city": [["name", "slug"], ["department", "image"], ["projects:12"]],
   "api::zone.zone": [["name", "slug"], ["city:6"]],
@@ -279,8 +266,6 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::lead.lead": ["createdAt", "form", "name", "phone", "email", "project", "crmStatus"],
   "api::sinco-project.sinco-project": ["label", "sincoId", "macroName", "lastSyncedAt"],
   "api::post.post": ["title", "category", "publishedOn", "featured"],
-  "api::macroproject.macroproject": ["name", "city", "slug"],
-  "api::point-of-interest.point-of-interest": ["name", "category", "macroproject", "distanceText"],
   "api::city.city": ["name", "department", "slug"],
   "api::zone.zone": ["name", "city", "slug"],
   "api::amenity.amenity": ["name", "iconKey", "description"],

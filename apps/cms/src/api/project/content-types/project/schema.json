@@ -117,11 +117,6 @@
       "type": "string",
       "description": "Third level of the location trail. Free text: too granular to curate as its own type"
     },
-    "macroproject": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::macroproject.macroproject"
-    },
     "amenities": {
       "type": "relation",
       "relation": "manyToMany",

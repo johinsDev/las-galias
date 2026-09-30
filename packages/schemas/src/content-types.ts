@@ -36,24 +36,6 @@ export interface City {
   image?: Media | null;
 }
 
-export interface PointOfInterest {
-  documentId: string;
-  name: string;
-  category: "commerce" | "health" | "education" | "transport" | "recreation";
-  distanceText?: string | null;
-}
-
-export interface Macroproject {
-  documentId: string;
-  name: string;
-  slug: string;
-  description?: unknown;
-  city?: City | null;
-  gallery?: Media[];
-  location?: Geo | null;
-  pointsOfInterest?: PointOfInterest[];
-}
-
 /**
  * Keys of the site's built-in line-icon set. They are drawn with
  * `currentColor`, which is what makes `Amenity["iconColor"]` work.
@@ -179,7 +161,6 @@ export interface Project {
   description?: unknown;
   priceFromCOP?: number | null;
   city: City;
-  macroproject?: Macroproject | null;
   amenities?: Amenity[];
   recommended?: Project[];
   unitTypes?: UnitType[];

@@ -171,8 +171,10 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   landing-only fields `interestCity`, `referralSource`, `budgetRange`.
 - A project's `recommended` list must belong to the **same city** (middleware).
 - Unpublishing a project creates an automatic `redirect` to `/proyectos-de-vivienda`.
-- `point-of-interest` entries belong to a `macroproject`; `amenity` entries are
-  reusable across projects (m2m).
+- `amenity` entries are reusable across projects (m2m). There is no
+  `macroproject` type any more: it (and `point-of-interest`) never got content
+  in production and was removed in Sept 2026; Sinco's "macroproyecto" is a
+  different thing and lives on `sinco-project`.
 - Publishing/unpublishing public content triggers (debounced) the Vercel Deploy
   Hook → static site rebuild.
 - Only the Super Admin touches `redirect`, `calculator-config`, `crm-config` and `exchange-rate`.
@@ -198,7 +200,7 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   picker.
 - The real projects are loaded from the company sheet with
   `node scripts/load-projects.cjs [--yes]` (data in `apps/cms/data/proyectos.csv`, the sheet downloaded as CSV).
-  It REPLACES every project, macroproject, zone and amenity — run it once, not
+  It REPLACES every project, zone and amenity — run it once, not
   on top of edited content.
 - Everything the site receives is stored in Strapi first, whatever happens next:
   `lead` (every contact form), `pqr`, `newsletter-subscriber` and

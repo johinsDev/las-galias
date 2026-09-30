@@ -5,19 +5,14 @@ import { getProjects } from "@/lib/strapi";
 import { SIMULATORS } from "@/lib/simulator-pages";
 
 /**
- * The seven items of the approved menu, in order. Two of them open a panel; the
+ * The seven items of the approved menu, in order. One of them opens a panel; the
  * currency selector that used to sit on the right is gone — design comment #114
  * moved it next to the price, which is where ProjectCard renders it now.
  */
 const links: { href: string; label: string; children?: { href: string; label: string }[] }[] = [
-  {
-    href: "/proyectos-de-vivienda",
-    label: "Proyectos",
-    children: [
-      { href: "/proyectos-de-vivienda", label: "Todos los proyectos" },
-      { href: "/macroproyectos", label: "Macroproyectos" },
-    ],
-  },
+  // Plain link since Sept 2026: its only other entry was the macroproject
+  // catalogue, which was removed along with the content type.
+  { href: "/proyectos-de-vivienda", label: "Proyectos" },
   {
     href: "/simuladores",
     label: "Calculadoras",

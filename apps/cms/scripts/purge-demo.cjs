@@ -46,7 +46,6 @@ const DEMO = {
       "ideas-decorar-apartamentos-pequenos",
     ],
   },
-  "api::macroproject.macroproject": { field: "slug", values: ["ciudad-verde-norte"] },
   "api::amenity.amenity": {
     field: "name",
     values: ["Piscina", "Gimnasio", "Zona BBQ", "Parque infantil", "Salón social", "Coworking"],

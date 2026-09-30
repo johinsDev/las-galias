@@ -1,5 +1,5 @@
 /**
- * Development seed: cities, macroproject + points of interest, amenities,
+ * Development seed: cities, amenities,
  * projects in both stages (with placeholder SVG images), home banners, posts
  * and the calculator/exchange-rate singles. Idempotent: exits early if the
  * seed marker (city "bogota") already exists.
@@ -122,45 +122,6 @@ async function main() {
     }
     log(`Amenities: ${amenitySpecs.map((a) => a.name).join(", ")}`);
 
-    /* macroproject + points of interest */
-    const macroGallery = await uploadSvg("macro-ciudad-verde", {
-      width: 1600,
-      height: 1000,
-      label: "Ciudad Verde Norte",
-      palette: "dusk",
-    });
-    const macro = await createAndPublish("api::macroproject.macroproject", {
-      name: "Ciudad Verde Norte",
-      slug: "ciudad-verde-norte",
-      city: bogota.documentId,
-      gallery: [macroGallery.id],
-      location: { lat: 4.7601, lng: -74.0465, address: "Autopista Norte km 21, Bogotá" },
-      description: [
-        {
-          type: "paragraph",
-          children: [
-            {
-              type: "text",
-              text: "Un macroproyecto de 40 hectáreas con parques, comercio y colegios a la puerta de tu casa.",
-            },
-          ],
-        },
-      ],
-    });
-    const pois = [
-      { name: "Centro Comercial Verde Plaza", category: "commerce", distanceText: "5 min" },
-      { name: "Clínica del Norte", category: "health", distanceText: "10 min" },
-      { name: "Colegio Nueva Granada Norte", category: "education", distanceText: "8 min" },
-      { name: "Estación TransMilenio Terminal", category: "transport", distanceText: "12 min" },
-      { name: "Parque Metropolitano", category: "recreation", distanceText: "3 min" },
-    ];
-    for (const poi of pois) {
-      await app
-        .documents("api::point-of-interest.point-of-interest")
-        .create({ data: { ...poi, macroproject: macro.documentId } });
-    }
-    log(`Macroproject "Ciudad Verde Norte" + ${pois.length} points of interest`);
-
     /* projects */
     const projectSpecs = [
       {
@@ -171,7 +132,6 @@ async function main() {
         constructionStatus: "construction",
         priceFromCOP: "320000000",
         city: bogota,
-        macroproject: macro.documentId,
         palette: "forest",
         blurb:
           "Apartamentos de 2 y 3 alcobas rodeados de senderos ecológicos, a 5 minutos del parque metropolitano.",
@@ -184,7 +144,6 @@ async function main() {
         constructionStatus: "presale",
         priceFromCOP: "280000000",
         city: bogota,
-        macroproject: macro.documentId,
         palette: "sky",
         blurb: "Torres de vivienda con vista al humedal y zonas comunes en el piso 12.",
       },
@@ -247,7 +206,6 @@ async function main() {
         stage: "sale",
         priceFromCOP: "260000000",
         city: bogota,
-        macroproject: macro.documentId,
         palette: "clay",
         blurb: "Locales de 45 a 90 m² sobre la vía principal del conjunto, con parqueadero para clientes.",
       },
@@ -319,7 +277,6 @@ async function main() {
         constructionStatus: spec.constructionStatus,
         priceFromCOP: spec.priceFromCOP,
         city: spec.city.documentId,
-        macroproject: spec.macroproject,
         location: spec.location,
         salesRoom: isSale
           ? {

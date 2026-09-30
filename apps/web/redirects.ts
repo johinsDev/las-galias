@@ -33,6 +33,11 @@ const ROUTE_REDIRECTS: AstroRedirects = {
   // page, so links shared before the rename keep landing on the right flat.
   "/proyectos": { destination: "/proyectos-de-vivienda", status: 301 },
   "/proyectos/[slug]": { destination: "/proyectos-de-vivienda/[slug]", status: 301 },
+  // The macroproject catalogue was removed in Sept 2026 (it never had content
+  // in production, but it sat in the header for months): send anyone who kept
+  // the link to the projects. No `[slug]` rule: Astro requires a dynamic
+  // destination for a dynamic source, and no macroproject page ever existed.
+  "/macroproyectos": { destination: "/proyectos-de-vivienda", status: 301 },
 };
 
 async function fetchJson<T>(url: string): Promise<T> {

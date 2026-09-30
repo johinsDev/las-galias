@@ -13,7 +13,7 @@
  *
  * Qué hace, en orden:
  *
- *  1. BORRA todos los proyectos, macroproyectos, zonas y zonas comunes, y las
+ *  1. BORRA todos los proyectos, zonas y zonas comunes, y las
  *     ciudades que no están en CITIES. No es un «rellenar huecos» como
  *     `fill-content.cjs`: lo editado a mano en esos tipos se pierde.
  *  2. Deja las ciudades en CITIES y el desplegable de ciudad del formulario.
@@ -449,7 +449,7 @@ function iconFor(name) {
 }
 
 async function wipe() {
-  for (const plural of ["projects", "macroprojects", "zones", "amenities"]) {
+  for (const plural of ["projects", "zones", "amenities"]) {
     const rows = await all(plural, { draftAndPublish: plural !== "amenities" });
     console.log(`  borrar ${rows.length} ${plural}`);
     if (!APPLY) continue;

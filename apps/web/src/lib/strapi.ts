@@ -9,7 +9,6 @@ import type {
   HomePage,
   LeadFormConfig,
   LegalDocument,
-  Macroproject,
   Post,
   PqrPage,
   Project,
@@ -278,7 +277,6 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[seo][populate][ogImage]": "true",
     "populate[unitTypes][populate][floorPlan]": "true",
     "populate[amenities][populate][icon]": "true",
-    "populate[macroproject][populate][pointsOfInterest]": "true",
     "populate[zone]": "true",
     "populate[recommended][populate][city]": "true",
     // The recommended cards are the same ProjectCard as the listing: without
@@ -316,18 +314,6 @@ export async function getPost(slug: string): Promise<Post | null> {
     "populate[seo][populate][ogImage]": "true",
   });
   return data?.[0] ?? null;
-}
-
-export async function getMacroprojects(): Promise<Macroproject[]> {
-  return (
-    (await strapiFetch<Macroproject[]>("macroprojects", {
-      "populate[city]": "true",
-      "populate[gallery]": "true",
-      "populate[location]": "true",
-      "populate[pointsOfInterest]": "true",
-      "pagination[pageSize]": "100",
-    })) ?? []
-  );
 }
 
 export async function getHomeBanners(): Promise<HomeBanner[]> {

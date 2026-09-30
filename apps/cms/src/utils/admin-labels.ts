@@ -106,10 +106,6 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     city: { label: "Ciudad" },
     zone: { label: "Zona", description: "Segundo nivel: Bogotá · Norte · San Antonio." },
     neighborhood: { label: "Barrio", description: "Tercer nivel del rastro de ubicación." },
-    macroproject: {
-      label: "Macroproyecto",
-      description: "Agrupación nuestra para puntos de interés. No es el macroproyecto de Sinco.",
-    },
     amenities: { label: "Zonas comunes" },
     recommended: { label: "Proyectos similares", description: "Deben ser de la misma ciudad." },
     unitTypes: { label: "Tipologías" },
@@ -245,21 +241,6 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     department: { label: "Departamento" },
     image: { label: "Imagen" },
     projects: { label: "Proyectos" },
-  },
-  "api::macroproject.macroproject": {
-    name: { label: "Nombre" },
-    slug: { label: "URL (slug)" },
-    description: { label: "Descripción" },
-    city: { label: "Ciudad" },
-    gallery: { label: "Galería" },
-    location: { label: "Ubicación" },
-    pointsOfInterest: { label: "Puntos de interés" },
-  },
-  "api::point-of-interest.point-of-interest": {
-    name: { label: "Nombre" },
-    category: { label: "Categoría" },
-    distanceText: { label: "Distancia", description: "Texto libre: «5 min», «800 m»." },
-    macroproject: { label: "Macroproyecto" },
   },
   "api::amenity.amenity": {
     name: { label: "Nombre" },

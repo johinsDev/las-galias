@@ -1053,39 +1053,6 @@ export interface ApiLegalDocumentLegalDocument extends Struct.CollectionTypeSche
   };
 }
 
-export interface ApiMacroprojectMacroproject extends Struct.CollectionTypeSchema {
-  collectionName: "macroprojects";
-  info: {
-    description: "Master developments that group projects and points of interest of a single location";
-    displayName: "Macroproyecto";
-    pluralName: "macroprojects";
-    singularName: "macroproject";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    city: Schema.Attribute.Relation<"manyToOne", "api::city.city">;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    description: Schema.Attribute.Blocks;
-    gallery: Schema.Attribute.Media<"images", true>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::macroproject.macroproject"> &
-      Schema.Attribute.Private;
-    location: Schema.Attribute.Component<"shared.geo", false>;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    pointsOfInterest: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::point-of-interest.point-of-interest"
-    >;
-    publishedAt: Schema.Attribute.DateTime;
-    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
 export interface ApiNewsletterSubscriberNewsletterSubscriber extends Struct.CollectionTypeSchema {
   collectionName: "newsletter_subscribers";
   info: {
@@ -1109,40 +1076,6 @@ export interface ApiNewsletterSubscriberNewsletterSubscriber extends Struct.Coll
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     source: Schema.Attribute.String;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-  };
-}
-
-export interface ApiPointOfInterestPointOfInterest extends Struct.CollectionTypeSchema {
-  collectionName: "points_of_interest";
-  info: {
-    description: "Nearby points of interest; ALWAYS tied to a macroproject so locations never mix";
-    displayName: "Punto de inter\u00E9s";
-    pluralName: "points-of-interest";
-    singularName: "point-of-interest";
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    category: Schema.Attribute.Enumeration<
-      ["commerce", "health", "education", "transport", "recreation"]
-    > &
-      Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
-    distanceText: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::point-of-interest.point-of-interest"
-    > &
-      Schema.Attribute.Private;
-    macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject"> &
-      Schema.Attribute.Required;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
   };
@@ -1290,6 +1223,11 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     amenities: Schema.Attribute.Relation<"manyToMany", "api::amenity.amenity">;
     appliesSubsidy: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     brochure: Schema.Attribute.Media<"files" | "images">;
+    certificationStage: Schema.Attribute.Enumeration<["precertified", "certified"]> &
+      Schema.Attribute.DefaultTo<"certified">;
+    certifiedCasa: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    certifiedEdge: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    certifiedLeed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     city: Schema.Attribute.Relation<"manyToOne", "api::city.city"> & Schema.Attribute.Required;
     constructionProgress: Schema.Attribute.Component<"project.construction-progress", true>;
     constructionStatus: Schema.Attribute.Enumeration<
@@ -1298,6 +1236,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     description: Schema.Attribute.Blocks;
+    expectationRedirect: Schema.Attribute.String;
     financing: Schema.Attribute.Component<"project.financing", false>;
     gallery: Schema.Attribute.Media<"images", true>;
     hasDiscount: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -1309,7 +1248,6 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     location: Schema.Attribute.Component<"shared.geo", false>;
     logo: Schema.Attribute.Media<"images">;
-    macroproject: Schema.Attribute.Relation<"manyToOne", "api::macroproject.macroproject">;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     neighborhood: Schema.Attribute.String;
     priceFromCOP: Schema.Attribute.BigInteger;
@@ -1882,9 +1820,7 @@ declare module "@strapi/strapi" {
       "api::lead-form-config.lead-form-config": ApiLeadFormConfigLeadFormConfig;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
-      "api::macroproject.macroproject": ApiMacroprojectMacroproject;
       "api::newsletter-subscriber.newsletter-subscriber": ApiNewsletterSubscriberNewsletterSubscriber;
-      "api::point-of-interest.point-of-interest": ApiPointOfInterestPointOfInterest;
       "api::post.post": ApiPostPost;
       "api::pqr-page.pqr-page": ApiPqrPagePqrPage;
       "api::pqr.pqr": ApiPqrPqr;
