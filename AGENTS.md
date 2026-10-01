@@ -176,6 +176,14 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   the editor flips the stage to `sale`, when the same URL becomes the full
   project page. The form stores a `lead` with `source: lanzamiento` and the
   landing-only fields `interestCity`, `referralSource`, `budgetRange`.
+- `launch` («Lanzamiento») is a pre-sale landing with its own URL,
+  `/lanzamientos/<slug>`, for expectation campaigns that run before the
+  project exists in the CMS: name, slug, the two banners, description, an
+  optional city and the Sinco project its leads go to. It renders the same
+  `LaunchPage.astro` a project in expectation shows at its own URL. Publishing
+  needs a banner; unpublishing creates the 301 to the catalogue. The form
+  stores `lead.launch`, and the CRM routing is project → launch → form
+  default → general default (`lead-routing.ts`).
 - A project's `recommended` list must belong to the **same city** (middleware).
 - Unpublishing a project creates an automatic `redirect` to `/proyectos-de-vivienda`.
 - `amenity` entries are reusable across projects (m2m). There is no
@@ -191,6 +199,11 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   rather than drawing an empty one.
 - Base prices are COP; USD/EUR come from the daily cron rates (TRM datos.gov.co +
   ECB cross-rate) stored in `exchange-rate`.
+- The nightly Sinco sync (5:45 Bogotá) writes the DRAFT. When the project is
+  published and its draft has no other pending edits, the sync publishes it
+  too, so the price reaches the site with the next rebuild; a draft an editor
+  is mid-way through is left alone and the price waits for their publish
+  (`publish-state.ts`, `node --test apps/cms/src/utils/publish-state.test.ts`).
 - **Sinco owns only price and areas.** Name, description, gallery,
   `constructionStatus`, bedrooms and bathrooms are the CMS's and a sync must never
   overwrite them — in Sinco the name is an operational code, `constructionStatus`

@@ -161,6 +161,8 @@ export const LeadSubmissionSchema = v.object({
   message: v.optional(v.pipe(v.string(), v.maxLength(1000))),
   /** The project's documentId, as the document service takes a relation. */
   project: v.optional(v.string()),
+  /** The launch landing's documentId, for leads from /lanzamientos/<slug>. */
+  launch: v.optional(v.string()),
   source: v.optional(v.pipe(v.string(), v.maxLength(120))),
   acceptsDataPolicy: v.literal(true),
   acceptsEmail: v.optional(v.boolean()),

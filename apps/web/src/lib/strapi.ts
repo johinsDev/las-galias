@@ -6,6 +6,7 @@ import type {
   FaqBotPublicConfig,
   ForeignBuyerPage,
   HomeBanner,
+  Launch,
   HomePage,
   LeadFormConfig,
   LegalDocument,
@@ -314,6 +315,19 @@ export async function getPost(slug: string): Promise<Post | null> {
     "populate[seo][populate][ogImage]": "true",
   });
   return data?.[0] ?? null;
+}
+
+/** The published launch landings (/lanzamientos/<slug>). */
+export async function getLaunches(): Promise<Launch[]> {
+  return (
+    (await strapiFetch<Launch[]>("launches", {
+      "populate[heroDesktop]": "true",
+      "populate[heroMobile]": "true",
+      "populate[city]": "true",
+      "populate[seo][populate][ogImage]": "true",
+      "pagination[pageSize]": "100",
+    })) ?? []
+  );
 }
 
 export async function getHomeBanners(): Promise<HomeBanner[]> {

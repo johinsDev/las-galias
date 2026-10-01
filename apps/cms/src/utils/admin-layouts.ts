@@ -73,7 +73,8 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["name", "email"],
     ["phone", "residenceCountry"],
     // Which form, which project, and the free-text detail of the origin.
-    ["form", "project", "source"],
+    ["form", "project", "launch"],
+    ["source:12"],
     // La calificación que dejó el formulario, junta: es lo que mira el asesor
     // antes de llamar.
     ["incomeRange", "savingsRange", "severance"],
@@ -114,6 +115,13 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["content"],
     ["highlights"],
     ["tags"],
+    ["seo"],
+  ],
+  "api::launch.launch": [
+    ["name", "slug"],
+    ["heroDesktop", "heroMobile"],
+    ["description"],
+    ["city", "sincoProject"],
     ["seo"],
   ],
   "api::city.city": [["name", "slug"], ["department", "image"], ["projects:12"]],
@@ -267,6 +275,7 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::lead.lead": ["createdAt", "form", "name", "phone", "email", "project", "crmStatus"],
   "api::sinco-project.sinco-project": ["label", "sincoId", "macroName", "lastSyncedAt"],
   "api::post.post": ["title", "category", "publishedOn", "featured"],
+  "api::launch.launch": ["name", "city", "slug", "sincoProject"],
   "api::city.city": ["name", "department", "slug"],
   "api::zone.zone": ["name", "city", "slug"],
   "api::amenity.amenity": ["name", "iconKey", "description"],

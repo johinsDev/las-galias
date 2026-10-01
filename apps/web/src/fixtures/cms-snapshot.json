@@ -3920,5 +3920,6 @@
         }
       ]
     }
-  ]
+  ],
+  "launches?pagination%5BpageSize%5D=100&populate%5Bcity%5D=true&populate%5BheroDesktop%5D=true&populate%5BheroMobile%5D=true&populate%5Bseo%5D%5Bpopulate%5D%5BogImage%5D=true": []
 }

@@ -67,6 +67,11 @@
       "relation": "manyToOne",
       "target": "api::project.project"
     },
+    "launch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::launch.launch"
+    },
     "source": {
       "type": "string"
     },

@@ -5,7 +5,8 @@
  * with `node --test` (see lead-routing.test.ts) without a database.
  *
  * Sinco's `POST /SalaVentas/Externo/Visitas` refuses a visit without a project
- * AND its macroproject. Leads from the project page carry one; the ones from
+ * AND its macroproject. Leads from the project page carry one, and leads from
+ * a launch landing carry the launch's own Sinco project; the ones from
  * the listing, the lots, the locales and the foreign-buyer pages do not, so
  * they fall back to whatever «Configuración · CRM» names for their form, then
  * to the general default, and only then are left unrouted.
@@ -38,12 +39,13 @@ const FORM_ROUTE_FIELD: Record<string, keyof CrmRouting> = {
 export interface RoutableLead {
   form?: string | null;
   project?: { sincoProject?: SincoRef | null } | null;
+  launch?: { sincoProject?: SincoRef | null } | null;
 }
 
 export interface SincoTarget {
   sincoId: string;
   macroSincoId: string;
-  via: "project" | "form" | "default";
+  via: "project" | "launch" | "form" | "default";
 }
 
 /** A catalog row only counts when it carries BOTH ids; Sinco rejects a visit without either. */
@@ -58,9 +60,10 @@ function usable(
 }
 
 /**
- * The lead's own project first, then the default for its form, then the
- * general default. `null` means there is nowhere to send it — the caller marks
- * it `unrouted` instead of burning retries.
+ * The lead's own project first, then its launch's Sinco project, then the
+ * default for its form, then the general default. `null` means there is
+ * nowhere to send it — the caller marks it `unrouted` instead of burning
+ * retries.
  */
 export function resolveSincoTarget(
   lead: RoutableLead,
@@ -68,6 +71,9 @@ export function resolveSincoTarget(
 ): SincoTarget | null {
   const own = usable(lead.project?.sincoProject);
   if (own) return { ...own, via: "project" };
+
+  const launch = usable(lead.launch?.sincoProject);
+  if (launch) return { ...launch, via: "launch" };
 
   const field = lead.form ? FORM_ROUTE_FIELD[lead.form] : undefined;
   const byForm = field ? usable(config?.[field]) : null;
@@ -115,6 +121,7 @@ const FORM_NAMES: Record<string, string> = {
 
 const VIA_NAMES: Record<SincoTarget["via"], string> = {
   project: "proyecto de la ficha",
+  launch: "proyecto de Sinco del lanzamiento",
   form: "proyecto por defecto del formulario",
   default: "proyecto por defecto general",
 };

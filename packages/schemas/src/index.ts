@@ -26,6 +26,7 @@ export type {
   ForeignBuyerPage,
   Geo,
   HomeBanner,
+  Launch,
   HomePage,
   LeadFormConfig,
   LegalDocument,

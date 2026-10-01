@@ -916,6 +916,37 @@ export interface ApiJobRunJobRun extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiLaunchLaunch extends Struct.CollectionTypeSchema {
+  collectionName: "launches";
+  info: {
+    description: "Pre-sale (expectation) landing with its own URL, independent of a project: /lanzamientos/<slug>. Leads go to its Sinco project";
+    displayName: "Lanzamiento";
+    pluralName: "launches";
+    singularName: "launch";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    city: Schema.Attribute.Relation<"manyToOne", "api::city.city">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    heroDesktop: Schema.Attribute.Media<"images">;
+    heroMobile: Schema.Attribute.Media<"images">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::launch.launch"> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<"shared.seo", false>;
+    sincoProject: Schema.Attribute.Relation<"oneToOne", "api::sinco-project.sinco-project">;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLeadFormConfigLeadFormConfig extends Struct.SingleTypeSchema {
   collectionName: "lead_form_config";
   info: {
@@ -993,6 +1024,7 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<"manual">;
     incomeRange: Schema.Attribute.String;
     interestCity: Schema.Attribute.String;
+    launch: Schema.Attribute.Relation<"manyToOne", "api::launch.launch">;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::lead.lead"> &
       Schema.Attribute.Private;
@@ -1818,6 +1850,7 @@ declare module "@strapi/strapi" {
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::home-page.home-page": ApiHomePageHomePage;
       "api::job-run.job-run": ApiJobRunJobRun;
+      "api::launch.launch": ApiLaunchLaunch;
       "api::lead-form-config.lead-form-config": ApiLeadFormConfigLeadFormConfig;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;

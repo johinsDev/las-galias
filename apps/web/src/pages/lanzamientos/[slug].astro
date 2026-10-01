@@ -1,0 +1,19 @@
+---
+import LaunchPage from "@/components/pdp/LaunchPage.astro";
+import { getLaunches, getLeadFormConfig } from "@/lib/strapi";
+
+/**
+ * /lanzamientos/<slug>: a pre-sale landing that exists on its own, before the
+ * project does. Same page a project in expectation shows at its own URL
+ * (LaunchPage), fed by the `launch` content type instead of a project.
+ */
+export async function getStaticPaths() {
+  const launches = await getLaunches();
+  return launches.map((launch) => ({ params: { slug: launch.slug }, props: { launch } }));
+}
+
+const { launch } = Astro.props;
+const leadForm = await getLeadFormConfig();
+---
+
+<LaunchPage launch={launch} leadForm={{ residenceCities: leadForm?.residenceCities ?? [] }} />

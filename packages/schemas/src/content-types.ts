@@ -128,6 +128,22 @@ interface Zone {
   slug: string;
 }
 
+/**
+ * A pre-sale landing with its own URL (/lanzamientos/<slug>), independent of
+ * any project: the way to run an expectation campaign before the project
+ * exists in the CMS. Its leads route to `sincoProject` in the CRM.
+ */
+export interface Launch {
+  documentId: string;
+  name: string;
+  slug: string;
+  heroDesktop?: Media | null;
+  heroMobile?: Media | null;
+  description?: unknown;
+  city?: City | null;
+  seo?: Seo | null;
+}
+
 export interface Project {
   documentId: string;
   name: string;

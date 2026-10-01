@@ -1,6 +1,6 @@
 ---
 import { getImage } from "astro:assets";
-import type { LeadFormConfig, Project } from "@lasgalias/schemas";
+import type { Launch, LeadFormConfig, Project } from "@lasgalias/schemas";
 
 import Blocks from "@/components/Blocks.astro";
 import CmsImage from "@/components/CmsImage.astro";
@@ -9,24 +9,31 @@ import Base from "@/layouts/Base.astro";
 import { mediaUrl } from "@/lib/strapi";
 
 /**
- * The pre-sale landing a project shows while `stage` is `expectation` (Figma
- * "PDP ↳ Landing expectativa", 3068:18965): the mobile and desktop banners the
- * editor uploaded, the project's copy OUTSIDE the photo (the client asked for
- * that explicitly), a row of facts and the interest form. Logo-only header,
- * no footer links: the only exit is the form.
+ * The pre-sale landing (Figma "PDP ↳ Landing expectativa", 3068:18965): the
+ * mobile and desktop banners the editor uploaded, the copy OUTSIDE the photo
+ * (the client asked for that explicitly), a row of facts and the interest
+ * form. Logo-only header, no footer links: the only exit is the form.
+ *
+ * Two things feed it: a project while its `stage` is `expectation` (at the
+ * project's own URL), or a `launch` — the standalone landing at
+ * /lanzamientos/<slug> that exists before the project does. The form stores
+ * which one the lead came from, and the CRM routing follows it.
  */
 interface Props {
-  project: Project;
-  leadForm: LeadFormConfig;
+  project?: Project;
+  launch?: Launch;
+  leadForm: Pick<LeadFormConfig, "residenceCities">;
 }
 
-const { project, leadForm } = Astro.props;
+const { project, launch, leadForm } = Astro.props;
+const source = project ?? launch;
+if (!source) throw new Error("LaunchPage needs a project or a launch");
 
-const mobile = project.heroMobile ?? project.heroDesktop;
+const mobile = source.heroMobile ?? source.heroDesktop;
 const desktop =
-  project.heroDesktop?.url && project.heroDesktop.url !== mobile?.url
+  source.heroDesktop?.url && source.heroDesktop.url !== mobile?.url
     ? await getImage({
-        src: mediaUrl(project.heroDesktop.url),
+        src: mediaUrl(source.heroDesktop.url),
         width: 1200,
         height: 675,
         widths: [828, 1080, 1200, 1600],
@@ -35,12 +42,13 @@ const desktop =
       })
     : null;
 
-const locationTrail = [project.city?.name, project.zone?.name ?? project.city?.department]
+const locationTrail = [source.city?.name, project?.zone?.name ?? source.city?.department]
   .filter(Boolean)
   .join(" · ");
 
 // The facts row: bedrooms, price from, status and place — whichever exist.
-const beds = (project.unitTypes ?? [])
+// A launch has none of the first three yet; it shows the place alone.
+const beds = (project?.unitTypes ?? [])
   .map((u) => u.bedrooms)
   .filter((n): n is number => typeof n === "number");
 const bedsChip =
@@ -49,7 +57,7 @@ const bedsChip =
     : Math.min(...beds) === Math.max(...beds)
       ? `${Math.min(...beds)} habitaciones`
       : `${Math.min(...beds)} y ${Math.max(...beds)} habitaciones`;
-const priceChip = project.priceFromCOP
+const priceChip = project?.priceFromCOP
   ? `Desde $${Math.round(Number(project.priceFromCOP) / 1_000_000)}M`
   : null;
 const statusLabels: Record<string, string> = {
@@ -58,21 +66,21 @@ const statusLabels: Record<string, string> = {
   construction: "En construcción",
   "immediate-delivery": "Entrega inmediata",
 };
-const statusChip = project.constructionStatus ? statusLabels[project.constructionStatus] : null;
+const statusChip = project?.constructionStatus ? statusLabels[project.constructionStatus] : null;
 const chips = [bedsChip, priceChip, statusChip, locationTrail || null].filter(
   (chip): chip is string => Boolean(chip),
 );
 
-const title = project.seo?.metaTitle ?? `${project.name} · Preventa exclusiva — Las Galias`;
+const title = source.seo?.metaTitle ?? `${source.name} · Preventa exclusiva — Las Galias`;
 const description =
-  project.seo?.metaDescription ??
-  `Regístrate antes del lanzamiento de ${project.name} y asegura tu precio de preventa.`;
+  source.seo?.metaDescription ??
+  `Regístrate antes del lanzamiento de ${source.name} y asegura tu precio de preventa.`;
 ---
 
 <Base
   title={title}
   description={description}
-  ogImage={mediaUrl(project.seo?.ogImage?.url ?? project.heroDesktop?.url)}
+  ogImage={mediaUrl(source.seo?.ogImage?.url ?? source.heroDesktop?.url)}
   chrome="minimal"
 >
   {/* Figma 3063:18963 draws the landing in a 1152px column, not edge to edge. */}
@@ -97,7 +105,7 @@ const description =
                 )}
                 <CmsImage
                   src={mobile.url}
-                  alt={mobile.alternativeText ?? project.name}
+                  alt={mobile.alternativeText ?? source.name}
                   width={828}
                   height={621}
                   widths={[420, 640, 750, 828, 1080]}
@@ -125,11 +133,11 @@ const description =
               </p>
             )
           }
-          <h2 class="text-h2 text-ink mt-2 font-bold">{project.name}</h2>
+          <h2 class="text-h2 text-ink mt-2 font-bold">{source.name}</h2>
           {
-            project.description && (
+            source.description && (
               <div class="text-body text-ink-muted mt-3 max-w-2xl">
-                <Blocks content={project.description} variant="inherit" />
+                <Blocks content={source.description} variant="inherit" />
               </div>
             )
           }
@@ -154,7 +162,9 @@ const description =
         <div class="mt-5">
           <LaunchLeadForm
             client:visible
-            projectDocumentId={project.documentId}
+            projectDocumentId={project?.documentId}
+            launchDocumentId={launch?.documentId}
+            launchSlug={launch?.slug}
             cities={(leadForm.residenceCities ?? []).map((c) => c.text).filter(Boolean)}
           />
         </div>

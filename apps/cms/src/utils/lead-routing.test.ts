@@ -16,6 +16,22 @@ describe("resolveSincoTarget", () => {
     assert.deepEqual(target, { sincoId: "10", macroSincoId: "1", via: "project" });
   });
 
+  test("a launch landing routes to the launch's own Sinco project", () => {
+    const target = resolveSincoTarget(
+      { form: "lanzamiento", launch: { sincoProject: catalog("40", "4") } },
+      { defaultProject: catalog("30", "3") },
+    );
+    assert.deepEqual(target, { sincoId: "40", macroSincoId: "4", via: "launch" });
+  });
+
+  test("a launch without a Sinco project still reaches the general default", () => {
+    const target = resolveSincoTarget(
+      { form: "lanzamiento", launch: { sincoProject: null } },
+      { defaultProject: catalog("30", "3") },
+    );
+    assert.deepEqual(target, { sincoId: "30", macroSincoId: "3", via: "default" });
+  });
+
   test("a project without a catalog entry falls to the form's default", () => {
     const target = resolveSincoTarget(
       { form: "lotes", project: { sincoProject: null } },

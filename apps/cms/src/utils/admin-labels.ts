@@ -169,6 +169,10 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
         "Desde qué formulario del sitio llegó. Es por lo que se filtra; «Origen» guarda el detalle.",
     },
     project: { label: "Proyecto" },
+    launch: {
+      label: "Lanzamiento",
+      description: "La landing de lanzamiento desde la que se registró, si fue una.",
+    },
     source: {
       label: "Origen",
       description: "Detalle libre: pdp:<slug>, una campaña… Se envía a Sinco como fuenteReg.",
@@ -250,6 +254,32 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     department: { label: "Departamento" },
     image: { label: "Imagen" },
     projects: { label: "Proyectos" },
+  },
+  "api::launch.launch": {
+    name: {
+      label: "Nombre",
+      description: "El título de la landing, tal cual se lee bajo la foto.",
+    },
+    slug: {
+      label: "URL (slug)",
+      description: "La landing vive en lasgalias.com/lanzamientos/<slug>.",
+    },
+    heroDesktop: { label: "Imagen de escritorio", description: "Banner ancho, 16:9." },
+    heroMobile: {
+      label: "Imagen de móvil",
+      description: "Banner 4:3. Sin ella se usa la de escritorio.",
+    },
+    description: {
+      label: "Descripción",
+      description: "Uno o dos párrafos bajo el título. Opcional.",
+    },
+    city: { label: "Ciudad", description: "Solo para el rótulo de ubicación. Opcional." },
+    sincoProject: {
+      label: "Proyecto de Sinco",
+      description:
+        "A dónde van los registros de esta landing en el CRM. Sin él, van al proyecto por defecto de «Configuración · CRM».",
+    },
+    seo: { label: "SEO" },
   },
   "api::amenity.amenity": {
     name: { label: "Nombre" },

@@ -5,9 +5,16 @@ import { applyAdminLayouts } from "./utils/admin-layouts";
 import { scheduleDeploy } from "./utils/deploy-hook";
 import { ensureConfig, invalidateContext } from "./utils/faq-bot-context";
 import {
+  createLaunchRedirect,
+  disableLaunchRedirect,
+  LAUNCH_UID,
+  validateLaunchOnPublish,
+} from "./utils/launch-rules";
+import {
   CRM_CONFIG_UID,
   LEAD_UID,
   reclassifyLegacyUnrouted,
+  requeueLaunchLeads,
   requeueProjectLeads,
   requeueUnroutedLeads,
   schedulePushLeadToCrm,
@@ -38,6 +45,7 @@ import { applyUploadLimits } from "./utils/upload-limits";
  */
 const PUBLIC_UIDS = new Set<string>([
   PROJECT_UID,
+  LAUNCH_UID,
   "api::post.post",
   "api::home-banner.home-banner",
   "api::city.city",
@@ -162,9 +170,16 @@ export default {
 
       // Read before next(): the data is the only place the new relation shows.
       const sincoEntryChanged =
-        uid === PROJECT_UID &&
+        (uid === PROJECT_UID || uid === LAUNCH_UID) &&
         action === "update" &&
         extractRelationIds(params.data?.sincoProject).length > 0;
+
+      if (uid === LAUNCH_UID) {
+        if (action === "publish") await validateLaunchOnPublish(strapi, params);
+        if (action === "unpublish" || action === "delete") {
+          await createLaunchRedirect(strapi, params);
+        }
+      }
 
       if (uid === PROJECT_UID) {
         if (action === "create" || action === "update") {
@@ -186,6 +201,9 @@ export default {
       if (uid === PROJECT_UID && action === "publish") {
         await disableAutoRedirect(strapi, params);
       }
+      if (uid === LAUNCH_UID && action === "publish") {
+        await disableLaunchRedirect(strapi, params);
+      }
 
       // After next(): the lead must exist (and own a documentId) before it can
       // be pushed. Not awaited — the public form never waits on the CRM.
@@ -198,7 +216,8 @@ export default {
       // that failed for lack of one; same when the CRM defaults are saved.
       // Re-queued, not pushed: saving never waits on the ERP, the cron does it.
       if (sincoEntryChanged && params.documentId) {
-        requeueProjectLeads(strapi, params.documentId);
+        if (uid === LAUNCH_UID) requeueLaunchLeads(strapi, params.documentId);
+        else requeueProjectLeads(strapi, params.documentId);
       }
       if (uid === CRM_CONFIG_UID && (action === "create" || action === "update")) {
         requeueUnroutedLeads(strapi);
@@ -241,6 +260,7 @@ export default {
 
     const reads = [
       "api::project.project",
+      "api::launch.launch",
       "api::post.post",
       "api::city.city",
       "api::zone.zone",

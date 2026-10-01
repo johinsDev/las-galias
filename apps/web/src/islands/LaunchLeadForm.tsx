@@ -10,7 +10,11 @@ import { Select } from "@lasgalias/ui/components/select";
 import { track } from "@/lib/analytics";
 
 interface LaunchLeadFormProps {
-  projectDocumentId: string;
+  /** The project behind the landing, when it is a project in expectation. */
+  projectDocumentId?: string;
+  /** The standalone launch (/lanzamientos/<slug>), when it is one of those. */
+  launchDocumentId?: string;
+  launchSlug?: string;
   /** "Ciudad de interés" options — the same list the lead-form config keeps for residence. */
   cities: string[];
 }
@@ -60,7 +64,12 @@ const EMPTY: Values = {
  * the data-policy consent. Stored as a lead with `source: lanzamiento`; the
  * project relation is what tells the advisor which launch it is.
  */
-export default function LaunchLeadForm({ projectDocumentId, cities }: LaunchLeadFormProps) {
+export default function LaunchLeadForm({
+  projectDocumentId,
+  launchDocumentId,
+  launchSlug,
+  cities,
+}: LaunchLeadFormProps) {
   const uid = useId();
   const [values, setValues] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
@@ -98,8 +107,9 @@ export default function LaunchLeadForm({ projectDocumentId, cities }: LaunchLead
             referralSource: lead.referralSource,
             budgetRange: lead.budgetRange,
             form: "lanzamiento",
-            source: "lanzamiento",
+            source: launchSlug ? `lanzamiento:${launchSlug}` : "lanzamiento",
             project: projectDocumentId,
+            launch: launchDocumentId,
             acceptsDataPolicy: true,
             // One consent in the design; the CRM keeps a flag per channel.
             acceptsWhatsApp: true,
@@ -113,7 +123,11 @@ export default function LaunchLeadForm({ projectDocumentId, cities }: LaunchLead
         }),
       });
       setStatus(res.ok ? "ok" : "error");
-      if (res.ok) track("lead", "Lead", { form: "lanzamiento", project: projectDocumentId });
+      if (res.ok)
+        track("lead", "Lead", {
+          form: "lanzamiento",
+          project: projectDocumentId ?? launchSlug,
+        });
     } catch {
       setStatus("error");
     }

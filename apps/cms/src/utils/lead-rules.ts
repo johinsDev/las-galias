@@ -65,6 +65,10 @@ interface LeadDoc {
     name?: string;
     sincoProject?: { sincoId?: string; macroSincoId?: string } | null;
   } | null;
+  launch?: {
+    name?: string;
+    sincoProject?: { sincoId?: string; macroSincoId?: string } | null;
+  } | null;
 }
 
 /** «Configuración · CRM», with the catalog rows it points at. `null` until someone saves it. */
@@ -114,7 +118,10 @@ async function loadLead(strapi: Core.Strapi, documentId: string): Promise<LeadDo
     documentId,
     // The CRM needs the project id *and* its macroproject id; the catalog entry
     // carries both.
-    populate: { project: { populate: ["sincoProject"] } },
+    populate: {
+      project: { populate: ["sincoProject"] },
+      launch: { populate: ["sincoProject"] },
+    },
   })) as LeadDoc | null;
 }
 
@@ -371,6 +378,15 @@ export function requeueProjectLeads(strapi: Core.Strapi, projectDocumentId: stri
   );
 }
 
+/** The leads of a launch that just got (or changed) its Sinco project. */
+export function requeueLaunchLeads(strapi: Core.Strapi, launchDocumentId: string): void {
+  scheduleRequeue(
+    strapi,
+    { launch: { documentId: launchDocumentId }, crmStatus: { $in: ["failed", "unrouted"] } },
+    `launch ${launchDocumentId} changed its Sinco entry`,
+  );
+}
+
 /** Everything waiting on a default: for when «Configuración · CRM» is saved. */
 export function requeueUnroutedLeads(strapi: Core.Strapi): void {
   scheduleRequeue(
@@ -465,6 +481,7 @@ async function notifyCrmProblem(
     `Correo: ${doc.email ?? ""}`,
     `Formulario: ${doc.form ?? "manual"}`,
     doc.project?.name ? `Proyecto: ${doc.project.name}` : null,
+    doc.launch?.name ? `Lanzamiento: ${doc.launch.name}` : null,
     "",
     `Motivo: ${doc.crmLastError ?? ""}`,
     adminUrl ? `\nVerlo en el admin: ${adminUrl}` : null,
