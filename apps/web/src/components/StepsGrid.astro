@@ -1,5 +1,5 @@
 ---
-import { Building2, HandCoins, HouseHeart } from "lucide-astro";
+import StepIcon from "@/components/icons/StepIcon.astro";
 
 /**
  * "Comprar es muy fácil, sólo sigue estos pasos" — three steps as the Home
@@ -7,7 +7,8 @@ import { Building2, HandCoins, HouseHeart } from "lucide-astro";
  * with an icon, the title in brand red and the body in grey, all centred.
  * The number comes from the position, so an editor reordering the list
  * renumbers it for free; the icons are one per position too, which is why the
- * editor's step photo is no longer drawn.
+ * editor's step photo is no longer drawn. The icons are the client's own
+ * (components/icons/StepIcon.astro), one per step in this order.
  */
 interface Step {
   title: string;
@@ -20,18 +21,18 @@ interface Props {
 
 const { steps } = Astro.props;
 
-const ICONS = [Building2, HandCoins, HouseHeart];
+const ICONS = ["building", "notification", "home"] as const;
 ---
 
 <div class="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
   {
     steps.map((step, index) => {
-      const Icon = ICONS[index % ICONS.length];
+      const icon = ICONS[index % ICONS.length];
       return (
         <div class="mx-auto max-w-[355px] text-center" data-reveal>
           <div class="relative mx-auto size-20">
             <span class="text-ink flex size-20 items-center justify-center rounded-full bg-[#f6f7f8]">
-              <Icon size={36} stroke-width={2.5} aria-hidden="true" />
+              <StepIcon name={icon} size={40} />
             </span>
             <span class="bg-brand absolute -top-1 -left-1 flex size-7 items-center justify-center rounded-full text-[13px] font-extrabold text-white">
               {index + 1}
