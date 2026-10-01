@@ -3,6 +3,7 @@ import { errors } from "@strapi/utils";
 
 import type { ExternalProjectData } from "@lasgalias/providers";
 import { getProjectDataProvider } from "./providers";
+import { hasUnpublishedChanges } from "./publish-state";
 import { extractRelationIds } from "./relations";
 
 export const PROJECT_UID = "api::project.project";
@@ -95,7 +96,13 @@ function mergeUnitTypes(current: unknown, external: ExternalProjectData): UnitTy
  * `POST /api/projects/:documentId/sync-sinco` action instead.
  *
  * Ownership is unchanged (see `mergeUnitTypes`): Sinco only ever writes price
- * and areas. `priceFromSincoCOP` always records what the CRM says so an editor
+ * and areas. The write lands on the DRAFT; when the project is published and
+ * its draft carries no other pending edits, the sync publishes it too, so the
+ * new price reaches the site with the next rebuild (the publish goes through
+ * the document middleware, which schedules the deploy). A draft an editor is
+ * still working on is left alone: publishing it would ship their half-done
+ * changes along with the price, so the price waits for their own publish.
+ * `priceFromSincoCOP` always records what the CRM says so an editor
  * can compare the two; `priceFromCOP` — what the site shows — is only touched
  * while `priceLocked` is off.
  *
@@ -133,8 +140,24 @@ export async function syncProjectFromSinco(
 
   if (Object.keys(data).length === 0) return false;
 
+  const [draft, published] = await Promise.all([
+    strapi.documents(PROJECT_UID).findOne({ documentId, status: "draft", fields: ["updatedAt"] }),
+    strapi
+      .documents(PROJECT_UID)
+      .findOne({ documentId, status: "published", fields: ["updatedAt"] }),
+  ]);
+
   await strapi.documents(PROJECT_UID).update({ documentId, data });
   strapi.log.info(`Project ${sincoId} price and areas refreshed from "${provider.name}"`);
+
+  if (published && !hasUnpublishedChanges(draft?.updatedAt, published.updatedAt)) {
+    await strapi.documents(PROJECT_UID).publish({ documentId });
+    strapi.log.info(`Project ${sincoId} republished with the refreshed price`);
+  } else if (published) {
+    strapi.log.warn(
+      `Project ${sincoId} has unpublished edits: the refreshed price stays in the draft until an editor publishes`,
+    );
+  }
   return true;
 }
 
