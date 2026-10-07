@@ -31,7 +31,10 @@ test("the prompt for the partner's AI is self-contained: contract, key and limit
     apiKey: "lg_abc",
   });
   assert.match(prompt, /Authorization: Bearer lg_abc/);
-  assert.match(prompt, /\/projects/);
+  assert.match(
+    prompt,
+    /Listado de proyectos: {2}GET {2}https:\/\/cms\.example\/api\/leads\/external\/zonario\/projects/,
+  );
   assert.match(prompt, /POST https:\/\/cms\.example\/api\/leads\/external\/zonario/);
   assert.match(prompt, /LAS_GALIAS_API_KEY/);
   assert.match(prompt, /acceptsDataPolicy \(boolean, obligatorio\)/);
