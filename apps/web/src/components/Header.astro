@@ -83,9 +83,12 @@ const searchableProjects = (await getProjects()).map((project) => ({
   !minimal && (
     <header
       transition:animate="none"
-      class="group/header bg-brand sticky top-0 z-50 text-white transition-colors duration-200"
+      class="group/header bg-brand sticky top-0 z-50 text-white"
       data-nav-open="false"
     >
+      {/* No colour transition on the bar: the two logos swap in one frame, so a
+      bar that faded between red and white showed the white logo on white (and
+      the red one on red) for the length of the fade — it read as a flicker. */}
       {/* Figma 2710:5989 (Menu dk / mb, after the team shrank the logo): the
       bar is 88px on a phone and 78px with the full nav, and the wordmark is
       30px tall on both. */}
