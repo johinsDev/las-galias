@@ -345,8 +345,8 @@ async function judge(
  * in `project`, so it maps its own listings to our slugs without anyone
  * mailing a spreadsheet that goes stale. Same key and same checks as a
  * delivery; a limit of its own, so reading the list never eats the quota for
- * leads. Only what is already public on the site, and only homes, lots and
- * premises that are published.
+ * leads. Only what is already public on the site: the published homes, lots
+ * and premises, minus the "próximamente" placeholders.
  */
 const PROJECT_LISTS_PER_MINUTE = 30;
 
@@ -385,10 +385,19 @@ export async function listProjectsForPartner(
     city?: { name?: string } | null;
   }[];
 
+  // A lot or a commercial premises still in expectation is the "próximamente"
+  // card of /lotes and /locales: a placeholder with nothing to sell yet, so
+  // there is nothing a partner could advertise against it. A home in
+  // expectation is a launch, and stays.
+  const offered = projects.filter(
+    (project) =>
+      (project.productType ?? "housing") === "housing" || project.stage !== "expectation",
+  );
+
   return {
     status: 200,
     body: {
-      data: projects.map((project) => ({
+      data: offered.map((project) => ({
         slug: project.slug,
         name: project.name,
         city: project.city?.name ?? null,
