@@ -1,5 +1,6 @@
 import DemoContentBanner from "./components/DemoContentBanner";
 import ExportCsvButton from "./components/ExportCsvButton";
+import LeadIntegrationPanel from "./components/LeadIntegrationPanel";
 import ResendFailedLeadsButton from "./components/ResendFailedLeadsButton";
 import ResendToCrmButton from "./components/ResendToCrmButton";
 import SyncFromSincoButton from "./components/SyncFromSincoButton";
@@ -66,6 +67,10 @@ export default {
     app.getPlugin("content-manager").injectComponent("editView", "right-links", {
       name: "resend-to-crm",
       Component: ResendToCrmButton,
+    });
+    app.getPlugin("content-manager").injectComponent("editView", "right-links", {
+      name: "lead-integration-panel",
+      Component: LeadIntegrationPanel,
     });
 
     // The lists of what the site receives: export what is on screen, and

@@ -11,7 +11,11 @@ import {
   validateLaunchOnPublish,
 } from "./utils/launch-rules";
 import { ensureFooter, FOOTER_UID } from "./utils/footer";
-import { LEAD_INTEGRATION_UID, stampApiKey } from "./utils/lead-integration";
+import {
+  LEAD_INTEGRATION_UID,
+  pruneIntegrationRequests,
+  stampApiKey,
+} from "./utils/lead-integration";
 import {
   CRM_CONFIG_UID,
   LEAD_UID,
@@ -141,6 +145,22 @@ export default {
           method: "POST",
           path: "/leads/:documentId/resend-crm",
           handler: "api::lead.lead.resendCrm",
+          config: { policies: ["admin::isAuthenticatedAdmin"] },
+          info: { pluginName: "admin", type: "admin" },
+        },
+        // The integration's panel: what to send the partner, how it is doing,
+        // and a new key on demand.
+        {
+          method: "GET",
+          path: "/lead-integrations/:documentId/summary",
+          handler: "api::lead-integration.lead-integration.summary",
+          config: { policies: ["admin::isAuthenticatedAdmin"] },
+          info: { pluginName: "admin", type: "admin" },
+        },
+        {
+          method: "POST",
+          path: "/lead-integrations/:documentId/rotate-key",
+          handler: "api::lead-integration.lead-integration.rotateKey",
           config: { policies: ["admin::isAuthenticatedAdmin"] },
           info: { pluginName: "admin", type: "admin" },
         },
@@ -342,6 +362,9 @@ export default {
     // Leads that failed for lack of a Sinco project before `unrouted` existed
     // get the honest status, so a configured default picks them up.
     await reclassifyLegacyUnrouted(strapi);
+
+    // The log of partner deliveries keeps 90 days.
+    await pruneIntegrationRequests(strapi);
 
     // Only the towers on sale stay in the picker. A database-only pass, so it
     // runs before the sync and does not need Sinco to be up.

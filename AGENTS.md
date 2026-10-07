@@ -270,14 +270,25 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
 - A partner (a portal such as Zonario) delivers leads to
   `POST /api/leads/external/<slug>`; each one is a row of `lead-integration`
   («Integración de leads», Super Admin only, never public): its API key
-  (generated; saved empty = rotated), on/off switch, allowed origins and IPs,
+  (generated, read-only in the form, rotated with «Generar clave nueva»),
+  on/off switch, allowed origins and IPs,
   per-minute and per-day limits, whether its leads go to Sinco and to which
   project. The route is `auth: false` because the handler does its own checks
   (`utils/lead-integration.ts`; the pure ones in `external-lead-guard.ts`,
   `node --test apps/cms/src/utils/external-lead-guard.test.ts`). The lead is
   stored with `form: externo`, `source: externo:<slug>` and `integration`, and
   routed project → launch → integration → form default → general default.
-  `docs/leads-externos.md` is the contract handed to the partner.
+  `docs/leads-externos.md` is the contract handed to the partner. Every
+  delivery to a known slug, let in or refused, is a row of
+  `lead-integration-request` («Peticiones de integraciones», read-only, 90
+  days). The edit view's side panel (`LeadIntegrationPanel.tsx`, admin routes
+  `GET /lead-integrations/:documentId/summary` and `POST …/rotate-key`, Super
+  Admin only) shows the real URL, copies the ready-to-send instructions and
+  the prompt for the partner's AI (`utils/partner-instructions.ts`, the one
+  place the contract is worded) and shows the lead/request figures.
+- A content type whose FIRST attribute is a `global::section` needs
+  `mainField` in `LIST_SETTINGS` (`admin-layouts.ts`): Strapi titles an entry
+  by its first string attribute, and a section stores nothing — «Untitled».
 - The FAQ assistant (`POST /api/faq-bot/ask`) answers one question at a time —
   no chat, no history — streaming SSE from the CMS. It answers ONLY from a
   context built out of published FAQs, published projects and

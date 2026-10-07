@@ -10,24 +10,38 @@ inmediato, reintentos por cron, alerta si se queda sin proyecto).
 En el admin, **Integración de leads → Crear**. Solo el Super Admin debe tener
 permiso sobre este tipo: guarda las claves.
 
-| Campo                         | Qué hace                                                                                                                         |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Nombre / Slug                 | El slug es el final de la URL: `/api/leads/external/<slug>`.                                                                     |
-| Encendida                     | Apagada responde `403` y no guarda nada. Nace apagada.                                                                           |
-| Clave (API key)               | Se genera al crear. Para rotarla: borrar el campo y guardar.                                                                     |
-| Orígenes permitidos           | Solo para peticiones desde un navegador (traen `Origin`). Vacío las rechaza todas. Un servidor no envía `Origin`.                |
-| IP permitidas                 | Direcciones exactas, una por línea. Vacío acepta cualquier IP que traiga la clave.                                               |
-| Máximo por minuto / por día   | Por encima responde `429` con `Retry-After`.                                                                                     |
-| Enviar a Sinco                | Apagado, los leads quedan solo en Strapi (`skipped`). Al encenderlo y guardar, los que estaban en espera se envían.              |
-| Proyecto de Sinco por defecto | A dónde van los leads que no nombran un proyecto del sitio. Vacío usa el de su formulario o el general de «Configuración · CRM». |
+Al guardar, el panel de la derecha muestra la URL real y los botones para
+compartirla: **Copiar instrucciones** (URL, clave, campos con sus validaciones,
+las respuestas y un ejemplo, listo para pegar en un correo al aliado),
+**Copiar prompt para IA** (el mismo contrato redactado para que el aliado lo
+pegue en su asistente de código; no lleva la clave), **Copiar URL** / **Copiar
+clave** y **Generar clave nueva**. Debajo están las cifras: leads de hoy, 7 y
+30 días, en qué estado quedaron en Sinco, y las peticiones aceptadas y
+rechazadas (con el motivo) de los últimos 7 días.
+
+| Campo                         | Qué hace                                                                                                                               |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Nombre / Slug                 | El slug es el final de la URL: `/api/leads/external/<slug>`.                                                                           |
+| Encendida                     | Apagada responde `403` y no guarda nada. Nace apagada.                                                                                 |
+| Clave (API key)               | Se genera al guardar y no se escribe a mano. Para rotarla: «Generar clave nueva» en el panel; la anterior deja de servir de inmediato. |
+| Orígenes permitidos           | Solo para peticiones desde un navegador (traen `Origin`). Vacío las rechaza todas. Un servidor no envía `Origin`.                      |
+| IP permitidas                 | Direcciones exactas, una por línea. Vacío acepta cualquier IP que traiga la clave.                                                     |
+| Máximo por minuto / por día   | Por encima responde `429` con `Retry-After`.                                                                                           |
+| Enviar a Sinco                | Apagado, los leads quedan solo en Strapi (`skipped`). Al encenderlo y guardar, los que estaban en espera se envían.                    |
+| Proyecto de Sinco por defecto | A dónde van los leads que no nombran un proyecto del sitio. Vacío usa el de su formulario o el general de «Configuración · CRM».       |
 
 A qué proyecto de Sinco llega cada lead, en orden: el proyecto del sitio que
 nombra el lead → el proyecto por defecto de la integración → el general de
 «Configuración · CRM». Sin ninguno queda «sin proyecto» y se avisa por correo.
 
 Los leads llegan a la lista **Lead** con formulario «Integración externa»,
-origen `externo:<slug>` y la integración enlazada, así que se filtran y
-exportan como los demás.
+origen `externo:<slug>` y la columna **Integración** con el aliado que lo
+envió, así que se filtran y exportan como los demás.
+
+Cada petición del aliado —aceptada o rechazada— deja una fila en **Peticiones
+de integraciones** con el resultado, el código HTTP, el detalle (qué campo
+falló), la IP y el lead creado. Se conservan 90 días. Las peticiones a un slug
+que no existe no se registran.
 
 ## Contrato para el aliado
 

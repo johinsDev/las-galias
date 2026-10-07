@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lead_integration_requests",
+  "info": {
+    "singularName": "lead-integration-request",
+    "pluralName": "lead-integration-requests",
+    "displayName": "Peticiones de integraciones",
+    "description": "One row per delivery a partner made to POST /api/leads/external/<slug>, accepted or refused, and why. Written by the endpoint, pruned after 90 days; read-only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "integration": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lead-integration.lead-integration"
+    },
+    "outcome": {
+      "type": "enumeration",
+      "enum": [
+        "accepted",
+        "duplicate",
+        "invalid",
+        "unauthorized",
+        "disabled",
+        "origin",
+        "ip",
+        "rate",
+        "cap"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "integer",
+      "required": true
+    },
+    "detail": {
+      "type": "text"
+    },
+    "lead": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lead.lead"
+    },
+    "externalId": {
+      "type": "string"
+    },
+    "ip": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "receivedAt": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}

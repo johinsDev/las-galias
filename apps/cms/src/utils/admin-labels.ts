@@ -235,7 +235,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     sectionAccess: {
       label: "Acceso",
       description:
-        "El aliado envía sus leads con POST a <URL del CMS>/api/leads/external/<slug>, con la clave en la cabecera «Authorization: Bearer <clave>». El contrato completo está en docs/leads-externos.md.",
+        "El panel de la derecha tiene la URL real, la clave y las instrucciones listas para copiar y enviarle al aliado. Guarda la integración para que aparezca.",
     },
     name: { label: "Nombre", description: "El aliado: «Zonario»." },
     slug: {
@@ -250,7 +250,7 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     apiKey: {
       label: "Clave (API key)",
       description:
-        "Se genera sola al crear. Para cambiarla, borra el campo y guarda: sale una nueva y la anterior deja de servir.",
+        "Se genera sola al guardar y no se escribe a mano. Para cambiarla usa «Generar clave nueva» en el panel de la derecha: la anterior deja de servir.",
     },
     sectionProtection: {
       label: "Protección",
@@ -287,6 +287,21 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     },
     notes: { label: "Notas", description: "Contacto técnico del aliado, acuerdos, fechas." },
     lastLeadAt: { label: "Último lead recibido" },
+  },
+  "api::lead-integration-request.lead-integration-request": {
+    receivedAt: { label: "Fecha" },
+    integration: { label: "Integración" },
+    outcome: {
+      label: "Resultado",
+      description:
+        "accepted: lead guardado · duplicate: ya existía ese ID · invalid: datos inválidos · unauthorized: clave ausente o incorrecta · disabled: integración apagada · origin / ip: no autorizados · rate / cap: límite por minuto o por día.",
+    },
+    status: { label: "Código HTTP" },
+    detail: { label: "Detalle", description: "Qué campo falló, o el aviso que se devolvió." },
+    lead: { label: "Lead" },
+    externalId: { label: "ID del aliado" },
+    ip: { label: "IP" },
+    origin: { label: "Origen (navegador)" },
   },
   "api::footer.footer": {
     description: { label: "Texto bajo el logo" },

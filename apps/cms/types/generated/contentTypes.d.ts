@@ -1021,6 +1021,55 @@ export interface ApiLeadFormConfigLeadFormConfig extends Struct.SingleTypeSchema
   };
 }
 
+export interface ApiLeadIntegrationRequestLeadIntegrationRequest
+  extends Struct.CollectionTypeSchema {
+  collectionName: "lead_integration_requests";
+  info: {
+    description: "One row per delivery a partner made to POST /api/leads/external/<slug>, accepted or refused, and why. Written by the endpoint, pruned after 90 days; read-only";
+    displayName: "Peticiones de integraciones";
+    pluralName: "lead-integration-requests";
+    singularName: "lead-integration-request";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    detail: Schema.Attribute.Text;
+    externalId: Schema.Attribute.String;
+    integration: Schema.Attribute.Relation<"manyToOne", "api::lead-integration.lead-integration">;
+    ip: Schema.Attribute.String;
+    lead: Schema.Attribute.Relation<"manyToOne", "api::lead.lead">;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::lead-integration-request.lead-integration-request"
+    > &
+      Schema.Attribute.Private;
+    origin: Schema.Attribute.String;
+    outcome: Schema.Attribute.Enumeration<
+      [
+        "accepted",
+        "duplicate",
+        "invalid",
+        "unauthorized",
+        "disabled",
+        "origin",
+        "ip",
+        "rate",
+        "cap",
+      ]
+    > &
+      Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    receivedAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    status: Schema.Attribute.Integer & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLeadIntegrationLeadIntegration extends Struct.CollectionTypeSchema {
   collectionName: "lead_integrations";
   info: {
@@ -1965,6 +2014,7 @@ declare module "@strapi/strapi" {
       "api::job-run.job-run": ApiJobRunJobRun;
       "api::launch.launch": ApiLaunchLaunch;
       "api::lead-form-config.lead-form-config": ApiLeadFormConfigLeadFormConfig;
+      "api::lead-integration-request.lead-integration-request": ApiLeadIntegrationRequestLeadIntegrationRequest;
       "api::lead-integration.lead-integration": ApiLeadIntegrationLeadIntegration;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;

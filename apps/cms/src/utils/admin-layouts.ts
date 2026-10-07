@@ -120,6 +120,13 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["notes:12"],
     ["lastLeadAt:6"],
   ],
+  "api::lead-integration-request.lead-integration-request": [
+    ["receivedAt", "integration"],
+    ["outcome", "status"],
+    ["detail:12"],
+    ["lead", "externalId"],
+    ["ip", "origin"],
+  ],
   // En el orden en que el footer se lee de izquierda a derecha y de arriba abajo.
   "api::footer.footer": [
     ["description:12"],
@@ -299,7 +306,24 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
 
 const LIST_LAYOUTS: Record<string, string[]> = {
   "api::project.project": ["name", "city", "stage", "constructionStatus", "priceFromCOP"],
-  "api::lead.lead": ["createdAt", "form", "name", "phone", "email", "project", "crmStatus"],
+  "api::lead.lead": [
+    "createdAt",
+    "form",
+    "integration",
+    "name",
+    "phone",
+    "email",
+    "project",
+    "crmStatus",
+  ],
+  "api::lead-integration-request.lead-integration-request": [
+    "receivedAt",
+    "integration",
+    "outcome",
+    "status",
+    "detail",
+    "lead",
+  ],
   "api::sinco-project.sinco-project": ["label", "sincoId", "macroName", "lastSyncedAt"],
   "api::lead-integration.lead-integration": [
     "name",
@@ -338,13 +362,6 @@ const LIST_SETTINGS: Record<string, ListSettings> = {
     filterable: true,
     searchable: true,
   },
-  "api::pqr.pqr": {
-    defaultSortBy: "createdAt",
-    defaultSortOrder: "DESC",
-    pageSize: 50,
-    filterable: true,
-    searchable: true,
-  },
   "api::newsletter-subscriber.newsletter-subscriber": {
     defaultSortBy: "createdAt",
     defaultSortOrder: "DESC",
@@ -360,6 +377,26 @@ const LIST_SETTINGS: Record<string, ListSettings> = {
     searchable: true,
   },
   "api::job-run.job-run": { defaultSortBy: "ranAt", defaultSortOrder: "DESC", pageSize: 50 },
+  "api::lead-integration-request.lead-integration-request": {
+    defaultSortBy: "receivedAt",
+    defaultSortOrder: "DESC",
+    pageSize: 50,
+    filterable: true,
+    searchable: true,
+  },
+  // The entry's title. Strapi takes the first string attribute, and on these
+  // three that is a section heading — which stores nothing, so every entry
+  // was headed «Untitled» and showed blank in relation pickers.
+  "api::lead-integration.lead-integration": { mainField: "name" },
+  "api::legal-document.legal-document": { mainField: "title" },
+  "api::pqr.pqr": {
+    mainField: "radicado",
+    defaultSortBy: "createdAt",
+    defaultSortOrder: "DESC",
+    pageSize: 50,
+    filterable: true,
+    searchable: true,
+  },
 };
 
 /**
@@ -375,7 +412,10 @@ const READ_ONLY: Record<string, string[] | "*"> = {
   // change it, and a hand-edited "sent" would hide a lead Sinco never got.
   "api::lead.lead": ["crmStatus", "crmVisitId", "crmAttempts", "crmLastError"],
   // Stamped by each delivery; it is how you see whether the partner is alive.
-  "api::lead-integration.lead-integration": ["lastLeadAt"],
+  // The key is only ever made by the system («Generar clave nueva»): a typed
+  // one is a guessable one.
+  "api::lead-integration.lead-integration": ["lastLeadAt", "apiKey"],
+  "api::lead-integration-request.lead-integration-request": "*",
   "api::sinco-project.sinco-project": "*",
   "api::job-run.job-run": "*",
   "api::faq-bot-question.faq-bot-question": "*",
