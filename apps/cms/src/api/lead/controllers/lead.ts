@@ -10,7 +10,7 @@ import {
 } from "@lasgalias/schemas";
 
 import { readApiKey } from "../../../utils/external-lead-guard";
-import { receiveExternalLead } from "../../../utils/lead-integration";
+import { listProjectsForPartner, receiveExternalLead } from "../../../utils/lead-integration";
 import { resendLeadsByStatus, resendLeadToCrm, type CrmStatus } from "../../../utils/lead-rules";
 
 /**
@@ -91,6 +91,24 @@ export default factories.createCoreController("api::lead.lead", ({ strapi }) => 
       origin: ctx.get("origin") || null,
       ip: ctx.request.ip,
       body: ctx.request.body,
+    });
+
+    if (result.retryAfter) ctx.set("Retry-After", String(result.retryAfter));
+    ctx.status = result.status;
+    ctx.body = result.body;
+  },
+
+  /** `GET /api/leads/external/:slug/projects` — the slugs a partner can name. */
+  async listExternalProjects(ctx) {
+    const { slug } = ctx.params as { slug?: string };
+    const result = await listProjectsForPartner(strapi, {
+      slug: slug ?? "",
+      apiKey: readApiKey({
+        authorization: ctx.get("authorization"),
+        apiKey: ctx.get("x-api-key"),
+      }),
+      origin: ctx.get("origin") || null,
+      ip: ctx.request.ip,
     });
 
     if (result.retryAfter) ctx.set("Retry-After", String(result.retryAfter));

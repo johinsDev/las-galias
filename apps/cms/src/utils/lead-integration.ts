@@ -184,11 +184,16 @@ export async function receiveExternalLead(
  * stranger the integration exists but is paused, and the brakes run before the
  * body is parsed, so a flood costs a map lookup and not a validation each.
  */
-async function judge(
+/**
+ * Who is asking: the key, the switch, the origin and the IP list. Shared by
+ * the delivery and by the projects listing, so a partner that is paused or
+ * cut off is so for both. `null` means it may come in.
+ */
+function admit(
   strapi: Core.Strapi,
   integration: IntegrationDoc | null,
-  request: ExternalLeadRequest,
-): Promise<Verdict> {
+  request: Omit<ExternalLeadRequest, "body">,
+): Verdict | null {
   if (!integration || !keyMatches(request.apiKey, integration.apiKey)) {
     return refuse(401, "Invalid or missing API key", "unauthorized", {
       detail: request.apiKey ? "Clave incorrecta" : "Sin clave",
@@ -206,6 +211,18 @@ async function judge(
     );
     return refuse(403, "IP address not allowed", "ip", { detail: request.ip ?? undefined });
   }
+  return null;
+}
+
+async function judge(
+  strapi: Core.Strapi,
+  integration: IntegrationDoc | null,
+  request: ExternalLeadRequest,
+): Promise<Verdict> {
+  const refusal = admit(strapi, integration, request);
+  if (refusal || !integration)
+    return refusal ?? refuse(401, "Invalid or missing API key", "unauthorized");
+
   if (!withinRate(integration.documentId, integration.ratePerMinute ?? 60)) {
     return refuse(429, "Too many requests, slow down", "rate", { retryAfter: 60 });
   }
@@ -323,6 +340,65 @@ async function judge(
   };
 }
 
+/**
+ * `GET /api/leads/external/<slug>/projects` — the projects a partner can name
+ * in `project`, so it maps its own listings to our slugs without anyone
+ * mailing a spreadsheet that goes stale. Same key and same checks as a
+ * delivery; a limit of its own, so reading the list never eats the quota for
+ * leads. Only what is already public on the site, and only homes, lots and
+ * premises that are published.
+ */
+const PROJECT_LISTS_PER_MINUTE = 30;
+
+export async function listProjectsForPartner(
+  strapi: Core.Strapi,
+  request: Omit<ExternalLeadRequest, "body">,
+): Promise<ExternalLeadResponse> {
+  const integration = (await strapi.documents(LEAD_INTEGRATION_UID).findFirst({
+    filters: { slug: request.slug },
+  })) as IntegrationDoc | null;
+
+  const refusal = admit(strapi, integration, request);
+  if (refusal || !integration) {
+    const { status, body } = refusal ?? refuse(401, "Invalid or missing API key", "unauthorized");
+    return { status, body };
+  }
+  if (!withinRate(`projects:${integration.documentId}`, PROJECT_LISTS_PER_MINUTE)) {
+    return {
+      status: 429,
+      body: refuse(429, "Too many requests, slow down", "rate").body,
+      retryAfter: 60,
+    };
+  }
+
+  const projects = (await strapi.documents(PROJECT_UID).findMany({
+    status: "published",
+    fields: ["name", "slug", "productType", "stage"],
+    populate: { city: { fields: ["name"] } },
+    sort: "name:asc",
+    limit: 500,
+  })) as {
+    name: string;
+    slug: string;
+    productType?: string | null;
+    stage?: string | null;
+    city?: { name?: string } | null;
+  }[];
+
+  return {
+    status: 200,
+    body: {
+      data: projects.map((project) => ({
+        slug: project.slug,
+        name: project.name,
+        city: project.city?.name ?? null,
+        type: project.productType ?? "housing",
+        stage: project.stage ?? null,
+      })),
+    },
+  };
+}
+
 /* ---------------------------------------------------------------- admin */
 
 const count = (strapi: Core.Strapi, uid: string, filters: Record<string, unknown>) =>
@@ -349,7 +425,7 @@ export interface IntegrationSummary {
   apiKey: string | null;
   /** The message to send the partner; null until the integration has a key. */
   instructions: string | null;
-  /** The same contract as a prompt for the partner's coding assistant. No key in it. */
+  /** The same contract as a prompt for the partner's coding assistant. */
   aiPrompt: string;
   lastLeadAt: string | null;
   leads: { today: number; week: number; month: number; total: number };
@@ -414,6 +490,7 @@ export async function summarizeIntegration(
     aiPrompt: buildPartnerPrompt({
       name: integration.name,
       url,
+      apiKey: integration.apiKey ?? "<clave>",
       ratePerMinute: integration.ratePerMinute,
       dailyCap: integration.dailyCap,
     }),

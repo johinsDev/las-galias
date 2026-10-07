@@ -17,20 +17,23 @@ test("the message carries the real address and key, ready to paste", () => {
   assert.match(text, /Authorization: Bearer lg_abc/);
   assert.match(text, /curl -X POST "https:\/\/cms\.example\/api\/leads\/external\/zonario"/);
   // A cap of 0 is "no cap", so it is not announced as a limit.
-  assert.match(text, /Límites: 60 peticiones por minuto\./);
+  assert.match(text, /Límites: 60 peticiones por minuto\. Por encima/);
+  assert.match(text, /GET https:\/\/cms\.example\/api\/leads\/external\/zonario\/projects/);
   // The shapes of a success and of an error are spelled out.
   assert.match(text, /"duplicate": false/);
   assert.match(text, /"issues"/);
 });
 
-test("the prompt for the partner's AI states the contract and never the key", () => {
+test("the prompt for the partner's AI is self-contained: contract, key and limits", () => {
   const prompt = buildPartnerPrompt({
     name: "Zonario",
     url: "https://cms.example/api/leads/external/zonario",
+    apiKey: "lg_abc",
   });
+  assert.match(prompt, /Authorization: Bearer lg_abc/);
+  assert.match(prompt, /\/projects/);
   assert.match(prompt, /POST https:\/\/cms\.example\/api\/leads\/external\/zonario/);
   assert.match(prompt, /LAS_GALIAS_API_KEY/);
   assert.match(prompt, /acceptsDataPolicy \(boolean, obligatorio\)/);
   assert.match(prompt, /Retry-After/);
-  assert.doesNotMatch(prompt, /lg_/);
 });

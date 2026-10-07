@@ -14,5 +14,12 @@ export default {
       handler: "api::lead.lead.createExternal",
       config: { auth: false, policies: [] },
     },
+    {
+      // The slugs a partner can send in `project`. Same key, same checks.
+      method: "GET",
+      path: "/leads/external/:slug/projects",
+      handler: "api::lead.lead.listExternalProjects",
+      config: { auth: false, policies: [] },
+    },
   ],
 };

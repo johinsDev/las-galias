@@ -14,7 +14,7 @@ Al guardar, el panel de la derecha muestra la URL real y los botones para
 compartirla: **Copiar instrucciones** (URL, clave, campos con sus validaciones,
 las respuestas y un ejemplo, listo para pegar en un correo al aliado),
 **Copiar prompt para IA** (el mismo contrato redactado para que el aliado lo
-pegue en su asistente de código; no lleva la clave), **Copiar URL** / **Copiar
+pegue en su asistente de código, también con la clave), **Copiar URL** / **Copiar
 clave** y **Generar clave nueva**. Debajo están las cifras: leads de hoy, 7 y
 30 días, en qué estado quedaron en Sinco, y las peticiones aceptadas y
 rechazadas (con el motivo) de los últimos 7 días.
@@ -105,6 +105,41 @@ campo se ignora.
 Un `201` puede traer `warnings` (por ejemplo, un `project` desconocido). El
 envío a Sinco ocurre después de responder: `crmStatus` es `pending` en la
 respuesta y el resultado se ve en el admin.
+
+### Listado de proyectos
+
+```
+GET https://<cms>/api/leads/external/<slug>/projects
+Authorization: Bearer <clave>
+```
+
+Devuelve los proyectos publicados y el slug que va en `project`, para que el
+aliado mapee sus avisos sin depender de una hoja de cálculo:
+
+```json
+{
+  "data": [
+    { "slug": "brezza", "name": "Brezza", "city": "Bogotá", "type": "housing", "stage": "sale" }
+  ]
+}
+```
+
+`type` es `housing`, `lot` o `local`. Mismas comprobaciones que el envío
+(clave, encendida, origen, IP) y un límite propio de 30 consultas por minuto,
+que no consume el de leads. Se consulta una vez al día o al configurar, no en
+cada lead.
+
+### Buenas prácticas para el aliado
+
+- Respetar los límites; ante un `429`, esperar `Retry-After` antes de reintentar.
+- No reintentar `400`, `401` ni `403`: fallarán igual.
+- Enviar cada lead una vez y con `externalId`.
+- No enviar leads de prueba sin avisar: llegan al equipo comercial.
+- Llamar solo desde su servidor; la clave puede ir en una variable de entorno
+  (recomendado) o en el código del backend, nunca en un navegador ni en un
+  repositorio público.
+- Todas las peticiones quedan registradas; un volumen anormal o muchas
+  rechazadas pueden llevar a pausar la integración o cambiar la clave.
 
 ### Ejemplo
 

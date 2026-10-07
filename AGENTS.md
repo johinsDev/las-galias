@@ -278,7 +278,9 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `node --test apps/cms/src/utils/external-lead-guard.test.ts`). The lead is
   stored with `form: externo`, `source: externo:<slug>` and `integration`, and
   routed project → launch → integration → form default → general default.
-  `docs/leads-externos.md` is the contract handed to the partner. Every
+  `docs/leads-externos.md` is the contract handed to the partner, and
+  `GET /api/leads/external/<slug>/projects` (same key and checks) lists the
+  published projects with the slug `project` accepts. Every
   delivery to a known slug, let in or refused, is a row of
   `lead-integration-request` («Peticiones de integraciones», read-only, 90
   days). The edit view's side panel (`LeadIntegrationPanel.tsx`, admin routes

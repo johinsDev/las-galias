@@ -170,7 +170,7 @@ export default function LeadIntegrationPanel() {
       <Typography variant="pi" textColor="neutral600">
         «Copiar instrucciones» lleva la URL, la clave, los campos con sus validaciones, las
         respuestas y un ejemplo: se pega en un correo tal cual. El prompt para IA es el mismo
-        contrato para que el aliado lo pegue en su asistente de código; no lleva la clave.
+        contrato, con la clave, para que el aliado lo pegue en su asistente de código.
         {summary.enabled ? "" : " La integración está apagada: enciéndela para que reciba leads."}
       </Typography>
 

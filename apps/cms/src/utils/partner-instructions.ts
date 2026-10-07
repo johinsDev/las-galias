@@ -1,8 +1,8 @@
 /**
  * What an editor sends a partner, in two wordings of the same contract: a
- * message for a person (with the key, ready to paste into an email) and a
- * prompt for the partner's coding assistant (without it — a key does not
- * belong in a chat with an AI; it reads it from an environment variable).
+ * message for a person and a prompt for the partner's coding assistant. Both
+ * carry the key, so either one is all the partner needs; the prompt recommends
+ * an environment variable and says a hardcoded key works too.
  *
  * Built here and not in the admin component so the contract is worded in one
  * place and can be tested. It mirrors `ExternalLeadSchema` in
@@ -44,7 +44,7 @@ const FIELDS: [name: string, type: string, required: boolean, rule: string][] = 
     "project",
     "string",
     false,
-    "El slug del proyecto en el sitio de Las Galias (lo que va después de /proyectos-de-vivienda/). Si no existe, el lead se guarda igual, sin proyecto, y la respuesta trae un aviso en «warnings».",
+    "El slug del proyecto, tal como lo devuelve el listado de proyectos (ver abajo). Si no existe, el lead se guarda igual, sin proyecto, y la respuesta trae un aviso en «warnings».",
   ],
   ["acceptsWhatsApp", "boolean", false, "La persona autorizó contacto por WhatsApp."],
   ["acceptsCall", "boolean", false, "La persona autorizó llamadas."],
@@ -96,6 +96,33 @@ const NOTES = [
   "- La llamada debe salir de un servidor, nunca de un navegador: la clave quedaría expuesta.",
 ];
 
+/** The companion endpoint: the slugs `project` accepts. */
+function projectsLines(input: PartnerContractInput): string[] {
+  return [
+    `GET ${input.url}/projects (misma cabecera Authorization)`,
+    "Devuelve los proyectos publicados y el slug que va en «project»:",
+    '  { "data": [ { "slug": "brezza", "name": "Brezza", "city": "Bogotá", "type": "housing", "stage": "sale" } ] }',
+    "«type» es housing (vivienda), lot (lote) o local (local comercial). Consúltenlo una vez al día o al configurar, no en cada lead: máximo 30 consultas por minuto.",
+  ];
+}
+
+/**
+ * How a partner keeps its access: the brakes of «Integración de leads» said
+ * as advice, so nobody finds them out by being cut off.
+ */
+function goodPractice(input: PartnerContractInput): string[] {
+  const limits = limitsLine(input);
+  return [
+    ...(limits ? [`- ${limits} Por encima la API responde 429.`] : []),
+    "- Ante un 429, esperen los segundos de la cabecera Retry-After antes de reintentar. No insistan en bucle.",
+    "- No reintenten un 400, 401 o 403: el mismo envío fallará igual. Corrijan el dato o la configuración.",
+    "- Envíen cada lead una sola vez y siempre con «externalId»; un reintento con el mismo id no duplica.",
+    "- No envíen leads de prueba ni datos inventados a esta URL sin avisarnos: llegan al equipo comercial.",
+    "- Llamen solo desde su servidor y, si pueden, desde IP fijas: podemos restringir el acceso a ellas.",
+    "- Todas las peticiones quedan registradas. Un volumen anormal o muchas rechazadas seguidas pueden llevar a pausar la integración o cambiar la clave.",
+  ];
+}
+
 function fieldLines(): string[] {
   return FIELDS.map(
     ([name, type, required, rule]) =>
@@ -113,7 +140,6 @@ function limitsLine(input: PartnerContractInput): string | null {
 
 /** The message for a person, key included. */
 export function buildPartnerInstructions(input: PartnerContractInput & { apiKey: string }): string {
-  const limits = limitsLine(input);
   return [
     `Integración de leads · ${input.name} → Constructora Las Galias`,
     "",
@@ -134,9 +160,14 @@ export function buildPartnerInstructions(input: PartnerContractInput & { apiKey:
     "Respuestas:",
     ...RESPONSES,
     "",
+    "Listado de proyectos:",
+    ...projectsLines(input),
+    "",
     "A tener en cuenta:",
     ...NOTES,
-    ...(limits ? [`- ${limits}`] : []),
+    "",
+    "Buenas prácticas (para que el acceso no se pause):",
+    ...goodPractice(input),
     "",
     "Ejemplo:",
     `curl -X POST "${input.url}" \\`,
@@ -150,19 +181,17 @@ export function buildPartnerInstructions(input: PartnerContractInput & { apiKey:
 
 /**
  * The same contract as a prompt the partner pastes into its coding assistant.
- * It names an environment variable instead of carrying the key.
  */
-export function buildPartnerPrompt(input: PartnerContractInput): string {
-  const limits = limitsLine(input);
+export function buildPartnerPrompt(input: PartnerContractInput & { apiKey: string }): string {
   return [
     `Necesito integrar el envío de leads de ${input.name} a la API de Constructora Las Galias. Implementa la integración en nuestro backend siguiendo este contrato al pie de la letra.`,
     "",
     "## Endpoint",
     `POST ${input.url}`,
     "Cabeceras:",
-    "  Authorization: Bearer <clave>",
+    `  Authorization: Bearer ${input.apiKey}`,
     "  Content-Type: application/json",
-    "La clave es secreta: léela de la variable de entorno LAS_GALIAS_API_KEY. No la escribas en el código ni la envíes al navegador; la llamada sale siempre de nuestro servidor.",
+    "Esa es la clave real. Recomendado: guárdala en la variable de entorno LAS_GALIAS_API_KEY y léela de ahí; si el proyecto no maneja variables de entorno puedes dejarla en una constante del backend. Lo que no puede pasar es que llegue al navegador o a un repositorio público: la llamada sale siempre de nuestro servidor.",
     "",
     "## Cuerpo de la petición (JSON)",
     ...REQUEST_EXAMPLE,
@@ -174,9 +203,15 @@ export function buildPartnerPrompt(input: PartnerContractInput): string {
     "## Respuestas",
     ...RESPONSES,
     "",
+    "## Listado de proyectos",
+    ...projectsLines(input),
+    "Úsalo para mapear nuestros proyectos a su slug y guarda el resultado en caché.",
+    "",
+    "## Límites y buenas prácticas (incumplirlas puede hacer que nos pausen el acceso)",
+    ...goodPractice(input),
+    "",
     "## Reglas de la integración",
     ...NOTES,
-    ...(limits ? [`- ${limits}`] : []),
     "- Envía siempre «externalId» con nuestro id del lead: así un reintento nunca duplica.",
     "- Trata 201 y 200 como éxito y guarda «data.id» junto a nuestro lead.",
     "- 400: no reintentes; registra «error.issues» para corregir el dato.",
@@ -189,6 +224,7 @@ export function buildPartnerPrompt(input: PartnerContractInput): string {
     "1. Una función que reciba nuestro lead, lo convierta a este cuerpo y lo valide.",
     "2. El cliente HTTP con el manejo de respuestas y los reintentos descritos.",
     "3. Tipos para la petición y para las respuestas de éxito y de error.",
-    "4. Pruebas para: éxito (201), duplicado (200), validación (400), clave inválida (401) y límite (429).",
+    "4. Una función que consulte el listado de proyectos y lo deje en caché.",
+    "5. Pruebas para: éxito (201), duplicado (200), validación (400), clave inválida (401) y límite (429).",
   ].join("\n");
 }
