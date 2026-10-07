@@ -8,6 +8,8 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import StatsBand from "@/components/StatsBand.astro";
 import StepsGrid from "@/components/StepsGrid.astro";
 import ToolCards from "@/components/ToolCards.astro";
+import type { HomeBanner } from "@lasgalias/schemas";
+
 import Base from "@/layouts/Base.astro";
 import { sortPosts } from "@/lib/blog";
 import { getHomeBanners, getHomePage, getPosts, getProjects } from "@/lib/strapi";
@@ -18,6 +20,23 @@ const [page, banners, projects, posts] = await Promise.all([
   getProjects(),
   getPosts(),
 ]);
+
+/**
+ * Where a banner leads. The editor picks a project or a launch from a list;
+ * the hand-written link is only the fallback (a campaign, a simulator). Lots
+ * and commercial premises have no page of their own, so they go to their
+ * listing.
+ */
+function bannerHref(banner: HomeBanner): string | null | undefined {
+  const { project, launch } = banner;
+  if (project?.slug) {
+    if (project.productType === "lot") return "/lotes";
+    if (project.productType === "local") return "/locales";
+    return `/proyectos-de-vivienda/${project.slug}`;
+  }
+  if (launch?.slug) return `/lanzamientos/${launch.slug}`;
+  return banner.link;
+}
 
 // Four across, as the approved grid shows — not the six the first build used.
 const featured = projects.slice(0, 4);
@@ -138,7 +157,7 @@ import { Search } from "lucide-astro";
           url: banner.desktopImage.url,
           mobileUrl: banner.mobileImage?.url,
           alt: banner.desktopImage.alternativeText ?? banner.title ?? "",
-          href: banner.link,
+          href: bannerHref(banner),
           cta: banner.ctaLabel,
         }))}
         labels={{ prev: "Banner anterior", next: "Banner siguiente", goTo: "Ir al banner" }}

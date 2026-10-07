@@ -338,6 +338,10 @@ export async function getHomeBanners(): Promise<HomeBanner[]> {
       "filters[active][$eq]": "true",
       "populate[desktopImage]": "true",
       "populate[mobileImage]": "true",
+      // Only what the link needs, not the whole project.
+      "populate[project][fields][0]": "slug",
+      "populate[project][fields][1]": "productType",
+      "populate[launch][fields][0]": "slug",
       sort: "order:asc",
     })) ?? []
   );

@@ -384,7 +384,19 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
     title: { label: "Título" },
     desktopImage: { label: "Imagen (escritorio)" },
     mobileImage: { label: "Imagen (móvil)" },
-    link: { label: "Enlace" },
+    project: {
+      label: "Proyecto",
+      description: "A dónde lleva el banner: la página de este proyecto. Se elige de la lista.",
+    },
+    launch: {
+      label: "Lanzamiento",
+      description: "Si el banner es de un lanzamiento. Solo cuenta si no hay proyecto elegido.",
+    },
+    link: {
+      label: "Enlace manual",
+      description:
+        "Solo si no elegiste proyecto ni lanzamiento: una ruta del sitio (/simuladores) o una dirección completa.",
+    },
     ctaLabel: {
       label: "Texto del botón",
       description: "El botón sobre la imagen. Vacío no pinta botón, solo la imagen enlazada.",

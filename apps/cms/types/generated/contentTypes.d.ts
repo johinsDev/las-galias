@@ -842,12 +842,14 @@ export interface ApiHomeBannerHomeBanner extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     ctaLabel: Schema.Attribute.String & Schema.Attribute.DefaultTo<"Ver proyecto">;
     desktopImage: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
+    launch: Schema.Attribute.Relation<"manyToOne", "api::launch.launch">;
     link: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::home-banner.home-banner"> &
       Schema.Attribute.Private;
     mobileImage: Schema.Attribute.Media<"images"> & Schema.Attribute.Required;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    project: Schema.Attribute.Relation<"manyToOne", "api::project.project">;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;

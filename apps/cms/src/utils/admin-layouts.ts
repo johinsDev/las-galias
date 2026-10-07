@@ -158,7 +158,10 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
   ],
   "api::faq.faq": [["question:12"], ["audience", "topic", "order"], ["answer"]],
   "api::home-banner.home-banner": [
-    ["title", "link"],
+    ["title:12"],
+    // El destino: se elige de la lista; el enlace manual es el respaldo.
+    ["project", "launch"],
+    ["link:12"],
     ["ctaLabel:6", "active:3", "order:3"],
     ["desktopImage", "mobileImage"],
   ],
@@ -312,7 +315,7 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::zone.zone": ["name", "city", "slug"],
   "api::amenity.amenity": ["name", "iconKey", "description"],
   "api::faq.faq": ["question", "audience", "order"],
-  "api::home-banner.home-banner": ["title", "active", "order"],
+  "api::home-banner.home-banner": ["title", "project", "launch", "active", "order"],
   "api::redirect.redirect": ["from", "to", "enabled", "source"],
   "api::job-run.job-run": ["task", "status", "ranAt", "durationMs"],
   "api::faq-bot-question.faq-bot-question": ["askedAt", "question", "wasCached", "model"],

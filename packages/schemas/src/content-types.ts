@@ -310,6 +310,13 @@ export interface HomeBanner {
   title?: string | null;
   desktopImage: Media;
   mobileImage: Media;
+  /**
+   * Where the banner leads, picked from a list in the CMS: the project's page
+   * first, else the launch landing, else the hand-written `link`. An
+   * unpublished one arrives as null, so the banner falls through.
+   */
+  project?: { slug: string; productType?: Project["productType"] } | null;
+  launch?: { slug: string } | null;
   link?: string | null;
   /** Label of the button painted over the image. Empty renders no button. */
   ctaLabel?: string | null;

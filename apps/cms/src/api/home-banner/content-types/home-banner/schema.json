@@ -26,8 +26,21 @@
       "allowedTypes": ["images"],
       "required": true
     },
+    "project": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::project.project",
+      "description": "Where the banner leads: this project's page. Wins over launch and link"
+    },
+    "launch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::launch.launch",
+      "description": "Where the banner leads when no project is picked: this launch landing"
+    },
     "link": {
-      "type": "string"
+      "type": "string",
+      "description": "Only used when neither a project nor a launch is picked"
     },
     "ctaLabel": {
       "type": "string",
