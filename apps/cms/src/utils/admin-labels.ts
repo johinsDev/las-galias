@@ -177,6 +177,14 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "Origen",
       description: "Detalle libre: pdp:<slug>, una campaña… Se envía a Sinco como fuenteReg.",
     },
+    integration: {
+      label: "Integración",
+      description: "El aliado que lo envió (Zonario…). Vacío en los formularios del sitio.",
+    },
+    externalId: {
+      label: "ID del aliado",
+      description: "El identificador del lead en el sistema del aliado. Evita duplicados.",
+    },
     acceptsDataPolicy: { label: "Acepta política de datos" },
     acceptsEmail: { label: "Autoriza correo" },
     acceptsSms: { label: "Autoriza SMS" },
@@ -222,6 +230,79 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "Correo de alertas",
       description: "Vacío usa CRM_ALERT_EMAIL del servidor; sin ninguno no se avisa a nadie.",
     },
+  },
+  "api::lead-integration.lead-integration": {
+    sectionAccess: {
+      label: "Acceso",
+      description:
+        "El aliado envía sus leads con POST a <URL del CMS>/api/leads/external/<slug>, con la clave en la cabecera «Authorization: Bearer <clave>». El contrato completo está en docs/leads-externos.md.",
+    },
+    name: { label: "Nombre", description: "El aliado: «Zonario»." },
+    slug: {
+      label: "Slug de la URL",
+      description: "Lo que va al final de /api/leads/external/. Cambiarlo rompe la integración.",
+    },
+    enabled: {
+      label: "Encendida",
+      description:
+        "Apagada responde 403 y no guarda nada. Es el interruptor para pausar al aliado.",
+    },
+    apiKey: {
+      label: "Clave (API key)",
+      description:
+        "Se genera sola al crear. Para cambiarla, borra el campo y guarda: sale una nueva y la anterior deja de servir.",
+    },
+    sectionProtection: {
+      label: "Protección",
+      description: "Quién puede usar la clave y cuánto. Los límites son por integración.",
+    },
+    allowedOrigins: {
+      label: "Orígenes permitidos",
+      description:
+        "Uno por línea (https://zonario.com). Solo aplica a peticiones desde un navegador, que traen la cabecera Origin: vacío las rechaza todas. Un servidor no la envía y pasa por la clave y las IP.",
+    },
+    allowedIps: {
+      label: "IP permitidas",
+      description:
+        "Una por línea, direcciones exactas (sin rangos). Vacío acepta cualquier IP que traiga la clave.",
+    },
+    ratePerMinute: {
+      label: "Máximo por minuto",
+      description: "Por encima responde 429 y el aliado debe reintentar.",
+    },
+    dailyCap: { label: "Máximo por día", description: "0 quita el tope diario." },
+    sectionCrm: {
+      label: "Sinco",
+      description: "Los leads se guardan siempre en Strapi. Aquí se decide si además van al CRM.",
+    },
+    sendToCrm: {
+      label: "Enviar a Sinco",
+      description:
+        "Apagado, sus leads quedan solo en Strapi («skipped»). Al encenderlo y guardar, los que estaban en espera se envían.",
+    },
+    sincoProject: {
+      label: "Proyecto de Sinco por defecto",
+      description:
+        "A dónde van sus leads cuando no nombran un proyecto del sitio. Vacío usa el general de Configuración · CRM.",
+    },
+    notes: { label: "Notas", description: "Contacto técnico del aliado, acuerdos, fechas." },
+    lastLeadAt: { label: "Último lead recibido" },
+  },
+  "api::footer.footer": {
+    description: { label: "Texto bajo el logo" },
+    socialLinks: { label: "Redes sociales" },
+    companyLinks: { label: "Columna «Empresa»" },
+    documentLinks: {
+      label: "Columna «Documentos»",
+      description: "Cartillas y políticas. Una lista vacía oculta la columna.",
+    },
+    legalLinks: {
+      label: "Barra legal",
+      description: "Los enlaces de la franja inferior, junto al copyright.",
+    },
+    contactEmail: { label: "Correo de contacto" },
+    contactPhone: { label: "Teléfono de contacto", description: "Vacío no se muestra." },
+    contactAddress: { label: "Ciudad o dirección" },
   },
   "api::zone.zone": {
     name: { label: "Nombre" },
@@ -686,6 +767,26 @@ const COMPONENTS: Record<string, FieldLabels> = {
     title: { label: "Título" },
     body: { label: "Texto" },
     image: { label: "Foto" },
+  },
+  "page.footer-link": {
+    label: { label: "Texto" },
+    url: {
+      label: "Enlace",
+      description:
+        "Una ruta del sitio (/nosotros, /legales/terminos-y-condiciones) o una dirección completa (https://…).",
+    },
+    file: {
+      label: "Documento",
+      description: "Un PDF subido aquí. Si hay documento, el enlace lleva a él y la URL se ignora.",
+    },
+    newTab: {
+      label: "Abrir en otra pestaña",
+      description: "Los documentos y las direcciones externas ya abren en otra pestaña.",
+    },
+  },
+  "page.social-link": {
+    network: { label: "Red" },
+    url: { label: "Enlace al perfil" },
   },
   "page.tool-card": {
     title: { label: "Título" },

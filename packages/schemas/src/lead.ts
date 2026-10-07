@@ -111,6 +111,7 @@ export const LEAD_FORMS = [
   "exterior",
   "lanzamiento",
   "whatsapp",
+  "externo",
   "manual",
 ] as const;
 
@@ -124,6 +125,7 @@ export const LEAD_FORM_LABELS: Record<LeadFormId, string> = {
   exterior: "Compra desde el exterior",
   lanzamiento: "Lanzamiento",
   whatsapp: "WhatsApp",
+  externo: "Integración externa",
   manual: "Manual u otro",
 };
 
@@ -190,4 +192,40 @@ export const ForeignLeadSubmissionSchema = v.object({
   ...LeadSubmissionSchema.entries,
   phone: ForeignLeadSchema.entries.phone,
   residenceCountry: ForeignLeadSchema.entries.residenceCountry,
+});
+
+/**
+ * What a partner sends to `POST /api/leads/external/<slug>` (a portal such as
+ * Zonario; see docs/leads-externos.md, which is the contract they are given).
+ *
+ * Looser than the site's own form on the phone — a portal sends whatever its
+ * user typed — and as strict on the consent: a lead without an accepted data
+ * policy cannot be stored, whoever collected it. `form`, `source` and the CRM
+ * bookkeeping are not here, so a partner cannot set them.
+ */
+export const ExternalLeadSchema = v.object({
+  /** The partner's id for the lead; makes a retried delivery idempotent. */
+  externalId: v.optional(v.pipe(v.string(), v.trim(), v.minLength(1), v.maxLength(120))),
+  name: v.pipe(v.string(), v.trim(), v.minLength(2), v.maxLength(160)),
+  email: v.optional(v.pipe(v.string(), v.trim(), v.email())),
+  phone: v.pipe(
+    v.string(),
+    v.trim(),
+    v.transform((s) => s.replace(/[\s().-]/g, "")),
+    v.regex(/^\+?[0-9]{7,15}$/),
+  ),
+  message: v.optional(v.pipe(v.string(), v.maxLength(1000))),
+  /** Slug of the project on the site (`/proyectos-de-vivienda/<slug>`). */
+  project: v.optional(v.pipe(v.string(), v.trim(), v.maxLength(120))),
+  acceptsDataPolicy: v.literal(true),
+  acceptsEmail: v.optional(v.boolean()),
+  acceptsSms: v.optional(v.boolean()),
+  acceptsWhatsApp: v.optional(v.boolean()),
+  acceptsCall: v.optional(v.boolean()),
+  interestCity: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  residenceCity: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  budgetRange: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  utmSource: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  utmMedium: v.optional(v.pipe(v.string(), v.maxLength(120))),
+  utmCampaign: v.optional(v.pipe(v.string(), v.maxLength(120))),
 });

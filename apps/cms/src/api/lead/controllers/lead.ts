@@ -9,6 +9,8 @@ import {
   type LeadFormId,
 } from "@lasgalias/schemas";
 
+import { readApiKey } from "../../../utils/external-lead-guard";
+import { receiveExternalLead } from "../../../utils/lead-integration";
 import { resendLeadsByStatus, resendLeadToCrm, type CrmStatus } from "../../../utils/lead-rules";
 
 /**
@@ -71,6 +73,29 @@ export default factories.createCoreController("api::lead.lead", ({ strapi }) => 
     // document service, so the middleware in src/index.ts still pushes the
     // lead to the CRM.
     return super.create(ctx);
+  },
+
+  /**
+   * `POST /api/leads/external/:slug` — a partner's delivery. Everything that
+   * decides whether it is let in lives in utils/lead-integration.ts; this only
+   * hands it the request and writes the answer back.
+   */
+  async createExternal(ctx) {
+    const { slug } = ctx.params as { slug?: string };
+    const result = await receiveExternalLead(strapi, {
+      slug: slug ?? "",
+      apiKey: readApiKey({
+        authorization: ctx.get("authorization"),
+        apiKey: ctx.get("x-api-key"),
+      }),
+      origin: ctx.get("origin") || null,
+      ip: ctx.request.ip,
+      body: ctx.request.body,
+    });
+
+    if (result.retryAfter) ctx.set("Retry-After", String(result.retryAfter));
+    ctx.status = result.status;
+    ctx.body = result.body;
   },
 
   /**

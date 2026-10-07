@@ -72,7 +72,7 @@ export const EXPORTS: Record<string, ExportSpec> = {
   leads: {
     uid: "api::lead.lead",
     filename: "leads",
-    populate: ["project"],
+    populate: ["project", "integration"],
     columns: [
       { header: "Fecha", get: (r) => date(r.createdAt) },
       {
@@ -84,6 +84,7 @@ export const EXPORTS: Record<string, ExportSpec> = {
       { header: "Correo", get: (r) => r.email },
       { header: "Proyecto", get: (r) => relationName(r.project) },
       { header: "Origen", get: (r) => r.source },
+      { header: "Integración", get: (r) => relationName(r.integration) },
       { header: "Mensaje", get: (r) => r.message },
       { header: "Ciudad de interés", get: (r) => r.interestCity },
       { header: "Ciudad de residencia", get: (r) => r.residenceCity },

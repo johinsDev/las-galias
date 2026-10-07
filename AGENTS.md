@@ -182,8 +182,8 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   optional city and the Sinco project its leads go to. It renders the same
   `LaunchPage.astro` a project in expectation shows at its own URL. Publishing
   needs a banner; unpublishing creates the 301 to the catalogue. The form
-  stores `lead.launch`, and the CRM routing is project → launch → form
-  default → general default (`lead-routing.ts`).
+  stores `lead.launch`, and the CRM routing is project → launch →
+  integration → form default → general default (`lead-routing.ts`).
 - A project's `recommended` list must belong to the **same city** (middleware).
 - Unpublishing a project creates an automatic `redirect` to `/proyectos-de-vivienda`.
 - `amenity` entries are reusable across projects (m2m). There is no
@@ -229,7 +229,8 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   admin router, `src/utils/csv-export.ts`) that exports exactly the rows the
   list's filters show.
 - `lead.form` is the closed list of forms (`LEAD_FORMS` in `@lasgalias/schemas`:
-  pdp, listado, lotes, locales, exterior, lanzamiento, whatsapp, manual) and is
+  pdp, listado, lotes, locales, exterior, lanzamiento, whatsapp, externo,
+  manual) and is
   what the admin filters by; `source` keeps the free-text detail. The public
   `POST /api/leads` (`api/lead/controllers/lead.ts`) re-shapes the body through
   the shared valibot schema, so the CRM fields can never be set from outside,
@@ -251,10 +252,32 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   (`src/utils/lead-routing.ts`, `node --test apps/cms/src/utils/lead-routing.test.ts`).
   A lead that ends unrouted, or fails its last attempt, emails
   `crm-config.alertEmail` (fallback `CRM_ALERT_EMAIL`) when `SMTP_HOST` is set.
-- The footer's "Documentos" column lists the sales booklets and policies by
-  slug (`Footer.astro`), but only those the CMS has published: "Tips para
-  comprar" is in `LEGAL_DOCUMENTS` and appears the day an editor creates that
-  legal document with slug `tips-para-comprar`.
+- The footer's links are the `footer` single type («Footer»): the company
+  column, "Documentos", the legal bar, the networks and the contact lines.
+  Each link is a path, a full address or an uploaded file (the file wins).
+  `FOOTER_DEFAULTS` in `@lasgalias/schemas` is both what the CMS seeds the
+  single type with on first boot (`utils/footer.ts`) and what the site falls
+  back to while the CMS answers 404; the projects column stays the catalogue's
+  cities. The sales booklets default to the PDFs in
+  `apps/web/public/documentos`, and the privacy policy to the page on
+  galias.com.co until its text lives in the CMS.
+- «Tips para comprar» lives at `/tips-para-comprar` (the address it has on
+  galias.com.co), not under `/legales`: `lib/legal-links.ts` names the
+  documents with an address of their own, `[slug].astro` skips them and
+  `ROUTE_REDIRECTS` 301s the old `/legales/<slug>`. Its text is still the legal
+  document with that slug — the CMS's when published, else
+  `lib/tips-para-comprar.ts`.
+- A partner (a portal such as Zonario) delivers leads to
+  `POST /api/leads/external/<slug>`; each one is a row of `lead-integration`
+  («Integración de leads», Super Admin only, never public): its API key
+  (generated; saved empty = rotated), on/off switch, allowed origins and IPs,
+  per-minute and per-day limits, whether its leads go to Sinco and to which
+  project. The route is `auth: false` because the handler does its own checks
+  (`utils/lead-integration.ts`; the pure ones in `external-lead-guard.ts`,
+  `node --test apps/cms/src/utils/external-lead-guard.test.ts`). The lead is
+  stored with `form: externo`, `source: externo:<slug>` and `integration`, and
+  routed project → launch → integration → form default → general default.
+  `docs/leads-externos.md` is the contract handed to the partner.
 - The FAQ assistant (`POST /api/faq-bot/ask`) answers one question at a time —
   no chat, no history — streaming SSE from the CMS. It answers ONLY from a
   context built out of published FAQs, published projects and

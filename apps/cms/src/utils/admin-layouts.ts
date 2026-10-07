@@ -75,6 +75,8 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     // Which form, which project, and the free-text detail of the origin.
     ["form", "project", "launch"],
     ["source:12"],
+    // Solo en los que llegan por una integración externa.
+    ["integration", "externalId"],
     // La calificación que dejó el formulario, junta: es lo que mira el asesor
     // antes de llamar.
     ["incomeRange", "savingsRange", "severance"],
@@ -104,6 +106,28 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["projectWhatsapp:6"],
     ["sectionAlerts"],
     ["alertEmail:6"],
+  ],
+  // El interruptor y la clave arriba: es a lo que se entra.
+  "api::lead-integration.lead-integration": [
+    ["sectionAccess"],
+    ["name", "slug"],
+    ["apiKey:8", "enabled:4"],
+    ["sectionProtection"],
+    ["allowedOrigins", "allowedIps"],
+    ["ratePerMinute", "dailyCap"],
+    ["sectionCrm"],
+    ["sendToCrm:4", "sincoProject:8"],
+    ["notes:12"],
+    ["lastLeadAt:6"],
+  ],
+  // En el orden en que el footer se lee de izquierda a derecha y de arriba abajo.
+  "api::footer.footer": [
+    ["description:12"],
+    ["socialLinks"],
+    ["companyLinks"],
+    ["documentLinks"],
+    ["contactEmail", "contactPhone", "contactAddress"],
+    ["legalLinks"],
   ],
   "api::post.post": [
     ["title", "slug"],
@@ -274,6 +298,14 @@ const LIST_LAYOUTS: Record<string, string[]> = {
   "api::project.project": ["name", "city", "stage", "constructionStatus", "priceFromCOP"],
   "api::lead.lead": ["createdAt", "form", "name", "phone", "email", "project", "crmStatus"],
   "api::sinco-project.sinco-project": ["label", "sincoId", "macroName", "lastSyncedAt"],
+  "api::lead-integration.lead-integration": [
+    "name",
+    "slug",
+    "enabled",
+    "sendToCrm",
+    "sincoProject",
+    "lastLeadAt",
+  ],
   "api::post.post": ["title", "category", "publishedOn", "featured"],
   "api::launch.launch": ["name", "city", "slug", "sincoProject"],
   "api::city.city": ["name", "department", "slug"],
@@ -339,6 +371,8 @@ const READ_ONLY: Record<string, string[] | "*"> = {
   // The CRM bookkeeping. `crmStatus` too: «Reenviar al CRM» is the one way to
   // change it, and a hand-edited "sent" would hide a lead Sinco never got.
   "api::lead.lead": ["crmStatus", "crmVisitId", "crmAttempts", "crmLastError"],
+  // Stamped by each delivery; it is how you see whether the partner is alive.
+  "api::lead-integration.lead-integration": ["lastLeadAt"],
   "api::sinco-project.sinco-project": "*",
   "api::job-run.job-run": "*",
   "api::faq-bot-question.faq-bot-question": "*",

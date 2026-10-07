@@ -1,4 +1,5 @@
 export {
+  ExternalLeadSchema,
   ForeignLeadSchema,
   ForeignLeadSubmissionSchema,
   inferLeadForm,
@@ -11,6 +12,13 @@ export {
   type LeadFormId,
   type LeadSubmission,
 } from "./lead";
+export {
+  FOOTER_DEFAULTS,
+  FOOTER_SOCIAL_NETWORKS,
+  type Footer,
+  type FooterLink,
+  type FooterSocialNetwork,
+} from "./footer";
 export { DATA_POLICY_SLUG, LEGAL_DOCUMENTS, type LegalDocumentRef } from "./legal";
 export { PQR_TYPE_LABELS, PQR_TYPES, PqrSchema, type Pqr, type PqrType } from "./pqr";
 export type {

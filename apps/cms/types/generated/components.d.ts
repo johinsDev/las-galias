@@ -1,5 +1,19 @@
 import type { Schema, Struct } from "@strapi/strapi";
 
+export interface PageFooterLink extends Struct.ComponentSchema {
+  collectionName: "components_page_footer_links";
+  info: {
+    description: "Un enlace del pie de p\u00E1gina: a una ruta del sitio, a otra web o a un documento subido. Si hay archivo, gana sobre la URL";
+    displayName: "Enlace del footer";
+  };
+  attributes: {
+    file: Schema.Attribute.Media<"files" | "images">;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    newTab: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    url: Schema.Attribute.String;
+  };
+}
+
 export interface PageIllustratedStep extends Struct.ComponentSchema {
   collectionName: "components_page_illustrated_steps";
   info: {
@@ -35,6 +49,21 @@ export interface PageOffice extends Struct.ComponentSchema {
     city: Schema.Attribute.String & Schema.Attribute.Required;
     region: Schema.Attribute.String;
     schedule: Schema.Attribute.String;
+  };
+}
+
+export interface PageSocialLink extends Struct.ComponentSchema {
+  collectionName: "components_page_social_links";
+  info: {
+    description: "Una red del pie de p\u00E1gina. La red es una clave, no un archivo: el icono lo pone el sitio";
+    displayName: "Red social";
+  };
+  attributes: {
+    network: Schema.Attribute.Enumeration<
+      ["instagram", "facebook", "youtube", "tiktok", "linkedin"]
+    > &
+      Schema.Attribute.Required;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -190,9 +219,11 @@ export interface SharedSeo extends Struct.ComponentSchema {
 declare module "@strapi/strapi" {
   export namespace Public {
     export interface ComponentSchemas {
+      "page.footer-link": PageFooterLink;
       "page.illustrated-step": PageIllustratedStep;
       "page.list-item": PageListItem;
       "page.office": PageOffice;
+      "page.social-link": PageSocialLink;
       "page.stat": PageStat;
       "page.step": PageStep;
       "page.tool-card": PageToolCard;

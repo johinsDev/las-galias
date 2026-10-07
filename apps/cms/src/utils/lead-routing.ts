@@ -6,10 +6,11 @@
  *
  * Sinco's `POST /SalaVentas/Externo/Visitas` refuses a visit without a project
  * AND its macroproject. Leads from the project page carry one, and leads from
- * a launch landing carry the launch's own Sinco project; the ones from
- * the listing, the lots, the locales and the foreign-buyer pages do not, so
- * they fall back to whatever «Configuración · CRM» names for their form, then
- * to the general default, and only then are left unrouted.
+ * a launch landing carry the launch's own Sinco project; the ones a partner
+ * sends (api/leads/external) carry the one their integration names. The ones
+ * from the listing, the lots, the locales and the foreign-buyer pages carry
+ * none, so they fall back to whatever «Configuración · CRM» names for their
+ * form, then to the general default, and only then are left unrouted.
  */
 
 interface SincoRef {
@@ -40,12 +41,13 @@ export interface RoutableLead {
   form?: string | null;
   project?: { sincoProject?: SincoRef | null } | null;
   launch?: { sincoProject?: SincoRef | null } | null;
+  integration?: { sincoProject?: SincoRef | null } | null;
 }
 
 export interface SincoTarget {
   sincoId: string;
   macroSincoId: string;
-  via: "project" | "launch" | "form" | "default";
+  via: "project" | "launch" | "integration" | "form" | "default";
 }
 
 /** A catalog row only counts when it carries BOTH ids; Sinco rejects a visit without either. */
@@ -60,8 +62,9 @@ function usable(
 }
 
 /**
- * The lead's own project first, then its launch's Sinco project, then the
- * default for its form, then the general default. `null` means there is
+ * The lead's own project first, then its launch's Sinco project, then the one
+ * of the integration that sent it, then the default for its form, then the
+ * general default. `null` means there is
  * nowhere to send it — the caller marks it `unrouted` instead of burning
  * retries.
  */
@@ -74,6 +77,9 @@ export function resolveSincoTarget(
 
   const launch = usable(lead.launch?.sincoProject);
   if (launch) return { ...launch, via: "launch" };
+
+  const integration = usable(lead.integration?.sincoProject);
+  if (integration) return { ...integration, via: "integration" };
 
   const field = lead.form ? FORM_ROUTE_FIELD[lead.form] : undefined;
   const byForm = field ? usable(config?.[field]) : null;
@@ -94,6 +100,8 @@ export function hasAnyDefault(config: CrmRouting | null | undefined): boolean {
 
 export interface ObservacionInput {
   form?: string | null;
+  /** The partner that sent it, when it did not come from the site. */
+  integration?: { name?: string | null } | null;
   message?: string | null;
   interestCity?: string | null;
   residenceCity?: string | null;
@@ -116,12 +124,14 @@ const FORM_NAMES: Record<string, string> = {
   exterior: "compra desde el exterior",
   lanzamiento: "lanzamiento",
   whatsapp: "WhatsApp",
+  externo: "integración externa",
   manual: "manual",
 };
 
 const VIA_NAMES: Record<SincoTarget["via"], string> = {
   project: "proyecto de la ficha",
   launch: "proyecto de Sinco del lanzamiento",
+  integration: "proyecto de Sinco de la integración",
   form: "proyecto por defecto del formulario",
   default: "proyecto por defecto general",
 };
@@ -150,6 +160,7 @@ export function buildObservacion(
     .join(" · ");
 
   const facts = [
+    lead.integration?.name && `Origen: ${lead.integration.name}`,
     lead.interestCity && `Ciudad de interés: ${lead.interestCity}`,
     lead.residenceCity && `Reside en: ${lead.residenceCity}`,
     lead.residenceCountry && `País: ${lead.residenceCountry}`,

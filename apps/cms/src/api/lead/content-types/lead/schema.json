@@ -72,6 +72,16 @@
       "relation": "manyToOne",
       "target": "api::launch.launch"
     },
+    "integration": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lead-integration.lead-integration",
+      "description": "The partner that sent it through POST /api/leads/external/<slug>; empty for the site's own forms"
+    },
+    "externalId": {
+      "type": "string",
+      "description": "The partner's own id for the lead. A second delivery with the same one is answered with the lead already stored"
+    },
     "source": {
       "type": "string"
     },
@@ -85,6 +95,7 @@
         "exterior",
         "lanzamiento",
         "whatsapp",
+        "externo",
         "manual"
       ],
       "required": true,

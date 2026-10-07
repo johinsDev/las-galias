@@ -1,0 +1,24 @@
+---
+import LegalDocumentView from "@/components/LegalDocumentView.astro";
+import Base from "@/layouts/Base.astro";
+import { getLegalDocuments } from "@/lib/strapi";
+import { TIPS_PARA_COMPRAR } from "@/lib/tips-para-comprar";
+
+/**
+ * «Tips para comprar» at the address it has on galias.com.co, which is the one
+ * the SIC ruling and years of links point at. The text is the CMS's legal
+ * document with this slug when an editor has published one, and the copy
+ * shipped with the code until then (`getLegalDocuments`).
+ */
+const doc =
+  (await getLegalDocuments()).find((other) => other.slug === TIPS_PARA_COMPRAR.slug) ??
+  TIPS_PARA_COMPRAR;
+---
+
+<Base
+  title={doc.seo?.metaTitle ?? `${doc.title} — Las Galias`}
+  description={doc.seo?.metaDescription ??
+    "Qué es vivienda VIS y VIP, cómo se compra en salarios mínimos y qué revisar antes de separar tu vivienda con Constructora Las Galias."}
+>
+  <LegalDocumentView doc={doc} standalone />
+</Base>

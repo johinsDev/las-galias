@@ -38,6 +38,9 @@ const ROUTE_REDIRECTS: AstroRedirects = {
   // the link to the projects. No `[slug]` rule: Astro requires a dynamic
   // destination for a dynamic source, and no macroproject page ever existed.
   "/macroproyectos": { destination: "/proyectos-de-vivienda", status: 301 },
+  // «Tips para comprar» has the address it has on galias.com.co; the first
+  // weeks it was published under /legales (lib/legal-links.ts).
+  "/legales/tips-para-comprar": { destination: "/tips-para-comprar", status: 301 },
 };
 
 async function fetchJson<T>(url: string): Promise<T> {

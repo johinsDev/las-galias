@@ -2,6 +2,7 @@
 import ChipScroller from "@/components/ChipScroller.astro";
 import Base from "@/layouts/Base.astro";
 import { formatCalendarDate } from "@/lib/dates";
+import { legalDocumentHref } from "@/lib/legal-links";
 import { getLegalDocuments } from "@/lib/strapi";
 
 const documents = await getLegalDocuments();
@@ -24,7 +25,10 @@ const documents = await getLegalDocuments();
             class="mt-5"
             ariaLabel="Documentos legales"
             storageKey="legales"
-            chips={documents.map((doc) => ({ href: `/legales/${doc.slug}`, label: doc.title }))}
+            chips={documents.map((doc) => ({
+              href: legalDocumentHref(doc.slug),
+              label: doc.title,
+            }))}
           />
         )
       }
@@ -51,7 +55,7 @@ const documents = await getLegalDocuments();
             {documents.map((doc) => (
               <li>
                 <a
-                  href={`/legales/${doc.slug}`}
+                  href={legalDocumentHref(doc.slug)}
                   class="border-mist hover:border-brand group flex h-full flex-col rounded-[16px] border-[1.43px] bg-white p-6 transition-colors"
                   data-reveal
                 >

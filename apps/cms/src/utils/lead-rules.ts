@@ -69,6 +69,12 @@ interface LeadDoc {
     name?: string;
     sincoProject?: { sincoId?: string; macroSincoId?: string } | null;
   } | null;
+  /** The partner that sent it (api/leads/external); empty for the site's forms. */
+  integration?: {
+    name?: string;
+    sendToCrm?: boolean | null;
+    sincoProject?: { sincoId?: string; macroSincoId?: string } | null;
+  } | null;
 }
 
 /** «Configuración · CRM», with the catalog rows it points at. `null` until someone saves it. */
@@ -121,6 +127,7 @@ async function loadLead(strapi: Core.Strapi, documentId: string): Promise<LeadDo
     populate: {
       project: { populate: ["sincoProject"] },
       launch: { populate: ["sincoProject"] },
+      integration: { populate: ["sincoProject"] },
     },
   })) as LeadDoc | null;
 }
@@ -145,6 +152,17 @@ async function pushLeadToCrm(
   const provider = getLeadProvider();
   const doc = await loadLead(strapi, documentId);
   if (!doc) return null;
+
+  // An integration switched off from Sinco keeps its leads in Strapi only.
+  // Decided here and not when the lead is stored, so «Reenviar al CRM» and the
+  // retry cron obey the switch too — and flipping it back on lets them through.
+  if (doc.integration && doc.integration.sendToCrm === false) {
+    await strapi.documents(LEAD_UID).update({
+      documentId,
+      data: { crmStatus: "skipped", crmLastError: CLEAR },
+    });
+    return "skipped";
+  }
 
   const config = routing === undefined ? await loadCrmRouting(strapi) : routing;
   const target = resolveSincoTarget(doc, config);
@@ -387,6 +405,27 @@ export function requeueLaunchLeads(strapi: Core.Strapi, launchDocumentId: string
   );
 }
 
+/**
+ * The leads of an integration that was just saved. Unrouted ones always: its
+ * Sinco project may be what they were waiting for. Failed ones only when that
+ * project changed, and skipped ones only when the integration sends to the
+ * CRM — the ones stored while it was switched off.
+ */
+export function requeueIntegrationLeads(
+  strapi: Core.Strapi,
+  integrationDocumentId: string,
+  options: { sincoEntryChanged: boolean; sendsToCrm: boolean },
+): void {
+  const statuses: CrmStatus[] = ["unrouted"];
+  if (options.sincoEntryChanged) statuses.push("failed");
+  if (options.sendsToCrm) statuses.push("skipped");
+  scheduleRequeue(
+    strapi,
+    { integration: { documentId: integrationDocumentId }, crmStatus: { $in: statuses } },
+    `integration ${integrationDocumentId} was saved`,
+  );
+}
+
 /** Everything waiting on a default: for when «Configuración · CRM» is saved. */
 export function requeueUnroutedLeads(strapi: Core.Strapi): void {
   scheduleRequeue(
@@ -482,6 +521,7 @@ async function notifyCrmProblem(
     `Formulario: ${doc.form ?? "manual"}`,
     doc.project?.name ? `Proyecto: ${doc.project.name}` : null,
     doc.launch?.name ? `Lanzamiento: ${doc.launch.name}` : null,
+    doc.integration?.name ? `Integración: ${doc.integration.name}` : null,
     "",
     `Motivo: ${doc.crmLastError ?? ""}`,
     adminUrl ? `\nVerlo en el admin: ${adminUrl}` : null,

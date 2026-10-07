@@ -1,0 +1,87 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lead_integrations",
+  "info": {
+    "singularName": "lead-integration",
+    "pluralName": "lead-integrations",
+    "displayName": "Integración de leads",
+    "description": "A partner (a portal such as Zonario) allowed to send leads to POST /api/leads/external/<slug>: its key, its brakes, and whether its leads go on to Sinco. Never public; Super Admin only"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "sectionAccess": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "apiKey": {
+      "type": "string",
+      "private": true,
+      "description": "Generated on create; clearing it and saving issues a new one"
+    },
+    "sectionProtection": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "allowedOrigins": {
+      "type": "text",
+      "description": "One origin per line. Checked against the Origin header when the request carries one"
+    },
+    "allowedIps": {
+      "type": "text",
+      "description": "One address per line; empty accepts any"
+    },
+    "ratePerMinute": {
+      "type": "integer",
+      "default": 60,
+      "min": 1,
+      "required": true
+    },
+    "dailyCap": {
+      "type": "integer",
+      "default": 2000,
+      "min": 0,
+      "required": true,
+      "description": "0 means no cap"
+    },
+    "sectionCrm": {
+      "type": "string",
+      "customField": "global::section",
+      "private": true
+    },
+    "sendToCrm": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "sincoProject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sinco-project.sinco-project",
+      "description": "Where its leads go when they name no project of the site"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "lastLeadAt": {
+      "type": "datetime"
+    }
+  }
+}

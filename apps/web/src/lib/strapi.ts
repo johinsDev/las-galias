@@ -1,9 +1,11 @@
+import { FOOTER_DEFAULTS } from "@lasgalias/schemas";
 import type {
   CalculatorConfig,
   CustomerServicePage,
   ExchangeRate,
   Faq,
   FaqBotPublicConfig,
+  Footer,
   ForeignBuyerPage,
   HomeBanner,
   Launch,
@@ -367,6 +369,25 @@ function withBuiltInDocuments(docs: LegalDocument[]): LegalDocument[] {
   return docs.some((doc) => doc.slug === TIPS_PARA_COMPRAR.slug)
     ? docs
     : [...docs, TIPS_PARA_COMPRAR];
+}
+
+/**
+ * The footer's links («Footer» in the CMS). Memoised: every page draws it.
+ *
+ * Until the CMS has the single type — the deploy that adds it, or a database
+ * where nobody has opened it yet — the answer is a 404 and the footer is the
+ * list shipped with the code, which is also what the CMS seeds itself with.
+ */
+let footerPromise: Promise<Footer> | null = null;
+
+export async function getFooter(): Promise<Footer> {
+  footerPromise ??= strapiFetch<Footer>("footer", {
+    "populate[socialLinks]": "true",
+    "populate[companyLinks][populate][file]": "true",
+    "populate[documentLinks][populate][file]": "true",
+    "populate[legalLinks][populate][file]": "true",
+  }).then((footer) => footer ?? FOOTER_DEFAULTS);
+  return footerPromise;
 }
 
 /**

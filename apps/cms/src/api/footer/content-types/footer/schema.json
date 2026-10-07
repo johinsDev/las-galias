@@ -1,0 +1,47 @@
+{
+  "kind": "singleType",
+  "collectionName": "footers",
+  "info": {
+    "singularName": "footer",
+    "pluralName": "footers",
+    "displayName": "Footer",
+    "description": "The site footer's links: company, documents, the legal bar, social networks and contact. The projects column is not here — it is the cities of the published catalogue"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "description": {
+      "type": "text"
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.social-link"
+    },
+    "companyLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.footer-link"
+    },
+    "documentLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.footer-link"
+    },
+    "legalLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "page.footer-link"
+    },
+    "contactEmail": {
+      "type": "email"
+    },
+    "contactPhone": {
+      "type": "string"
+    },
+    "contactAddress": {
+      "type": "string"
+    }
+  }
+}

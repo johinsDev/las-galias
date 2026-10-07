@@ -755,6 +755,37 @@ export interface ApiFaqFaq extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFooterFooter extends Struct.SingleTypeSchema {
+  collectionName: "footers";
+  info: {
+    description: "The site footer's links: company, documents, the legal bar, social networks and contact. The projects column is not here \u2014 it is the cities of the published catalogue";
+    displayName: "Footer";
+    pluralName: "footers";
+    singularName: "footer";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    companyLinks: Schema.Attribute.Component<"page.footer-link", true>;
+    contactAddress: Schema.Attribute.String;
+    contactEmail: Schema.Attribute.Email;
+    contactPhone: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    documentLinks: Schema.Attribute.Component<"page.footer-link", true>;
+    legalLinks: Schema.Attribute.Component<"page.footer-link", true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::footer.footer"> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    socialLinks: Schema.Attribute.Component<"page.social-link", true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiForeignBuyerPageForeignBuyerPage extends Struct.SingleTypeSchema {
   collectionName: "foreign_buyer_page";
   info: {
@@ -988,6 +1019,73 @@ export interface ApiLeadFormConfigLeadFormConfig extends Struct.SingleTypeSchema
   };
 }
 
+export interface ApiLeadIntegrationLeadIntegration extends Struct.CollectionTypeSchema {
+  collectionName: "lead_integrations";
+  info: {
+    description: "A partner (a portal such as Zonario) allowed to send leads to POST /api/leads/external/<slug>: its key, its brakes, and whether its leads go on to Sinco. Never public; Super Admin only";
+    displayName: "Integraci\u00F3n de leads";
+    pluralName: "lead-integrations";
+    singularName: "lead-integration";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    allowedIps: Schema.Attribute.Text;
+    allowedOrigins: Schema.Attribute.Text;
+    apiKey: Schema.Attribute.String & Schema.Attribute.Private;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+    dailyCap: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<2000>;
+    enabled: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    lastLeadAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::lead-integration.lead-integration"
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    notes: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    ratePerMinute: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<60>;
+    sectionAccess: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionCrm: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sectionProtection: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.CustomField<"global::section">;
+    sendToCrm: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<true>;
+    sincoProject: Schema.Attribute.Relation<"manyToOne", "api::sinco-project.sinco-project">;
+    slug: Schema.Attribute.UID<"name"> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiLeadLead extends Struct.CollectionTypeSchema {
   collectionName: "leads";
   info: {
@@ -1016,13 +1114,25 @@ export interface ApiLeadLead extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<"pending">;
     crmVisitId: Schema.Attribute.String;
     email: Schema.Attribute.Email;
+    externalId: Schema.Attribute.String;
     firstHome: Schema.Attribute.Boolean;
     form: Schema.Attribute.Enumeration<
-      ["pdp", "listado", "lotes", "locales", "exterior", "lanzamiento", "whatsapp", "manual"]
+      [
+        "pdp",
+        "listado",
+        "lotes",
+        "locales",
+        "exterior",
+        "lanzamiento",
+        "whatsapp",
+        "externo",
+        "manual",
+      ]
     > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<"manual">;
     incomeRange: Schema.Attribute.String;
+    integration: Schema.Attribute.Relation<"manyToOne", "api::lead-integration.lead-integration">;
     interestCity: Schema.Attribute.String;
     launch: Schema.Attribute.Relation<"manyToOne", "api::launch.launch">;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -1846,12 +1956,14 @@ declare module "@strapi/strapi" {
       "api::faq-bot-config.faq-bot-config": ApiFaqBotConfigFaqBotConfig;
       "api::faq-bot-question.faq-bot-question": ApiFaqBotQuestionFaqBotQuestion;
       "api::faq.faq": ApiFaqFaq;
+      "api::footer.footer": ApiFooterFooter;
       "api::foreign-buyer-page.foreign-buyer-page": ApiForeignBuyerPageForeignBuyerPage;
       "api::home-banner.home-banner": ApiHomeBannerHomeBanner;
       "api::home-page.home-page": ApiHomePageHomePage;
       "api::job-run.job-run": ApiJobRunJobRun;
       "api::launch.launch": ApiLaunchLaunch;
       "api::lead-form-config.lead-form-config": ApiLeadFormConfigLeadFormConfig;
+      "api::lead-integration.lead-integration": ApiLeadIntegrationLeadIntegration;
       "api::lead.lead": ApiLeadLead;
       "api::legal-document.legal-document": ApiLegalDocumentLegalDocument;
       "api::newsletter-subscriber.newsletter-subscriber": ApiNewsletterSubscriberNewsletterSubscriber;

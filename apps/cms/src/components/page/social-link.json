@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_page_social_links",
+  "info": {
+    "displayName": "Red social",
+    "description": "Una red del pie de página. La red es una clave, no un archivo: el icono lo pone el sitio"
+  },
+  "attributes": {
+    "network": {
+      "type": "enumeration",
+      "enum": ["instagram", "facebook", "youtube", "tiktok", "linkedin"],
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

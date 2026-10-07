@@ -10,10 +10,13 @@ import {
   LAUNCH_UID,
   validateLaunchOnPublish,
 } from "./utils/launch-rules";
+import { ensureFooter, FOOTER_UID } from "./utils/footer";
+import { LEAD_INTEGRATION_UID, stampApiKey } from "./utils/lead-integration";
 import {
   CRM_CONFIG_UID,
   LEAD_UID,
   reclassifyLegacyUnrouted,
+  requeueIntegrationLeads,
   requeueLaunchLeads,
   requeueProjectLeads,
   requeueUnroutedLeads,
@@ -80,6 +83,8 @@ const DEPLOY_ON_UPDATE = new Set<string>([
   // whatever rate was current at the last build. USD and EUR prices were stale
   // by however long it had been since someone published something else.
   "api::exchange-rate.exchange-rate",
+  // Every page carries the footer.
+  FOOTER_UID,
 ]);
 
 export default {
@@ -168,6 +173,11 @@ export default {
         await stampPqr(strapi, params);
       }
 
+      // Before next(): the key has to be on the row the first time it is saved.
+      if (uid === LEAD_INTEGRATION_UID && (action === "create" || action === "update")) {
+        stampApiKey(action, params.data);
+      }
+
       // Read before next(): the data is the only place the new relation shows.
       const sincoEntryChanged =
         (uid === PROJECT_UID || uid === LAUNCH_UID) &&
@@ -221,6 +231,12 @@ export default {
       }
       if (uid === CRM_CONFIG_UID && (action === "create" || action === "update")) {
         requeueUnroutedLeads(strapi);
+      }
+      if (uid === LEAD_INTEGRATION_UID && action === "update" && params.documentId) {
+        requeueIntegrationLeads(strapi, params.documentId, {
+          sincoEntryChanged: extractRelationIds(params.data?.sincoProject).length > 0,
+          sendsToCrm: params.data?.sendToCrm === true,
+        });
       }
 
       // Same shape as the lead push, same reason: the person filing a complaint
@@ -278,6 +294,7 @@ export default {
       "api::pqr-page.pqr-page.find",
       "api::customer-service-page.customer-service-page.find",
       "api::lead-form-config.lead-form-config.find",
+      "api::footer.footer.find",
     ];
     const actions = [
       ...reads,
@@ -309,6 +326,9 @@ export default {
     // El asistente arranca con su configuración lista para editar, en vez de
     // obligar a alguien a escribir cinco campos antes de poder encenderlo.
     await ensureConfig(strapi);
+
+    // The footer opens in the admin already holding the links the site shows.
+    await ensureFooter(strapi);
 
     // Field labels in Spanish. Idempotent and cheap: it only writes when a
     // label actually differs.

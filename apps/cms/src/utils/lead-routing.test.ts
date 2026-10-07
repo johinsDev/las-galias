@@ -24,6 +24,26 @@ describe("resolveSincoTarget", () => {
     assert.deepEqual(target, { sincoId: "40", macroSincoId: "4", via: "launch" });
   });
 
+  test("a partner's lead goes to its integration's project before any default", () => {
+    const target = resolveSincoTarget(
+      { form: "externo", integration: { sincoProject: catalog("50", "5") } },
+      { defaultProject: catalog("30", "3") },
+    );
+    assert.deepEqual(target, { sincoId: "50", macroSincoId: "5", via: "integration" });
+  });
+
+  test("a partner's lead that names a project of the site goes to that project", () => {
+    const target = resolveSincoTarget(
+      {
+        form: "externo",
+        project: { sincoProject: catalog("10", "1") },
+        integration: { sincoProject: catalog("50", "5") },
+      },
+      { defaultProject: catalog("30", "3") },
+    );
+    assert.deepEqual(target, { sincoId: "10", macroSincoId: "1", via: "project" });
+  });
+
   test("a launch without a Sinco project still reaches the general default", () => {
     const target = resolveSincoTarget(
       { form: "lanzamiento", launch: { sincoProject: null } },

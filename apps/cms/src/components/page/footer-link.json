@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_page_footer_links",
+  "info": {
+    "displayName": "Enlace del footer",
+    "description": "Un enlace del pie de página: a una ruta del sitio, a otra web o a un documento subido. Si hay archivo, gana sobre la URL"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string"
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["files", "images"]
+    },
+    "newTab": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -55,6 +55,11 @@ interface Props {
    * photo viewer, which starts hidden and should cost nothing until opened.
    */
   reveal?: boolean;
+  /**
+   * Milliseconds each slide stays before the rail moves on by itself. Home
+   * only; the photo viewer leaves it out and never moves on its own.
+   */
+  autoplay?: number;
 }
 
 const {
@@ -68,6 +73,7 @@ const {
   slideMax = "1600px",
   shelf = false,
   reveal = true,
+  autoplay,
 } = Astro.props;
 
 // The phone artwork, as a srcset for the <source> that swaps it in below `md`.
@@ -109,6 +115,7 @@ const leads = (index: number) => reveal && index % items.length === 0;
       data-banner-carousel
       data-banner-count={items.length}
       data-banner-loop={loops > 1 ? "true" : "false"}
+      data-banner-autoplay={autoplay && loops > 1 ? autoplay : undefined}
       data-reveal={reveal ? "" : undefined}
     >
       {/* The white the slide hangs onto. Behind everything, hence z-0. */}
@@ -548,6 +555,71 @@ const leads = (index: number) => reveal && index % items.length === 0;
         paintScale();
         paintDots();
       });
+
+      /**
+       * Autoplay: the next banner every few seconds, as long as nobody is
+       * using the rail. It waits while the pointer or the focus is on it, a
+       * finger is down, the tab is hidden or the rail is off screen, and any
+       * scroll — the visitor's or its own — restarts the count, so a banner
+       * someone just chose gets its full turn. Not at all under reduced
+       * motion: there the slides only move when asked.
+       */
+      const every = Number(root.dataset.bannerAutoplay) || 0;
+      if (every > 0 && looping && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        let hovered = false;
+        let focused = false;
+        let onScreen = true;
+
+        const advance = () => {
+          // The rail has been at rest for the whole wait, so rewinding to the
+          // middle copy here is invisible — and it is the only rewind a touch
+          // device gets between two touches (see scheduleRecentre).
+          if (settled()) {
+            recentre();
+            goTo(currentIndex() + 1);
+          }
+          arm();
+        };
+        const arm = () => {
+          clearTimeout(timer);
+          if (hovered || focused || touching || !onScreen || document.hidden) return;
+          timer = setTimeout(advance, every);
+        };
+
+        root.addEventListener("pointerenter", (event) => {
+          // A tap also fires pointerenter and never a matching leave.
+          if (event.pointerType !== "mouse") return;
+          hovered = true;
+          arm();
+        });
+        root.addEventListener("pointerleave", () => {
+          hovered = false;
+          arm();
+        });
+        root.addEventListener("focusin", () => {
+          focused = root.matches(":has(:focus-visible)");
+          arm();
+        });
+        root.addEventListener("focusout", () => {
+          focused = false;
+          arm();
+        });
+        root.addEventListener("touchstart", arm, { passive: true });
+        root.addEventListener("touchend", arm, { passive: true });
+        root.addEventListener("touchcancel", arm, { passive: true });
+        rail.addEventListener("scroll", arm, { passive: true });
+        document.addEventListener("visibilitychange", arm);
+        new IntersectionObserver(
+          ([entry]) => {
+            onScreen = entry?.isIntersecting ?? true;
+            arm();
+          },
+          { threshold: 0.5 },
+        ).observe(rail);
+
+        arm();
+      }
 
       // Jump or glide to a slide from outside — the photo viewer opens on the
       // photo that was clicked. Aimed at the middle copy so both neighbours show.

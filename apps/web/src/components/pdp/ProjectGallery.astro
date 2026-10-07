@@ -23,6 +23,10 @@ const photos = [hero, ...(project.gallery ?? [])].filter(
 );
 // The mosaic shows the hero plus the next two; every photo opens the viewer.
 const secondary = photos.slice(1, 3);
+// What the mosaic leaves out, said on its last tile the way a marketplace
+// listing does ("+7"): the phone shows one photo, the desktop up to three.
+const hiddenOnDesktop = photos.length - 1 - secondary.length;
+const hiddenOnMobile = photos.length - 1;
 const hasLocation = Boolean(
   (project.location?.lat && project.location?.lng) || project.location?.address,
 );
@@ -99,6 +103,14 @@ const desktopHero =
                   class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 />
               </picture>
+              {hiddenOnMobile > 0 && (
+                <span
+                  class="absolute right-3 bottom-3 rounded-full bg-black/60 px-3 py-1.5 text-[13px] leading-none font-bold text-white md:hidden"
+                  aria-hidden="true"
+                >
+                  +{hiddenOnMobile} fotos
+                </span>
+              )}
             </button>
             {/* The two side images are desktop-only: the design's phone shows a
                 single photograph, and stacking three of them would push the whole
@@ -109,8 +121,12 @@ const desktopHero =
                   <button
                     type="button"
                     data-lightbox-open={i + 1}
-                    aria-label={`Ver la foto ${i + 2} de ${project.name}`}
-                    class="group bg-cloud min-h-0 cursor-zoom-in overflow-hidden rounded-[48px]"
+                    aria-label={
+                      hiddenOnDesktop > 0 && i === secondary.length - 1
+                        ? `Ver las ${hiddenOnDesktop} fotos más de ${project.name}`
+                        : `Ver la foto ${i + 2} de ${project.name}`
+                    }
+                    class="group bg-cloud relative min-h-0 cursor-zoom-in overflow-hidden rounded-[48px]"
                   >
                     <CmsImage
                       src={img.url}
@@ -121,6 +137,14 @@ const desktopHero =
                       sizes="(min-width: 1564px) 481px, (min-width: 768px) 31vw, 100vw"
                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     />
+                    {hiddenOnDesktop > 0 && i === secondary.length - 1 && (
+                      <span
+                        class="absolute inset-0 flex items-center justify-center bg-black/55 text-4xl font-extrabold text-white transition-colors duration-300 group-hover:bg-black/45"
+                        aria-hidden="true"
+                      >
+                        +{hiddenOnDesktop}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
