@@ -146,8 +146,16 @@ const leads = (index: number) => reveal && index % items.length === 0;
                     class="h-full w-full object-cover"
                   />
                 </picture>
+                {/* The phone artwork comes with its own button drawn in, so
+                    ours would sit on top of it; a slide without a phone piece
+                    keeps the button at every width. */}
                 {slide.cta && (
-                  <span class="btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl">
+                  <span
+                    class:list={[
+                      "btn btn-primary absolute bottom-[8%] left-1/2 -translate-x-1/2 px-8 py-4 text-base font-extrabold tracking-wide uppercase md:px-12 md:py-5 md:text-2xl",
+                      mobileSet && "max-md:hidden",
+                    ]}
+                  >
                     {slide.cta}
                   </span>
                 )}

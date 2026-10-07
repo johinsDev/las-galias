@@ -99,10 +99,11 @@ const searchableProjects = (await getProjects()).map((project) => ({
           >
             <Logo variant="light" height={30} class="group-data-[nav-open=true]/header:hidden" />
             {/* On a white bar the white artwork would vanish, so the open menu
-            shows the same wordmark in brand red. */}
+            shows the two-tone logo: red wordmark, "CONSTRUCTORA" in black. */}
             <Logo
-              variant="brand"
+              variant="dark"
               height={30}
+              loading="lazy"
               class="hidden group-data-[nav-open=true]/header:block"
             />
           </a>

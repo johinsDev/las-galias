@@ -3,21 +3,17 @@
  * The corporate logo.
  *
  * Two files rather than one tinted with `currentColor`: the real artwork is
- * two-tone (dark wordmark + red rule) on light backgrounds and solid white on
- * the red footer, so a single-colour version would lose the red rule. Both come
- * from galias.com.co — the Figma file has exporting disabled.
+ * two-tone (red wordmark and rule, "CONSTRUCTORA" in near-black) on light
+ * backgrounds and solid white on the red bands, so a single-colour version
+ * would lose the second tone. Both come from galias.com.co — the Figma file
+ * has exporting disabled.
  *
  * Rendered as <img> on purpose: each SVG carries its own `.st0`/`.st1` classes
  * in an internal <style>, which would collide if both were inlined on one page.
  */
 interface Props {
-  /**
-   * `dark` for light backgrounds, `light` for the red bands, `brand` for the
-   * wordmark in brand red — the open mobile menu turns the bar white, where
-   * the white artwork would disappear and the two-tone one reads as a
-   * different logo.
-   */
-  variant?: "dark" | "light" | "brand";
+  /** `dark` for light backgrounds, `light` for the red bands. */
+  variant?: "dark" | "light";
   /**
    * Rendered height in px, and width follows. Both files are cropped to the
    * artwork (147.96×33.8): the originals carried a fifth of the box as empty
@@ -26,10 +22,18 @@ interface Props {
   height?: number;
   /** Height from `xl` up, where the header bar grows. Defaults to `height`. */
   heightXl?: number;
+  /** `lazy` for a logo that starts hidden, so it is not fetched until shown. */
+  loading?: "eager" | "lazy";
   class?: string;
 }
 
-const { variant = "dark", height = 17, heightXl = height, class: className } = Astro.props;
+const {
+  variant = "dark",
+  height = 17,
+  heightXl = height,
+  loading = "eager",
+  class: className,
+} = Astro.props;
 
 const ASPECT = 147.96 / 33.8;
 // Heights travel as custom properties so the breakpoint stays in a class: an
@@ -38,29 +42,13 @@ const size = `--logo-h:${height}px;--logo-h-xl:${heightXl}px`;
 const SIZE = "h-(--logo-h) xl:h-(--logo-h-xl)";
 ---
 
-{
-  /* Recoloured with a mask rather than a third file: the white artwork is a
-     single tone, so its alpha is exactly the wordmark's shape. A filter could
-     not hit an arbitrary brand colour, and an <img> cannot be tinted at all. */
-}
-{
-  variant === "brand" ? (
-    <span
-      role="img"
-      aria-label="Las Galias Constructora"
-      class:list={["block", SIZE, className]}
-      style={`${size};aspect-ratio:${ASPECT.toFixed(4)};background-color:var(--brand);-webkit-mask:url(/logo-white.svg) no-repeat center/contain;mask:url(/logo-white.svg) no-repeat center/contain`}
-    />
-  ) : (
-    <img
-      src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
-      alt="Las Galias Constructora"
-      width={Math.round(heightXl * ASPECT)}
-      height={heightXl}
-      class:list={["w-auto", SIZE, className]}
-      style={size}
-      loading="eager"
-      decoding="async"
-    />
-  )
-}
+<img
+  src={variant === "light" ? "/logo-white.svg" : "/logo.svg"}
+  alt="Las Galias Constructora"
+  width={Math.round(heightXl * ASPECT)}
+  height={heightXl}
+  class:list={["w-auto", SIZE, className]}
+  style={size}
+  loading={loading}
+  decoding="async"
+/>
