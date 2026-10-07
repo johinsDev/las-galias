@@ -7,6 +7,7 @@ import AmenityIcon from "@/components/AmenityIcon.astro";
 import Blocks from "@/components/Blocks.astro";
 import TourFacade from "@/components/pdp/TourFacade.astro";
 import VideoFacade from "@/components/pdp/VideoFacade.astro";
+import { videoEmbedUrl } from "@/lib/video-embed";
 import TypologySimulator, { type TypologyOption } from "@/islands/TypologySimulator";
 import { mediaUrl } from "@/lib/strapi";
 import type { QuoteTerms } from "@/lib/mortgage";
@@ -91,9 +92,14 @@ const typologies: TypologyOption[] = await Promise.all(
 );
 
 // Newest month first; the label is what the editor typed, the date only sorts.
-const progress = [...(project.constructionProgress ?? [])].sort((a, b) =>
-  (b.date ?? "").localeCompare(a.date ?? ""),
-);
+// The video is whatever link the editor pasted, so it goes through
+// `videoEmbedUrl`; a month whose link cannot be played gets no tab.
+const progress = [...(project.constructionProgress ?? [])]
+  .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
+  .flatMap((entry) => {
+    const video = videoEmbedUrl(entry.video);
+    return video ? [{ ...entry, video }] : [];
+  });
 const videoPoster = project.heroDesktop?.url ?? project.heroMobile?.url ?? null;
 
 const amenities = project.amenities ?? [];
