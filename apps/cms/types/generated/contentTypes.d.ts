@@ -1220,7 +1220,8 @@ export interface ApiLegalDocumentLegalDocument extends Struct.CollectionTypeSche
     draftAndPublish: true;
   };
   attributes: {
-    body: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    body: Schema.Attribute.Blocks;
+    bodyMarkdown: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> & Schema.Attribute.Private;
     effectiveDate: Schema.Attribute.Date & Schema.Attribute.Required;

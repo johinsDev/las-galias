@@ -38,9 +38,11 @@
       "type": "date",
       "required": true
     },
+    "bodyMarkdown": {
+      "type": "richtext"
+    },
     "body": {
-      "type": "blocks",
-      "required": true
+      "type": "blocks"
     },
     "sectionSeo": {
       "type": "string",

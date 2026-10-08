@@ -267,6 +267,14 @@ Website for the Las Galias construction company. Turborepo + bun workspaces.
   `ROUTE_REDIRECTS` 301s the old `/legales/<slug>`. Its text is still the legal
   document with that slug — the CMS's when published, else
   `lib/tips-para-comprar.ts`.
+- A legal document's text lives in one of two fields. `bodyMarkdown`
+  (Strapi `richtext`, i.e. plain markdown) is the one to paste a converted
+  PDF/Word into and the only one that holds tables; when it has text it is
+  what the site publishes (`lib/markdown.ts` → `Markdown.astro`, build time,
+  `node --test apps/web/src/lib/markdown.test.ts`). `body` (blocks) is the
+  fallback: that editor keeps nothing of a pasted document and has no tables.
+  Neither is `required` in the schema, so the "cannot publish empty" check is
+  a publish rule (`utils/legal-rules.ts`).
 - A partner (a portal such as Zonario) delivers leads to
   `POST /api/leads/external/<slug>`; each one is a row of `lead-integration`
   («Integración de leads», Super Admin only, never public): its API key

@@ -11,6 +11,7 @@ import {
   validateLaunchOnPublish,
 } from "./utils/launch-rules";
 import { ensureFooter, FOOTER_UID } from "./utils/footer";
+import { LEGAL_DOCUMENT_UID, validateLegalDocumentOnPublish } from "./utils/legal-rules";
 import {
   LEAD_INTEGRATION_UID,
   pruneIntegrationRequests,
@@ -203,6 +204,10 @@ export default {
         (uid === PROJECT_UID || uid === LAUNCH_UID) &&
         action === "update" &&
         extractRelationIds(params.data?.sincoProject).length > 0;
+
+      if (uid === LEGAL_DOCUMENT_UID && action === "publish") {
+        await validateLegalDocumentOnPublish(strapi, params);
+      }
 
       if (uid === LAUNCH_UID) {
         if (action === "publish") await validateLaunchOnPublish(strapi, params);

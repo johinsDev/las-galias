@@ -1,0 +1,117 @@
+---
+/**
+ * The HTML of a legal document written in markdown (`lib/markdown.ts`), in
+ * the same frame Blocks.astro's `legal` variant draws (Figma 2742:8381) plus
+ * what blocks cannot hold: tables, bold, links and a fourth heading level.
+ *
+ * The HTML comes from `set:html`, so it carries no scoped attribute and the
+ * rules reach it through `:global()` under the wrapper.
+ */
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+---
+
+<div class="legal-markdown text-iron text-[14.5px] leading-[25.38px]" set:html={html} />
+
+<style>
+  .legal-markdown :global(> :first-child) {
+    margin-top: 0;
+  }
+  .legal-markdown :global(h2) {
+    margin-top: 2rem;
+    scroll-margin-top: 7rem;
+    color: var(--graphite);
+    font-size: 1.25rem;
+    line-height: 1.5rem;
+    font-weight: 800;
+  }
+  .legal-markdown :global(h3) {
+    margin-top: 1.5rem;
+    color: var(--graphite);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 700;
+  }
+  .legal-markdown :global(h4) {
+    margin-top: 1.25rem;
+    color: var(--graphite);
+    font-size: 14.5px;
+    font-weight: 700;
+  }
+  .legal-markdown :global(p),
+  .legal-markdown :global(ul),
+  .legal-markdown :global(ol),
+  .legal-markdown :global(blockquote) {
+    margin-top: 0.625rem;
+  }
+  .legal-markdown :global(h4 + p) {
+    margin-top: 0.25rem;
+  }
+  .legal-markdown :global(ul),
+  .legal-markdown :global(ol) {
+    padding-left: 1.5rem;
+  }
+  .legal-markdown :global(ul) {
+    list-style: disc;
+  }
+  .legal-markdown :global(ol) {
+    list-style: decimal;
+  }
+  .legal-markdown :global(li + li) {
+    margin-top: 0.25rem;
+  }
+  .legal-markdown :global(strong) {
+    color: var(--graphite);
+    font-weight: 700;
+  }
+  .legal-markdown :global(a) {
+    color: var(--brand);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .legal-markdown :global(blockquote) {
+    border-left: 3px solid var(--cloud);
+    padding-left: 1rem;
+  }
+  .legal-markdown :global(hr) {
+    margin-top: 2rem;
+    border-color: var(--cloud);
+  }
+
+  .legal-markdown :global([data-table-scroll]) {
+    margin-top: 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--cloud);
+    border-radius: 8px;
+  }
+  .legal-markdown :global([data-table-scroll] + *) {
+    margin-top: 1.25rem;
+  }
+  .legal-markdown :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    line-height: 20px;
+  }
+  .legal-markdown :global(th),
+  .legal-markdown :global(td) {
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .legal-markdown :global(th) {
+    background: var(--fog);
+    color: var(--graphite);
+    font-weight: 700;
+  }
+  .legal-markdown :global(tbody tr) {
+    border-top: 1px solid var(--cloud);
+  }
+  /* Figures stay on one line (lib/markdown.ts marks them); sentences wrap. */
+  .legal-markdown :global(td[data-short]) {
+    white-space: nowrap;
+  }
+</style>

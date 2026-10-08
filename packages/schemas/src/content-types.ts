@@ -369,8 +369,9 @@ export interface ExchangeRate {
 
 /**
  * A published legal document (terms, privacy policy, the sale cartillas).
- * `body` is Strapi "blocks"; its level-2 headings become the side index on
- * /legales/[slug].
+ * The text is `bodyMarkdown` when the editor filled it — the only one that
+ * can hold tables — and Strapi "blocks" in `body` otherwise. Either way its
+ * level-2 headings become the side index on /legales/[slug].
  */
 export interface LegalDocument {
   documentId: string;
@@ -380,6 +381,7 @@ export interface LegalDocument {
   /** Shown as "Última actualización" at the top of the document. */
   effectiveDate: string;
   body?: unknown;
+  bodyMarkdown?: string | null;
   seo?: Seo | null;
   publishedAt?: string;
 }

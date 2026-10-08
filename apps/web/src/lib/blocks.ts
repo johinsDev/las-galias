@@ -39,24 +39,34 @@ export interface Heading {
 }
 
 /**
- * The level-2 headings of a blocks field, in order — the table of contents the
- * legal pages render beside the text and track while scrolling.
+ * Hands out the anchor ids of one document, in reading order.
  *
  * Duplicated titles get a numeric suffix: two clauses both called
  * "Vigencia" would otherwise share an anchor and the index would jump to the
  * first one from both entries.
  */
+export function createHeadingIds(): (text: string) => string {
+  const seen = new Map<string, number>();
+  return (text) => {
+    const base = headingId(text);
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    return count === 0 ? base : `${base}-${count + 1}`;
+  };
+}
+
+/**
+ * The level-2 headings of a blocks field, in order — the table of contents the
+ * legal pages render beside the text and track while scrolling.
+ */
 export function extractHeadings(content: unknown): Heading[] {
   const blocks: BlockNode[] = Array.isArray(content) ? (content as BlockNode[]) : [];
-  const seen = new Map<string, number>();
+  const nextId = createHeadingIds();
 
   return blocks
     .filter((block) => block.type === "heading" && (block.level ?? 2) <= 2)
     .map((block) => {
       const text = textOf(block.children);
-      const base = headingId(text);
-      const count = seen.get(base) ?? 0;
-      seen.set(base, count + 1);
-      return { id: count === 0 ? base : `${base}-${count + 1}`, text };
+      return { id: nextId(text), text };
     });
 }

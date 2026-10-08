@@ -3,9 +3,11 @@ import type { LegalDocument } from "@lasgalias/schemas";
 
 import Blocks from "@/components/Blocks.astro";
 import ChipScroller from "@/components/ChipScroller.astro";
+import Markdown from "@/components/Markdown.astro";
 import { extractHeadings } from "@/lib/blocks";
 import { formatCalendarDate } from "@/lib/dates";
 import { legalDocumentHref } from "@/lib/legal-links";
+import { renderMarkdown } from "@/lib/markdown";
 
 /**
  * One legal document: the chip bar, the side index with its scroll-spy and the
@@ -21,7 +23,10 @@ interface Props {
 }
 
 const { doc, documents = [], standalone = false } = Astro.props;
-const headings = extractHeadings(doc.body);
+// The markdown text wins when the editor filled it: it is the only one of the
+// two that can hold a table.
+const markdown = doc.bodyMarkdown?.trim() ? renderMarkdown(doc.bodyMarkdown) : null;
+const headings = markdown ? markdown.headings : extractHeadings(doc.body);
 
 const updated = formatCalendarDate(doc.effectiveDate);
 ---
@@ -96,7 +101,13 @@ const updated = formatCalendarDate(doc.effectiveDate);
       <article class="min-w-0 lg:max-w-[885px]">
         <p class="text-steel text-[13px] leading-[20.8px]">Última actualización: {updated}</p>
         <div class="mt-7">
-          <Blocks content={doc.body} variant="legal" />
+          {
+            markdown ? (
+              <Markdown html={markdown.html} />
+            ) : (
+              <Blocks content={doc.body} variant="legal" />
+            )
+          }
         </div>
       </article>
     </div>

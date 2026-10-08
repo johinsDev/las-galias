@@ -688,9 +688,15 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       label: "Última actualización",
       description: "La fecha que se muestra al inicio del documento.",
     },
+    bodyMarkdown: {
+      label: "Texto del documento (markdown)",
+      description:
+        "Pega aquí el documento en markdown: conserva tablas, títulos, negritas y enlaces. Los títulos ## arman el índice lateral. Si tiene texto, es el que se publica.",
+    },
     body: {
-      label: "Texto del documento",
-      description: "Los títulos de nivel 2 arman el índice lateral automáticamente.",
+      label: "Texto del documento (editor)",
+      description:
+        "Solo se publica si el campo de markdown está vacío. No admite tablas; los títulos de nivel 2 arman el índice lateral.",
     },
     sectionSeo: { label: "SEO" },
     seo: { label: "SEO" },

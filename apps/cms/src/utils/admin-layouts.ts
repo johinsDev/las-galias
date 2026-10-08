@@ -281,6 +281,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["slug"],
     ["sectionContent"],
     ["effectiveDate:4"],
+    ["bodyMarkdown"],
     ["body"],
     ["sectionSeo"],
     ["seo"],

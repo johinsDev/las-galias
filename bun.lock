@@ -66,6 +66,7 @@
         "@lasgalias/ui": "workspace:*",
         "astro": "^7.0.5",
         "lucide-astro": "^0.556.0",
+        "marked": "^18.1.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "valibot": "^1.1.0",
@@ -2608,6 +2609,8 @@
     "markdown-it-sub": ["markdown-it-sub@1.0.0", "", {}, "sha512-z2Rm/LzEE1wzwTSDrI+FlPEveAAbgdAdPhdWarq/ZGJrGW/uCQbKAnhoCsE4hAbc3SEym26+W2z/VQB0cQiA9Q=="],
 
     "markdown-it-sup": ["markdown-it-sup@1.0.0", "", {}, "sha512-E32m0nV9iyhRR7CrhnzL5msqic7rL1juWre6TQNxsnApg7Uf+F97JOKxUijg5YwXz86lZ0mqfOnutoryyNdntQ=="],
+
+    "marked": ["marked@18.1.0", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-PamYXWWWg2nboG3oX5Ffzpy3EFZROqZJK9hSlMmUnekp7TxPs5DcT95vwd46m73/exfKCRVMtgXoPMI4FEJL6w=="],
 
     "match-sorter": ["match-sorter@6.4.0", "", { "dependencies": { "@babel/runtime": "^7.23.8", "remove-accents": "0.5.0" } }, "sha512-d4664ahzdL1QTTvmK1iI0JsrxWeJ6gn33qkYtnPg3mcn+naBLtXSgSPOe+X2vUgtgGwaAk3eiaj7gwKjjMAq+Q=="],
 
