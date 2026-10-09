@@ -88,11 +88,12 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
     class:list={[
       "container-bleed grid gap-10 py-16",
       // Campaign mode keeps the brand block and, when published, the documents.
+      // On a phone Proyectos and Empresa share a row; the rest spans both columns.
       !minimal &&
-        "campana:lg:grid-cols-[1.3fr_1.4fr]! md:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1.4fr_1fr]",
+        "campana:lg:grid-cols-[1.3fr_1.4fr]! grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.8fr_1.4fr_1fr]",
     ]}
   >
-    <div>
+    <div class:list={[!minimal && "max-md:col-span-2"]}>
       <Logo variant="light" height={16} />
       {
         footer.description && (
@@ -164,7 +165,7 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
           )}
 
           {documents.length > 0 && (
-            <nav aria-label="Documentos">
+            <nav aria-label="Documentos" class="max-md:col-span-2">
               <p class="eyebrow text-white">Documentos</p>
               <ul class="mt-5 space-y-3">
                 {documents.map((link) => (
@@ -183,7 +184,7 @@ const newTab = { target: "_blank", rel: "noopener noreferrer" };
           )}
 
           {hasContact && (
-            <div class="campana:hidden!">
+            <div class="campana:hidden! max-md:col-span-2">
               <p class="eyebrow text-white">Contacto</p>
               <ul class="mt-5 space-y-3">
                 {footer.contactEmail && (
