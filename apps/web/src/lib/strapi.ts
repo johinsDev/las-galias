@@ -294,6 +294,7 @@ export async function getProject(slug: string): Promise<Project | null> {
     "populate[salesRoom]": "true",
     "populate[constructionProgress]": "true",
     "populate[brochure]": "true",
+    "populate[tour360Poster]": "true",
   });
   return data?.[0] ?? null;
 }
