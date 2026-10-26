@@ -128,6 +128,11 @@ const CONTENT_TYPES: Record<string, FieldLabels> = {
       description:
         "Para recorridos que no se pueden incrustar, como los 360 de galias.com.co: la foto del apartamento modelo se vuelve un enlace que abre el recorrido aparte.",
     },
+    tour360Poster: {
+      label: "Portada del recorrido 360°",
+      description:
+        "La imagen que se ve antes de abrir el recorrido. Banner apaisado de 1080×420 (o más grande con esa forma), con el texto y las flechas del 360° ya puestos: otra forma se recorta. Vacía, sale el banner «Apto modelo» de siempre.",
+    },
     constructionProgress: { label: "Avance de obra", description: "Un video por mes." },
     specSheet: { label: "Ficha técnica" },
     financing: { label: "Financiación y fiducia" },

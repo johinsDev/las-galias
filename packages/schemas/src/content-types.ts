@@ -187,6 +187,7 @@ export interface Project {
   video?: string | null;
   tour360Url?: string | null;
   tour360External?: boolean | null;
+  tour360Poster?: Media | null;
   brochure?: Media | null;
   constructionProgress?: ConstructionProgress[];
   specSheet?: SpecSheet | null;

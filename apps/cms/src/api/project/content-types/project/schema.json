@@ -165,6 +165,12 @@
       "default": false,
       "description": "Open tour360Url in a new window instead of embedding it (the galias.com.co 360 pages do not embed)"
     },
+    "tour360Poster": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"],
+      "description": "Still shown before the 360° tour opens; without one the PDP uses the shared model-flat banner"
+    },
     "brochure": {
       "type": "media",
       "multiple": false,

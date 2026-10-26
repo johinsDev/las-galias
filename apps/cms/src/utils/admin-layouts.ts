@@ -54,7 +54,7 @@ const EDIT_LAYOUTS: Record<string, string[][]> = {
     ["heroDesktop", "heroMobile"],
     ["logo", "gallery"],
     ["video", "tour360Url"],
-    ["tour360External:6"],
+    ["tour360External:6", "tour360Poster:6"],
     ["brochure"],
     // La ficha del producto.
     ["sectionProduct"],
