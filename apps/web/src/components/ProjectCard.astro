@@ -200,15 +200,27 @@ const CHIP =
                every card flew across the screen on the way back. Compact cards
                ("Proyectos similares" on the project page) get no name either —
                they would morph into the listing's cards behind the hero. */
+            /* Each slide is a link of its own, so the photos open the project
+               like the rest of the card. One overlay over the rail would sit on
+               top of the scroller and swallow the swipe; links inside it scroll
+               with it. Out of the tab order and hidden from screen readers: the
+               body's overlay link already names the project. */
+            const Slide = isLot ? "div" : "a";
+            const link = isLot
+              ? {}
+              : { href: projectHref, tabindex: -1, "aria-hidden": "true" as const };
             return index === 0 && !compact && !isLot ? (
-              <div
-                class="vt-hero h-full w-full shrink-0 snap-center"
+              <Slide
+                {...link}
+                class="vt-hero block h-full w-full shrink-0 snap-center"
                 transition:name={`project-hero-${project.slug}`}
               >
                 {photo}
-              </div>
+              </Slide>
             ) : (
-              <div class="h-full w-full shrink-0 snap-center">{photo}</div>
+              <Slide {...link} class="block h-full w-full shrink-0 snap-center">
+                {photo}
+              </Slide>
             );
           })}
         </div>
@@ -375,11 +387,7 @@ const CHIP =
     compact ? (
       <div class="relative flex flex-1 flex-col p-3.5">
         {!isLot && (
-          <a
-            href={`/proyectos-de-vivienda/${project.slug}`}
-            class="absolute inset-0 z-0"
-            aria-label={`Ver ${project.name}`}
-          />
+          <a href={projectHref} class="absolute inset-0 z-0" aria-label={`Ver ${project.name}`} />
         )}
         <p class="text-steel flex items-center gap-1.5 text-xs leading-[18px] font-medium">
           <MapPin size={13} stroke-width={2} aria-hidden="true" class="shrink-0" />
@@ -424,11 +432,7 @@ const CHIP =
     ) : (
       <div class="relative flex flex-1 flex-col p-[18px]">
         {!isLot && (
-          <a
-            href={`/proyectos-de-vivienda/${project.slug}`}
-            class="absolute inset-0 z-0"
-            aria-label={`Ver ${project.name}`}
-          />
+          <a href={projectHref} class="absolute inset-0 z-0" aria-label={`Ver ${project.name}`} />
         )}
         <div class="flex flex-1 flex-col">
           <p class="text-caption text-ink-muted flex items-center gap-1.5">
