@@ -413,8 +413,11 @@
     background-color 0.2s,
     border-color 0.2s,
     color 0.2s;
+  /* Hover darkens the outline and tints the fill, so a chip reads as
+     clickable before it is pressed (a steel outline alone barely showed). */
   &:hover {
-    border-color: var(--steel);
+    border-color: var(--graphite);
+    background: var(--cloud);
   }
 }
 
@@ -424,6 +427,7 @@
   color: #fff;
   &:hover {
     border-color: var(--graphite);
+    background: var(--graphite);
   }
 }
 
