@@ -1,49 +1,58 @@
+import { downPaymentPlan, SUBSIDY_TIERS_SMMLV, subsidyInCOP } from "@/lib/simulators";
+
 /** Per-project financing terms, falling back to the global calculator-config. */
 export interface QuoteTerms {
-  /** Effective annual rate, in percent (e.g. 13.95). */
-  annualRatePct: number;
-  termYears: number;
   /** Down payment as a percentage of the price (e.g. 30). */
   downPaymentPct: number;
   /** Months to pay the down payment to the builder (e.g. 36). */
   builderInstallmentMonths: number;
+  /** This year's minimum wage, which prices the Mi Casa Ya subsidy. */
+  smmlvCOP: number;
 }
 
 export interface Quote {
   price: number;
   /** Down payment (cuota inicial). */
   downPayment: number;
-  /** Down payment split across the builder instalment months. */
-  builderMonthly: number;
   /** What the mortgage has to cover. */
   financed: number;
-  /** Estimated monthly mortgage payment. */
-  monthlyPayment: number;
+  /** The highest Mi Casa Ya subsidy, in pesos, and its tier in SMMLV. */
+  subsidy: number;
+  subsidyTier: number;
+  /** Builder instalment with that subsidy taken off the down payment: the "desde". */
+  monthlyWithSubsidy: number;
+  /** The same instalment for a household with no subsidy. */
+  monthlyWithoutSubsidy: number;
 }
 
 /**
- * The PDP breakdown: cuota inicial, cuota constructora and the estimated
- * mortgage payment for one price. Shared by the typology simulator and the
- * sticky sidebar so the two can never disagree.
- *
- * The rate is effective annual (E.A., how Colombian lenders quote it), so the
- * monthly rate is its twelfth root — not a division by 12.
+ * The PDP breakdown, centred on the down payment (Nov 2026 revision): the
+ * cuota inicial, what the credit covers and the builder instalment "desde",
+ * i.e. with the top Mi Casa Ya tier off the down payment. It is the same
+ * formula as the cuota inicial simulator (`downPaymentPlan`), so the PDP and
+ * /simuladores can never disagree.
  */
 export function quoteFor(price: number, terms: QuoteTerms): Quote {
-  const downPayment = price * (terms.downPaymentPct / 100);
-  const financed = price - downPayment;
+  const subsidyTier = Math.max(...SUBSIDY_TIERS_SMMLV);
+  const plan = (subsidy: number) =>
+    downPaymentPlan({
+      price,
+      downPct: terms.downPaymentPct,
+      subsidy,
+      months: terms.builderInstallmentMonths,
+      financingPct: 100 - terms.downPaymentPct,
+    });
+  const withSubsidy = plan(subsidyInCOP(subsidyTier, terms.smmlvCOP));
 
-  const months = Math.max(1, terms.builderInstallmentMonths);
-  const builderMonthly = downPayment / months;
-
-  const monthlyRate = Math.pow(1 + terms.annualRatePct / 100, 1 / 12) - 1;
-  const n = Math.max(1, terms.termYears * 12);
-  const monthlyPayment =
-    monthlyRate === 0
-      ? financed / n
-      : (financed * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -n));
-
-  return { price, downPayment, builderMonthly, financed, monthlyPayment };
+  return {
+    price,
+    downPayment: withSubsidy.downPayment,
+    financed: withSubsidy.financed,
+    subsidy: withSubsidy.subsidy,
+    subsidyTier,
+    monthlyWithSubsidy: withSubsidy.monthlySaving,
+    monthlyWithoutSubsidy: plan(0).monthlySaving,
+  };
 }
 
 /** Event the typology simulator broadcasts so the sticky sidebar can follow. */

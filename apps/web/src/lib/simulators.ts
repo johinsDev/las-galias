@@ -52,6 +52,9 @@ export function percentOf(part: number, whole: number): number {
  */
 export const SUBSIDY_TIERS_SMMLV = [0, 20, 30] as const;
 
+/** 2026 (Decreto 1469 de 2025): the fallback while `calculator-config` has none. */
+export const DEFAULT_SMMLV_COP = 1_750_905;
+
 export function subsidyInCOP(tier: number, smmlvCOP: number): number {
   return Math.max(0, tier) * Math.max(0, smmlvCOP);
 }

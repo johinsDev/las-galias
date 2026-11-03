@@ -1,3 +1,4 @@
+import { DEFAULT_SMMLV_COP } from "@/lib/simulators";
 import { getCalculatorConfig, getProjects } from "@/lib/strapi";
 
 /**
@@ -75,8 +76,7 @@ export async function getSimulatorSettings(): Promise<SimulatorSettings> {
     visFinancingPercent: calculator?.visFinancingPercent ?? 80,
     maxIncomeRatioPercent: calculator?.maxIncomeRatioPercent ?? 40,
     paymentIncomeRatioPercent: calculator?.paymentIncomeRatioPercent ?? 30,
-    // 2026 (Decreto 1469 de 2025).
-    smmlvCOP: calculator?.smmlvCOP ?? 1_750_905,
+    smmlvCOP: calculator?.smmlvCOP ?? DEFAULT_SMMLV_COP,
     startingPrice: prices.length > 0 ? Math.min(...prices) : 300_000_000,
   };
 }

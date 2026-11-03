@@ -33,7 +33,7 @@ interface TypologySimulatorProps {
 
 /**
  * "Planos por tipología": picking Tipo A/B/C swaps the floor plan and
- * recalculates the whole breakdown for that unit's price.
+ * recalculates the down payment breakdown for that unit's price.
  *
  * The breakdown used to be drawn twice — here and again in a sidebar card — the
  * duplication design comment #115 flagged. It now lives only here, beside the
@@ -167,32 +167,40 @@ export default function TypologySimulator({
             </p>
           </div>
 
-          {/* Hairlines between the rows, as the design draws them. */}
+          {/* Hairlines between the rows, as the design draws them. Centred on
+              the down payment since Nov 2026: the mortgage estimate is gone and
+              the subsidy comes off the cuota inicial, the way it is paid. */}
           <dl className="mt-3.5">
             <Row
-              label={`CI ${terms.downPaymentPct}% en ${terms.builderInstallmentMonths}m`}
+              label={`Cuota inicial ${terms.downPaymentPct}%`}
               value={formatMoney(quote.downPayment, "COP")}
-            />
-            <Row
-              label={`Cuota constructora (${terms.builderInstallmentMonths}m)`}
-              value={`≈ ${formatMoney(quote.builderMonthly, "COP")}/mes`}
             />
             <Row
               label={`A financiar (${100 - terms.downPaymentPct}%)`}
               value={formatMoney(quote.financed, "COP")}
             />
+            <Row
+              label={`Subsidio de vivienda (${quote.subsidyTier} SMMLV, si aplica*)`}
+              value={`− ${formatMoney(quote.subsidy, "COP")}`}
+            />
           </dl>
 
           <div className="bg-graphite mt-3.5 rounded-[12px] px-4 py-3.5 text-white">
-            <p className={`${LABEL} text-pewter`}>Cuota hipotecaria est.</p>
+            <p className="text-pewter text-[13px] leading-[19.5px] font-medium">
+              Cuotas mensuales desde:
+            </p>
             <p className="text-[22px] leading-[33px] font-extrabold">
-              {formatMoney(quote.monthlyPayment, "COP")}
+              {formatMoney(quote.monthlyWithSubsidy, "COP")}
               <span className="text-xs leading-[18px] font-medium">/mes</span>
             </p>
             <p className="text-steel mt-[3px] text-[11px] leading-[16.5px]">
-              {terms.annualRatePct}% EA · {terms.termYears} años
+              {terms.builderInstallmentMonths} meses
             </p>
           </div>
+          <p className="text-steel mt-2 text-[11px] leading-[16.5px]">
+            *Mi Casa Ya, para hogares con ingresos de hasta 2 SMMLV. Sin subsidio, la cuota es de{" "}
+            {formatMoney(quote.monthlyWithoutSubsidy, "COP")}/mes.
+          </p>
 
           {(trusteeName || trustNumber) && (
             <div className="mt-3.5 rounded-[12px] bg-white px-3.5 py-3">
@@ -261,7 +269,9 @@ function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-cloud flex items-baseline justify-between gap-4 border-b-[0.71px] py-2 last:border-b-0">
       <dt className="text-iron text-[13px] leading-[19.5px]">{label}</dt>
-      <dd className="text-graphite text-right text-[13px] leading-[19.5px] font-bold">{value}</dd>
+      <dd className="text-graphite text-right text-[13px] leading-[19.5px] font-bold whitespace-nowrap">
+        {value}
+      </dd>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import Base from "@/layouts/Base.astro";
 import type { LeadFormConfig } from "@lasgalias/schemas";
 
 import type { QuoteTerms } from "@/lib/mortgage";
+import { DEFAULT_SMMLV_COP } from "@/lib/simulators";
 import {
   getCalculatorConfig,
   getExchangeRate,
@@ -75,12 +76,11 @@ if (!project) {
  */
 const financing = project.financing;
 const terms: QuoteTerms = {
-  annualRatePct: financing?.annualRatePct ?? calculator?.annualInterestRate ?? 13.95,
-  termYears: financing?.termYears ?? calculator?.maxTermYears ?? 15,
   downPaymentPct:
     financing?.downPaymentPct ??
     (calculator?.maxFinancingPercent != null ? 100 - calculator.maxFinancingPercent : 30),
   builderInstallmentMonths: financing?.builderInstallmentMonths ?? 36,
+  smmlvCOP: calculator?.smmlvCOP ?? DEFAULT_SMMLV_COP,
 };
 
 /**
